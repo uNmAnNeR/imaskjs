@@ -1,0 +1,34 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>test IMask</title>
+</head>
+
+<body>
+  <input id="testinput" type="text" value="1.23">
+  <input id="testinput2" type="text" value="">
+  <script type="text/javascript" src="imask.js"></script>
+  <script type="text/javascript">
+    var delimiters = ['.', ','];
+    var imask = new IMask(document.getElementById('testinput'), {
+      mask: /^\d{1,10}(\.\d{0,2})?$/,
+      charMask: function (ch, idx, arr) {
+        // accept
+        if (/\d/.test(ch) ||
+          (delimiters.includes(ch) && arr.indexOf(ch) === idx)) {
+          // replace delimiters
+          if (delimiters.includes(ch)) ch = '.';
+
+          return ch;
+        }
+      }
+    });
+    new IMask(document.getElementById('testinput2'), {
+      mask: '00aa'
+    })
+  </script>
+</body>
+</html>
