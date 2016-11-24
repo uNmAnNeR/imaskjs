@@ -71,15 +71,23 @@ class PatternResolver extends MaskResolver {
   }
 
   resolve (str, event) {
-    if (!str) return true;
+    console.log(event);
 
-    // console.log(event);
+    if (!str) return true;
 
     var begins = str.substring(0, event.cursorPos);
     var ends = str.substring(event.cursorPos + event.insertedCount);
-    var inserted = str.substring(event.cursorPos, event.cursorPos + event.insertedCount);
+    var inserted = str.substr(event.cursorPos, event.insertedCount);
 
-    console.log(begins, ends, inserted);
+    // extract input chars from ends
+    var endsInput = '';
+    var oldEndPos = event.cursorPos + event.removedCount;
+    for (var di=oldEndPos, ci=0; ci<ends.length; ++ci, ++di) {
+      var ch = ends[ci];
+      var def = this._charDefs[di];
+
+      if (def.type === PatternResolver.DEF_TYPES.INPUT) endsInput += ch;
+    }
 
     var chars = inserted.split('');
 
@@ -113,67 +121,73 @@ class PatternResolver extends MaskResolver {
           res += placeholderBuffer; placeholderBuffer = '';
 
           chres = conform(chres, ch);
-        } else {
-          placeholderBuffer += '_';
         }
         ++chIndex;
       } else {
         placeholderBuffer += def.char;
         // appendFixed = true;
 
-        if (ch !== def.char) {
-          inserted = inserted.substr(0, chIndex) + ch + inserted.substr(chIndex);
+        if (ch === def.char) {
+          // inserted = inserted.substr(0, chIndex) + ch + inserted.substr(chIndex);
 
-          var oldChIndex = chIndex + event.removedCount - endsOffset;
-          if (oldChIndex < ends.length && def.char === ends[oldChIndex]) {
-            ends = ends.substr(0, oldChIndex) + ends.substr(oldChIndex+1);
-            ++endsOffset;
-          }
+          // var oldChIndex = chIndex + event.removedCount - endsOffset;
+          // if (oldChIndex < ends.length && def.char === ends[oldChIndex]) {
+          //   ends = ends.substr(0, oldChIndex) + ends.substr(oldChIndex+1);
+          //   ++endsOffset;
+          // }
+          ++chIndex;
         }
-        ++chIndex;
         ++defIndex;  // TODO move cursor
       }
 
       res += chres;
     }
 
-    while (chIndex < event.removedCount) {
-      var ch;
+    // while (chIndex < event.removedCount) {
+    //   var ch;
+    //   var def = this._charDefs[defIndex];
+
+    //   if (!def) break; // pattern ends
+
+    //   if (def.type === PatternResolver.DEF_TYPES.INPUT) {
+    //     ch = "_";
+    //   } else {
+    //     ch = def.char;
+    //   }
+    //   placeholderBuffer += ch;
+    //   ++chIndex;
+    //   ++defIndex;
+    // }
+
+    for (var ci=0; ci<endsInput.length;) {
+      var ch = endsInput[ci];
       var def = this._charDefs[defIndex];
 
       if (!def) break; // pattern ends
 
       if (def.type === PatternResolver.DEF_TYPES.INPUT) {
-        ch = "_";
-      } else {
-        ch = def.char;
-      }
-      placeholderBuffer += ch;
-      ++chIndex;
-      ++defIndex;
-    }
-
-    for (var endIndex=0; endIndex<ends.length; ++endIndex) {
-      var ch = ends[endIndex];
-      var def = this._charDefs[defIndex];
-
-      if (!def) break; // pattern ends
-
-      if (def.type === PatternResolver.DEF_TYPES.INPUT) {
-        res += placeholderBuffer + ch;
-        placeholderBuffer = '';
+        var resolver = this._resolvers[def.char];
+        var chres = resolver.resolve(ch, chIndex, chars) || '';
+        if (chres) {
+          chres = conform(chres, ch);
+          res += placeholderBuffer + ch;
+          placeholderBuffer = '';
+          ++defIndex;
+        } else {
+          // placeholderBuffer += '_';
+        }
+        ++ci;
       } else {
         placeholderBuffer += def.char;
-        // appendFixed = false;
+        ++defIndex;
       }
-      ++defIndex;
     }
 
-    if (placeholderBuffer && event.insertedCount) {
-      for (var def=this._charDefs[res.length]; def && def.type === PatternResolver.DEF_TYPES.FIXED; def=this._charDefs[res.length]) {
-        res += def.char;
-      }
-    }
+    // if (placeholderBuffer && event.insertedCount) {
+    //   for (var def=this._charDefs[res.length]; def && def.type === PatternResolver.DEF_TYPES.FIXED; def=this._charDefs[res.length]) {
+    //     res += def.char;
+    //   }
+    // }
 
     return res;
   }
@@ -197,16 +211,21 @@ class IMask {
     this._strResolver = IMask.ResolverFactory(opts.mask);
     this._charResolver = IMask.ResolverFactory(opts.charMask);
     this._oldValue = conform(this._strResolver.resolve(inputValue), inputValue);
-    this.cursorPos = 0;
-    this.oldSelectionValue = '';
-    el.addEventListener('input', this._processInput.bind(this));
+
     el.addEventListener('keydown', this._saveCursor.bind(this));
+    el.addEventListener('input', this._processInput.bind(this));
+    this._saveCursor();
     this._processInput();
   }
 
   _saveCursor (ev) {
-    this.cursorPos = this.el.selectionStart;
-    this.oldSelectionValue = this.el.value.substring(this.el.selectionStart, this.el.selectionEnd);
+    // this.cursorPos = this.el.selectionStart;
+    this._oldValue = this.el.value;
+    this._oldSelection = {
+      start: this.el.selectionStart,
+      end: this.el.selectionEnd
+    }
+    // this.oldSelectionValue = this.el.value.substring(this.el.selectionStart, this.el.selectionEnd);
   }
 
   _processInput (ev) {
@@ -219,6 +238,9 @@ class IMask {
 
   _conform () {
     var inputValue = this.el.value;
+    // use selectionEnd for handle Undo
+    var cursorPos = this.el.selectionEnd;
+
     let res = inputValue
       .split('')
       .map((ch, ...args) => {
@@ -227,13 +249,18 @@ class IMask {
       })
       .join('');
 
-    var oldSelectionEnd = this.cursorPos + this.oldSelectionValue.length;
-    var charsAfterSelection = this._oldValue.length - oldSelectionEnd;
-    var selectionEnd = inputValue.length - charsAfterSelection;
+    // var changeStart = Math.min(cursorPos, this._oldSelection.start);
+    // var changeEnd = Math.max(cursorPos, this._oldSelection.end);
+    // var oldSelectionEnd = cursorPos + this._oldSelection.end;
+    // var charsAfterSelection = this._oldValue.length - oldSelectionEnd;
+    // var selectionEnd = inputValue.length - charsAfterSelection;
     var event = {
-      cursorPos: Math.min(this.cursorPos, this.el.selectionStart),
-      removedCount: Math.max(this._oldValue.length - inputValue.length, 0),
-      insertedCount: Math.max(selectionEnd - this.cursorPos, 0),
+      cursorPos: Math.min(cursorPos, this._oldSelection.start),
+      // Math.max for opposite operation
+      removedCount: Math.max((this._oldSelection.end - cursorPos) ||
+        // for Delete
+        this._oldValue.length - inputValue.length, 0),
+      insertedCount: Math.max(cursorPos - this._oldSelection.start, 0),
       oldValue: this._oldValue
     };
 
@@ -245,9 +272,8 @@ class IMask {
       // var afterCursorCount = inputValue.length - cursorPos;
       // var cursorPos = res.length - afterCursorCount;
       this.el.value = res;
-      this.el.selectionStart = this.el.selectionEnd = this.cursorPos; //cursorPos;
+      this.el.selectionStart = this.el.selectionEnd = cursorPos; //cursorPos;
     }
-    this._oldValue = res;
   }
 
   static ResolverFactory (mask) {
