@@ -1,6 +1,7 @@
 (function () {
 // TODO
 // - cursor
+// - remove head fixed on remove, add trailing fixed on insert
 // - empty placeholder (+ as option)
 // - escape defs
 // - pattern init from value
@@ -70,7 +71,7 @@ class PatternResolver extends MaskResolver {
       this._charDefs.push({
         char: ch,
         type: type,
-        optional: false,
+        optional: false,  // TODO
         unmasking: type === PatternResolver.DEF_TYPES.INPUT
       });
     }
@@ -161,8 +162,6 @@ class PatternResolver extends MaskResolver {
     // TODO
     if (!event) return '';
     // console.log(event);
-
-    // if (!str) return true;
 
     var head = str.substring(0, event.cursorPos);
     var tail = str.substring(event.cursorPos + event.insertedCount);
