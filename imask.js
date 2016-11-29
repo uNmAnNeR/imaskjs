@@ -1,10 +1,7 @@
 (function () {
 // TODO
-// - cursor
-// - remove head fixed on remove, add trailing fixed on insert
 // - empty placeholder (+ as option)
 // - escape defs
-// - pattern init from value
 // - !progressive
 // - validateOnly
 // - get/set unmasked
@@ -27,13 +24,12 @@ class MaskResolver {
     this.mask = mask;
   }
 
-  // conform (str, fallback='') {
-  //   return conform(this.resolve(str), str, fallback);
-  // }
-
   resolve (str) {
     return str;
   };
+
+  get unmaskedValue () {}
+  set unmaskedValue (value) {}
 }
 
 class RegExpResolver extends MaskResolver {
@@ -116,6 +112,7 @@ class PatternResolver extends MaskResolver {
     for (var di=startDefIndex, ci=0; ci<str.length; ++ci, ++di) {
       var ch = str[ci];
       var def = this._charDefs[di];
+      if (!def) break;
 
       if (def.type === PatternResolver.DEF_TYPES.INPUT &&
         this._hollows.indexOf(di) < 0) input += ch;
@@ -158,19 +155,19 @@ class PatternResolver extends MaskResolver {
     return insertSteps;
   }
 
-  resolve (str, event) {
+  resolve (str, details) {
     // TODO
-    if (!event) return '';
-    // console.log(event);
+    if (!details) return '';
+    // console.log(details);
 
-    var head = str.substring(0, event.cursorPos);
-    var tail = str.substring(event.cursorPos + event.insertedCount);
-    var inserted = str.substr(event.cursorPos, event.insertedCount);
+    var head = str.substring(0, details.startChangePos);
+    var tail = str.substring(details.startChangePos + details.insertedCount);
+    var inserted = str.substr(details.startChangePos, details.insertedCount);
 
-    var tailInput = this._extractInput(tail, event.cursorPos + event.removedCount);
+    var tailInput = this._extractInput(tail, details.startChangePos + details.removedCount);
 
     // remove hollows after cursor
-    this._hollows = this._hollows.filter(h => h < event.cursorPos);
+    this._hollows = this._hollows.filter(h => h < details.startChangePos);
 
     var insertSteps = this._generateInsertSteps(head, inserted);
 
@@ -179,9 +176,32 @@ class PatternResolver extends MaskResolver {
       var result = this._tryAppendTail(step, tailInput);
       if (result) {
         [res, this._hollows] = result;
-        event.newCursorPos = step.length;
+        details.cursorPos = step.length;
         break;
       }
+    }
+
+    // append fixed at end
+    if (details.oldSelection.end <= details.cursorPos) { // if not backspace
+      for (;; ++details.cursorPos) {
+        var def = this._charDefs[details.cursorPos];
+        if (!def || def.type === PatternResolver.DEF_TYPES.INPUT) break;
+        if (details.cursorPos >= res.length) res += def.char;
+      }
+    }
+
+    // remove head fixed and hollows
+    if (!inserted && details.cursorPos === res.length) { // if removed at end
+      var di = details.cursorPos - 1;
+      var hasHollows = false;
+      for (; di > 0; --di) {
+        var def = this._charDefs[di];
+        if (def.type === PatternResolver.DEF_TYPES.INPUT) {
+          if (this._hollows.includes(di)) hasHollows = true;
+          else break;
+        }
+      }
+      if (hasHollows) res = res.slice(0, di);
     }
 
     return res;
@@ -203,14 +223,22 @@ class IMask {
     var inputValue = el.value;
 
     this.el = el;
-    this._strResolver = IMask.ResolverFactory(opts.mask);
-    this._charResolver = IMask.ResolverFactory(opts.charMask);
-    this._oldValue = conform(this._strResolver.resolve(inputValue), inputValue);
+    this.resolver = IMask.ResolverFactory(opts.mask);
+    this.charResolver = IMask.ResolverFactory(opts.charMask);
 
     el.addEventListener('keydown', this._saveCursor.bind(this));
     el.addEventListener('input', this._processInput.bind(this));
+    el.addEventListener('drop', this._onDrop.bind(this));
     this._saveCursor();
     this._processInput();
+
+    // refresh
+    this.rawValue = this.el.value;
+  }
+
+  _onDrop (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
   }
 
   _saveCursor (ev) {
@@ -237,24 +265,26 @@ class IMask {
     let res = inputValue
       .split('')
       .map((ch, ...args) => {
-        var res = this._charResolver.resolve(ch, ...args);
+        var res = this.charResolver.resolve(ch, ...args);
         return conform(res, ch);
       })
       .join('');
 
-    var minCursorPos = Math.min(cursorPos, this._oldSelection.start);
-    var maxCursorPos = Math.max(cursorPos, this._oldSelection.end);
-    var event = {
-      cursorPos: minCursorPos,
+    var startChangePos = Math.min(cursorPos, this._oldSelection.start);
+    // var maxCursorPos = Math.max(cursorPos, this._oldSelection.end);
+    var details = {
+      startChangePos: startChangePos,
+      oldSelection: this._oldSelection,
+      cursorPos: cursorPos,
       // Math.max for opposite operation
-      removedCount: Math.max((this._oldSelection.end - minCursorPos) ||
+      removedCount: Math.max((this._oldSelection.end - startChangePos) ||
         // for Delete
         this._oldValue.length - inputValue.length, 0),
-      insertedCount: cursorPos - minCursorPos,
+      insertedCount: cursorPos - startChangePos,
       oldValue: this._oldValue
     };
 
-    res = conform(this._strResolver.resolve(res, event),
+    res = conform(this.resolver.resolve(res, details),
       res,
       this._oldValue);
     if (res !== inputValue) {
@@ -262,9 +292,36 @@ class IMask {
       // var afterCursorCount = inputValue.length - cursorPos;
       // var cursorPos = res.length - afterCursorCount;
       this.el.value = res;
-      this.el.selectionStart = this.el.selectionEnd =
-        event.newCursorPos || cursorPos;
+      if (details.cursorPos != null) cursorPos = details.cursorPos;
+      this.el.selectionStart = this.el.selectionEnd = cursorPos;
     }
+  }
+
+  get rawValue () {
+    return this.el.value;
+  }
+
+  set rawValue (str) {
+    var details = {
+      startChangePos: 0,
+      oldSelection: {
+        start: 0,
+        end: this.el.value.length
+      },
+      removedCount: this.el.value.length,
+      insertedCount: str.length,
+      oldValue: this.el.value
+    };
+    this.el.value = conform(this.resolver.resolve(str, details), this.el.value);
+  }
+
+  get unmaskedValue () {
+    const resUnmasked = this.resolver.unmaskedValue;
+    return resUnmasked != null ? resUnmasked : this.el.value;
+  }
+
+  set unmaskedValue (value) {
+    this.resolver.unmaskedValue = value;
   }
 
   static ResolverFactory (mask) {
