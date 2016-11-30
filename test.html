@@ -11,17 +11,18 @@
   <input id="testinput" type="text" value="1.23">
   <input id="testinput2" type="text" value="">
   <input id="testinput3" type="text" value="">
-  <script type="text/javascript" src="imask.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+  <script type="text/javascript" src="dist/imask.js"></script>
   <script type="text/javascript">
     var delimiters = ['.', ','];
-    var imask = new IMask(document.getElementById('testinput'), {
-      mask: /^\d{1,10}(\.\d{0,2})?$/,
+    new IMask(document.getElementById('testinput'), {
+      mask: /^\d{0,10}(\.\d{0,2})?$/,
       charMask: function (ch, idx, arr) {
         // accept
         if (/\d/.test(ch) ||
-          (delimiters.includes(ch) && arr.indexOf(ch) === idx)) {
+          (delimiters.indexOf(ch) >= 0 && arr.indexOf(ch) === idx)) {
           // replace delimiters
-          if (delimiters.includes(ch)) ch = '.';
+          if (delimiters.indexOf(ch) >= 0) ch = '.';
 
           return ch;
         }
