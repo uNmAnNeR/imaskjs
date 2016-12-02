@@ -6,30 +6,20 @@ import RegExpResolver from './resolvers/regexp-resolver';
 import PatternResolver from './resolvers/pattern-resolver';
 
 // TODO
-// - empty placeholder (+ as option)
-// - escape defs
+// - empty placeholder
 // - !progressive
 // - validateOnly
-// - get/set unmasked
 // - add comments
-
-
-// TODO opts = {
-//   placeholder: '_',
-//   definitions: {},
-//   progressive: true,
-//   validateOnly: false
-// }
 
 
 export default
 class IMask {
   constructor (el, opts={}) {
-    var inputValue = el.value;
-
     this.el = el;
-    this.resolver = IMask.ResolverFactory(opts.mask);
-    this.charResolver = IMask.ResolverFactory(opts.charMask);
+    this.resolver = IMask.ResolverFactory(opts.mask, opts);
+    this.charResolver = IMask.ResolverFactory(opts.charMask, opts);
+
+    this._listeners = {};
 
     el.addEventListener('keydown', this._saveCursor.bind(this));
     el.addEventListener('input', this._processInput.bind(this));
@@ -59,7 +49,18 @@ class IMask {
   }
 
   on (ev, handler) {
+    if (!this._listeners[ev]) this._listeners[ev] = [];
+    this._listeners[ev].push(handler);
+  }
 
+  off (ev, handler) {
+    if (!this._listeners[ev]) return;
+    if (!handler) {
+      delete this._listeners[ev];
+      return;
+    }
+    var hIndex = this._listeners[ev].indexOf(handler);
+    if (hIndex >= 0) this._listeners.splice(hIndex, 1);
   }
 
   _conform () {
@@ -75,17 +76,10 @@ class IMask {
       })
       .join('');
 
-    var startChangePos = Math.min(cursorPos, this._oldSelection.start);
     // var maxCursorPos = Math.max(cursorPos, this._oldSelection.end);
     var details = {
-      startChangePos: startChangePos,
       oldSelection: this._oldSelection,
       cursorPos: cursorPos,
-      // Math.max for opposite operation
-      removedCount: Math.max((this._oldSelection.end - startChangePos) ||
-        // for Delete
-        this._oldValue.length - inputValue.length, 0),
-      insertedCount: cursorPos - startChangePos,
       oldValue: this._oldValue
     };
 
@@ -97,8 +91,12 @@ class IMask {
       // var afterCursorCount = inputValue.length - cursorPos;
       // var cursorPos = res.length - afterCursorCount;
       this.el.value = res;
-      if (details.cursorPos != null) cursorPos = details.cursorPos;
-      this.el.selectionStart = this.el.selectionEnd = cursorPos;
+      this.el.selectionStart = this.el.selectionEnd = details.cursorPos;
+    }
+
+    if (res !== this._oldValue) {
+      var listeners = this._listeners.accept || [];
+      listeners.forEach(l => l());
     }
   }
 
@@ -121,19 +119,19 @@ class IMask {
   }
 
   get unmaskedValue () {
-    const resUnmasked = this.resolver.unmaskedValue;
-    return resUnmasked != null ? resUnmasked : this.el.value;
+    return this.resolver.extractUnmasked(this.el.value);
   }
 
   set unmaskedValue (value) {
-    this.resolver.unmaskedValue = value;
+    this.el.value = this.resolver.resolveUnmasked(value);
   }
 
-  static ResolverFactory (mask) {
-    if (mask instanceof RegExp) return new RegExpResolver(mask);
-    if (mask instanceof Function) return new FuncResolver(mask);
-    if (isString(mask)) return new PatternResolver(mask);
-    return new MaskResolver(mask);
+  static ResolverFactory (mask, opts) {
+    if (mask instanceof MaskResolver) return mask;
+    if (mask instanceof RegExp) return new RegExpResolver(mask, opts);
+    if (mask instanceof Function) return new FuncResolver(mask, opts);
+    if (isString(mask)) return new PatternResolver(mask, opts);
+    return new MaskResolver(mask, opts);
   }
 }
 IMask.MaskResolver = MaskResolver;

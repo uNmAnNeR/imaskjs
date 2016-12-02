@@ -4,23 +4,46 @@ import {conform} from '../utils';
 
 export default
 class PatternResolver extends MaskResolver {
-  constructor (pattern) {
+  constructor (pattern, opts) {
     super(pattern);
+    this._charPlaceholder = opts.charPlaceholder || PatternResolver.DEFAULT_CHAR_PLACEHOLDER;
     this._definitions = PatternResolver.DEFINITIONS;
     this._charDefs = [];
     this._hollows = [];
 
+    var unmaskingBlock = false;
+    var optionalBlock = false;
     for (var i=0; i<pattern.length; ++i) {
       var ch = pattern[i];
-      var type = ch in this._definitions ?
+      var type = !unmaskingBlock && ch in this._definitions ?
         PatternResolver.DEF_TYPES.INPUT :
         PatternResolver.DEF_TYPES.FIXED;
+      var unmasking = type === PatternResolver.DEF_TYPES.INPUT || unmaskingBlock;
+      var optional = type === PatternResolver.DEF_TYPES.INPUT && optionalBlock;
+
+      if (ch === '{' || ch === '}') {
+        unmaskingBlock = !unmaskingBlock;
+        continue;
+      }
+
+      if (ch === '[' || ch === ']') {
+        optionalBlock = !optionalBlock;
+        continue;
+      }
+
+      if (ch === '\\') {
+        ++i;
+        ch = pattern[i];
+        // TODO validation
+        if (!ch) break;
+        type = PatternResolver.DEF_TYPES.FIXED;
+      }
 
       this._charDefs.push({
         char: ch,
         type: type,
-        optional: false,  // TODO
-        unmasking: type === PatternResolver.DEF_TYPES.INPUT
+        optional: optional,
+        unmasking: unmasking
       });
     }
 
@@ -46,7 +69,7 @@ class PatternResolver extends MaskResolver {
           chres = conform(chres, ch);
           ++ci;
         } else {
-          chres = '_';
+          chres = this.charPlaceholder;
           hollows.push(defIndex);
         }
         str += placeholderBuffer + chres;
@@ -61,10 +84,9 @@ class PatternResolver extends MaskResolver {
 
   _extractInput (str, startDefIndex=0) {
     var input = '';
-    for (var di=startDefIndex, ci=0; ci<str.length; ++ci, ++di) {
+    for (var di=startDefIndex, ci=0; ci<str.length && di<this._charDefs.length; ++ci, ++di) {
       var ch = str[ci];
       var def = this._charDefs[di];
-      if (!def) break;
 
       if (def.type === PatternResolver.DEF_TYPES.INPUT &&
         this._hollows.indexOf(di) < 0) input += ch;
@@ -85,7 +107,7 @@ class PatternResolver extends MaskResolver {
       var chres = '';
       if (def.type === PatternResolver.DEF_TYPES.INPUT) {
         var resolver = this._resolvers[def.char];
-        var chres = resolver.resolve(ch, ci) || '';
+        chres = resolver.resolve(ch, ci) || '';
         // if ok - next di
         if (chres) {
           ++di;
@@ -112,14 +134,26 @@ class PatternResolver extends MaskResolver {
     if (!details) return '';
     // console.log(details);
 
-    var head = str.substring(0, details.startChangePos);
-    var tail = str.substring(details.startChangePos + details.insertedCount);
-    var inserted = str.substr(details.startChangePos, details.insertedCount);
 
-    var tailInput = this._extractInput(tail, details.startChangePos + details.removedCount);
+    var cursorPos = details.cursorPos;
+    var oldSelection = details.oldSelection;
+    var oldValue = details.oldValue;
+    var startChangePos = Math.min(cursorPos, oldSelection.start);
+    // Math.max for opposite operation
+    var removedCount = Math.max((oldSelection.end - startChangePos) ||
+      // for Delete
+      oldValue.length - str.length, 0);
+    var insertedCount = cursorPos - startChangePos;
+
+
+    var head = str.substring(0, startChangePos);
+    var tail = str.substring(startChangePos + insertedCount);
+    var inserted = str.substr(startChangePos, insertedCount);
+
+    var tailInput = this._extractInput(tail, startChangePos + removedCount);
 
     // remove hollows after cursor
-    this._hollows = this._hollows.filter(h => h < details.startChangePos);
+    this._hollows = this._hollows.filter(h => h < startChangePos);
 
     var insertSteps = this._generateInsertSteps(head, inserted);
 
@@ -128,26 +162,27 @@ class PatternResolver extends MaskResolver {
       var result = this._tryAppendTail(step, tailInput);
       if (result) {
         [res, this._hollows] = result;
-        details.cursorPos = step.length;
+        cursorPos = step.length;
         break;
       }
     }
 
+    var def;
     // append fixed at end
-    if (details.oldSelection.end <= details.cursorPos) { // if not backspace
-      for (;; ++details.cursorPos) {
-        var def = this._charDefs[details.cursorPos];
+    if (oldSelection.end <= cursorPos) { // if not backspace
+      for (;; ++cursorPos) {
+        def = this._charDefs[cursorPos];
         if (!def || def.type === PatternResolver.DEF_TYPES.INPUT) break;
-        if (details.cursorPos >= res.length) res += def.char;
+        if (cursorPos >= res.length) res += def.char;
       }
     }
 
     // remove head fixed and hollows
-    if (!inserted && details.cursorPos === res.length) { // if removed at end
-      var di = details.cursorPos - 1;
+    if (!inserted && cursorPos === res.length) { // if removed at end
+      var di = cursorPos - 1;
       var hasHollows = false;
       for (; di > 0; --di) {
-        var def = this._charDefs[di];
+        def = this._charDefs[di];
         if (def.type === PatternResolver.DEF_TYPES.INPUT) {
           if (this._hollows.includes(di)) hasHollows = true;
           else break;
@@ -156,7 +191,55 @@ class PatternResolver extends MaskResolver {
       if (hasHollows) res = res.slice(0, di);
     }
 
+    details.cursorPos = cursorPos;
+
     return res;
+  }
+
+  resolveUnmasked (str) {
+    var res = '';
+    for (var ci=0, di=0; ci<str.length && di<this._charDefs.length;) {
+      var def = this._charDefs[di];
+      var ch = str[ci];
+
+      var chres = '';
+      if (def.type === PatternResolver.DEF_TYPES.INPUT) {
+        if (!this._hollows.includes(di) && this._resolvers[def.char].resolve(ch, ci)) {
+          chres = ch;
+          ++di;
+        }
+        ++ci;
+      } else {
+        chres = def.char;
+        if (def.unmasking && def.char === ch) ++ci;
+        ++di;
+      }
+      res += chres;
+    }
+    return res;
+  }
+
+  extractUnmasked (str) {
+    var unmasked = '';
+    for (var ci=0; ci<str.length && ci<this._charDefs.length; ++ci) {
+      var ch = str[ci];
+      var def = this._charDefs[ci];
+
+      if (def.unmasking && !this._hollows.includes(ci) &&
+        (def.type === PatternResolver.DEF_TYPES.INPUT && this._resolvers[def.char].resolve(ch, ci) ||
+          def.char === ch)) {
+        unmasked += ch;
+      }
+    }
+    return unmasked;
+  }
+
+  get charPlaceholder () {
+    return this._charPlaceholder;
+  }
+
+  set charPlaceholder (ph) {
+    // TODO
   }
 }
 PatternResolver.DEFINITIONS = {
@@ -168,3 +251,4 @@ PatternResolver.DEF_TYPES = {
   INPUT: 'input',
   FIXED: 'fixed'
 }
+PatternResolver.DEFAULT_CHAR_PLACEHOLDER = '_';

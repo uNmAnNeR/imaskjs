@@ -1,13 +1,9 @@
 export default
 class MaskResolver {
-  constructor (mask) {
-    this.mask = mask;
-  }
+  constructor (mask) { this.mask = mask; }
 
-  resolve (str) {
-    return str;
-  };
+  resolve (str) { return str; }
+  resolveUnmasked (str) { return str; }
 
-  get unmaskedValue () {}
-  set unmaskedValue (value) {}
+  extractUnmasked (str) { return str; }
 }
