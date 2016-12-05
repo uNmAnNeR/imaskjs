@@ -11,7 +11,7 @@
   <input id="testinput" type="text" value="1.23">
   <input id="testinput2" type="text" value="">
   <input id="testinput3" type="text" value="">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+
   <script type="text/javascript" src="dist/imask.js"></script>
   <script type="text/javascript">
     var delimiters = ['.', ','];
@@ -32,11 +32,13 @@
       mask: '+{7}(000)000-00-00'
     });
     phoneMask.on('accept', function() {
-      console.log(phoneMask.rawValue, phoneMask.unmaskedValue);
+      console.log('accept', phoneMask.rawValue, phoneMask.unmaskedValue);
+    });
+    phoneMask.on('complete', function() {
+      console.log('complete', phoneMask.rawValue, phoneMask.unmaskedValue);
     });
     new IMask(document.getElementById('testinput3'), {
-      mask: '000aaaXXX\\\\***',
-      charPlaceholder: '-'
+      mask: '000aaaXXX***'
     });
   </script>
 </body>
