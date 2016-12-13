@@ -17,12 +17,12 @@ class BaseMask {
   }
 
   bindEvents () {
-    this.el.addEventListener('keydown', this.saveCursor.bind(this));
+    this.el.addEventListener('keydown', this.saveState.bind(this));
     this.el.addEventListener('input', this.processInput.bind(this));
     this.el.addEventListener('drop', this._onDrop.bind(this));
   }
 
-  saveCursor (ev) {
+  saveState (ev) {
     this._oldValue = this.el.value;
     this._oldSelection = {
       start: this.el.selectionStart,
@@ -53,13 +53,10 @@ class BaseMask {
     res = conform(this.resolve(res, details),
       res,
       this._oldValue);
+
     if (res !== inputValue) {
       this.el.value = res;
-      cursorPos = res === this._oldValue ?
-        // if value not changed - use old cursor pos
-        this._oldSelection.end :
-        // else set new
-        details.cursorPos;
+      cursorPos = details.cursorPos;
     }
     this.el.selectionStart = this.el.selectionEnd = cursorPos;
 

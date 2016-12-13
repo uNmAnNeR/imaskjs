@@ -29,7 +29,10 @@
       }
     });
     var phoneMask = new IMask(document.getElementById('testinput2'), {
-      mask: '+{7}(000)000-00-00'
+      mask: '+{7}(000)000-00-00',
+      placeholder: {
+        show: 'always'
+      }
     });
     phoneMask.on('accept', function() {
       console.log('accept', phoneMask.rawValue, phoneMask.unmaskedValue);
@@ -38,7 +41,10 @@
       console.log('complete', phoneMask.rawValue, phoneMask.unmaskedValue);
     });
     new IMask(document.getElementById('testinput3'), {
-      mask: '000aaaXXX***'
+      mask: '000aaaXXX***',
+      placeholder: {
+        show: 'always'
+      }
     });
   </script>
 </body>

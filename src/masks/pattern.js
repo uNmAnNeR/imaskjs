@@ -7,7 +7,7 @@ class PatternMask extends BaseMask {
   constructor (el, opts) {
     super(el, opts);
     var pattern = this.mask;
-    this._charPlaceholder = opts.charPlaceholder || PatternMask.DEFAULT_CHAR_PLACEHOLDER;
+    this.placeholder = opts.placeholder;
     this._definitions = PatternMask.DEFINITIONS;
     this._charDefs = [];
     this._hollows = [];
@@ -62,6 +62,12 @@ class PatternMask extends BaseMask {
     }
   }
 
+  bindEvents () {
+    super.bindEvents();
+    ['click', 'focus'].forEach(ev =>
+      this.el.addEventListener(ev, this._alignCursor.bind(this)));
+  }
+
   _tryAppendTail (str, tail) {
     var placeholderBuffer = '';
     var hollows = this._hollows.slice();
@@ -79,7 +85,7 @@ class PatternMask extends BaseMask {
           chres = conform(chres, ch);
           ++ci;
         } else {
-          chres = this.charPlaceholder;
+          chres = this._placeholder.char;
           hollows.push(di);
         }
         str += placeholderBuffer + chres;
@@ -199,6 +205,16 @@ class PatternMask extends BaseMask {
       }
       if (hasHollows) res = res.slice(0, di);
     }
+
+    // append placeholder if in 'always' mode
+    var ph = this.placeholder;
+    if (ph.show === PatternMask.SHOW_PH_TYPES.ALWAYS) {
+      for(var hi=res.length; hi<ph.label.length; ++hi) {
+        if (this._charDefs[hi].type === PatternMask.DEF_TYPES.INPUT)
+          this._hollows.push(hi);
+      }
+      res += ph.label.substr(res.length);
+    }
     details.cursorPos = cursorPos;
 
     return res;
@@ -267,12 +283,44 @@ class PatternMask extends BaseMask {
     this.el.value = res;
   }
 
-  get charPlaceholder () {
-    return this._charPlaceholder;
+  get placeholder () {
+    return {
+      ...this._placeholder,
+      label: this.placeholderLabel
+    }
   }
 
-  set charPlaceholder (ph) {
-    // TODO
+  set placeholder (ph) {
+    this._placeholder = {
+      ...{
+        char: PatternMask.DEFAULT_CHAR_PLACEHOLDER
+      },
+      ...ph
+    };
+  }
+
+  get placeholderLabel () {
+    return this._charDefs.map(def =>
+      def.type === PatternMask.DEF_TYPES.FIXED ?
+        def.char :
+        !def.optional ?
+          this._placeholder.char :
+          '').join('');
+  }
+
+  _alignCursor () {
+    var cursorPos = this.el.selectionEnd;
+    for (var rPos = cursorPos; rPos >= 0; --rPos) {
+      var rDef = this._charDefs[rPos];
+      var lPos = rPos-1;
+      var lDef = this._charDefs[lPos];
+      if ((!rDef || rDef.type === PatternMask.DEF_TYPES.INPUT && this._hollows.indexOf(rPos) > -1) &&
+        this._hollows.indexOf(lPos) < 0) {
+        cursorPos = rPos;
+        if (!lDef || lDef.type === PatternMask.DEF_TYPES.INPUT) break;
+      }
+    }
+    this.el.selectionStart = this.el.selectionEnd = cursorPos;
   }
 }
 PatternMask.DEFINITIONS = {
@@ -285,3 +333,7 @@ PatternMask.DEF_TYPES = {
   FIXED: 'fixed'
 }
 PatternMask.DEFAULT_CHAR_PLACEHOLDER = '_';
+PatternMask.SHOW_PH_TYPES = {
+  ALWAYS: 'always',
+  INSIDE: 'inside'
+}
