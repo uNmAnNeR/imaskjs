@@ -2,7 +2,6 @@ import {conform} from '../utils';
 
 // TODO
 // - empty placeholder
-// - !progressive
 // - validateOnly
 // - add comments
 
@@ -14,6 +13,7 @@ class BaseMask {
     this.mask = opts.mask;
 
     this._listeners = {};
+    this._refreshingCount = 0;
   }
 
   bindEvents () {
@@ -92,6 +92,24 @@ class BaseMask {
   }
 
   set rawValue (str) {
+    this.startRefresh();
+    this.el.value = str;
+    this.endRefresh();
+  }
+
+  get unmaskedValue () {
+    return this.el.value;
+  }
+
+  set unmaskedValue (value) {
+    this.startRefresh();
+    this.el.value = value;
+    this.endRefresh();
+  }
+
+  refresh () {
+    if (this._refreshingCount) return;
+    var str = this.el.value;
     var details = {
       startChangePos: 0,
       oldSelection: {
@@ -105,12 +123,13 @@ class BaseMask {
     this.el.value = conform(this.resolve(str, details), this.el.value);
   }
 
-  get unmaskedValue () {
-    return this.el.value;
+  startRefresh () {
+    ++this._refreshingCount;
   }
 
-  set unmaskedValue (value) {
-    this.el.value = value;
+  endRefresh () {
+    --this._refreshingCount;
+    if (!this._refreshingCount) this.refresh();
   }
 
   _onDrop (ev) {
