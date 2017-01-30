@@ -111,6 +111,7 @@ class BaseMask {
     if (this._refreshingCount) return;
     var str = this.el.value;
     var details = {
+      cursorPos: this.el.value.length,
       startChangePos: 0,
       oldSelection: {
         start: 0,

@@ -357,7 +357,7 @@ PatternMask.DEF_TYPES = {
   FIXED: 'fixed'
 }
 PatternMask.DEFAULT_PLACEHOLDER = {
-  mode:'inside',
+  show: 'inside',
   char: '_'
 };
 PatternMask.SHOW_PH_TYPES = {
