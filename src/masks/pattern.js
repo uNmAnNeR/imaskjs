@@ -254,7 +254,7 @@ class PatternMask extends BaseMask {
       var ch = str[ci];
       var def = this._charDefs[ci];
 
-      if (def.unmasking && !this._hollows.indexOf(ci) >= 0 &&
+      if (def.unmasking && this._hollows.indexOf(ci) < 0 &&
         (def.type === PatternMask.DEF_TYPES.INPUT && this._resolvers[def.char].resolve(ch, ci) ||
           def.char === ch)) {
         unmasked += ch;

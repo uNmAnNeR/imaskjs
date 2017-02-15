@@ -67,6 +67,7 @@ class BaseMask {
   on (ev, handler) {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
+    return this;
   }
 
   off (ev, handler) {
@@ -77,6 +78,7 @@ class BaseMask {
     }
     var hIndex = this._listeners[ev].indexOf(handler);
     if (hIndex >= 0) this._listeners.splice(hIndex, 1);
+    return this;
   }
 
   fireEvent (ev) {
