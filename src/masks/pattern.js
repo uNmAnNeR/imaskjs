@@ -206,7 +206,7 @@ class PatternMask extends BaseMask {
           else break;
         }
       }
-      if (hasHollows) res = res.slice(0, di);
+      if (hasHollows) res = res.slice(0, di + 1);
     }
 
     // append placeholder
