@@ -110,7 +110,11 @@ class BaseMask {
   }
 
   refresh () {
-    if (this._refreshingCount) return;
+    // use unmasked value if value was not changed to update with options correctly
+    if (this._oldRawValue === this.el.value) this.el.value = this._oldUnmaskedValue;
+    delete this._oldRawValue;
+    delete this._oldUnmaskedValue;
+
     var str = this.el.value;
     var details = {
       cursorPos: this.el.value.length,
@@ -127,6 +131,11 @@ class BaseMask {
   }
 
   startRefresh () {
+    // store unmasked value to apply after changes
+    if (!this._refreshingCount) {
+      this._oldUnmaskedValue = this.unmaskedValue;
+      this._oldRawValue = this.rawValue;
+    }
     ++this._refreshingCount;
   }
 
