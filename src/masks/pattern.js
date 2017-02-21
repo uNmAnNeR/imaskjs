@@ -394,7 +394,8 @@ class PatternMask extends BaseMask {
         if (!lDef || lDef.type === PatternMask.DEF_TYPES.INPUT) break;
       }
     }
-    this.el.selectionStart = this.el.selectionEnd = this._mapDefIndexToPos(cursorDefIndex);
+    cursorPos = this._mapDefIndexToPos(cursorDefIndex);
+    this.el.setSelectionRange(cursorPos, cursorPos);
   }
 }
 PatternMask.DEFINITIONS = {

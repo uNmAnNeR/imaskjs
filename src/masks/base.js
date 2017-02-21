@@ -65,7 +65,7 @@ class BaseMask {
       this.el.value = res;
       cursorPos = details.cursorPos;
     }
-    this.el.selectionStart = this.el.selectionEnd = cursorPos;
+    this.el.setSelectionRange(cursorPos, cursorPos);
 
     if (res !== this._oldValue) this.fireEvent("accept");
     return res;
