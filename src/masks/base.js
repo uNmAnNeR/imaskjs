@@ -14,12 +14,27 @@ class BaseMask {
 
     this._listeners = {};
     this._refreshingCount = 0;
+
+    this.saveState = this.saveState.bind(this);
+    this.processInput = this.processInput.bind(this);
+    this._onDrop = this._onDrop.bind(this);
   }
 
   bindEvents () {
-    this.el.addEventListener('keydown', this.saveState.bind(this));
-    this.el.addEventListener('input', this.processInput.bind(this));
-    this.el.addEventListener('drop', this._onDrop.bind(this));
+    this.el.addEventListener('keydown', this.saveState);
+    this.el.addEventListener('input', this.processInput);
+    this.el.addEventListener('drop', this._onDrop);
+  }
+
+  unbindEvents () {
+    this.el.removeEventListener('keydown', this.saveState);
+    this.el.removeEventListener('input', this.processInput);
+    this.el.removeEventListener('drop', this._onDrop);
+  }
+
+  destroy () {
+    this.unbindEvents();
+    this._listeners.length = 0;
   }
 
   saveState (ev) {
@@ -32,17 +47,9 @@ class BaseMask {
 
   processInput (ev) {
      var inputValue = this.el.value;
+
     // use selectionEnd for handle Undo
     var cursorPos = this.el.selectionEnd;
-
-    // var res = inputValue
-    //   .split('')
-    //   .map((ch, ...args) => {
-    //     var res = this.charResolver.resolve(ch, ...args);
-    //     return conform(res, ch);
-    //   })
-    //   .join('');
-
     var details = {
       oldSelection: this._oldSelection,
       cursorPos: cursorPos,

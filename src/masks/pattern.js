@@ -17,13 +17,21 @@ class PatternMask extends BaseMask {
     this._hollows = [];
     this._buildResolvers();
 
+    this._alignCursor = this._alignCursor.bind(this);
+
     this.endRefresh();
   }
 
   bindEvents () {
     super.bindEvents();
     ['click', 'focus'].forEach(ev =>
-      this.el.addEventListener(ev, this._alignCursor.bind(this)));
+      this.el.addEventListener(ev, this._alignCursor));
+  }
+
+  unbindEvents () {
+    super.unbindEvents();
+    ['click', 'focus'].forEach(ev =>
+      this.el.removeEventListener(ev, this._alignCursor));
   }
 
   _buildResolvers () {
@@ -125,7 +133,7 @@ class PatternMask extends BaseMask {
 
   _isHiddenHollow (defIndex) {
     return this._hollows.indexOf(defIndex) >= 0 &&
-      (this._placeholder.show === 'hidden' || this._charDefs[defIndex] && this._charDefs[defIndex].optional);
+      this._charDefs[defIndex] && this._charDefs[defIndex].optional;
   }
 
   _hollowsBefore (defIndex) {
@@ -157,7 +165,7 @@ class PatternMask extends BaseMask {
       var ch = inserted[ci];
       if (def.type === PatternMask.DEF_TYPES.INPUT) {
         var resolver = this._resolvers[def.char];
-        var chres = resolver.resolve(ch, ci) || '';
+        var chres = resolver.resolve(ch, ci, res) || '';
         // if ok - next di
         if (chres) {
           res += placeholderBuffer + conform(chres, ch); placeholderBuffer = '';
@@ -200,9 +208,10 @@ class PatternMask extends BaseMask {
     var lastHollowIndex = this._mapPosToDefIndex(startChangePos);
     this._hollows = this._hollows.filter(h => h < lastHollowIndex);
 
-    var insertSteps = this._generateInsertSteps(head, inserted);
-
     var res = head;
+
+    // insert available
+    var insertSteps = this._generateInsertSteps(head, inserted);
     for (var istep=insertSteps.length-1; istep >= 0; --istep) {
       var step;
       [step, this._hollows] = insertSteps[istep];
@@ -214,9 +223,8 @@ class PatternMask extends BaseMask {
       }
     }
 
-    var def;
-    // append fixed at end if inserted
     if (inserted) {
+      // append fixed at end
       var appended = this._appendFixedEnd(res);
       cursorPos += appended.length - res.length;
       res = appended;
@@ -227,7 +235,7 @@ class PatternMask extends BaseMask {
       var di = this._mapPosToDefIndex(cursorPos-1);
       var hasHollows = false;
       for (; di > 0; --di) {
-        def = this._charDefs[di];
+        var def = this._charDefs[di];
         if (def.type === PatternMask.DEF_TYPES.INPUT) {
           if (this._hollows.indexOf(di) >= 0) hasHollows = true;
           else break;
@@ -245,13 +253,13 @@ class PatternMask extends BaseMask {
 
   processInput (ev) {
     var res = super.processInput(ev);
-    if (res !== this._oldValue && this._isComplete(res)) this.fireEvent("complete");
+    if (res !== this._oldValue && this.isComplete) this.fireEvent("complete");
   }
 
-  _isComplete (str) {
-    var defInputs = this._charDefs.filter(def =>
-      def.type === PatternMask.DEF_TYPES.INPUT && !def.optional);
-    return this._extractInput(str).length >= defInputs.length;
+  get isComplete () {
+    return !this._charDefs.filter((def, di) =>
+      def.type === PatternMask.DEF_TYPES.INPUT && !def.optional &&
+      this._hollows.indexOf(di) >= 0).length;
   }
 
   _appendFixedEnd (res) {
@@ -284,7 +292,7 @@ class PatternMask extends BaseMask {
   }
 
   get unmaskedValue () {
-    var str = this.el.value;
+    var str = this.rawValue;
     var unmasked = '';
     for (var ci=0, di=0; ci<str.length && di<this._charDefs.length; ++di) {
       var ch = str[ci];
@@ -293,7 +301,7 @@ class PatternMask extends BaseMask {
       if (this._isHiddenHollow(di)) continue;
 
       if (def.unmasking && this._hollows.indexOf(di) < 0 &&
-        (def.type === PatternMask.DEF_TYPES.INPUT && this._resolvers[def.char].resolve(ch, ci) ||
+        (def.type === PatternMask.DEF_TYPES.INPUT && this._resolvers[def.char].resolve(ch, ci, str) ||
           def.char === ch)) {
         unmasked += ch;
       }
@@ -312,7 +320,7 @@ class PatternMask extends BaseMask {
 
       var chres = '';
       if (def.type === PatternMask.DEF_TYPES.INPUT) {
-        if (this._resolvers[def.char].resolve(ch, ci)) {
+        if (this._resolvers[def.char].resolve(ch, ci, res)) {
           chres = ch;
           ++di;
         }
@@ -325,7 +333,7 @@ class PatternMask extends BaseMask {
       res += chres;
     }
     this._hollows.length = 0;
-    this.el.value = res;
+    this.rawValue = res;
 
     this.endRefresh();
   }
@@ -399,6 +407,6 @@ PatternMask.DEF_TYPES = {
   FIXED: 'fixed'
 }
 PatternMask.DEFAULT_PLACEHOLDER = {
-  show: 'inside',
+  show: 'lazy',
   char: '_'
 };
