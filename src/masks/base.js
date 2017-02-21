@@ -64,10 +64,10 @@ class BaseMask {
     if (res !== inputValue) {
       this.el.value = res;
       cursorPos = details.cursorPos;
-    }
 
-    // queue change cursor
-    setTimeout(() => this.el.setSelectionRange(cursorPos, cursorPos), 0);
+      // queue change cursor
+      setTimeout(() => this.el.setSelectionRange(cursorPos, cursorPos), 0);
+    }
 
     if (res !== this._oldValue) this.fireEvent("accept");
     return res;
