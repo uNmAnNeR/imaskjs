@@ -5,7 +5,7 @@ vanilla JS input mask
 * get and set raw and unmasked values easily
 * no external dependencies
 * show placeholders in always and lazy modes
-* unmasked value can contains fixed parts
+* unmasked value can contain fixed parts
 * optional input parts
 
 May coming soon:
