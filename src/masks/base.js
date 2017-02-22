@@ -1,10 +1,5 @@
 import {conform} from '../utils';
 
-// TODO
-// - empty placeholder
-// - validateOnly
-// - add comments
-
 
 export default
 class BaseMask {
