@@ -383,8 +383,7 @@ class PatternMask extends BaseMask {
   }
 
   _alignCursor () {
-    var cursorPos = this.el.selectionEnd;
-    var cursorDefIndex = this._mapPosToDefIndex(cursorPos);
+    var cursorDefIndex = this._mapPosToDefIndex(this.cursorPos);
     for (var rPos = cursorDefIndex; rPos >= 0; --rPos) {
       var rDef = this._charDefs[rPos];
       var lPos = rPos-1;
@@ -397,8 +396,7 @@ class PatternMask extends BaseMask {
         if (!lDef || lDef.type === PatternMask.DEF_TYPES.INPUT) break;
       }
     }
-    cursorPos = this._mapDefIndexToPos(cursorDefIndex);
-    this.el.setSelectionRange(cursorPos, cursorPos);
+    this.cursorPos = this._mapDefIndexToPos(cursorDefIndex);
   }
 }
 PatternMask.DEFINITIONS = {
