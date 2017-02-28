@@ -45,7 +45,8 @@ class BaseMask {
   }
 
   saveState (ev) {
-    this._oldValue = this.rawValue;
+    this._oldRawValue = this.rawValue;
+    this._oldUnmaskedValue = this.unmaskedValue;
     this._oldSelection = {
       start: this.selectionStart,
       end: this.cursorPos
@@ -56,7 +57,8 @@ class BaseMask {
     details = {
       cursorPos: this.cursorPos,
       oldSelection: this._oldSelection,
-      oldValue: this._oldValue,
+      oldValue: this._oldRawValue,
+      oldUnmaskedValue: this._oldUnmaskedValue,
       ...details
     };
 
@@ -64,7 +66,7 @@ class BaseMask {
     var res = inputValue;
     res = conform(this.resolve(res, details),
       res,
-      this._oldValue);
+      this._oldRawValue);
 
     if (res !== inputValue) {
       this.el.value = res;
@@ -83,12 +85,17 @@ class BaseMask {
     this.saveState();
   }
 
+  get _isChanged () {
+    return (this.rawValue !== this._oldRawValue ||
+      this.unmaskedValue !== this._oldUnmaskedValue);
+  }
+
   _fireChangeEvents () {
-    if (this.rawValue !== this._oldValue) this.fireEvent("accept");
+    if (this._isChanged) this.fireEvent("accept");
   }
 
   processInput (ev) {
-    if (this.rawValue === this._oldValue) return;
+    if (!this._isChanged) return;
     this._changeState();
   }
 

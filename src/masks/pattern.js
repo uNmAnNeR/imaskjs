@@ -263,7 +263,7 @@ class PatternMask extends BaseMask {
   _fireChangeEvents () {
     // fire 'complete' after 'accept' event
     super._fireChangeEvents();
-    if (this.rawValue !== this._oldValue && this.isComplete) this.fireEvent("complete");
+    if (this._isChanged && this.isComplete) this.fireEvent("complete");
   }
 
   get isComplete () {
