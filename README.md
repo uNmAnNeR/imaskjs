@@ -18,5 +18,5 @@ May coming soon:
 ## Compatibility
 IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
 
-## Docs
+## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
