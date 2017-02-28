@@ -52,35 +52,44 @@ class BaseMask {
     }
   }
 
-  processInput (ev) {
-     var inputValue = this.rawValue;
-
-    // use selectionEnd for handle Undo
-    var cursorPos = this.cursorPos;
-    var details = {
+  _changeState (details) {
+    details = {
+      cursorPos: this.cursorPos,
       oldSelection: this._oldSelection,
-      cursorPos: cursorPos,
-      oldValue: this._oldValue
+      oldValue: this._oldValue,
+      ...details
     };
 
+    var inputValue = this.rawValue;
     var res = inputValue;
     res = conform(this.resolve(res, details),
       res,
       this._oldValue);
 
     if (res !== inputValue) {
-      ++this._refreshingCount;
-      this.rawValue = res;
-      --this._refreshingCount;
-      cursorPos = details.cursorPos;
-
-      this.cursorPos = cursorPos;
+      this.el.value = res;
+      this.cursorPos = details.cursorPos;
       // also queue change cursor for some browsers
-      setTimeout(() => this.cursorPos = cursorPos, 0);
+      setTimeout(() => this.cursorPos = details.cursorPos, 0);
     }
 
-    if (res !== this._oldValue) this.fireEvent("accept");
+    this._onChangeState();
+
     return res;
+  }
+
+  _onChangeState () {
+    this._fireChangeEvents();
+    this.saveState();
+  }
+
+  _fireChangeEvents () {
+    if (this.rawValue !== this._oldValue) this.fireEvent("accept");
+  }
+
+  processInput (ev) {
+    if (this.rawValue === this._oldValue) return;
+    this._changeState();
   }
 
   on (ev, handler) {
@@ -113,9 +122,15 @@ class BaseMask {
   }
 
   set rawValue (str) {
-    this.startRefresh();
     this.el.value = str;
-    this.endRefresh();
+    this._changeState({
+      cursorPos: str.length,
+      oldSelection: {
+        start: 0,
+        end: str.length
+      },
+      oldValue: str
+    });
   }
 
   get unmaskedValue () {
@@ -124,46 +139,6 @@ class BaseMask {
 
   set unmaskedValue (value) {
     this.rawValue = value;
-  }
-
-  refresh () {
-    if (this._refreshingCount) return;
-    ++this._refreshingCount;
-
-    var str = this.rawValue;
-    // use unmasked value if value was not changed to update with options correctly
-    if (this._oldRawValue === str) str = this._oldUnmaskedValue;
-    delete this._oldRawValue;
-    delete this._oldUnmaskedValue;
-
-    var details = {
-      cursorPos: str.length,
-      startChangePos: 0,
-      oldSelection: {
-        start: 0,
-        end: str.length
-      },
-      removedCount: str.length,
-      insertedCount: str.length,
-      oldValue: str
-    };
-    this.rawValue = conform(this.resolve(str, details), str);
-
-    --this._refreshingCount;
-  }
-
-  startRefresh () {
-    // store unmasked value to apply after changes
-    if (!this._refreshingCount) {
-      this._oldUnmaskedValue = this.unmaskedValue;
-      this._oldRawValue = this.rawValue;
-    }
-    ++this._refreshingCount;
-  }
-
-  endRefresh () {
-    --this._refreshingCount;
-    if (!this._refreshingCount) this.refresh();
   }
 
   _onDrop (ev) {
