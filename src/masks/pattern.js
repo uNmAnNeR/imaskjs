@@ -322,7 +322,9 @@ class PatternMask extends BaseMask {
 
   set unmaskedValue (str) {
     this._hollows.length = 0;
-    [this.el.value, this._hollows] = this._appendTail('', str);
+    var res;
+    [res, this._hollows] = this._appendTail('', str);
+    this.el.value = this._appendPlaceholderEnd(res);
 
     this._onChangeState();
   }
