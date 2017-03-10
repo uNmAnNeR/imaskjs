@@ -15,20 +15,24 @@ class PatternMask extends BaseMask {
     };
 
     this._alignCursor = this._alignCursor.bind(this);
+    this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
 
     this._initialized = true;
   }
 
+  _alignCursorFriendly () {
+    if (this.selectionStart !== this.cursorPos) return;
+    this._alignCursor();
+  }
+
   bindEvents () {
     super.bindEvents();
-    ['click', 'focus'].forEach(ev =>
-      this.el.addEventListener(ev, this._alignCursor));
+    this.el.addEventListener('click', this._alignCursorFriendly);
   }
 
   unbindEvents () {
     super.unbindEvents();
-    ['click', 'focus'].forEach(ev =>
-      this.el.removeEventListener(ev, this._alignCursor));
+    this.el.removeEventListener('click', this._alignCursorFriendly);
   }
 
   _installDefinitions (definitions) {
