@@ -236,7 +236,8 @@ class PatternMask extends BaseMask {
       }
     }
 
-    if (inserted) {
+    // if input at the end - append fixed
+    if (inserted && cursorPos === res.length) {
       // append fixed at end
       var appended = this._appendFixedEnd(res);
       cursorPos += appended.length - res.length;

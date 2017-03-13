@@ -55,7 +55,9 @@ class BaseMask {
 
   _changeState (details) {
     details = {
-      cursorPos: this.cursorPos,
+      cursorPos: !this._cursorChanging ?
+        this.cursorPos :
+        this._oldSelection.end,
       oldSelection: this._oldSelection,
       oldValue: this._oldRawValue,
       oldUnmaskedValue: this._oldUnmaskedValue,
@@ -72,7 +74,11 @@ class BaseMask {
       this.el.value = res;
       this.cursorPos = details.cursorPos;
       // also queue change cursor for some browsers
-      setTimeout(() => this.cursorPos = details.cursorPos, 0);
+      if (this._cursorChanging) clearTimeout(this._cursorChanging);
+      this._cursorChanging = setTimeout(() => {
+        this.cursorPos = details.cursorPos;
+        delete this._cursorChanging;
+      }, 0);
     }
 
     this._onChangeState();
