@@ -244,18 +244,29 @@ class PatternMask extends BaseMask {
       res = appended;
     }
 
-    // remove head fixed and hollows if removed at end
-    if (!inserted && cursorPos === res.length) {
-      var di = this._mapPosToDefIndex(cursorPos-1);
-      var hasHollows = false;
-      for (; di > 0; --di) {
-        var def = this._charDefs[di];
-        if (def.type === PatternMask.DEF_TYPES.INPUT) {
-          if (this._isHollow(di)) hasHollows = true;
-          else break;
+    if (!inserted && removedCount) {
+      // if delete at right
+      if (oldSelection.end === cursorPos) {
+        for (;;++cursorPos) {
+          var di=this._mapPosToDefIndex(cursorPos);
+          var def = this._charDefs[di];
+          if (!def || def.type !== PatternMask.DEF_TYPES.FIXED) break;
         }
       }
-      if (hasHollows) res = res.slice(0, di + 1);
+
+      // remove head fixed and hollows if removed at end
+      if (cursorPos === res.length) {
+        var di = this._mapPosToDefIndex(cursorPos-1);
+        var hasHollows = false;
+        for (; di > 0; --di) {
+          var def = this._charDefs[di];
+          if (def.type === PatternMask.DEF_TYPES.INPUT) {
+            if (this._isHollow(di)) hasHollows = true;
+            else break;
+          }
+        }
+        if (hasHollows) res = res.slice(0, di + 1);
+      }
     }
 
     // append placeholder
