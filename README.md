@@ -20,3 +20,17 @@ IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
 
 ## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
+
+## Changes
+
+### 0.1.1
+* fix bugs with setting cursor position
+
+### 0.1.0
+* add mask types: _function_, _regexp_, _BaseMask_ and
+* _pattern_
+  * _lazy_ and _always_ modes
+  * fixed and optional input parts
+  * get and set raw and unmasked values
+  * custom symbol definitions
+  * _accept_ and _complete_ events
