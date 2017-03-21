@@ -1,0 +1,81 @@
+header {
+  margin-bottom: 30px;
+}
+
+.gh-link {
+  width: 32px;
+  height: 32px;
+  display: block;
+  background-image: url(../i/GitHub-Mark-32px.png);
+}
+
+a:hover {
+  transition: all linear 0.2s;
+  text-decoration: underline;
+}
+
+body {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+nav {
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: white;
+}
+
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+nav .menu li {
+  margin-right: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.download-links {
+  width: 50px;
+  margin: 10px 10px 10px auto;
+  justify-content: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+nav li a:hover {
+  color: #000;
+}
+
+body {
+  padding: 0 20px;
+}
+
+.section-h a {
+  text-decoration: none;
+}
+
+.section-h:after {
+  content: '#';
+  font-size: 15px;
+  font-weight: normal;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.3);
+  margin-left: 8px;
+}
+
+.example__complete {
+  display: none;
+  margin-left: 5px;
+}
+
+.example__complete::after {
+  content: '✔';
+}
