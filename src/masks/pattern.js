@@ -201,30 +201,19 @@ class PatternMask extends BaseMask {
 
   resolve (str, details) {
     var cursorPos = details.cursorPos;
-    var oldSelection = details.oldSelection;
-    var oldValue = details.oldValue;
-    var startChangePos = Math.min(cursorPos, oldSelection.start);
-    // Math.max for opposite operation
-    var removedCount = Math.max((oldSelection.end - startChangePos) ||
-      // for Delete
-      oldValue.length - str.length, 0);
-    var insertedCount = cursorPos - startChangePos;
-
-
-    var head = str.substring(0, startChangePos);
-    var tail = str.substring(startChangePos + insertedCount);
-    var inserted = str.substr(startChangePos, insertedCount);
-
-    var tailInput = this._extractInput(tail, startChangePos + removedCount);
+    var startChangePos = details.startChangePos;
+    var inserted = details.inserted;
+    var removedCount = details.removed.length;
+    var tailInput = this._extractInput(details.tail, startChangePos + removedCount);
 
     // remove hollows after cursor
     var lastHollowIndex = this._mapPosToDefIndex(startChangePos);
     this._hollows = this._hollows.filter(h => h < lastHollowIndex);
 
-    var res = head;
+    var res = details.head;
 
     // insert available
-    var insertSteps = this._generateInsertSteps(head, inserted);
+    var insertSteps = this._generateInsertSteps(res, inserted);
     for (var istep=insertSteps.length-1; istep >= 0; --istep) {
       var step;
       [step, this._hollows] = insertSteps[istep];
@@ -246,7 +235,7 @@ class PatternMask extends BaseMask {
 
     if (!inserted && removedCount) {
       // if delete at right
-      if (oldSelection.end === cursorPos) {
+      if (details.oldSelection.end === cursorPos) {
         for (;;++cursorPos) {
           var di=this._mapPosToDefIndex(cursorPos);
           var def = this._charDefs[di];
@@ -279,7 +268,7 @@ class PatternMask extends BaseMask {
   _fireChangeEvents () {
     // fire 'complete' after 'accept' event
     super._fireChangeEvents();
-    if (this._isChanged && this.isComplete) this.fireEvent("complete");
+    if (this.isComplete) this.fireEvent("complete");
   }
 
   get isComplete () {
@@ -317,8 +306,7 @@ class PatternMask extends BaseMask {
     return res;
   }
 
-  get unmaskedValue () {
-    var str = this.rawValue;
+  _calcUnmasked (str) {
     var unmasked = '';
     for (var ci=0, di=0; ci<str.length && di<this._charDefs.length; ++di) {
       var ch = str[ci];
@@ -336,13 +324,15 @@ class PatternMask extends BaseMask {
     return unmasked;
   }
 
+  get unmaskedValue () {
+    return this._unmaskedValue;
+  }
+
   set unmaskedValue (str) {
     this._hollows.length = 0;
     var res;
     [res, this._hollows] = this._appendTail('', str);
-    this.el.value = this._appendPlaceholderEnd(res);
-
-    this._onChangeState();
+    this.updateElement(this._appendPlaceholderEnd(res));
   }
 
   get placeholder () { return this._placeholder; }

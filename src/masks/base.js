@@ -1,4 +1,4 @@
-import {conform} from '../utils';
+import {conform, extendDetailsAdjustments} from '../utils';
 
 
 export default
@@ -9,100 +9,12 @@ class BaseMask {
 
     this._listeners = {};
     this._refreshingCount = 0;
+    this._rawValue = "";
+    this._unmaskedValue = "";
 
-    this.saveState = this.saveState.bind(this);
-    this.processInput = this.processInput.bind(this);
+    this.saveSelection = this.saveSelection.bind(this);
+    this._onInput = this._onInput.bind(this);
     this._onDrop = this._onDrop.bind(this);
-  }
-
-  bindEvents () {
-    this.el.addEventListener('keydown', this.saveState);
-    this.el.addEventListener('input', this.processInput);
-    this.el.addEventListener('drop', this._onDrop);
-  }
-
-  unbindEvents () {
-    this.el.removeEventListener('keydown', this.saveState);
-    this.el.removeEventListener('input', this.processInput);
-    this.el.removeEventListener('drop', this._onDrop);
-  }
-
-  destroy () {
-    this.unbindEvents();
-    this._listeners.length = 0;
-  }
-
-  get selectionStart () {
-    return this.el.selectionStart;
-  }
-
-  get cursorPos () {
-    return this.el.selectionEnd;
-  }
-
-  set cursorPos (pos) {
-    this.el.setSelectionRange(pos, pos);
-  }
-
-  saveState (ev) {
-    this._oldRawValue = this.rawValue;
-    this._oldUnmaskedValue = this.unmaskedValue;
-    this._oldSelection = {
-      start: this.selectionStart,
-      end: this.cursorPos
-    }
-  }
-
-  _changeState (details) {
-    details = {
-      cursorPos: !this._cursorChanging ?
-        this.cursorPos :
-        this._oldSelection.end,
-      oldSelection: this._oldSelection,
-      oldValue: this._oldRawValue,
-      oldUnmaskedValue: this._oldUnmaskedValue,
-      ...details
-    };
-
-    var inputValue = this.rawValue;
-    var res = inputValue;
-    res = conform(this.resolve(res, details),
-      res,
-      this._oldRawValue);
-
-    if (res !== inputValue) {
-      this.el.value = res;
-      this.cursorPos = details.cursorPos;
-      // also queue change cursor for some browsers
-      if (this._cursorChanging) clearTimeout(this._cursorChanging);
-      this._cursorChanging = setTimeout(() => {
-        this.cursorPos = details.cursorPos;
-        delete this._cursorChanging;
-      }, 0);
-    }
-
-    this._onChangeState();
-
-    return res;
-  }
-
-  _onChangeState () {
-    this._fireChangeEvents();
-    this.saveState();
-  }
-
-  get _isChanged () {
-    return (this.rawValue !== this._oldRawValue ||
-      this.unmaskedValue !== this._oldUnmaskedValue);
-  }
-
-  _fireChangeEvents () {
-    if (this._isChanged) this.fireEvent("accept");
-  }
-
-  processInput (ev) {
-    if (!this._isChanged) return;
-    this._changeState();
   }
 
   on (ev, handler) {
@@ -122,40 +34,138 @@ class BaseMask {
     return this;
   }
 
-  fireEvent (ev) {
-    var listeners = this._listeners[ev] || [];
-    listeners.forEach(l => l());
-  }
-
-  // override this
-  resolve (str, details) { return str; }
-
   get rawValue () {
-    return this.el.value;
+    return this._rawValue;
   }
 
   set rawValue (str) {
-    this.el.value = str;
-    this._changeState({
+    this.processInput(str, {
       cursorPos: str.length,
       oldSelection: {
         start: 0,
-        end: str.length
+        end: this.rawValue.length
       },
-      oldValue: str
     });
   }
 
   get unmaskedValue () {
-    return this.rawValue;
+    return this._unmaskedValue;
   }
 
   set unmaskedValue (value) {
     this.rawValue = value;
   }
 
+
+  bindEvents () {
+    this.el.addEventListener('keydown', this.saveSelection);
+    this.el.addEventListener('input', this._onInput);
+    this.el.addEventListener('drop', this._onDrop);
+  }
+
+  unbindEvents () {
+    this.el.removeEventListener('keydown', this.saveSelection);
+    this.el.removeEventListener('input', this._onInput);
+    this.el.removeEventListener('drop', this._onDrop);
+  }
+
+  fireEvent (ev) {
+    var listeners = this._listeners[ev] || [];
+    listeners.forEach(l => l());
+  }
+
+  processInput (inputValue, details) {
+    details = {
+      cursorPos: this.cursorPos,
+      oldSelection: this._selection,
+      oldValue: this.rawValue,
+      oldUnmaskedValue: this.unmaskedValue,
+      ...details
+    };
+
+    details = extendDetailsAdjustments(inputValue, details);
+
+    var res = conform(this.resolve(inputValue, details),
+      inputValue,
+      this.rawValue);
+
+    this.updateElement(res, details.cursorPos);
+    return res;
+  }
+
+
+  get selectionStart () {
+    return this.el.selectionStart;
+  }
+
+  get cursorPos () {
+    return this._cursorChanging ?
+      this._changingCursorPos :
+      this.el.selectionEnd;
+  }
+
+  set cursorPos (pos) {
+    this.el.setSelectionRange(pos, pos);
+  }
+
+  saveSelection (ev) {
+    if (this.rawValue !== this.el.value) {
+      console.warn("Uncontrolled input change, refresh mask manually!");
+    }
+    this._selection = {
+      start: this.selectionStart,
+      end: this.cursorPos
+    };
+  }
+
+  destroy () {
+    this.unbindEvents();
+    this._listeners.length = 0;
+  }
+
+  updateElement (value, cursorPos) {
+    var unmaskedValue = this._calcUnmasked(value);
+    var isChanged = (this.unmaskedValue !== unmaskedValue ||
+      this.rawValue !== value);
+
+    this._unmaskedValue = unmaskedValue;
+    this._rawValue = value;
+
+    if (this.el.value !== value) this.el.value = value;
+    if (this.cursorPos != cursorPos && cursorPos != null) {
+      // also queue change cursor for some browsers
+      if (this._cursorChanging) clearTimeout(this._cursorChanging);
+      this._changingCursorPos = cursorPos;
+      this._cursorChanging = setTimeout(() => {
+        this.cursorPos = this._changingCursorPos;
+        delete this._cursorChanging;
+      }, 10);
+      this.cursorPos = cursorPos;
+    }
+    this.saveSelection();
+
+    if (isChanged) this._fireChangeEvents();
+  }
+
+  _fireChangeEvents () {
+    this.fireEvent("accept");
+  }
+
+  _onInput (ev) {
+    if (this._cursorChanging) {
+      ev.preventDefault();
+      return;
+    }
+    this.processInput(this.el.value);
+  }
+
   _onDrop (ev) {
     ev.preventDefault();
     ev.stopPropagation();
   }
+
+  // override
+  resolve (str, details) { return str; }
+
+  _calcUnmasked (value) { return value; }
 }
