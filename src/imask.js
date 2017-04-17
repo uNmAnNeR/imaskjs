@@ -4,6 +4,7 @@ import BaseMask from './masks/base';
 import RegExpMask from './masks/regexp';
 import FuncMask from './masks/func';
 import PatternMask from './masks/pattern';
+import PipeMask from './masks/pipe';
 
 
 export default
@@ -20,6 +21,7 @@ IMask.MaskFactory = function (el, opts) {
   if (mask instanceof BaseMask) return mask;
   if (mask instanceof RegExp) return new RegExpMask(el, opts);
   if (mask instanceof Function) return new FuncMask(el, opts);
+  if (mask instanceof Array) return new PipeMask(el, opts);
   if (isString(mask)) return new PatternMask(el, opts);
   return new BaseMask(el, opts);
 }
