@@ -155,6 +155,20 @@ var mask = new IMask(element, {
   }
 });</code></pre>
 
+        <h3 id="ex-uppercase" class="section-h"><a href="#ex-uppercase">Pipe uppercase</a></h3>
+        <pre><code>var uppercaseMask = new IMask(document.getElementById('uppercase-mask'), {
+  mask: [
+    {
+      mask: "aaa"
+    },
+    {
+      mask: function (str) {
+        return str.toUpperCase();
+      }
+    }
+  ]
+});</code></pre>
+
         <h2 id="demo" class="section-h"><a href="#demo">Demo</a></h2>
         <h3 id="demo-phone" class="section-h"><a href="#demo-phone">Phone number</a></h3>
         <form class="form example-phone">
@@ -170,6 +184,14 @@ var mask = new IMask(element, {
           <div class="form-item">
             <label>Type here</label>
             <input id="numbers-mask" type="text" value="">
+          </div>
+        </form>
+
+        <h3 id="demo-uppercase" class="section-h"><a href="#demo-uppercase">Uppercase</a></h3>
+        <form class="form example-uppercase">
+          <div class="form-item">
+            <label>Type here</label>
+            <input id="uppercase-mask" type="text" value="">
           </div>
         </form>
 
@@ -256,6 +278,17 @@ var mask = new IMask(element, {
           details.cursorPos -= inserted.length - insertedNumbers.length;
           return details.head + insertedNumbers + details.tail;
         }
+      });
+
+      new IMask(document.getElementById('uppercase-mask'), {
+        mask: [
+          {
+            mask: "aaa"
+          },
+          {
+            mask: function (str) {return str.toUpperCase();}
+          }
+        ]
       });
 
       var customMask = new IMask(document.getElementById('custom-mask'), {
