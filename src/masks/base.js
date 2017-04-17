@@ -41,10 +41,11 @@ class BaseMask {
   set rawValue (str) {
     this.processInput(str, {
       cursorPos: str.length,
+      oldValue: this.rawValue,
       oldSelection: {
         start: 0,
         end: this.rawValue.length
-      },
+      }
     });
   }
 
@@ -95,12 +96,16 @@ class BaseMask {
 
 
   get selectionStart () {
-    return this.el.selectionStart;
+    return this._cursorChanging ?
+      this._changingCursorPos :
+
+      this.el.selectionStart;
   }
 
   get cursorPos () {
     return this._cursorChanging ?
       this._changingCursorPos :
+
       this.el.selectionEnd;
   }
 
@@ -133,14 +138,17 @@ class BaseMask {
 
     if (this.el.value !== value) this.el.value = value;
     if (this.cursorPos != cursorPos && cursorPos != null) {
-      // also queue change cursor for some browsers
-      if (this._cursorChanging) clearTimeout(this._cursorChanging);
-      this._changingCursorPos = cursorPos;
-      this._cursorChanging = setTimeout(() => {
-        this.cursorPos = this._changingCursorPos;
-        delete this._cursorChanging;
-      }, 10);
       this.cursorPos = cursorPos;
+
+      // also queue change cursor for mobile browsers
+      if (this._cursorChanging) clearTimeout(this._cursorChanging);
+      if (this.cursorPos != cursorPos) {
+        this._changingCursorPos = cursorPos;
+        this._cursorChanging = setTimeout(() => {
+          this.cursorPos = this._changingCursorPos;
+          delete this._cursorChanging;
+        }, 10);
+      }
     }
     this.saveSelection();
 
@@ -152,10 +160,6 @@ class BaseMask {
   }
 
   _onInput (ev) {
-    if (this._cursorChanging) {
-      ev.preventDefault();
-      return;
-    }
     this.processInput(this.el.value);
   }
 
