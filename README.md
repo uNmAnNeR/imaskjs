@@ -23,6 +23,10 @@ IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
 
 ## Changes
 
+### 0.2.0
+* add _pipe_ mask type
+* fix some bugs with cursor
+
 ### 0.1.1
 * fix bugs with setting cursor position
 
