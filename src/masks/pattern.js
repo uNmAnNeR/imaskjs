@@ -90,12 +90,12 @@ class PatternMask extends BaseMask {
     }
   }
 
-  _appendTail (str, tail) {
+  _appendTail (str, tail, skipUnresolvedInput=true) {
     var placeholderBuffer = '';
     var hollows = this._hollows.slice();
     var overflow = false;
 
-    for (var ci=0, di=this._mapPosToDefIndex(str.length); ci < tail.length; ++di) {
+    for (var ci=0, di=this._mapPosToDefIndex(str.length); ci < tail.length;) {
       var ch = tail[ci];
       var def = this._charDefs[di];
 
@@ -108,18 +108,26 @@ class PatternMask extends BaseMask {
       if (def.type === PatternMask.DEF_TYPES.INPUT) {
         var resolver = this._resolvers[def.char];
         var chres = resolver.resolve(ch, di, str) || '';
+
+        // if ok - next di
         if (chres) {
           chres = conform(chres, ch);
-          ++ci;
-        } else {
-          if (!def.optional) chres = this._placeholder.char;
-          hollows.push(di);
+        } else if (!def.optional) {
+          if (skipUnresolvedInput) chres = this._placeholder.char;
+          if (hollows.indexOf(di) < 0) hollows.push(di);
         }
-        str += placeholderBuffer + chres;
-        placeholderBuffer = '';
+
+        if (chres) {
+          str += placeholderBuffer + conform(chres, ch);
+          placeholderBuffer = '';
+        }
+        if (chres || def.optional || !skipUnresolvedInput) ++di;
+        if (chres || !def.optional) ++ci;
       } else {
         placeholderBuffer += def.char;
+
         if (ch === def.char) ++ci;
+        ++di;
       }
     }
 
@@ -167,33 +175,17 @@ class PatternMask extends BaseMask {
   }
 
   _generateInsertSteps (head, inserted) {
-    var res = head;
+    var overflow = false;
     var hollows = this._hollows.slice();
     var placeholderBuffer = '';
-    var insertSteps = [[res, hollows.slice()]];
+    var insertSteps = [[head, hollows.slice()]];
 
-    for (var ci=0, di=this._mapPosToDefIndex(head.length); ci<inserted.length;) {
-      var def = this._charDefs[di];
-      if (!def) break;
-
+    for (var ci=0; ci<inserted.length && !overflow; ++ci) {
       var ch = inserted[ci];
-      if (def.type === PatternMask.DEF_TYPES.INPUT) {
-        var resolver = this._resolvers[def.char];
-        var chres = resolver.resolve(ch, ci, res) || '';
-        // if ok - next di
-        if (chres) {
-          res += placeholderBuffer + conform(chres, ch); placeholderBuffer = '';
-          insertSteps.push([res, hollows.slice()]);
-        } else if (def.optional) {
-          if (hollows.indexOf(di) < 0) hollows.push(di);
-        }
-        if (chres || def.optional) ++di;
-        if (chres || !def.optional) ++ci;
-      } else {
-        placeholderBuffer += def.char;
-
-        if (ch === def.char) ++ci;
-        ++di;
+      var [res, hollows, overflow] = this._appendTail(head, ch, false);
+      if (!overflow && res !== head) {
+        insertSteps.push([res, hollows]);
+        head = res;
       }
     }
 
@@ -334,6 +326,7 @@ class PatternMask extends BaseMask {
     var res;
     [res, this._hollows] = this._appendTail('', str);
     this.updateElement(this._appendPlaceholderEnd(res));
+    this._alignCursor();
   }
 
   get placeholder () { return this._placeholder; }

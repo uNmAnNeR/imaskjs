@@ -20,9 +20,10 @@ IMask.MaskFactory = function (el, opts) {
   var mask = opts.mask;
   if (mask instanceof BaseMask) return mask;
   if (mask instanceof RegExp) return new RegExpMask(el, opts);
-  if (mask instanceof Function) return new FuncMask(el, opts);
   if (mask instanceof Array) return new PipeMask(el, opts);
   if (isString(mask)) return new PatternMask(el, opts);
+  if (mask.prototype instanceof BaseMask) return new mask(el, opts);
+  if (mask instanceof Function) return new FuncMask(el, opts);
   return new BaseMask(el, opts);
 }
 IMask.BaseMask = BaseMask;
