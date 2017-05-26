@@ -159,8 +159,6 @@ class BaseMask {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
     this._cursorChanging = setTimeout(() => {
-      delete this._cursorChanging;
-      if (this.cursorPos === this._changingCursorPos) return;
       this.cursorPos = this._changingCursorPos;
       this.saveSelection();
     }, 10);
