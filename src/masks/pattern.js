@@ -107,13 +107,14 @@ class PatternMask extends BaseMask {
 
       if (def.type === PatternMask.DEF_TYPES.INPUT) {
         var resolver = this._resolvers[def.char];
-        var chres = resolver.resolve(ch, di, str) || '';
+        var chres = resolver.resolve(ch, di, str + placeholderBuffer) || '';
+        var isResolved = !!chres;
 
         // if ok - next di
         if (chres) {
           chres = conform(chres, ch);
-        } else if (!def.optional) {
-          if (skipUnresolvedInput) chres = this._placeholder.char;
+        } else {
+          if (!def.optional && skipUnresolvedInput) chres = this._placeholder.char;
           if (hollows.indexOf(di) < 0) hollows.push(di);
         }
 
@@ -122,7 +123,7 @@ class PatternMask extends BaseMask {
           placeholderBuffer = '';
         }
         if (chres || def.optional || !skipUnresolvedInput) ++di;
-        if (chres || !def.optional) ++ci;
+        if (isResolved || !def.optional && !skipUnresolvedInput) ++ci;
       } else {
         placeholderBuffer += def.char;
 
@@ -167,27 +168,35 @@ class PatternMask extends BaseMask {
   }
 
   _mapPosToDefIndex (pos) {
-    var lastHollowIndex = pos;
-    // extend contiguous
-    while (this._isHiddenHollow(lastHollowIndex-1)) ++lastHollowIndex;
-
-    return pos + this._hollowsBefore(lastHollowIndex).length;
+    var defIndex = pos;
+    for (var hi=0; hi<this._hollows.length; ++hi) {
+      var h = this._hollows[hi];
+      if (h >= defIndex) break;
+      if (this._isHiddenHollow(h)) ++defIndex;
+    }
+    return defIndex;
   }
 
   _generateInsertSteps (head, inserted) {
     var overflow = false;
-    var hollows = this._hollows.slice();
-    var placeholderBuffer = '';
+
+    // save hollow during generation
+    var hollows = this._hollows;
+
     var insertSteps = [[head, hollows.slice()]];
 
     for (var ci=0; ci<inserted.length && !overflow; ++ci) {
       var ch = inserted[ci];
       var [res, hollows, overflow] = this._appendTail(head, ch, false);
+      this._hollows = hollows;
       if (!overflow && res !== head) {
         insertSteps.push([res, hollows]);
         head = res;
       }
     }
+
+    // pop hollows back
+    this._hollows = hollows;
 
     return insertSteps;
   }
