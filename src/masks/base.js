@@ -137,20 +137,7 @@ class BaseMask {
     this._rawValue = value;
 
     if (this.el.value !== value) this.el.value = value;
-    if (this.cursorPos != cursorPos && cursorPos != null) {
-      this.cursorPos = cursorPos;
-
-      // also queue change cursor for mobile browsers
-      if (this._cursorChanging) clearTimeout(this._cursorChanging);
-      if (this.cursorPos != cursorPos) {
-        this._changingCursorPos = cursorPos;
-        this._cursorChanging = setTimeout(() => {
-          this.cursorPos = this._changingCursorPos;
-          delete this._cursorChanging;
-        }, 10);
-      }
-    }
-    this.saveSelection();
+    this.updateCursor(cursorPos);
 
     if (isChanged) this._fireChangeEvents();
   }
@@ -159,7 +146,35 @@ class BaseMask {
     this.fireEvent("accept");
   }
 
+  updateCursor (cursorPos) {
+    if (this.cursorPos != cursorPos && cursorPos != null) {
+      this.cursorPos = cursorPos;
+      // also queue change cursor for mobile browsers
+      this._delayUpdateCursor(cursorPos);
+    }
+    this.saveSelection();
+  }
+
+  _delayUpdateCursor (cursorPos) {
+    this._abortUpdateCursor();
+    this._changingCursorPos = cursorPos;
+    this._cursorChanging = setTimeout(() => {
+      delete this._cursorChanging;
+      if (this.cursorPos === this._changingCursorPos) return;
+      this.cursorPos = this._changingCursorPos;
+      this.saveSelection();
+    }, 10);
+  }
+
+  _abortUpdateCursor() {
+    if (this._cursorChanging) {
+      clearTimeout(this._cursorChanging);
+      delete this._cursorChanging;
+    }
+  }
+
   _onInput (ev) {
+    this._abortUpdateCursor();
     this.processInput(this.el.value);
   }
 
