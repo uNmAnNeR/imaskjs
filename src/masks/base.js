@@ -158,7 +158,10 @@ class BaseMask {
   _delayUpdateCursor (cursorPos) {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
-    this._cursorChanging = setTimeout(() => this.cursorPos = this._changingCursorPos, 10);
+    this._cursorChanging = setTimeout(() => {
+      this._abortUpdateCursor();
+      this.cursorPos = this._changingCursorPos;
+    }, 10);
   }
 
   _abortUpdateCursor() {

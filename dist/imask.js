@@ -312,7 +312,8 @@ var BaseMask = function () {
       this._abortUpdateCursor();
       this._changingCursorPos = cursorPos;
       this._cursorChanging = setTimeout(function () {
-        return _this.cursorPos = _this._changingCursorPos;
+        _this._abortUpdateCursor();
+        _this.cursorPos = _this._changingCursorPos;
       }, 10);
     }
   }, {
