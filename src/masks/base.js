@@ -111,6 +111,7 @@ class BaseMask {
 
   set cursorPos (pos) {
     this.el.setSelectionRange(pos, pos);
+    this.saveSelection();
   }
 
   saveSelection (ev) {
@@ -147,21 +148,17 @@ class BaseMask {
   }
 
   updateCursor (cursorPos) {
-    if (this.cursorPos != cursorPos && cursorPos != null) {
-      this.cursorPos = cursorPos;
-      // also queue change cursor for mobile browsers
-      this._delayUpdateCursor(cursorPos);
-    }
-    this.saveSelection();
+    if (cursorPos == null) return;
+    this.cursorPos = cursorPos;
+
+    // also queue change cursor for mobile browsers
+    this._delayUpdateCursor(cursorPos);
   }
 
   _delayUpdateCursor (cursorPos) {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
-    this._cursorChanging = setTimeout(() => {
-      this.cursorPos = this._changingCursorPos;
-      this.saveSelection();
-    }, 10);
+    this._cursorChanging = setTimeout(() => this.cursorPos = this._changingCursorPos, 10);
   }
 
   _abortUpdateCursor() {
