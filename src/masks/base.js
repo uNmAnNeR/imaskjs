@@ -110,6 +110,8 @@ class BaseMask {
   }
 
   set cursorPos (pos) {
+    if (this.el !== document.activeElement) return;
+
     this.el.setSelectionRange(pos, pos);
     this.saveSelection();
   }

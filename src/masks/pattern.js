@@ -336,7 +336,7 @@ class PatternMask extends BaseMask {
     [res, this._hollows] = this._appendTail('', str);
     this.updateElement(this._appendPlaceholderEnd(res));
 
-    if (this.el === document.activeElement) this._alignCursor();
+    this._alignCursor();
   }
 
   get placeholder () { return this._placeholder; }
