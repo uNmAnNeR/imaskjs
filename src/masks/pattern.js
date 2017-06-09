@@ -127,7 +127,7 @@ class PatternMask extends BaseMask {
       } else {
         placeholderBuffer += def.char;
 
-        if (ch === def.char) ++ci;
+        if (ch === def.char && (def.unmasking || !skipUnresolvedInput)) ++ci;
         ++di;
       }
     }
