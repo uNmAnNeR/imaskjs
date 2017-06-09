@@ -380,7 +380,8 @@ class PatternMask extends BaseMask {
       var lDef = this._charDefs[lPos];
       if (this._isHiddenHollow(lPos)) continue;
 
-      if ((!rDef || rDef.type === PatternMask.DEF_TYPES.INPUT && this._isHollow(rPos) && !this._isHiddenHollow(rPos)) &&
+      if (!rPos ||
+        (!rDef || rDef.type === PatternMask.DEF_TYPES.INPUT && this._isHollow(rPos) && !this._isHiddenHollow(rPos)) &&
         !this._isHollow(lPos)) {
         cursorDefIndex = rPos;
         if (!lDef || lDef.type === PatternMask.DEF_TYPES.INPUT) break;
