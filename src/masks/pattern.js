@@ -159,6 +159,10 @@ class PatternMask extends BaseMask {
       this._charDefs[defIndex] && this._charDefs[defIndex].optional;
   }
 
+  _isInput (defIndex) {
+    return this._charDefs[defIndex] && this._charDefs[defIndex].type === PatternMask.DEF_TYPES.INPUT;
+  }
+
   _hollowsBefore (defIndex) {
     return this._hollows.filter(h => h < defIndex && this._isHiddenHollow(h));
   }
@@ -258,6 +262,8 @@ class PatternMask extends BaseMask {
         }
         if (hasHollows) res = res.slice(0, di + 1);
       }
+
+      cursorPos = this._alignCursorPos(cursorPos);
     }
 
     // append placeholder
@@ -372,22 +378,32 @@ class PatternMask extends BaseMask {
     if (this._initialized) this.definitions = this.definitions;
   }
 
-  _alignCursor () {
-    var cursorDefIndex = this._mapPosToDefIndex(this.cursorPos);
-    for (var rPos = cursorDefIndex; rPos >= 0; --rPos) {
-      var rDef = this._charDefs[rPos];
-      var lPos = rPos-1;
-      var lDef = this._charDefs[lPos];
-      if (this._isHiddenHollow(lPos)) continue;
+  _alignCursorPos (cursorPos) {
+    var cursorDefIndex = this._mapPosToDefIndex(cursorPos);
 
-      if (!rPos ||
-        (!rDef || rDef.type === PatternMask.DEF_TYPES.INPUT && this._isHollow(rPos) && !this._isHiddenHollow(rPos)) &&
-        !this._isHollow(lPos)) {
-        cursorDefIndex = rPos;
-        if (!lDef || lDef.type === PatternMask.DEF_TYPES.INPUT) break;
-      }
-    }
-    this.cursorPos = this._mapDefIndexToPos(cursorDefIndex);
+    var lPos = cursorDefIndex - 1;
+
+    // align left till first input
+    while (lPos >= 0 && !this._isInput(lPos) && !this._isInput(lPos+1)) --lPos;
+    cursorDefIndex = lPos + 1;  // adjust max available pos
+
+    // continue align left also skipping hollows
+    while (lPos >= 0 && (!this._isInput(lPos) || this._isHollow(lPos))) --lPos;
+
+    var rPos = lPos + 1;
+
+    // align right back until first input
+    while (this._charDefs[rPos] && !this._isInput(rPos-1) && !this._isInput(rPos)) ++rPos;
+    cursorDefIndex = Math.max(rPos, cursorDefIndex);  // adjust max available pos
+
+    // continue align right also skipping hollows
+    while (rPos < cursorDefIndex && (!this._isInput(rPos) || !this._isHollow(rPos) || this._isHiddenHollow(rPos))) ++rPos;
+
+    return this._mapDefIndexToPos(rPos);
+  }
+
+  _alignCursor () {
+    this.cursorPos = this._alignCursorPos(this.cursorPos);
   }
 }
 PatternMask.DEFINITIONS = {
