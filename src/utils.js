@@ -27,7 +27,7 @@ function extendDetailsAdjustments(str, details) {
   var head = str.substring(0, startChangePos);
   var tail = str.substring(startChangePos + insertedCount);
   var inserted = str.substr(startChangePos, insertedCount);
-  var removed = str.substr(startChangePos, removedCount);
+  var removed = oldValue.substr(startChangePos, removedCount);
 
   return {
     startChangePos,

@@ -38,8 +38,9 @@ class PatternMask extends BaseMask {
   _installDefinitions (definitions) {
     this._definitions = definitions;
     this._charDefs = [];
-    var pattern = this.mask;
+    this._alignStops = [];
 
+    var pattern = this.mask;
     if (!pattern || !definitions) return;
 
     var unmaskingBlock = false;
@@ -52,6 +53,11 @@ class PatternMask extends BaseMask {
       var unmasking = type === PatternMask.DEF_TYPES.INPUT || unmaskingBlock;
       var optional = type === PatternMask.DEF_TYPES.INPUT && optionalBlock;
 
+      if (ch === PatternMask.STOP_CHAR) {
+        this._alignStops.push(this._charDefs.length);
+        continue;
+      }
+
       if (ch === '{' || ch === '}') {
         unmaskingBlock = !unmaskingBlock;
         continue;
@@ -62,7 +68,7 @@ class PatternMask extends BaseMask {
         continue;
       }
 
-      if (ch === '\\') {
+      if (ch === PatternMask.ESCAPE_CHAR) {
         ++i;
         ch = pattern[i];
         // TODO validation
@@ -96,6 +102,12 @@ class PatternMask extends BaseMask {
     var overflow = false;
 
     for (var ci=0, di=this._mapPosToDefIndex(str.length); ci < tail.length;) {
+      if (this._isHollow(di)) {
+        // TODO check other cases
+        ++di;
+        continue;
+      }
+
       var ch = tail[ci];
       var def = this.def(di, str + placeholderBuffer);
 
@@ -115,6 +127,7 @@ class PatternMask extends BaseMask {
           chres = conform(chres, ch);
         } else {
           if (!def.optional && skipUnresolvedInput) chres = this._placeholder.char;
+          // TODO seems check is useless
           if (hollows.indexOf(di) < 0) hollows.push(di);
         }
 
@@ -135,20 +148,47 @@ class PatternMask extends BaseMask {
     return [str, hollows, overflow];
   }
 
-  _extractInput (str, fromPos=0) {
+  _appendTailChunks (str, chunks, skipUnresolvedInput) {
+    var overflow = false;
+    for (var ci=0; ci < chunks.length; ++ci) {
+      var [, input] = chunks[ci];
+      [str, this._hollows, overflow] = this._appendTail(str, input, skipUnresolvedInput);
+      if (overflow) break;
+
+      // not last - append placeholder between stops
+      var chunk2 = chunks[ci+1]
+      var stop2 = chunk2 && chunk2[0];
+      if (stop2) str = this._appendPlaceholderEnd(str, stop2);
+    }
+    return [str, this._hollows, overflow];
+  }
+
+  _extractInput (str, fromPos=0, toPos) {
     var input = '';
 
-    for (var ci=0, di=this._mapPosToDefIndex(fromPos); ci<str.length; ++di) {
+    var toDefIndex = toPos && this._mapPosToDefIndex(toPos);
+    for (var ci=0, di=this._mapPosToDefIndex(fromPos); ci<str.length && (!toDefIndex || di < toDefIndex); ++di) {
       var ch = str[ci];
       var def = this.def(di, str);
 
       if (!def) break;
       if (this._isHiddenHollow(di)) continue;
 
-      if (def.type === PatternMask.DEF_TYPES.INPUT && !this._isHollow(di)) input += ch;
+      if (this._isInput(di) && !this._isHollow(di)) input += ch;
       ++ci;
     }
     return input;
+  }
+
+  _extractInputChunks (str, stops) {
+    var chunks = [];
+    for (var si=0; si<stops.length && str; ++si) {
+      var s = stops[si];
+      var s2 = stops[si+1];
+      chunks.push([s, this._extractInput(str, s, s2)]);
+      if (s2) str = str.slice(s2 - s);
+    }
+    return chunks;
   }
 
   _isHollow (defIndex) {
@@ -210,7 +250,15 @@ class PatternMask extends BaseMask {
     var startChangePos = details.startChangePos;
     var inserted = details.inserted;
     var removedCount = details.removed.length;
-    var tailInput = this._extractInput(details.tail, startChangePos + removedCount);
+    var tailPos = startChangePos + removedCount;
+    var tailDefIndex = this._mapPosToDefIndex(tailPos);
+    var tailAlignStopsPos = [
+      tailPos,
+      ...this._alignStops
+        .filter(s => s >= tailDefIndex)
+        .map(s => this._mapDefIndexToPos(s))
+    ];
+    var tailInputChunks = this._extractInputChunks(details.tail, tailAlignStopsPos);
 
     // remove hollows after cursor
     var lastHollowIndex = this._mapPosToDefIndex(startChangePos);
@@ -221,11 +269,11 @@ class PatternMask extends BaseMask {
     // insert available
     var insertSteps = this._generateInsertSteps(res, inserted);
     for (var istep=insertSteps.length-1; istep >= 0; --istep) {
-      var step;
+      var step, tres, overflow;
       [step, this._hollows] = insertSteps[istep];
-      var [tres, thollows, overflow] = this._appendTail(step, tailInput);
+      [tres, this._hollows, overflow] = this._appendTailChunks(step, tailInputChunks);
       if (!overflow) {
-        [res, this._hollows] = [tres, thollows];
+        res = tres;
         cursorPos = step.length;
         break;
       }
@@ -241,21 +289,20 @@ class PatternMask extends BaseMask {
 
     if (!inserted && removedCount) {
       // if delete at right
-      if (details.oldSelection.end === cursorPos) {
-        for (;;++cursorPos) {
-          var di=this._mapPosToDefIndex(cursorPos);
-          var def = this.def(di);
-          if (!def || def.type !== PatternMask.DEF_TYPES.FIXED) break;
-        }
-      }
+      // if (details.oldSelection.end === cursorPos) {
+      //   for (;;++cursorPos) {
+      //     var di=this._mapPosToDefIndex(cursorPos);
+      //     var def = this.def(di);
+      //     if (!def || def.type !== PatternMask.DEF_TYPES.FIXED) break;
+      //   }
+      // }
 
       // remove head fixed and hollows if removed at end
       if (cursorPos === res.length) {
-        var di = this._mapPosToDefIndex(cursorPos-1);
         var hasHollows = false;
+        var di = this._mapPosToDefIndex(cursorPos-1);
         for (; di > 0; --di) {
-          var def = this.def(di);
-          if (def.type === PatternMask.DEF_TYPES.INPUT) {
+          if (this._isInput(di)) {
             if (this._isHollow(di)) hasHollows = true;
             else break;
           }
@@ -266,9 +313,8 @@ class PatternMask extends BaseMask {
       cursorPos = this._nearestInputPos(cursorPos);
     }
 
-    // append placeholder
-    res = this._appendPlaceholderEnd(res);
     details.cursorPos = cursorPos;
+    res = this._appendPlaceholderEnd(res);
 
     return res;
   }
@@ -283,32 +329,33 @@ class PatternMask extends BaseMask {
     for (var di=0; ;++di) {
       var def = this.def(di);
       if (!def) break;
-      if (def.type === PatternMask.DEF_TYPES.INPUT && !def.optional && this._isHollow(di)) return false;
+      if (this._isInput(di) && !def.optional && this._isHollow(di)) return false;
     }
     return true;
   }
 
   _appendFixedEnd (res) {
-    for (var di=this._mapPosToDefIndex(res.length);; ++di) {
+    for (var di=this._mapPosToDefIndex(res.length); ; ++di) {
       var def = this.def(di, res);
       if (!def) break;
 
       if (this._isHiddenHollow(di)) continue;
-      if (def.type === PatternMask.DEF_TYPES.INPUT) break;
+      if (this._isInput(di)) break;
       if (di >= res.length) res += def.char;
     }
     return res;
   }
 
-  _appendPlaceholderEnd (res) {
-    for (var di=this._mapPosToDefIndex(res.length); ; ++di) {
+  _appendPlaceholderEnd (res, toPos) {
+    var toDefIndex = toPos && this._mapPosToDefIndex(toPos);
+    for (var di=this._mapPosToDefIndex(res.length); !toDefIndex || di < toDefIndex; ++di) {
       var def = this.def(di, res);
       if (!def) break;
 
-      if (def.type === PatternMask.DEF_TYPES.INPUT && !this._isHollow(di)) {
+      if (this._isInput(di) && !this._isHollow(di)) {
         this._hollows.push(di);
       }
-      if (this._placeholder.show === 'always') {
+      if (this._placeholder.show === 'always' || toPos) {
         res += def.type === PatternMask.DEF_TYPES.FIXED ?
           def.char :
           !def.optional ?
@@ -329,7 +376,7 @@ class PatternMask extends BaseMask {
       if (this._isHiddenHollow(di)) continue;
 
       if (def.unmasking && !this._isHollow(di) &&
-        (def.type === PatternMask.DEF_TYPES.INPUT && this._resolvers[def.char].resolve(ch, ci, str) ||
+        (this._isInput(di) && this._resolvers[def.char].resolve(ch, ci, str) ||
           def.char === ch)) {
         unmasked += ch;
       }
@@ -417,7 +464,7 @@ class PatternMask extends BaseMask {
     cursorDefIndex = Math.max(rPos, cursorDefIndex);  // adjust max available pos
 
     // continue align right also skipping hollows
-    while (rPos < cursorDefIndex && (!this._isInput(rPos) || !this._isHollow(rPos) || this._isHiddenHollow(rPos))) ++rPos;
+    while (rPos < cursorDefIndex && (!this._isInput(rPos) || !this._isHollow(rPos))) ++rPos;
 
     return this._mapDefIndexToPos(rPos);
   }
@@ -439,3 +486,5 @@ PatternMask.DEFAULT_PLACEHOLDER = {
   show: 'lazy',
   char: '_'
 };
+PatternMask.STOP_CHAR = '\'';
+PatternMask.ESCAPE_CHAR = '\\';
