@@ -1,4 +1,4 @@
-import {conform} from '../utils';
+import {conform, extendDetailsAdjustments, indexInDirection, DIRECTION} from '../utils';
 import BaseMask from './base';
 
 
@@ -265,6 +265,8 @@ class PatternMask extends BaseMask {
     this._hollows = this._hollows.filter(h => h < lastHollowIndex);
 
     var res = details.head;
+    // if remove at left - adjust start change pos
+    if (details.removeDirection === DIRECTION.LEFT) res = res.slice(0, this._nearestInputPos(startChangePos));
 
     // insert available
     var insertSteps = this._generateInsertSteps(res, inserted);
@@ -279,42 +281,8 @@ class PatternMask extends BaseMask {
       }
     }
 
-    // if input at the end - append fixed
-    if (inserted && cursorPos === res.length) {
-      // append fixed at end
-      var appended = this._appendFixedEnd(res);
-      cursorPos += appended.length - res.length;
-      res = appended;
-    }
-
-    if (!inserted && removedCount) {
-      // if delete at right
-      // if (details.oldSelection.end === cursorPos) {
-      //   for (;;++cursorPos) {
-      //     var di=this._mapPosToDefIndex(cursorPos);
-      //     var def = this.def(di);
-      //     if (!def || def.type !== PatternMask.DEF_TYPES.FIXED) break;
-      //   }
-      // }
-
-      // remove head fixed and hollows if removed at end
-      if (cursorPos === res.length) {
-        var hasHollows = false;
-        var di = this._mapPosToDefIndex(cursorPos-1);
-        for (; di > 0; --di) {
-          if (this._isInput(di)) {
-            if (this._isHollow(di)) hasHollows = true;
-            else break;
-          }
-        }
-        if (hasHollows) res = res.slice(0, di + 1);
-      }
-
-      cursorPos = this._nearestInputPos(cursorPos);
-    }
-
-    details.cursorPos = cursorPos;
     res = this._appendPlaceholderEnd(res);
+    details.cursorPos = this._nearestInputPos(cursorPos, details.removeDirection);
 
     return res;
   }
@@ -445,28 +413,58 @@ class PatternMask extends BaseMask {
     return this._charDefs[index];
   }
 
-  _nearestInputPos (cursorPos) {
-    var cursorDefIndex = this._mapPosToDefIndex(cursorPos);
+  _nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
+    if (!direction) return cursorPos;
 
-    var lPos = cursorDefIndex - 1;
+    var initialDefIndex = this._mapPosToDefIndex(cursorPos);
+    var di = initialDefIndex;
 
-    // align left till first input
-    while (lPos >= 0 && !this._isInput(lPos) && !this._isInput(lPos+1)) --lPos;
-    cursorDefIndex = lPos + 1;  // adjust max available pos
+    var firstInputIndex,
+        firstFilledInputIndex,
+        firstVisibleHollowIndex,
+        nextdi;
 
-    // continue align left also skipping hollows
-    while (lPos >= 0 && (!this._isInput(lPos) || this._isHollow(lPos))) --lPos;
+    // search forward
+    for (nextdi = indexInDirection(di, direction); this.def(nextdi); di += direction, nextdi += direction) {
+      if (firstInputIndex == null && this._isInput(nextdi)) firstInputIndex = di;
+      if (firstVisibleHollowIndex == null && this._isHollow(nextdi) && !this._isHiddenHollow(nextdi)) firstVisibleHollowIndex = di;
+      if (this._isInput(nextdi) && !this._isHollow(nextdi)) {
+        firstFilledInputIndex = di;
+        break;
+      }
+    }
 
-    var rPos = lPos + 1;
+    if (direction === DIRECTION.LEFT || firstInputIndex == null) {
+      // search backwards
+      direction = -direction;
+      var overflow = false;
 
-    // align right back until first input
-    while (this.def(rPos) && !this._isInput(rPos-1) && !this._isInput(rPos)) ++rPos;
-    cursorDefIndex = Math.max(rPos, cursorDefIndex);  // adjust max available pos
+      // find hollows only before initial pos
+      for (nextdi = indexInDirection(di, direction); this.def(nextdi); di += direction, nextdi += direction) {
+        if (this._isInput(nextdi)) {
+          firstInputIndex = di;
+          if (this._isHollow(nextdi) && !this._isHiddenHollow(nextdi)) break;
+        }
 
-    // continue align right also skipping hollows
-    while (rPos < cursorDefIndex && (!this._isInput(rPos) || !this._isHollow(rPos))) ++rPos;
+        // if hollow not found before start position - set `overflow`
+        // and try to find just any input
+        if (di === initialDefIndex) overflow = true;
 
-    return this._mapDefIndexToPos(rPos);
+        // first input found
+        if (overflow && firstInputIndex != null) break;
+      }
+
+      // process overflow
+      overflow = overflow || !this.def(nextdi);
+      if (overflow && firstInputIndex != null) di = firstInputIndex;
+    } else if (firstFilledInputIndex == null) {
+      // adjust index if delete at right and filled input not found at right
+      di = firstVisibleHollowIndex != null ?
+        firstVisibleHollowIndex :
+        firstInputIndex;
+    }
+
+    return this._mapDefIndexToPos(di);
   }
 
   _alignCursor () {

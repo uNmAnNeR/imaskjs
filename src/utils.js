@@ -13,6 +13,14 @@ function conform (res, str, fallback='') {
 }
 
 export
+var DIRECTION = {
+  NONE: 0,
+  LEFT: -1,
+  RIGHT: 1
+}
+
+
+export
 function extendDetailsAdjustments(str, details) {
   var cursorPos = details.cursorPos;
   var oldSelection = details.oldSelection;
@@ -24,17 +32,24 @@ function extendDetailsAdjustments(str, details) {
   var removedCount = Math.max((oldSelection.end - startChangePos) ||
     // for Delete
     oldValue.length - str.length, 0);
-  var head = str.substring(0, startChangePos);
-  var tail = str.substring(startChangePos + insertedCount);
-  var inserted = str.substr(startChangePos, insertedCount);
-  var removed = oldValue.substr(startChangePos, removedCount);
 
   return {
+    ...details,
     startChangePos,
-    head,
-    tail,
-    inserted,
-    removed,
-    ...details
+    head: str.substring(0, startChangePos),
+    tail: str.substring(startChangePos + insertedCount),
+    inserted: str.substr(startChangePos, insertedCount),
+    removed: oldValue.substr(startChangePos, removedCount),
+    removeDirection: removedCount &&
+      ((oldSelection.end === cursorPos || insertedCount) ?
+        DIRECTION.RIGHT :
+        DIRECTION.LEFT)
   };
+}
+
+
+export
+function indexInDirection (pos, direction) {
+  if (direction === DIRECTION.LEFT) --pos;
+  return pos;
 }
