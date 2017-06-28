@@ -1,9 +1,3 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.IMask = factory());
-}(this, (function () { 'use strict';
-
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -964,7 +958,5 @@ IMask$1.RegExpMask = RegExpMask;
 IMask$1.PatternMask = PatternMask;
 window.IMask = IMask$1;
 
-return IMask$1;
-
-})));
-//# sourceMappingURL=imask.js.map
+export default IMask$1;
+//# sourceMappingURL=imask.es.js.map

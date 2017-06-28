@@ -1,4 +1,4 @@
-import {conform, extendDetailsAdjustments, indexInDirection, DIRECTION} from '../utils';
+import {conform, indexInDirection, DIRECTION} from '../utils';
 import BaseMask from './base';
 
 

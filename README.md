@@ -12,8 +12,13 @@ May coming soon:
 
 * jQuery integration
 * composite mask (for date, datetime etc.)
-* unit tests
+* more unit tests
 * ?RTL
+
+## Build & test
+`npm run build`
+
+`npm run test`
 
 ## Compatibility
 IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
@@ -22,6 +27,12 @@ IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
 
 ## Changes
+
+### 0.4.0
+* **breaking change**: add _quote_ (') to definitions to prevent symbols shift back. Should be escaped from now.
+* fix some bugs with cursor
+* write some tests
+* use _rollup_ for build and test
 
 ### 0.3.0
 * add mobile support
