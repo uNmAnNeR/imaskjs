@@ -156,7 +156,7 @@ class PatternMask extends BaseMask {
       if (overflow) break;
 
       // not last - append placeholder between stops
-      var chunk2 = chunks[ci+1]
+      var chunk2 = chunks[ci+1];
       var stop2 = chunk2 && chunk2[0];
       if (stop2) str = this._appendPlaceholderEnd(str, stop2);
     }
@@ -203,12 +203,12 @@ class PatternMask extends BaseMask {
     return this.def(defIndex) && this.def(defIndex).type === PatternMask.DEF_TYPES.INPUT;
   }
 
-  _hollowsBefore (defIndex) {
+  _hiddenHollowsBefore (defIndex) {
     return this._hollows.filter(h => h < defIndex && this._isHiddenHollow(h));
   }
 
   _mapDefIndexToPos (defIndex) {
-    return defIndex - this._hollowsBefore(defIndex).length;
+    return defIndex - this._hiddenHollowsBefore(defIndex).length;
   }
 
   _mapPosToDefIndex (pos) {
@@ -265,7 +265,7 @@ class PatternMask extends BaseMask {
     this._hollows = this._hollows.filter(h => h < lastHollowIndex);
 
     var res = details.head;
-    // if remove at left - adjust start change pos
+    // if remove at left - adjust start change pos to trim holes and fixed at the end
     if (details.removeDirection === DIRECTION.LEFT) res = res.slice(0, this._nearestInputPos(startChangePos));
 
     // insert available
@@ -294,7 +294,7 @@ class PatternMask extends BaseMask {
   }
 
   get isComplete () {
-    for (var di=0; ;++di) {
+    for (var di=0; ; ++di) {
       var def = this.def(di);
       if (!def) break;
       if (this._isInput(di) && !def.optional && this._isHollow(di)) return false;
@@ -373,7 +373,7 @@ class PatternMask extends BaseMask {
       ...PatternMask.DEFAULT_PLACEHOLDER,
       ...ph
     };
-    if (this._initialized) this.unmaskedValue = this.unmaskedValue;
+    this._refreshValue();
   }
 
   get placeholderLabel () {
@@ -389,7 +389,7 @@ class PatternMask extends BaseMask {
 
   set definitions (defs) {
     this._installDefinitions(defs);
-    if (this._initialized) this.unmaskedValue = this.unmaskedValue;
+    this._refreshValue();
   }
 
   get mask () { return this._mask; }
@@ -401,7 +401,7 @@ class PatternMask extends BaseMask {
 
   defs (str) {
     var defs = [];
-    for (var i=0; ;++i) {
+    for (var i=0; ; ++i) {
       var def = this.def(i, str);
       if (!def) break;
       defs.push(def);
@@ -411,6 +411,10 @@ class PatternMask extends BaseMask {
 
   def (index, str) {
     return this._charDefs[index];
+  }
+
+  _refreshValue () {
+    if (this._initialized) this.unmaskedValue = this.unmaskedValue;
   }
 
   _nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
