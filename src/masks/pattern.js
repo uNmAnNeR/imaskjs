@@ -117,32 +117,35 @@ class PatternMask extends BaseMask {
         break;
       }
 
+      var resolved, skipped;
       if (def.type === PatternMask.DEF_TYPES.INPUT) {
         var resolver = this._resolvers[def.char];
         var chres = resolver.resolve(ch, di, str + placeholderBuffer) || '';
-        var isResolved = !!chres;
+        resolved = !!chres;
+        skipped = !chres && !def.optional;
 
         // if ok - next di
         if (chres) {
           chres = conform(chres, ch);
         } else {
-          if (!def.optional && skipUnresolvedInput) chres = this._placeholder.char;
-          // TODO seems check is useless
-          if (hollows.indexOf(di) < 0) hollows.push(di);
+          if (!def.optional && skipUnresolvedInput) {
+            chres = this._placeholder.char;
+            skipped = false;
+          }
+          if (!skipped) hollows.push(di);
         }
 
         if (chres) {
           str += placeholderBuffer + conform(chres, ch);
           placeholderBuffer = '';
         }
-        if (chres || def.optional || !skipUnresolvedInput) ++di;
-        if (isResolved || !def.optional && !skipUnresolvedInput) ++ci;
       } else {
         placeholderBuffer += def.char;
-
-        if (ch === def.char && (def.unmasking || !skipUnresolvedInput)) ++ci;
-        ++di;
+        resolved = ch === def.char && (def.unmasking || !skipUnresolvedInput);
       }
+
+      if (!skipped) ++di;
+      if (resolved || skipped) ++ci;
     }
 
     return [str, hollows, overflow];

@@ -2,14 +2,25 @@ var babel = require('rollup-plugin-babel');
 
 
 module.exports = function (config) {
+  var preprocessors = ['rollup'];
+  var reporters = ['progress'];
+  if (config.singleRun) {
+    preprocessors.push('coverage');
+    reporters.push('coverage');
+  }
+
   config.set({
     basePath: '',
-    files: ['test/**/*.js'],
+    files: [
+      'src/**/*.js',
+      'test/**/*.js'
+    ],
     frameworks: ['mocha', 'chai', 'sinon'],
     preprocessors: {
-      'test/**/*.js': ['rollup', 'coverage']
+      'src/**/*.js': preprocessors,
+      'test/**/*.js': ['rollup']
     },
-    reporters: ['progress', 'coverage'],
+    reporters: reporters,
     coverageReporter: {
       type: 'html',
       dir: 'coverage/'
