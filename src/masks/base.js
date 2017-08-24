@@ -1,20 +1,23 @@
-import {conform, extendDetailsAdjustments} from '../utils';
+import {extendDetailsAdjustments} from '../utils';
+import createMask from '../core/factory';
 
 
 export default
 class BaseMask {
   constructor (el, opts) {
     this.el = el;
+    this.masked = createMask(opts);
     this.mask = opts.mask;
 
     this._listeners = {};
-    this._refreshingCount = 0;
-    this._rawValue = "";
-    this._unmaskedValue = "";
+    this._rawValue = '';
+    this._unmaskedValue = '';
 
     this.saveSelection = this.saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
     this._onDrop = this._onDrop.bind(this);
+    this._alignCursor = this._alignCursor.bind(this);
+    this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
   }
 
   on (ev, handler) {
@@ -34,6 +37,13 @@ class BaseMask {
     return this;
   }
 
+  get mask () { return this.masked.mask; }
+  set mask (mask) {
+    // TODO check
+    this.masked.mask = mask;
+    this.masked = createMask(this.masked);
+  }
+
   get rawValue () {
     return this._rawValue;
   }
@@ -49,25 +59,18 @@ class BaseMask {
     });
   }
 
-  get unmaskedValue () {
-    return this._unmaskedValue;
-  }
-
-  set unmaskedValue (value) {
-    this.rawValue = value;
-  }
-
-
   bindEvents () {
     this.el.addEventListener('keydown', this.saveSelection);
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
+    this.el.addEventListener('click', this._alignCursorFriendly);
   }
 
   unbindEvents () {
     this.el.removeEventListener('keydown', this.saveSelection);
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
+    this.el.removeEventListener('click', this._alignCursorFriendly);
   }
 
   fireEvent (ev) {
@@ -86,12 +89,10 @@ class BaseMask {
 
     details = extendDetailsAdjustments(inputValue, details);
 
-    var res = conform(this.resolve(inputValue, details),
-      inputValue,
-      this.rawValue);
+    this.resolve(inputValue, details);
 
-    this.updateElement(res, details.cursorPos);
-    return res;
+    this.updateValue();
+    this.updateCursor(details.cursorPos)
   }
 
 
@@ -118,7 +119,7 @@ class BaseMask {
 
   saveSelection (ev) {
     if (this.rawValue !== this.el.value) {
-      console.warn("Uncontrolled input change, refresh mask manually!");
+      console.warn('Uncontrolled input change, refresh mask manually!');
     }
     this._selection = {
       start: this.selectionStart,
@@ -131,22 +132,32 @@ class BaseMask {
     this._listeners.length = 0;
   }
 
-  updateElement (value, cursorPos) {
-    var unmaskedValue = this._calcUnmasked(value);
-    var isChanged = (this.unmaskedValue !== unmaskedValue ||
-      this.rawValue !== value);
+  get unmaskedValue () {
+    return this._unmaskedValue;
+  }
 
-    this._unmaskedValue = unmaskedValue;
-    this._rawValue = value;
+  set unmaskedValue (str) {
+    this.masked.unmaskedValue = str;
+    this.updateValue();
+    this._alignCursor();
+  }
 
-    if (this.el.value !== value) this.el.value = value;
-    this.updateCursor(cursorPos);
+  updateValue () {
+    var newUnmaskedValue = this.masked.unmaskedValue;
+    var newRawValue = this.masked.value;
+    var isChanged = (this.unmaskedValue !== newUnmaskedValue ||
+      this.rawValue !== newRawValue);
 
+    this._unmaskedValue = newUnmaskedValue;
+    this._rawValue = newRawValue;
+
+    if (this.el.value !== newRawValue) this.el.value = newRawValue;
     if (isChanged) this._fireChangeEvents();
   }
 
   _fireChangeEvents () {
-    this.fireEvent("accept");
+    this.fireEvent('accept');
+    if (this.masked.isComplete) this.fireEvent('complete');
   }
 
   updateCursor (cursorPos) {
@@ -161,8 +172,8 @@ class BaseMask {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
     this._cursorChanging = setTimeout(() => {
-      this._abortUpdateCursor();
       this.cursorPos = this._changingCursorPos;
+      this._abortUpdateCursor();
     }, 10);
   }
 
@@ -171,6 +182,15 @@ class BaseMask {
       clearTimeout(this._cursorChanging);
       delete this._cursorChanging;
     }
+  }
+
+  _alignCursor () {
+    this.cursorPos = this.masked.nearestInputPos(this.cursorPos);
+  }
+
+  _alignCursorFriendly () {
+    if (this.selectionStart !== this.cursorPos) return;
+    this._alignCursor();
   }
 
   _onInput (ev) {
@@ -183,8 +203,13 @@ class BaseMask {
     ev.stopPropagation();
   }
 
-  // override
-  resolve (str, details) { return str; }
+  resolve (str, details) {
+    var insertedCount = this.masked.splice(
+      details.startChangePos,
+      details.removed.length,
+      details.inserted,
+      details.removeDirection);
 
-  _calcUnmasked (value) { return value; }
+    details.cursorPos = this.masked.nearestInputPos(details.startChangePos + insertedCount, details.removeDirection);
+  }
 }

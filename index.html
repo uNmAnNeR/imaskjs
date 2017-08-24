@@ -271,14 +271,7 @@ var mask = new IMask(element, {
       });
 
       new IMask(document.getElementById('numbers-mask'), {
-        mask: function (str, details) {
-          var inserted = details.inserted;
-          if (!inserted.length) return true;
-          var insertedNumbers = inserted.replace(/\D/g, '');
-
-          details.cursorPos -= inserted.length - insertedNumbers.length;
-          return details.head + insertedNumbers + details.tail;
-        }
+        mask: /^\d+$/
       });
 
       new IMask(document.getElementById('uppercase-mask'), {

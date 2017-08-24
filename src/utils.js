@@ -4,6 +4,24 @@ function isString (str) {
 }
 
 export
+function extend (target) {
+  target = Object(target);
+
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+    if (source == null) continue;
+
+    for (var key in source) {
+      if (source.hasOwnProperty(key)) {
+          target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+}
+
+export
 function conform (res, str, fallback='') {
   return isString(res) ?
     res :
