@@ -464,32 +464,35 @@ var PatternMask = function (_BaseMask) {
         break;
       }
 
+      var resolved, skipped;
       if (def.type === PatternMask.DEF_TYPES.INPUT) {
         var resolver = this._resolvers[def.char];
         var chres = resolver.resolve(ch, di, str + placeholderBuffer) || '';
-        var isResolved = !!chres;
+        resolved = !!chres;
+        skipped = !chres && !def.optional;
 
         // if ok - next di
         if (chres) {
           chres = conform(chres, ch);
         } else {
-          if (!def.optional && skipUnresolvedInput) chres = this._placeholder.char;
-          // TODO seems check is useless
-          if (hollows.indexOf(di) < 0) hollows.push(di);
+          if (!def.optional && skipUnresolvedInput) {
+            chres = this._placeholder.char;
+            skipped = false;
+          }
+          if (!skipped) hollows.push(di);
         }
 
         if (chres) {
           str += placeholderBuffer + conform(chres, ch);
           placeholderBuffer = '';
         }
-        if (chres || def.optional || !skipUnresolvedInput) ++di;
-        if (isResolved || !def.optional && !skipUnresolvedInput) ++ci;
       } else {
         placeholderBuffer += def.char;
-
-        if (ch === def.char && (def.unmasking || !skipUnresolvedInput)) ++ci;
-        ++di;
+        resolved = ch === def.char && (def.unmasking || !skipUnresolvedInput);
       }
+
+      if (!skipped) ++di;
+      if (resolved || skipped) ++ci;
     }
 
     return [str, hollows, overflow];
@@ -560,7 +563,7 @@ var PatternMask = function (_BaseMask) {
     return this.def(defIndex) && this.def(defIndex).type === PatternMask.DEF_TYPES.INPUT;
   };
 
-  PatternMask.prototype._hollowsBefore = function _hollowsBefore(defIndex) {
+  PatternMask.prototype._hiddenHollowsBefore = function _hiddenHollowsBefore(defIndex) {
     var _this2 = this;
 
     return this._hollows.filter(function (h) {
@@ -569,7 +572,7 @@ var PatternMask = function (_BaseMask) {
   };
 
   PatternMask.prototype._mapDefIndexToPos = function _mapDefIndexToPos(defIndex) {
-    return defIndex - this._hollowsBefore(defIndex).length;
+    return defIndex - this._hiddenHollowsBefore(defIndex).length;
   };
 
   PatternMask.prototype._mapPosToDefIndex = function _mapPosToDefIndex(pos) {
@@ -634,7 +637,7 @@ var PatternMask = function (_BaseMask) {
     });
 
     var res = details.head;
-    // if remove at left - adjust start change pos
+    // if remove at left - adjust start change pos to trim holes and fixed at the end
     if (details.removeDirection === DIRECTION.LEFT) res = res.slice(0, this._nearestInputPos(startChangePos));
 
     // insert available
@@ -729,6 +732,10 @@ var PatternMask = function (_BaseMask) {
     return this._charDefs[index];
   };
 
+  PatternMask.prototype._refreshValue = function _refreshValue() {
+    if (this._initialized) this.unmaskedValue = this.unmaskedValue;
+  };
+
   PatternMask.prototype._nearestInputPos = function _nearestInputPos(cursorPos) {
     var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DIRECTION.LEFT;
 
@@ -819,7 +826,7 @@ var PatternMask = function (_BaseMask) {
     },
     set: function set$$1(ph) {
       this._placeholder = _extends({}, PatternMask.DEFAULT_PLACEHOLDER, ph);
-      if (this._initialized) this.unmaskedValue = this.unmaskedValue;
+      this._refreshValue();
     }
   }, {
     key: 'placeholderLabel',
@@ -837,7 +844,7 @@ var PatternMask = function (_BaseMask) {
     },
     set: function set$$1(defs) {
       this._installDefinitions(defs);
-      if (this._initialized) this.unmaskedValue = this.unmaskedValue;
+      this._refreshValue();
     }
   }, {
     key: 'mask',
