@@ -11,6 +11,11 @@ class PatternDefinition {
     }
   }
 
+  reset () {
+    this.isHollow = false;
+    if (this._masked) this._masked.reset();
+  }
+
   get isInput () {
     return this.type === PatternDefinition.TYPES.INPUT;
   }

@@ -1,20 +1,21 @@
-import {extendDetailsAdjustments} from '../utils';
+import {DIRECTION} from '../core/utils';
+import ActionDetails from '../core/action-details';
 import createMask from '../core/factory';
 
 
 export default
-class BaseMask {
+class InputMask {
   constructor (el, opts) {
     this.el = el;
     this.masked = createMask(opts);
-    this.mask = opts.mask;
 
     this._listeners = {};
-    this._rawValue = '';
+    this._value = '';
     this._unmaskedValue = '';
 
     this.saveSelection = this.saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
+    this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
     this._alignCursor = this._alignCursor.bind(this);
     this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
@@ -32,7 +33,7 @@ class BaseMask {
       delete this._listeners[ev];
       return;
     }
-    var hIndex = this._listeners[ev].indexOf(handler);
+    const hIndex = this._listeners[ev].indexOf(handler);
     if (hIndex >= 0) this._listeners.splice(hIndex, 1);
     return this;
   }
@@ -44,19 +45,14 @@ class BaseMask {
     this.masked = createMask(this.masked);
   }
 
-  get rawValue () {
-    return this._rawValue;
+  get value () {
+    return this._value;
   }
 
-  set rawValue (str) {
-    this.processInput(str, {
-      cursorPos: str.length,
-      oldValue: this.rawValue,
-      oldSelection: {
-        start: 0,
-        end: this.rawValue.length
-      }
-    });
+  set value (str) {
+    this.masked.value = str;
+    this.updateValue();
+    this._alignCursor();
   }
 
   bindEvents () {
@@ -64,6 +60,7 @@ class BaseMask {
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
     this.el.addEventListener('click', this._alignCursorFriendly);
+    this.el.addEventListener('change', this._onChange);
   }
 
   unbindEvents () {
@@ -71,30 +68,13 @@ class BaseMask {
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
     this.el.removeEventListener('click', this._alignCursorFriendly);
+    this.el.removeEventListener('change', this._onChange);
   }
 
   fireEvent (ev) {
-    var listeners = this._listeners[ev] || [];
+    const listeners = this._listeners[ev] || [];
     listeners.forEach(l => l());
   }
-
-  processInput (inputValue, details) {
-    details = {
-      cursorPos: this.cursorPos,
-      oldSelection: this._selection,
-      oldValue: this.rawValue,
-      oldUnmaskedValue: this.unmaskedValue,
-      ...details
-    };
-
-    details = extendDetailsAdjustments(inputValue, details);
-
-    this.resolve(inputValue, details);
-
-    this.updateValue();
-    this.updateCursor(details.cursorPos)
-  }
-
 
   get selectionStart () {
     return this._cursorChanging ?
@@ -118,7 +98,7 @@ class BaseMask {
   }
 
   saveSelection (ev) {
-    if (this.rawValue !== this.el.value) {
+    if (this.value !== this.el.value) {
       console.warn('Uncontrolled input change, refresh mask manually!');
     }
     this._selection = {
@@ -143,15 +123,15 @@ class BaseMask {
   }
 
   updateValue () {
-    var newUnmaskedValue = this.masked.unmaskedValue;
-    var newRawValue = this.masked.value;
-    var isChanged = (this.unmaskedValue !== newUnmaskedValue ||
-      this.rawValue !== newRawValue);
+    const newUnmaskedValue = this.masked.unmaskedValue;
+    const newValue = this.masked.value;
+    const isChanged = (this.unmaskedValue !== newUnmaskedValue ||
+      this.value !== newValue);
 
     this._unmaskedValue = newUnmaskedValue;
-    this._rawValue = newRawValue;
+    this._value = newValue;
 
-    if (this.el.value !== newRawValue) this.el.value = newRawValue;
+    if (this.el.value !== newValue) this.el.value = newValue;
     if (isChanged) this._fireChangeEvents();
   }
 
@@ -193,23 +173,36 @@ class BaseMask {
     this._alignCursor();
   }
 
-  _onInput (ev) {
+  _onInput () {
     this._abortUpdateCursor();
-    this.processInput(this.el.value);
-  }
 
-  _onDrop (ev) {
-    ev.preventDefault();
-    ev.stopPropagation();
-  }
+    const details = new ActionDetails(
+      // new state
+      this.el.value, this.cursorPos,
+      // old state
+      this.value, this._selection);
 
-  resolve (str, details) {
-    var insertedCount = this.masked.splice(
+    const insertedCount = this.masked.splice(
       details.startChangePos,
       details.removed.length,
       details.inserted,
       details.removeDirection);
 
-    details.cursorPos = this.masked.nearestInputPos(details.startChangePos + insertedCount, details.removeDirection);
+    const cursorPos = this.masked.nearestInputPos(
+      details.startChangePos + insertedCount,
+      // if none was removed - align to right
+      details.removeDirection || DIRECTION.RIGHT);
+
+    this.updateValue();
+    this.updateCursor(cursorPos);
+  }
+
+  _onChange () {
+    if (this.value !== this.el.value) this.value = this.el.value;
+  }
+
+  _onDrop (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
   }
 }

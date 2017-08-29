@@ -271,7 +271,7 @@ var mask = new IMask(element, {
       });
 
       new IMask(document.getElementById('numbers-mask'), {
-        mask: /^\d+$/
+        mask: /^\d{0,5}$/
       });
 
       new IMask(document.getElementById('uppercase-mask'), {

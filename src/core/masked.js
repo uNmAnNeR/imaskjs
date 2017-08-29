@@ -1,9 +1,22 @@
+import {refreshValue} from './utils';
+
+
 export default
 class Masked {
   constructor ({mask, validate}) {
     this._value = '';
     this.mask = mask;
     this.validate = validate || (() => true);
+    this.isInitialized = true;
+  }
+
+  get mask () {
+    return this._mask;
+  }
+
+  @refreshValue
+  set mask (mask) {
+    this._mask = mask;
   }
 
   _validate () {
@@ -11,7 +24,7 @@ class Masked {
   }
 
   clone () {
-    var m = new Masked(this);
+    const m = new Masked(this);
     m._value = this.value.slice();
     return m;
   }
@@ -21,12 +34,13 @@ class Masked {
   }
 
   get value () {
-    return this._value || '';
+    return this._value;
   }
 
   set value (value) {
     this.reset();
-    this.append(value, false);
+    this.append(value, true);
+    this._appendTail();
   }
 
   get unmaskedValue () {
@@ -36,13 +50,14 @@ class Masked {
   set unmaskedValue (value) {
     this.reset();
     this.append(value);
+    this._appendTail();
   }
 
   get isComplete () {
     return true;
   }
 
-  nearestInputPos (cursorPos, direction) {
+  nearestInputPos (cursorPos, /* direction */) {
     return cursorPos;
   }
 
@@ -55,18 +70,18 @@ class Masked {
   }
 
   _appendTail (tail) {
-    return this.append(tail);
+    return !tail || this.append(tail);
   }
 
-  append (str, skipUnresolvedInput=true) {
-    var oldValueLength = this.value.length;
-    var consistentValue = this.clone();
+  append (str, soft) {
+    const oldValueLength = this.value.length;
+    let consistentValue = this.clone();
 
-    for (var ci=0; ci<str.length; ++ci) {
+    for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
       if (this._validate() === false) {
         Object.assign(this, consistentValue);
-        if (skipUnresolvedInput) return false;
+        if (!soft) return false;
       }
 
       consistentValue = this.clone();
@@ -81,19 +96,19 @@ class Masked {
 
   appendWithTail (str, tail) {
     // TODO refactor
-    var appendCount = 0;
-    var consistentValue = this.clone();
-    var consistentAppended;
+    let appendCount = 0;
+    let consistentValue = this.clone();
+    let consistentAppended;
 
-    for (var ci=0; ci<str.length; ++ci) {
-      var ch = str[ci];
+    for (let ci=0; ci<str.length; ++ci) {
+      const ch = str[ci];
 
-      var appended = this.append(ch, false);
+      const appended = this.append(ch, true);
       consistentAppended = this.clone();
-      var tailAppended = appended !== false && this._appendTail(tail) !== false;
+      const tailAppended = appended !== false && this._appendTail(tail) !== false;
       if (tailAppended === false) {
         Object.assign(this, consistentValue);
-        return false;
+        break;
       }
 
       consistentValue = this.clone();
@@ -104,6 +119,7 @@ class Masked {
     // TODO needed for cases when
     // 1) REMOVE ONLY AND NO LOOP AT ALL
     // 2) last loop iteration removes tail
+    // 3) when breaks on tail insert
     this._appendTail(tail);
 
     return appendCount;
@@ -118,8 +134,8 @@ class Masked {
   }
 
   splice (start, deleteCount, inserted, removeDirection) {
-    var tailPos = start + deleteCount;
-    var tail = this._extractTail(tailPos);
+    const tailPos = start + deleteCount;
+    const tail = this._extractTail(tailPos);
 
     start = this.nearestInputPos(start, removeDirection);
     this.clear(start);

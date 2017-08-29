@@ -1,8 +1,8 @@
-import el from '../el-stub';
-import IMask from '../../../src/imask';
+import PatternMasked from '../../../src/core/pattern-masked';
+
 
 describe('Extract', function () {
-  const mask = new IMask.PatternMask(new el, {
+  const mask = new PatternMasked({
     mask: '',
     placeholder: {
       show: 'always'

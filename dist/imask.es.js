@@ -1,3 +1,40 @@
+function isString(str) {
+  return typeof str === 'string' || str instanceof String;
+}
+
+function conform(res, str) {
+  var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+
+  return isString(res) ? res : res ? str : fallback;
+}
+
+var DIRECTION = {
+  NONE: 0,
+  LEFT: -1,
+  RIGHT: 1
+};
+
+function indexInDirection(pos, direction) {
+  if (direction === DIRECTION.LEFT) --pos;
+  return pos;
+}
+
+function refreshValue(target, key, descriptor) {
+  var method = descriptor.set;
+  descriptor.set = function () {
+    var unmasked = void 0;
+    if (this.isInitialized) unmasked = this.unmaskedValue;
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var ret = method.call.apply(method, [this].concat(args));
+    if (unmasked != null) this.unmaskedValue = unmasked;
+    return ret;
+  };
+}
+
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -78,47 +115,38 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
-function isString(str) {
-  return typeof str === 'string' || str instanceof String;
-}
+var _class;
 
-
-
-function conform(res, str) {
-  var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-
-  return isString(res) ? res : res ? str : fallback;
-}
-
-var DIRECTION = {
-  NONE: 0,
-  LEFT: -1,
-  RIGHT: 1
-};
-
-function extendDetailsAdjustments(str, details) {
-  var cursorPos = details.cursorPos;
-  var oldSelection = details.oldSelection;
-  var oldValue = details.oldValue;
-
-  var startChangePos = Math.min(cursorPos, oldSelection.start);
-  var insertedCount = cursorPos - startChangePos;
-  // Math.max for opposite operation
-  var removedCount = Math.max(oldSelection.end - startChangePos ||
-  // for Delete
-  oldValue.length - str.length, 0);
-
-  return _extends({}, details, {
-    startChangePos: startChangePos,
-    head: str.substring(0, startChangePos),
-    tail: str.substring(startChangePos + insertedCount),
-    inserted: str.substr(startChangePos, insertedCount),
-    removed: oldValue.substr(startChangePos, removedCount),
-    removeDirection: removedCount && (oldSelection.end === cursorPos || insertedCount ? DIRECTION.RIGHT : DIRECTION.LEFT)
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
   });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
 }
 
-var Masked = function () {
+var Masked = (_class = function () {
   function Masked(_ref) {
     var mask = _ref.mask,
         validate = _ref.validate;
@@ -129,6 +157,7 @@ var Masked = function () {
     this.validate = validate || function () {
       return true;
     };
+    this.isInitialized = true;
   }
 
   Masked.prototype._validate = function _validate() {
@@ -145,7 +174,7 @@ var Masked = function () {
     this._value = '';
   };
 
-  Masked.prototype.nearestInputPos = function nearestInputPos(cursorPos, direction) {
+  Masked.prototype.nearestInputPos = function nearestInputPos(cursorPos) /* direction */{
     return cursorPos;
   };
 
@@ -164,12 +193,10 @@ var Masked = function () {
   };
 
   Masked.prototype._appendTail = function _appendTail(tail) {
-    return this.append(tail);
+    return !tail || this.append(tail);
   };
 
-  Masked.prototype.append = function append(str) {
-    var skipUnresolvedInput = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
+  Masked.prototype.append = function append(str, soft) {
     var oldValueLength = this.value.length;
     var consistentValue = this.clone();
 
@@ -177,7 +204,7 @@ var Masked = function () {
       this._value += str[ci];
       if (this._validate() === false) {
         _extends(this, consistentValue);
-        if (skipUnresolvedInput) return false;
+        if (!soft) return false;
       }
 
       consistentValue = this.clone();
@@ -193,17 +220,17 @@ var Masked = function () {
     // TODO refactor
     var appendCount = 0;
     var consistentValue = this.clone();
-    var consistentAppended;
+    var consistentAppended = void 0;
 
     for (var ci = 0; ci < str.length; ++ci) {
       var ch = str[ci];
 
-      var appended = this.append(ch, false);
+      var appended = this.append(ch, true);
       consistentAppended = this.clone();
       var tailAppended = appended !== false && this._appendTail(tail) !== false;
       if (tailAppended === false) {
         _extends(this, consistentValue);
-        return false;
+        break;
       }
 
       consistentValue = this.clone();
@@ -214,6 +241,7 @@ var Masked = function () {
     // TODO needed for cases when
     // 1) REMOVE ONLY AND NO LOOP AT ALL
     // 2) last loop iteration removes tail
+    // 3) when breaks on tail insert
     this._appendTail(tail);
 
     return appendCount;
@@ -240,13 +268,22 @@ var Masked = function () {
   };
 
   createClass(Masked, [{
+    key: 'mask',
+    get: function get$$1() {
+      return this._mask;
+    },
+    set: function set$$1(mask) {
+      this._mask = mask;
+    }
+  }, {
     key: 'value',
     get: function get$$1() {
-      return this._value || '';
+      return this._value;
     },
     set: function set$$1(value) {
       this.reset();
-      this.append(value, false);
+      this.append(value, true);
+      this._appendTail();
     }
   }, {
     key: 'unmaskedValue',
@@ -256,6 +293,7 @@ var Masked = function () {
     set: function set$$1(value) {
       this.reset();
       this.append(value);
+      this._appendTail();
     }
   }, {
     key: 'isComplete',
@@ -264,7 +302,23 @@ var Masked = function () {
     }
   }]);
   return Masked;
-}();
+}(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValue], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
+
+function createMask(opts) {
+  var mask = opts.mask;
+  if (mask instanceof Masked) return mask;
+  if (mask instanceof RegExp) return new Masked(_extends({}, opts, {
+    validate: function validate(masked) {
+      return mask.test(masked.value);
+    }
+  }));
+  if (isString(mask)) return new PatternMasked(opts);
+  if (mask.prototype instanceof Masked) return new mask(opts);
+  if (mask instanceof Function) return new Masked(_extends({}, opts, {
+    validate: mask
+  }));
+  return new Masked(opts);
+}
 
 var PatternDefinition = function () {
   function PatternDefinition(opts) {
@@ -276,6 +330,11 @@ var PatternDefinition = function () {
       this._masked = createMask(opts);
     }
   }
+
+  PatternDefinition.prototype.reset = function reset() {
+    this.isHollow = false;
+    if (this._masked) this._masked.reset();
+  };
 
   PatternDefinition.prototype.resolve = function resolve(ch) {
     if (!this._masked) return false;
@@ -308,7 +367,38 @@ PatternDefinition.TYPES = {
   FIXED: 'fixed'
 };
 
-var PatternMasked = function (_Masked) {
+var _class$1;
+
+function _applyDecoratedDescriptor$1(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var PatternMasked = (_class$1 = function (_Masked) {
   inherits(PatternMasked, _Masked);
 
   function PatternMasked(opts) {
@@ -318,18 +408,90 @@ var PatternMasked = function (_Masked) {
 
     var _this = possibleConstructorReturn(this, _Masked.call(this, opts));
 
+    delete _this.isInitialized;
+
     _this.placeholder = placeholder;
     _this.definitions = definitions;
+
+    _this.isInitialized = true;
     return _this;
   }
 
-  PatternMasked.prototype.clone = function clone() {
+  PatternMasked.prototype._updateMask = function _updateMask() {
     var _this2 = this;
+
+    var defs = this._definitions;
+    this._charDefs = [];
+
+    var pattern = this.mask;
+    if (!pattern || !defs) return;
+
+    var unmaskingBlock = false;
+    var optionalBlock = false;
+    var stopAlign = false;
+
+    var _loop = function _loop(_i) {
+      var char = pattern[_i];
+      var type = !unmaskingBlock && char in defs ? PatternDefinition.TYPES.INPUT : PatternDefinition.TYPES.FIXED;
+      var unmasking = type === PatternDefinition.TYPES.INPUT || unmaskingBlock;
+      var optional = type === PatternDefinition.TYPES.INPUT && optionalBlock;
+
+      if (char === PatternMasked.STOP_CHAR) {
+        stopAlign = true;
+        return 'continue';
+      }
+
+      if (char === '{' || char === '}') {
+        unmaskingBlock = !unmaskingBlock;
+        return 'continue';
+      }
+
+      if (char === '[' || char === ']') {
+        optionalBlock = !optionalBlock;
+        return 'continue';
+      }
+
+      if (char === PatternMasked.ESCAPE_CHAR) {
+        ++_i;
+        char = pattern[_i];
+        // TODO validation
+        if (!char) return 'break';
+        type = PatternDefinition.TYPES.FIXED;
+      }
+
+      _this2._charDefs.push(new PatternDefinition({
+        char: char,
+        type: type,
+        optional: optional,
+        stopAlign: stopAlign,
+        mask: unmasking && (type === PatternDefinition.TYPES.INPUT ? defs[char] : function (m) {
+          return m.value === char;
+        })
+      }));
+
+      stopAlign = false;
+      i = _i;
+    };
+
+    _loop2: for (var i = 0; i < pattern.length; ++i) {
+      var _ret = _loop(i);
+
+      switch (_ret) {
+        case 'continue':
+          continue;
+
+        case 'break':
+          break _loop2;}
+    }
+  };
+
+  PatternMasked.prototype.clone = function clone() {
+    var _this3 = this;
 
     var m = new PatternMasked(this);
     m._value = this.value.slice();
     m._charDefs.forEach(function (d, i) {
-      return _extends(d, _this2._charDefs[i]);
+      return _extends(d, _this3._charDefs[i]);
     });
     return m;
   };
@@ -348,10 +510,12 @@ var PatternMasked = function (_Masked) {
   };
 
   PatternMasked.prototype.mapDefIndexToPos = function mapDefIndexToPos(defIndex) {
+    if (defIndex == null) return;
     return defIndex - this.hiddenHollowsBefore(defIndex);
   };
 
   PatternMasked.prototype.mapPosToDefIndex = function mapPosToDefIndex(pos) {
+    if (pos == null) return;
     var defIndex = pos;
     for (var di = 0; di < this._charDefs.length; ++di) {
       var def = this._charDefs[di];
@@ -364,29 +528,26 @@ var PatternMasked = function (_Masked) {
   PatternMasked.prototype._unmask = function _unmask() {
     var str = this.value;
     var unmasked = '';
-    for (var ci = 0, di = 0; ci < str.length; ++di) {
+
+    for (var ci = 0, di = 0; ci < str.length && di < this._charDefs.length; ++di) {
       var ch = str[ci];
-      var def = this.def(di, str);
+      var def = this._charDefs[di];
 
-      if (!def) break;
-      if (this.isHiddenHollow(di)) continue;
-
-      if (def.unmasking && !def.isHollow && (this.isInput(di) && this._resolvers[def.char].resolve(ch, ci, str) || def.char === ch)) {
-        unmasked += ch;
-      }
+      if (def.isHiddenHollow) continue;
+      if (def.unmasking && !def.isHollow) unmasked += ch;
       ++ci;
     }
+
     return unmasked;
   };
 
   PatternMasked.prototype._appendTail = function _appendTail(tail) {
-    return this.appendChunks(tail);
+    return (!tail || this.appendChunks(tail)) && this._appendPlaceholder();
   };
 
-  PatternMasked.prototype.append = function append(str) {
-    var skipUnresolvedInput = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
+  PatternMasked.prototype.append = function append(str, soft) {
     var oldValueLength = this.value.length;
+
     for (var ci = 0, di = this.mapPosToDefIndex(this.value.length); ci < str.length;) {
       var ch = str[ci];
       var def = this._charDefs[di];
@@ -394,18 +555,17 @@ var PatternMasked = function (_Masked) {
       // check overflow
       if (!def) return false;
 
-      if (def.isHollow) {
-        // TODO check other cases
-        ++di;
-        continue;
-      }
+      // reset
+      def.isHollow = false;
 
-      var resolved, skipped;
+      var resolved = void 0,
+          skipped = void 0;
       var chres = conform(def.resolve(ch), ch);
+
       if (def.type === PatternDefinition.TYPES.INPUT) {
         if (chres) {
           var m = this.clone();
-          this.value += chres;
+          this._value += chres;
           if (!this._validate()) {
             chres = '';
             _extends(this, m);
@@ -417,36 +577,32 @@ var PatternMasked = function (_Masked) {
 
         // if ok - next di
         if (!chres) {
-          if (!def.optional && skipUnresolvedInput) {
-            this._value += this._placeholder.char;
+          if (!def.optional && !soft) {
+            this._value += this.placeholder.char;
             skipped = false;
           }
           if (!skipped) def.isHollow = true;
         }
       } else {
         this._value += def.char;
-        resolved = chres && (def.mask || !skipUnresolvedInput);
+        resolved = chres && (def.mask || soft);
       }
 
       if (!skipped) ++di;
       if (resolved || skipped) ++ci;
     }
 
-    this._appendPlaceholder();
     return this.value.length - oldValueLength;
   };
 
-  PatternMasked.prototype.appendChunks = function appendChunks(chunks, skipUnresolvedInput) {
+  PatternMasked.prototype.appendChunks = function appendChunks(chunks, soft) {
     for (var ci = 0; ci < chunks.length; ++ci) {
       var _chunks$ci = chunks[ci],
+          fromDefIndex = _chunks$ci[0],
           input = _chunks$ci[1];
 
-      if (this.append(input, skipUnresolvedInput) === false) return false;
-
-      // not last - append placeholder between stops
-      // var chunk2 = chunks[ci+1];
-      // var stop2 = chunk2 && chunk2[0];
-      // if (stop2) str = this._appendPlaceholder(str, stop2);
+      if (fromDefIndex != null) this._appendPlaceholder(fromDefIndex);
+      if (this.append(input, soft) === false) return false;
     }
     return true;
   };
@@ -464,7 +620,7 @@ var PatternMasked = function (_Masked) {
     var input = '';
 
     var toDefIndex = this.mapPosToDefIndex(toPos);
-    for (var ci = 0, di = this.mapPosToDefIndex(fromPos); ci < str.length && di < toDefIndex; ++di) {
+    for (var ci = fromPos, di = this.mapPosToDefIndex(fromPos); ci < toPos && di < toDefIndex; ++di) {
       var ch = str[ci];
       var def = this._charDefs[di];
 
@@ -478,7 +634,7 @@ var PatternMasked = function (_Masked) {
   };
 
   PatternMasked.prototype.extractInputChunks = function extractInputChunks() {
-    var _this3 = this;
+    var _this4 = this;
 
     var fromPos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     var toPos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.value.length;
@@ -486,42 +642,32 @@ var PatternMasked = function (_Masked) {
     // TODO fromPos === toPos
     var fromDefIndex = this.mapPosToDefIndex(fromPos);
     var toDefIndex = this.mapPosToDefIndex(toPos);
-    var stops = [fromPos].concat(this._alignStops.filter(function (s) {
-      return fromDefIndex <= s && s < toDefIndex;
-    }).map(function (s) {
-      return _this3._mapDefIndexToPos(s);
-    }), [toPos]);
-    var str = this.value;
-    var chunks = [];
-    for (var si = 0; si < stops.length && str; ++si) {
-      var s = stops[si];
-      var s2 = stops[si + 1];
-      chunks.push([s, this.extractInput(s, s2)]);
-      if (s2) str = str.slice(s2 - s);
-    }
-    return chunks;
+    var stopDefIndices = this._charDefs.map(function (d, i) {
+      return [d, i];
+    }).slice(fromDefIndex, toDefIndex).filter(function (_ref) {
+      var d = _ref[0];
+      return d.stopAlign;
+    }).map(function (_ref2) {
+      var i = _ref2[1];
+      return i;
+    });
+
+    var stops = [fromDefIndex].concat(stopDefIndices, [toDefIndex]);
+
+    return stops.map(function (s, i) {
+      return [stopDefIndices.indexOf(s) >= 0 ? s : null, _this4.extractInput(_this4.mapDefIndexToPos(s), _this4.mapDefIndexToPos(stops[++i]))];
+    });
   };
 
-  PatternMasked.prototype._appendPlaceholder = function _appendPlaceholder(toPos) {
-    var toDefIndex = this.mapPosToDefIndex(toPos);
-    for (var di = this.mapPosToDefIndex(this.value.length); di < toDefIndex; ++di) {
-      var def = this.def(di, this.value);
-      if (!def) break;
+  PatternMasked.prototype._appendPlaceholder = function _appendPlaceholder(toDefIndex) {
+    var maxDefIndex = toDefIndex || this._charDefs.length;
+    for (var di = this.mapPosToDefIndex(this.value.length); di < maxDefIndex; ++di) {
+      var def = this._charDefs[di];
+      if (def.isInput) def.isHollow = true;
 
-      if (this.isInput(di) && !this.isHollow(di)) {
-        def.isHollow = true;
+      if (this.placeholder.show === 'always' || toDefIndex) {
+        this._value += !def.isInput ? def.char : !def.optional ? this.placeholder.char : '';
       }
-      if (this._placeholder.show === 'always' || toPos) {
-        this._value += def.type === PatternDefinition.TYPES.FIXED ? def.char : !def.optional ? this._placeholder.char : '';
-      }
-    }
-  };
-
-  PatternMasked.prototype._installDefinitions = function _installDefinitions() {
-    for (var defKey in this.definitions) {
-      this._resolvers[defKey] = IMask.MaskFactory(this.el, {
-        mask: this.definitions[defKey]
-      });
     }
   };
 
@@ -532,7 +678,65 @@ var PatternMasked = function (_Masked) {
     this._value = this.value.slice(0, from) + this.value.slice(to);
     var fromDefIndex = this.mapPosToDefIndex(from);
     var toDefIndex = this.mapPosToDefIndex(to);
-    this._charDefs.splice(fromDefIndex, toDefIndex - fromDefIndex);
+    this._charDefs.slice(fromDefIndex, toDefIndex).forEach(function (d) {
+      return d.reset();
+    });
+  };
+
+  PatternMasked.prototype.nearestInputPos = function nearestInputPos(cursorPos) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DIRECTION.LEFT;
+
+    if (!direction) return cursorPos;
+
+    var initialDefIndex = this.mapPosToDefIndex(cursorPos);
+    var di = initialDefIndex;
+
+    var firstInputIndex = void 0,
+        firstFilledInputIndex = void 0,
+        firstVisibleHollowIndex = void 0,
+        nextdi = void 0;
+
+    // search forward
+    for (nextdi = indexInDirection(di, direction); 0 <= nextdi && nextdi < this._charDefs.length; di += direction, nextdi += direction) {
+      var nextDef = this._charDefs[nextdi];
+      if (firstInputIndex == null && nextDef.isInput) firstInputIndex = di;
+      if (firstVisibleHollowIndex == null && nextDef.isHollow && !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
+      if (nextDef.isInput && !nextDef.isHollow) {
+        firstFilledInputIndex = di;
+        break;
+      }
+    }
+
+    if (direction === DIRECTION.LEFT || firstInputIndex == null) {
+      // search backwards
+      direction = -direction;
+      var overflow = false;
+
+      // find hollows only before initial pos
+      for (nextdi = indexInDirection(di, direction); 0 <= nextdi && nextdi < this._charDefs.length; di += direction, nextdi += direction) {
+        var _nextDef = this._charDefs[nextdi];
+        if (_nextDef.isInput) {
+          firstInputIndex = di;
+          if (_nextDef.isHollow && !_nextDef.isHiddenHollow) break;
+        }
+
+        // if hollow not found before start position - set `overflow`
+        // and try to find just any input
+        if (di === initialDefIndex) overflow = true;
+
+        // first input found
+        if (overflow && firstInputIndex != null) break;
+      }
+
+      // process overflow
+      overflow = overflow || nextdi >= this._charDefs.length;
+      if (overflow && firstInputIndex != null) di = firstInputIndex;
+    } else if (firstFilledInputIndex == null) {
+      // adjust index if delete at right and filled input not found at right
+      di = firstVisibleHollowIndex != null ? firstVisibleHollowIndex : firstInputIndex;
+    }
+
+    return this.mapDefIndexToPos(di);
   };
 
   createClass(PatternMasked, [{
@@ -552,52 +756,7 @@ var PatternMasked = function (_Masked) {
       defs = _extends({}, PatternDefinition.DEFAULTS, defs);
 
       this._definitions = defs;
-      this._charDefs = [];
-      this._alignStops = [];
-
-      var pattern = this.mask;
-      if (!pattern || !defs) return;
-
-      var unmaskingBlock = false;
-      var optionalBlock = false;
-      for (var i = 0; i < pattern.length; ++i) {
-        var char = pattern[i];
-        var type = !unmaskingBlock && char in defs ? PatternDefinition.TYPES.INPUT : PatternDefinition.TYPES.FIXED;
-        var unmasking = type === PatternDefinition.TYPES.INPUT || unmaskingBlock;
-        var optional = type === PatternDefinition.TYPES.INPUT && optionalBlock;
-
-        if (char === PatternMasked.STOP_CHAR) {
-          this._alignStops.push(this._charDefs.length);
-          continue;
-        }
-
-        if (char === '{' || char === '}') {
-          unmaskingBlock = !unmaskingBlock;
-          continue;
-        }
-
-        if (char === '[' || char === ']') {
-          optionalBlock = !optionalBlock;
-          continue;
-        }
-
-        if (char === PatternMasked.ESCAPE_CHAR) {
-          ++i;
-          char = pattern[i];
-          // TODO validation
-          if (!char) break;
-          type = PatternDefinition.TYPES.FIXED;
-        }
-
-        this._charDefs.push(new PatternDefinition({
-          char: char,
-          type: type,
-          optional: optional,
-          mask: unmasking && (type === PatternDefinition.TYPES.INPUT ? defs[char] : function (ch) {
-            return ch === char;
-          })
-        }));
-      }
+      this._updateMask();
     }
   }, {
     key: 'mask',
@@ -606,7 +765,7 @@ var PatternMasked = function (_Masked) {
     },
     set: function set$$1(mask) {
       this._mask = mask;
-      if (this.value) this.definitions = this.definitions;
+      this._updateMask();
     }
   }, {
     key: 'isComplete',
@@ -617,57 +776,98 @@ var PatternMasked = function (_Masked) {
     }
   }]);
   return PatternMasked;
-}(Masked);
-
+}(Masked), (_applyDecoratedDescriptor$1(_class$1.prototype, 'placeholder', [refreshValue], Object.getOwnPropertyDescriptor(_class$1.prototype, 'placeholder'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'definitions', [refreshValue], Object.getOwnPropertyDescriptor(_class$1.prototype, 'definitions'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'mask', [refreshValue], Object.getOwnPropertyDescriptor(_class$1.prototype, 'mask'), _class$1.prototype)), _class$1);
 PatternMasked.DEFAULT_PLACEHOLDER = {
   show: 'lazy',
   char: '_'
 };
-PatternMasked.STOP_CHAR = '\'';
+PatternMasked.STOP_CHAR = '`';
 PatternMasked.ESCAPE_CHAR = '\\';
+PatternMasked.Definition = PatternDefinition;
 
-function createMask(opts) {
-  var mask = opts.mask;
-  if (mask instanceof Masked) return mask;
-  if (mask instanceof RegExp) return new Masked(_extends({}, opts, {
-    validate: function validate(masked) {
-      return mask.test(masked.value);
+var ActionDetails = function () {
+  function ActionDetails(value, cursorPos, oldValue, oldSelection) {
+    classCallCheck(this, ActionDetails);
+
+    this.value = value;
+    this.cursorPos = cursorPos;
+    this.oldValue = oldValue;
+    this.oldSelection = oldSelection;
+  }
+
+  createClass(ActionDetails, [{
+    key: 'startChangePos',
+    get: function get$$1() {
+      return Math.min(this.cursorPos, this.oldSelection.start);
     }
-  }));
-  if (isString(mask)) return new PatternMasked(opts);
-  if (mask.prototype instanceof Masked) return new mask(opts);
-  if (mask instanceof Function) return new Masked(_extends({}, opts, {
-    validate: mask
-  }));
-  return new Masked(opts);
-}
+  }, {
+    key: 'insertedCount',
+    get: function get$$1() {
+      return this.cursorPos - this.startChangePos;
+    }
+  }, {
+    key: 'inserted',
+    get: function get$$1() {
+      return this.value.substr(this.startChangePos, this.insertedCount);
+    }
+  }, {
+    key: 'removedCount',
+    get: function get$$1() {
+      // Math.max for opposite operation
+      return Math.max(this.oldSelection.end - this.startChangePos ||
+      // for Delete
+      this.oldValue.length - this.value.length, 0);
+    }
+  }, {
+    key: 'removed',
+    get: function get$$1() {
+      return this.oldValue.substr(this.startChangePos, this.removedCount);
+    }
+  }, {
+    key: 'head',
+    get: function get$$1() {
+      return this.value.substring(0, this.startChangePos);
+    }
+  }, {
+    key: 'tail',
+    get: function get$$1() {
+      this.value.substring(this.startChangePos + this.insertedCount);
+    }
+  }, {
+    key: 'removeDirection',
+    get: function get$$1() {
+      return this.removedCount && (this.oldSelection.end === this.cursorPos || this.insertedCount ? DIRECTION.RIGHT : DIRECTION.LEFT);
+    }
+  }]);
+  return ActionDetails;
+}();
 
-var BaseMask = function () {
-  function BaseMask(el, opts) {
-    classCallCheck(this, BaseMask);
+var InputMask = function () {
+  function InputMask(el, opts) {
+    classCallCheck(this, InputMask);
 
     this.el = el;
     this.masked = createMask(opts);
-    this.mask = opts.mask;
 
     this._listeners = {};
-    this._rawValue = '';
+    this._value = '';
     this._unmaskedValue = '';
 
     this.saveSelection = this.saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
+    this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
     this._alignCursor = this._alignCursor.bind(this);
     this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
   }
 
-  BaseMask.prototype.on = function on(ev, handler) {
+  InputMask.prototype.on = function on(ev, handler) {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
     return this;
   };
 
-  BaseMask.prototype.off = function off(ev, handler) {
+  InputMask.prototype.off = function off(ev, handler) {
     if (!this._listeners[ev]) return;
     if (!handler) {
       delete this._listeners[ev];
@@ -678,45 +878,31 @@ var BaseMask = function () {
     return this;
   };
 
-  BaseMask.prototype.bindEvents = function bindEvents() {
+  InputMask.prototype.bindEvents = function bindEvents() {
     this.el.addEventListener('keydown', this.saveSelection);
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
     this.el.addEventListener('click', this._alignCursorFriendly);
+    this.el.addEventListener('change', this._onChange);
   };
 
-  BaseMask.prototype.unbindEvents = function unbindEvents() {
+  InputMask.prototype.unbindEvents = function unbindEvents() {
     this.el.removeEventListener('keydown', this.saveSelection);
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
     this.el.removeEventListener('click', this._alignCursorFriendly);
+    this.el.removeEventListener('change', this._onChange);
   };
 
-  BaseMask.prototype.fireEvent = function fireEvent(ev) {
+  InputMask.prototype.fireEvent = function fireEvent(ev) {
     var listeners = this._listeners[ev] || [];
     listeners.forEach(function (l) {
       return l();
     });
   };
 
-  BaseMask.prototype.processInput = function processInput(inputValue, details) {
-    details = _extends({
-      cursorPos: this.cursorPos,
-      oldSelection: this._selection,
-      oldValue: this.rawValue,
-      oldUnmaskedValue: this.unmaskedValue
-    }, details);
-
-    details = extendDetailsAdjustments(inputValue, details);
-
-    this.resolve(inputValue, details);
-
-    this.updateValue();
-    this.updateCursor(details.cursorPos);
-  };
-
-  BaseMask.prototype.saveSelection = function saveSelection(ev) {
-    if (this.rawValue !== this.el.value) {
+  InputMask.prototype.saveSelection = function saveSelection(ev) {
+    if (this.value !== this.el.value) {
       console.warn('Uncontrolled input change, refresh mask manually!');
     }
     this._selection = {
@@ -725,29 +911,29 @@ var BaseMask = function () {
     };
   };
 
-  BaseMask.prototype.destroy = function destroy() {
+  InputMask.prototype.destroy = function destroy() {
     this.unbindEvents();
     this._listeners.length = 0;
   };
 
-  BaseMask.prototype.updateValue = function updateValue() {
+  InputMask.prototype.updateValue = function updateValue() {
     var newUnmaskedValue = this.masked.unmaskedValue;
-    var newRawValue = this.masked.value;
-    var isChanged = this.unmaskedValue !== newUnmaskedValue || this.rawValue !== newRawValue;
+    var newValue = this.masked.value;
+    var isChanged = this.unmaskedValue !== newUnmaskedValue || this.value !== newValue;
 
     this._unmaskedValue = newUnmaskedValue;
-    this._rawValue = newRawValue;
+    this._value = newValue;
 
-    if (this.el.value !== newRawValue) this.el.value = newRawValue;
+    if (this.el.value !== newValue) this.el.value = newValue;
     if (isChanged) this._fireChangeEvents();
   };
 
-  BaseMask.prototype._fireChangeEvents = function _fireChangeEvents() {
+  InputMask.prototype._fireChangeEvents = function _fireChangeEvents() {
     this.fireEvent('accept');
     if (this.masked.isComplete) this.fireEvent('complete');
   };
 
-  BaseMask.prototype.updateCursor = function updateCursor(cursorPos) {
+  InputMask.prototype.updateCursor = function updateCursor(cursorPos) {
     if (cursorPos == null) return;
     this.cursorPos = cursorPos;
 
@@ -755,7 +941,7 @@ var BaseMask = function () {
     this._delayUpdateCursor(cursorPos);
   };
 
-  BaseMask.prototype._delayUpdateCursor = function _delayUpdateCursor(cursorPos) {
+  InputMask.prototype._delayUpdateCursor = function _delayUpdateCursor(cursorPos) {
     var _this = this;
 
     this._abortUpdateCursor();
@@ -766,39 +952,51 @@ var BaseMask = function () {
     }, 10);
   };
 
-  BaseMask.prototype._abortUpdateCursor = function _abortUpdateCursor() {
+  InputMask.prototype._abortUpdateCursor = function _abortUpdateCursor() {
     if (this._cursorChanging) {
       clearTimeout(this._cursorChanging);
       delete this._cursorChanging;
     }
   };
 
-  BaseMask.prototype._alignCursor = function _alignCursor() {
+  InputMask.prototype._alignCursor = function _alignCursor() {
     this.cursorPos = this.masked.nearestInputPos(this.cursorPos);
   };
 
-  BaseMask.prototype._alignCursorFriendly = function _alignCursorFriendly() {
+  InputMask.prototype._alignCursorFriendly = function _alignCursorFriendly() {
     if (this.selectionStart !== this.cursorPos) return;
     this._alignCursor();
   };
 
-  BaseMask.prototype._onInput = function _onInput(ev) {
+  InputMask.prototype._onInput = function _onInput() {
     this._abortUpdateCursor();
-    this.processInput(this.el.value);
+
+    var details = new ActionDetails(
+    // new state
+    this.el.value, this.cursorPos,
+    // old state
+    this.value, this._selection);
+
+    var insertedCount = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection);
+
+    var cursorPos = this.masked.nearestInputPos(details.startChangePos + insertedCount,
+    // if none was removed - align to right
+    details.removeDirection || DIRECTION.RIGHT);
+
+    this.updateValue();
+    this.updateCursor(cursorPos);
   };
 
-  BaseMask.prototype._onDrop = function _onDrop(ev) {
+  InputMask.prototype._onChange = function _onChange() {
+    if (this.value !== this.el.value) this.value = this.el.value;
+  };
+
+  InputMask.prototype._onDrop = function _onDrop(ev) {
     ev.preventDefault();
     ev.stopPropagation();
   };
 
-  BaseMask.prototype.resolve = function resolve(str, details) {
-    var insertedCount = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection);
-
-    details.cursorPos = this.masked.nearestInputPos(details.startChangePos + insertedCount, details.removeDirection);
-  };
-
-  createClass(BaseMask, [{
+  createClass(InputMask, [{
     key: 'mask',
     get: function get$$1() {
       return this.masked.mask;
@@ -809,19 +1007,14 @@ var BaseMask = function () {
       this.masked = createMask(this.masked);
     }
   }, {
-    key: 'rawValue',
+    key: 'value',
     get: function get$$1() {
-      return this._rawValue;
+      return this._value;
     },
     set: function set$$1(str) {
-      this.processInput(str, {
-        cursorPos: str.length,
-        oldValue: this.rawValue,
-        oldSelection: {
-          start: 0,
-          end: this.rawValue.length
-        }
-      });
+      this.masked.value = str;
+      this.updateValue();
+      this._alignCursor();
     }
   }, {
     key: 'selectionStart',
@@ -850,814 +1043,25 @@ var BaseMask = function () {
       this._alignCursor();
     }
   }]);
-  return BaseMask;
+  return InputMask;
 }();
 
-var RegExpMask = function (_BaseMask) {
-  inherits(RegExpMask, _BaseMask);
-
-  function RegExpMask() {
-    classCallCheck(this, RegExpMask);
-    return possibleConstructorReturn(this, _BaseMask.apply(this, arguments));
-  }
-
-  RegExpMask.prototype.resolve = function resolve(str) {
-    return this.mask.test(str);
-  };
-
-  return RegExpMask;
-}(BaseMask);
-
-var FuncMask = function (_BaseMask) {
-  inherits(FuncMask, _BaseMask);
-
-  function FuncMask() {
-    classCallCheck(this, FuncMask);
-    return possibleConstructorReturn(this, _BaseMask.apply(this, arguments));
-  }
-
-  FuncMask.prototype.resolve = function resolve() {
-    return this.mask.apply(this, arguments);
-  };
-
-  return FuncMask;
-}(BaseMask);
-
-var State = function () {
-  function State() {
-    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    classCallCheck(this, State);
-
-    this.value = value;
-  }
-
-  State.prototype.slice = function slice() {
-    var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var to = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.value.length;
-
-    return new State(this.value.slice(from, to));
-  };
-
-  return State;
-}();
-
-var BaseResolver = function () {
-  function BaseResolver() {
-    classCallCheck(this, BaseResolver);
-
-    this.state = new State();
-  }
-
-  BaseResolver.prototype.nearestInputPos = function nearestInputPos(cursorPos, direction) {
-    return cursorPos;
-  };
-
-  BaseResolver.prototype.extractInput = function extractInput() {
-    var fromPos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var toPos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.state.value.length;
-
-    return this.state.value.slice(fromPos, toPos);
-  };
-
-  BaseResolver.prototype._extractTail = function _extractTail() {
-    var fromPos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var toPos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.state.value.length;
-
-    return this.extractInput(fromPos, toPos);
-  };
-
-  BaseResolver.prototype._appendTail = function _appendTail(tail) {
-    return this.append(tail);
-  };
-
-  BaseResolver.prototype.append = function append(str) {
-    // TODO
-
-    var skipUnresolvedInput = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-  };
-
-  BaseResolver.prototype.appendWithTail = function appendWithTail(str, tail) {
-    var consistentState = this.state.slice();
-
-    for (var ci = 0; ci < str.length; ++ci) {
-      var ch = str[ci];
-      if (this.append(ch, false) === false || this._appendTail(tail) === false) {
-        this.state = consistentState;
-        return false;
-      }
-
-      consistentState = this.state.slice();
-    }
-
-    return true;
-  };
-
-  BaseResolver.prototype.splice = function splice(start, deleteCount, inserted, removeDirection) {
-    var tailPos = start + deleteCount;
-    var tail = this._extractTail(tailPos);
-
-    start = this.nearestInputPos(start, removeDirection);
-    this.state = this.state.slice(0, start);
-    this.appendWithTail(inserted, tail);
-  };
-
-  BaseResolver.prototype.resolve = function resolve(str, details) {
-    // var startChangePos = details.startChangePos;
-    // var inserted = details.inserted;
-    // var deleteCount = details.removed.length;
-    // var tailPos = startChangePos + deleteCount;
-
-    // if remove at left - adjust start change pos to trim holes and fixed at the end
-    // var startInputPos = this.nearestInputPos(startChangePos, details.removeDirection);
-    // TODO. SOURCE WAS:
-    // var startInputPos = details.removeDirection === DIRECTION.LEFT ?
-    //   this.nearestInputPos(startChangePos) :
-    //   startChangePos;
-
-    // var tail = this._extractTail(tailPos);
-
-    // this.state = this.state.slice(0, startInputPos);
-
-    // var insertStates = this._generateInsertStates(inserted);
-    // for (var istep=insertStates.length-1; istep >= 0; --istep) {
-    //   this.state = insertStates[istep];
-    //   // TODO overflow?
-    //   var stateInserted = this._appendTail(tail);
-    //   if (stateInserted) {
-    //     this.state = stateInserted;
-    //     break;
-    //   }
-    // }
-
-    // this.appendWithTail(inserted, tail);
-    this.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection);
-
-    details.cursorPos = this._nearestInputPos(this.state.value.length, details.removeDirection);
-
-    return this.state.value;
-  };
-
-  createClass(BaseResolver, [{
-    key: 'state',
-    get: function get$$1() {
-      return this._state;
-    },
-    set: function set$$1(state) {
-      this._state = state;
-    }
-  }, {
-    key: 'rawValue',
-    get: function get$$1() {
-      return this.state.value;
-    },
-    set: function set$$1(rawValue) {
-      // TODO
-      this.state.value = rawValue;
-    }
-  }]);
-  return BaseResolver;
-}();
-
-var PatternResolver = function (_BaseResolver) {
-  inherits(PatternResolver, _BaseResolver);
-
-  function PatternResolver(_ref) {
-    var placeholder = _ref.placeholder,
-        definitions = _ref.definitions,
-        mask = _ref.mask;
-    classCallCheck(this, PatternResolver);
-
-    var _this = possibleConstructorReturn(this, _BaseResolver.call(this));
-
-    _this.mask = mask;
-    _this.placeholder = placeholder;
-    _this.definitions = _extends({}, PatternDefinitions.DEFAULT, definitions);
-    _this.state = new PatternState(_this.definitions);
-    _this._initialized = true;
-    return _this;
-  }
-
-  // append (tail, skipUnresolvedInput=true) {
-  //   var str = this.state.value;
-  //   var placeholderBuffer = '';
-  //   var hollows = this._hollows.slice();
-  //   var overflow = false;
-
-  //   for (var ci=0, di=this._mapPosToDefIndex(str.length); ci < tail.length;) {
-  //     if (this._isHollow(di)) {
-  //       // TODO check other cases
-  //       ++di;
-  //       continue;
-  //     }
-
-  //     var ch = tail[ci];
-  //     var def = this.def(di, str + placeholderBuffer);
-
-  //     // failed
-  //     if (!def) {
-  //       overflow = true;
-  //       break;
-  //     }
-
-  //     var resolved, skipped;
-  //     if (def.type === PatternDefinitions.TYPES.INPUT) {
-  //       var resolver = this._resolvers[def.char];
-  //       var chres = resolver.resolve(ch, di, str + placeholderBuffer) || '';
-  //       resolved = !!chres;
-  //       skipped = !chres && !def.optional;
-
-  //       // if ok - next di
-  //       if (chres) {
-  //         chres = conform(chres, ch);
-  //       } else {
-  //         if (!def.optional && skipUnresolvedInput) {
-  //           chres = this._placeholder.char;
-  //           skipped = false;
-  //         }
-  //         if (!skipped) hollows.push(di);
-  //       }
-
-  //       if (chres) {
-  //         str += placeholderBuffer + conform(chres, ch);
-  //         placeholderBuffer = '';
-  //       }
-  //     } else {
-  //       placeholderBuffer += def.char;
-  //       resolved = ch === def.char && (def.unmasking || !skipUnresolvedInput);
-  //     }
-
-  //     if (!skipped) ++di;
-  //     if (resolved || skipped) ++ci;
-  //   }
-
-  //   this._appendPlaceholderEnd();
-
-  //   return [str, hollows, overflow];
-  // }
-
-  // _generateInsertSteps (inserted) {
-  //   // TODO
-  //   var head = this.rawValue;
-
-  //   var overflow = false;
-
-  //   // save hollow during generation
-  //   var hollows = this._hollows;
-
-  //   var insertSteps = [[head, hollows.slice()]];
-
-  //   for (var ci=0; ci<inserted.length && !overflow; ++ci) {
-  //     var ch = inserted[ci];
-  //     var [res, hollows, overflow] = this.append(head, ch, false);
-  //     this._hollows = hollows;
-  //     if (!overflow && res !== head) {
-  //       insertSteps.push([res, hollows]);
-  //       head = res;
-  //     }
-  //   }
-
-  //   // pop hollows back
-  //   this._hollows = hollows;
-
-  //   return insertSteps;
-  // }
-
-  // _tryInsert (inserted, tailInput) {
-  //   for (var ci=0; ci<inserted.length && !overflow; ++ci) {
-  //     var ch = inserted[ci];
-  //     var [res, hollows, overflow] = this.append(head, ch, false);
-  //     this._hollows = hollows;
-  //     if (!overflow && res !== head) {
-  //       insertSteps.push([res, hollows]);
-  //       head = res;
-  //     }
-  //   }
-  // }
-
-  // resolve (str, details) {
-  //   var cursorPos = details.cursorPos;
-  //   var startChangePos = details.startChangePos;
-  //   var inserted = details.inserted;
-  //   var removedCount = details.removed.length;
-  //   var tailPos = startChangePos + removedCount;
-
-  //   var tailInputChunks = this.extractInputChunks(tailPos);
-
-  //   // remove hollows after cursor
-  //   var lastHollowIndex = this._mapPosToDefIndex(startChangePos);
-  //   this._hollows = this._hollows.filter(h => h < lastHollowIndex);
-
-  //   var res = details.head;
-  //   // if remove at left - adjust start change pos to trim holes and fixed at the end
-  //   if (details.removeDirection === DIRECTION.LEFT) res = res.slice(0, this._nearestInputPos(startChangePos));
-
-  //   // insert available
-  //   var insertSteps = this._generateInsertSteps(res, inserted);
-  //   for (var istep=insertSteps.length-1; istep >= 0; --istep) {
-  //     var step, tres, overflow;
-  //     [step, this._hollows] = insertSteps[istep];
-  //     [tres, this._hollows, overflow] = this.appendTailChunks(step, tailInputChunks);
-  //     if (!overflow) {
-  //       res = tres;
-  //       cursorPos = step.length;
-  //       break;
-  //     }
-  //   }
-
-  //   res = this._appendPlaceholderEnd(res);
-  //   details.cursorPos = this._nearestInputPos(cursorPos, details.removeDirection);
-
-  //   return res;
-  // }
-
-  // nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
-  //   if (!direction) return cursorPos;
-
-  //   var initialDefIndex = this._mapPosToDefIndex(cursorPos);
-  //   var di = initialDefIndex;
-
-  //   var firstInputIndex,
-  //       firstFilledInputIndex,
-  //       firstVisibleHollowIndex,
-  //       nextdi;
-
-  //   // search forward
-  //   for (nextdi = indexInDirection(di, direction); this.def(nextdi); di += direction, nextdi += direction) {
-  //     if (firstInputIndex == null && this._isInput(nextdi)) firstInputIndex = di;
-  //     if (firstVisibleHollowIndex == null && this._isHollow(nextdi) && !this._isHiddenHollow(nextdi)) firstVisibleHollowIndex = di;
-  //     if (this._isInput(nextdi) && !this._isHollow(nextdi)) {
-  //       firstFilledInputIndex = di;
-  //       break;
-  //     }
-  //   }
-
-  //   if (direction === DIRECTION.LEFT || firstInputIndex == null) {
-  //     // search backwards
-  //     direction = -direction;
-  //     var overflow = false;
-
-  //     // find hollows only before initial pos
-  //     for (nextdi = indexInDirection(di, direction); this.def(nextdi); di += direction, nextdi += direction) {
-  //       if (this._isInput(nextdi)) {
-  //         firstInputIndex = di;
-  //         if (this._isHollow(nextdi) && !this._isHiddenHollow(nextdi)) break;
-  //       }
-
-  //       // if hollow not found before start position - set `overflow`
-  //       // and try to find just any input
-  //       if (di === initialDefIndex) overflow = true;
-
-  //       // first input found
-  //       if (overflow && firstInputIndex != null) break;
-  //     }
-
-  //     // process overflow
-  //     overflow = overflow || !this.def(nextdi);
-  //     if (overflow && firstInputIndex != null) di = firstInputIndex;
-  //   } else if (firstFilledInputIndex == null) {
-  //     // adjust index if delete at right and filled input not found at right
-  //     di = firstVisibleHollowIndex != null ?
-  //       firstVisibleHollowIndex :
-  //       firstInputIndex;
-  //   }
-
-  //   return this._mapDefIndexToPos(di);
-  // }
-
-  // get isComplete () {
-  //   for (var di=0; ; ++di) {
-  //     var def = this.def(di);
-  //     if (!def) break;
-  //     if (this._isInput(di) && !def.optional && this._isHollow(di)) return false;
-  //   }
-  //   return true;
-  // }
-
-  // get placeholder () { return this._placeholder; }
-
-  // set placeholder (ph) {
-  //   this._placeholder = {
-  //     ...PatternResolver.DEFAULT_PLACEHOLDER,
-  //     ...ph
-  //   };
-  //   this.refreshValue();
-  // }
-
-  // get placeholderLabel () {
-  //   return this.defs().map(def =>
-  //     def.type === PatternDefinitions.TYPES.FIXED ?
-  //       def.char :
-  //       !def.optional ?
-  //         this._placeholder.char :
-  //         '').join('');
-  // }
-
-  // get definitions () { return this._definitions; }
-
-  // set definitions (defs) {
-  //   this._installDefinitions(defs);
-  //   this.refreshValue();
-  // }
-
-  // get mask () { return this._mask; }
-
-  // set mask (mask) {
-  //   this._mask = mask;
-  //   if (this._initialized) this.definitions = this.definitions;
-  // }
-
-  // refreshValue () {
-  // TODO
-  // if (this._initialized) this.unmaskedValue = this.unmaskedValue;
-  // }
-
-  // _calcUnmasked (str) {
-  //   var unmasked = '';
-  //   for (var ci=0, di=0; ci<str.length; ++di) {
-  //     var ch = str[ci];
-  //     var def = this.def(di, str);
-
-  //     if (!def) break;
-  //     if (this._isHiddenHollow(di)) continue;
-
-  //     if (def.unmasking && !this._isHollow(di) &&
-  //       (this._isInput(di) && this._resolvers[def.char].resolve(ch, ci, str) ||
-  //         def.char === ch)) {
-  //       unmasked += ch;
-  //     }
-  //     ++ci;
-  //   }
-  //   return unmasked;
-  // }
-
-  PatternResolver.prototype.defs = function defs(str) {
-    var defs = [];
-    for (var i = 0;; ++i) {
-      var def = this.def(i, str);
-      if (!def) break;
-      defs.push(def);
-    }
-    return defs;
-  };
-
-  PatternResolver.prototype.def = function def(index, str) {
-    return this._charDefs[index];
-  };
-
-  PatternResolver.prototype._buildResolvers = function _buildResolvers() {
-    this._resolvers = {};
-    for (var defKey in this.definitions) {
-      this._resolvers[defKey] = IMask.MaskFactory(this.el, {
-        mask: this.definitions[defKey]
-      });
-    }
-  };
-
-  // _appendPlaceholderEnd (toPos) {
-
-  //   // TODO with state
-
-  //   // use `toPos-1` to prevent out of bounds, and then use `<=` compare
-  //   var toDefIndex = this._mapPosToDefIndex(toPos-1);
-  //   for (var di=this._mapPosToDefIndex(res.length); di <= toDefIndex; ++di) {
-  //     var def = this.def(di, res);
-  //     if (!def) break;
-
-  //     if (this._isInput(di) && !this._isHollow(di)) {
-  //       this._hollows.push(di);
-  //     }
-  //     if (this._placeholder.show === 'always' || toPos) {
-  //       res += def.type === PatternDefinitions.TYPES.FIXED ?
-  //         def.char :
-  //         !def.optional ?
-  //           this._placeholder.char :
-  //           '';
-  //     }
-  //   }
-  //   return res;
-  // }
-
-  // _appendTail (tail) {
-  //   return this.appendChunks(tail);
-  // }
-
-  // appendChunks (chunks, skipUnresolvedInput) {
-  //   for (var ci=0; ci < chunks.length; ++ci) {
-  //     var [, input] = chunks[ci];
-  //     if (this.append(input, skipUnresolvedInput) === false) return false;
-
-  //     // not last - append placeholder between stops
-  //     // var chunk2 = chunks[ci+1];
-  //     // var stop2 = chunk2 && chunk2[0];
-  //     // if (stop2) str = this._appendPlaceholderEnd(str, stop2);
-  //   }
-  //   return true;
-  // }
-
-
-  // _extractTail (fromPos, toPos) {
-  //   return this.extractInputChunks(fromPos, toPos);
-  // }
-
-  // extractInput (fromPos=0, toPos=this.rawValue.length) {
-  //   // TODO fromPos === toPos
-  //   var str = this.rawValue;
-  //   var input = '';
-
-  //   // use `toPos-1` to prevent out of bounds, and then use `<=` compare
-  //   var toDefIndex = this._mapPosToDefIndex(toPos-1);
-  //   for (var ci=0, di=this._mapPosToDefIndex(fromPos); ci<str.length && di <= toDefIndex; ++di) {
-  //     var ch = str[ci];
-  //     var def = this.def(di, str);
-
-  //     if (!def) break;
-  //     if (this._isHiddenHollow(di)) continue;
-
-  //     if (this._isInput(di) && !this._isHollow(di)) input += ch;
-  //     ++ci;
-  //   }
-  //   return input;
-  // }
-
-  // extractInputChunks (fromPos=0, toPos=this.rawValue.length) {
-  //   // TODO fromPos === toPos
-  //   var fromDefIndex = this._mapPosToDefIndex(fromPos);
-  //   // use `toPos-1` to prevent out of bounds, and then use `<=` compare
-  //   var toDefIndex = this._mapPosToDefIndex(toPos-1);
-  //   var stops = [
-  //     fromPos,
-  //     ...this._alignStops
-  //       .filter(s => fromDefIndex <= s && s <= toDefIndex)
-  //       .map(s => this._mapDefIndexToPos(s)),
-  //     toPos
-  //   ];
-  //   var str = this.rawValue;
-  //   var chunks = [];
-  //   for (var si=0; si<stops.length && str; ++si) {
-  //     var s = stops[si];
-  //     var s2 = stops[si+1];
-  //     chunks.push([s, this.extractInput(s, s2)]);
-  //     if (s2) str = str.slice(s2 - s);
-  //   }
-  //   return chunks;
-  // }
-
-  PatternResolver.prototype._installDefinitions = function _installDefinitions(definitions) {
-    this._definitions = definitions;
-    this._charDefs = [];
-    this._alignStops = [];
-
-    var pattern = this.mask;
-    if (!pattern || !definitions) return;
-
-    var unmaskingBlock = false;
-    var optionalBlock = false;
-    for (var i = 0; i < pattern.length; ++i) {
-      var ch = pattern[i];
-      var type = !unmaskingBlock && ch in definitions ? PatternDefinitions.TYPES.INPUT : PatternDefinitions.TYPES.FIXED;
-      var unmasking = type === PatternDefinitions.TYPES.INPUT || unmaskingBlock;
-      var optional = type === PatternDefinitions.TYPES.INPUT && optionalBlock;
-
-      if (ch === PatternResolver.STOP_CHAR) {
-        this._alignStops.push(this._charDefs.length);
-        continue;
-      }
-
-      if (ch === '{' || ch === '}') {
-        unmaskingBlock = !unmaskingBlock;
-        continue;
-      }
-
-      if (ch === '[' || ch === ']') {
-        optionalBlock = !optionalBlock;
-        continue;
-      }
-
-      if (ch === PatternResolver.ESCAPE_CHAR) {
-        ++i;
-        ch = pattern[i];
-        // TODO validation
-        if (!ch) break;
-        type = PatternDefinitions.TYPES.FIXED;
-      }
-
-      this._charDefs.push({
-        char: ch,
-        type: type,
-        optional: optional,
-        unmasking: unmasking
-      });
-    }
-
-    this._buildResolvers();
-  };
-
-  return PatternResolver;
-}(BaseResolver);
-
-PatternResolver.DEFAULT_PLACEHOLDER = {
-  show: 'lazy',
-  char: '_'
-};
-PatternResolver.STOP_CHAR = '\'';
-PatternResolver.ESCAPE_CHAR = '\\';
-
-var PatternMask = function (_BaseMask) {
-  inherits(PatternMask, _BaseMask);
-
-  function PatternMask() {
-    classCallCheck(this, PatternMask);
-    return possibleConstructorReturn(this, _BaseMask.apply(this, arguments));
-  }
-
-  createClass(PatternMask, [{
-    key: 'unmaskedValue',
-
-    // constructor (el, opts) {
-    // super(el, opts);
-
-    // var {placeholder, definitions} = opts;
-
-    // this.resolver = new PatternResolver({
-    //   placeholder,
-    //   definitions
-    // });
-
-    // this._alignCursor = this._alignCursor.bind(this);
-    // this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
-    // }
-
-    // _alignCursorFriendly () {
-    //   if (this.selectionStart !== this.cursorPos) return;
-    //   this._alignCursor();
-    // }
-
-    // bindEvents () {
-    //   super.bindEvents();
-    //   this.el.addEventListener('click', this._alignCursorFriendly);
-    // }
-
-    // unbindEvents () {
-    //   super.unbindEvents();
-    //   this.el.removeEventListener('click', this._alignCursorFriendly);
-    // }
-
-    // _fireChangeEvents () {
-    //   // fire 'complete' after 'accept' event
-    //   super._fireChangeEvents();
-    //   if (this.isComplete) this.fireEvent("complete");
-    // }
-
-    // get isComplete () {
-    //   return this.resolver.isComplete;
-    // }
-
-    get: function get$$1() {
-      return this._unmaskedValue;
-    },
-    set: function set$$1(str) {
-      // TODO
-      this._hollows.length = 0;
-      var res;
-
-      var _appendTail = this._appendTail('', str);
-
-      res = _appendTail[0];
-      this._hollows = _appendTail[1];
-
-      this.updateElement(this._appendPlaceholderEnd(res));
-
-      this._alignCursor();
-    }
-  }, {
-    key: 'placeholder',
-    get: function get$$1() {
-      return this.resolver.placeholder;
-    },
-    set: function set$$1(ph) {
-      this.resolver.placeholder = ph;
-    }
-  }, {
-    key: 'definitions',
-    get: function get$$1() {
-      return this.resolver.definitions;
-    },
-    set: function set$$1(defs) {
-      this.resolver.definitions = defs;
-    }
-  }, {
-    key: 'mask',
-    get: function get$$1() {
-      return this.resolver.mask;
-    },
-    set: function set$$1(mask) {
-      this.resolver.mask = mask;
-    }
-  }]);
-  return PatternMask;
-}(BaseMask);
-
-var PipeMask = function (_BaseMask) {
-  inherits(PipeMask, _BaseMask);
-
-  function PipeMask(el, opts) {
-    classCallCheck(this, PipeMask);
-
-    var _this = possibleConstructorReturn(this, _BaseMask.call(this, el, opts));
-
-    _this.multipass = opts.multipass;
-
-    _this._compiledMasks = _this.mask.map(function (m) {
-      return IMask.MaskFactory(el, m);
-    });
-    return _this;
-  }
-
-  PipeMask.prototype.resolve = function resolve(str, details) {
-    var res = this._pipe(str, details);
-    if (!this.multipass) return res;
-
-    var cursorPos = details.cursorPos;
-
-    var stepRes;
-    var tempRes = res;
-
-    while (stepRes !== tempRes) {
-      stepRes = tempRes;
-      tempRes = this._pipe(stepRes, {
-        cursorPos: stepRes.length,
-        oldValue: stepRes,
-        oldSelection: {
-          start: 0,
-          end: stepRes.length
-        }
-      });
-    }
-
-    details.cursorPos = cursorPos - (res.length - stepRes.length);
-
-    return stepRes;
-  };
-
-  PipeMask.prototype._pipe = function _pipe(str, details) {
-    return this._compiledMasks.reduce(function (s, m) {
-      var d = extendDetailsAdjustments(s, details);
-      var res = m.resolve(s, d);
-      details.cursorPos = d.cursorPos;
-      return res;
-    }, str);
-  };
-
-  PipeMask.prototype.bindEvents = function bindEvents() {
-    _BaseMask.prototype.bindEvents.call(this);
-    this._compiledMasks.forEach(function (m) {
-      m.bindEvents();
-      // disable basemask events for child masks
-      BaseMask.prototype.unbindEvents.apply(m);
-    });
-  };
-
-  PipeMask.prototype.unbindEvents = function unbindEvents() {
-    _BaseMask.prototype.unbindEvents.call(this);
-    this._compiledMasks.forEach(function (m) {
-      return m.unbindEvents();
-    });
-  };
-
-  return PipeMask;
-}(BaseMask);
-
-function IMask$1(el) {
+function IMask(el) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  var mask = new BaseMask(el, opts);
+  var mask = new InputMask(el, opts);
   mask.bindEvents();
   // refresh
-  mask.rawValue = el.value;
+  mask.value = el.value;
   return mask;
 }
 
-// IMask.MaskFactory = function (el, opts) {
-//   var mask = opts.mask;
-//   if (mask instanceof BaseMask) return mask;
-//   if (mask instanceof RegExp) return new RegExpMask(el, opts);
-//   if (mask instanceof Array) return new PipeMask(el, opts);
-//   if (isString(mask)) return new PatternMask(el, opts);
-//   if (mask.prototype instanceof BaseMask) return new mask(el, opts);
-//   if (mask instanceof Function) return new FuncMask(el, opts);
-//   return new BaseMask(el, opts);
-// }
+IMask.InputMask = InputMask;
 
-IMask$1.BaseMask = BaseMask;
-IMask$1.FuncMask = FuncMask;
-IMask$1.RegExpMask = RegExpMask;
-IMask$1.PatternMask = PatternMask;
-IMask$1.PipeMask = PipeMask;
+IMask.Masked = Masked;
+IMask.PatternMasked = PatternMasked;
 
-IMask$1.ResolverBase = PatternResolver;
-IMask$1.ResolverPattern = BaseResolver;
+window.IMask = IMask;
 
-window.IMask = IMask$1;
-
-export default IMask$1;
+export default IMask;
 //# sourceMappingURL=imask.es.js.map

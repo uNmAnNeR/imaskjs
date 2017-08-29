@@ -1,4 +1,4 @@
-import {isString} from '../utils';
+import {isString} from './utils';
 
 import Masked from './masked';
 import PatternMasked from './pattern-masked';
@@ -6,7 +6,7 @@ import PatternMasked from './pattern-masked';
 
 export default
 function createMask (opts) {
-  var mask = opts.mask;
+  const mask = opts.mask;
   if (mask instanceof Masked) return mask;
   if (mask instanceof RegExp) return new Masked({
     ...opts,

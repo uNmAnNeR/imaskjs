@@ -1,8 +1,8 @@
-import el from '../el-stub';
-import IMask from '../../../src/imask';
+import PatternMasked from '../../../src/core/pattern-masked';
+
 
 describe('Insert', function () {
-  const mask = new IMask.PatternMask(new el, {
+  const mask = new PatternMasked({
     mask: '',
     placeholder: {
       show: 'always'
@@ -18,21 +18,21 @@ describe('Insert', function () {
     mask.mask = '0{.}0';
     mask.unmaskedValue = '.2';
 
-    assert.equal(mask.rawValue, '_.2');
+    assert.equal(mask.value, '_.2');
   });
 
   it('should skip empty and not consider dot', function () {
     mask.mask = '0.0';
     mask.unmaskedValue = '.2';
 
-    assert.equal(mask.rawValue, '_._');
+    assert.equal(mask.value, '_._');
   });
 
   it('should not skip empty', function () {
     ['0.0', '0{.}0'].forEach(pattern => {
       mask.mask = pattern;
-      mask.rawValue = '.2';
-      assert.equal(mask.rawValue, '2._');
+      mask.value = '.2';
+      assert.equal(mask.value, '2._');
     });
   });
 });
