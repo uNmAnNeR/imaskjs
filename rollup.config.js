@@ -14,7 +14,7 @@ function destName (format) {
 
 export default {
   // tell rollup our main entry point
-  entry: 'src/index.js',
+  entry: 'src/imask.js',
   targets: [
     { dest: destName(), format: 'umd' },
     { dest: destName('es'), format: 'es' }

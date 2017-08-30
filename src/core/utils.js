@@ -26,13 +26,9 @@ function indexInDirection (pos, direction) {
 }
 
 export
-function refreshValue (target, key, descriptor) {
+function refreshValueOnSet (target, key, descriptor) {
   const method = descriptor.set;
   descriptor.set = function (...args) {
-    let unmasked;
-    if (this.isInitialized) unmasked = this.unmaskedValue;
-    const ret = method.call(this, ...args);
-    if (unmasked != null) this.unmaskedValue = unmasked;
-    return ret;
+    return this.withValueRefresh(method.bind(this, ...args));
   };
 }

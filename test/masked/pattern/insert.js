@@ -1,4 +1,4 @@
-import PatternMasked from '../../../src/core/pattern-masked';
+import PatternMasked from '../../../src/masked/pattern';
 
 
 describe('Insert', function () {

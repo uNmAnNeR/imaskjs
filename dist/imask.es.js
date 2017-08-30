@@ -19,21 +19,32 @@ function indexInDirection(pos, direction) {
   return pos;
 }
 
-function refreshValue(target, key, descriptor) {
+function refreshValueOnSet(target, key, descriptor) {
   var method = descriptor.set;
   descriptor.set = function () {
-    var unmasked = void 0;
-    if (this.isInitialized) unmasked = this.unmaskedValue;
-
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    var ret = method.call.apply(method, [this].concat(args));
-    if (unmasked != null) this.unmaskedValue = unmasked;
-    return ret;
+    return this.withValueRefresh(method.bind.apply(method, [this].concat(args)));
   };
 }
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+
+
+
+
+
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -267,6 +278,19 @@ var Masked = (_class = function () {
     return this.appendWithTail(inserted, tail);
   };
 
+  Masked.prototype.withValueRefresh = function withValueRefresh(fn) {
+    if (this._refreshing) return fn();
+    this._refreshing = true;
+
+    var unmasked = this.isInitialized ? this.unmaskedValue : null;
+
+    var ret = fn();
+
+    if (unmasked != null) this.unmaskedValue = unmasked;
+    delete this._refreshing;
+    return ret;
+  };
+
   createClass(Masked, [{
     key: 'mask',
     get: function get$$1() {
@@ -302,7 +326,7 @@ var Masked = (_class = function () {
     }
   }]);
   return Masked;
-}(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValue], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
+}(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
 
 function createMask(opts) {
   var mask = opts.mask;
@@ -534,7 +558,7 @@ var PatternMasked = (_class$1 = function (_Masked) {
       var def = this._charDefs[di];
 
       if (def.isHiddenHollow) continue;
-      if (def.unmasking && !def.isHollow) unmasked += ch;
+      if (def.mask && !def.isHollow) unmasked += ch;
       ++ci;
     }
 
@@ -656,6 +680,10 @@ var PatternMasked = (_class$1 = function (_Masked) {
 
     return stops.map(function (s, i) {
       return [stopDefIndices.indexOf(s) >= 0 ? s : null, _this4.extractInput(_this4.mapDefIndexToPos(s), _this4.mapDefIndexToPos(stops[++i]))];
+    }).filter(function (_ref3) {
+      var stop = _ref3[0],
+          input = _ref3[1];
+      return stop != null || input;
     });
   };
 
@@ -776,7 +804,7 @@ var PatternMasked = (_class$1 = function (_Masked) {
     }
   }]);
   return PatternMasked;
-}(Masked), (_applyDecoratedDescriptor$1(_class$1.prototype, 'placeholder', [refreshValue], Object.getOwnPropertyDescriptor(_class$1.prototype, 'placeholder'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'definitions', [refreshValue], Object.getOwnPropertyDescriptor(_class$1.prototype, 'definitions'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'mask', [refreshValue], Object.getOwnPropertyDescriptor(_class$1.prototype, 'mask'), _class$1.prototype)), _class$1);
+}(Masked), (_applyDecoratedDescriptor$1(_class$1.prototype, 'placeholder', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'placeholder'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'definitions', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'definitions'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'mask'), _class$1.prototype)), _class$1);
 PatternMasked.DEFAULT_PLACEHOLDER = {
   show: 'lazy',
   char: '_'
@@ -861,6 +889,21 @@ var InputMask = function () {
     this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
   }
 
+  InputMask.prototype.update = function update(opts) {
+    var unmasked = this.masked ? this.masked.unmaskedValue : null;
+
+    var mask = opts.mask;
+    if (mask) this.mask = mask;
+
+    for (var k in opts) {
+      if (k === 'mask') continue;
+      this.masked[k] = opts[k];
+    }
+
+    if (unmasked != null) this.masked.unmaskedValue = unmasked;
+    this.updateControl();
+  };
+
   InputMask.prototype.on = function on(ev, handler) {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
@@ -901,9 +944,9 @@ var InputMask = function () {
     });
   };
 
-  InputMask.prototype.saveSelection = function saveSelection(ev) {
+  InputMask.prototype.saveSelection = function saveSelection() /* ev */{
     if (this.value !== this.el.value) {
-      console.warn('Uncontrolled input change, refresh mask manually!');
+      console.warn('Uncontrolled input change, refresh mask manually!'); // eslint-disable-line no-console
     }
     this._selection = {
       start: this.selectionStart,
@@ -916,7 +959,7 @@ var InputMask = function () {
     this._listeners.length = 0;
   };
 
-  InputMask.prototype.updateValue = function updateValue() {
+  InputMask.prototype.updateControl = function updateControl() {
     var newUnmaskedValue = this.masked.unmaskedValue;
     var newValue = this.masked.value;
     var isChanged = this.unmaskedValue !== newUnmaskedValue || this.value !== newValue;
@@ -981,9 +1024,9 @@ var InputMask = function () {
 
     var cursorPos = this.masked.nearestInputPos(details.startChangePos + insertedCount,
     // if none was removed - align to right
-    details.removeDirection || DIRECTION.RIGHT);
+    details.removeDirection);
 
-    this.updateValue();
+    this.updateControl();
     this.updateCursor(cursorPos);
   };
 
@@ -1002,8 +1045,7 @@ var InputMask = function () {
       return this.masked.mask;
     },
     set: function set$$1(mask) {
-      // TODO check
-      this.masked.mask = mask;
+      if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) === _typeof(this.masked.mask)) this.masked.mask = mask;
       this.masked = createMask(this.masked);
     }
   }, {
@@ -1013,7 +1055,7 @@ var InputMask = function () {
     },
     set: function set$$1(str) {
       this.masked.value = str;
-      this.updateValue();
+      this.updateControl();
       this._alignCursor();
     }
   }, {
@@ -1039,7 +1081,7 @@ var InputMask = function () {
     },
     set: function set$$1(str) {
       this.masked.unmaskedValue = str;
-      this.updateValue();
+      this.updateControl();
       this._alignCursor();
     }
   }]);

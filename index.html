@@ -123,7 +123,7 @@ var mask = new IMask(element, {
         <ul class="unstyled">
           <li><code>mask</code></li>
           <li><code>unmaskedValue</code></li>
-          <li><code>rawValue</code></li>
+          <li><code>value</code></li>
         </ul>
         <p>For pattern mask in addition can be used
         <ul class="unstyled">
@@ -132,7 +132,7 @@ var mask = new IMask(element, {
           <li><code>placeholderLabel<sub>get</sub></code></li>
           <li><code>isComplete<sub>get</sub></code></li>
         </ul>
-        <p>Commonly mask automatically reapplies. For manual mask refresh set <code>rawValue</code> or <code>unmaskedValue</code>.</p>
+        <p>Commonly mask automatically reapplies. For manual mask refresh set <code>value</code> or <code>unmaskedValue</code>.</p>
 
         <h3 id="docs-destroy" class="section-h"><a href="#docs-destroy">Destroy</a></h3>
         <p>Call <code>destroy</code> method.</p>
@@ -209,7 +209,7 @@ var mask = new IMask(element, {
               <div class="col col-4">
                 <div class="form-item">
                   <label>Mask</label>
-                  <input type="text" name="mask" value="000[aaa]XXX'***">
+                  <input type="text" name="mask" value="000[aaa]XXX`***">
                 </div>
               </div>
               <div class="col col-4">
@@ -275,18 +275,14 @@ var mask = new IMask(element, {
       });
 
       new IMask(document.getElementById('uppercase-mask'), {
-        mask: [
-          {
-            mask: "aaa"
-          },
-          {
-            mask: function (str) {return str.toUpperCase();}
-          }
-        ]
+        mask: function (state) {
+          // TODO why not public API?
+          state._value = state.value.toUpperCase();
+        }
       });
 
       var customMask = new IMask(document.getElementById('custom-mask'), {
-          mask: '000[aaa]XXX\'***',
+          mask: '000[aaa]XXX`***',
           placeholder: {
             show: 'always'
           }
@@ -306,15 +302,17 @@ var mask = new IMask(element, {
           show: customEl.querySelector('[name=ph-show]').value,
           char: customEl.querySelector('[name=ph-char]').value || '_'
         };
-        var rawValue = customEl.querySelector('[name=raw]').value;
+        var value = customEl.querySelector('[name=raw]').value;
         customEl.querySelector('[name=raw]').value = '';
 
         var unmaskedValue = customEl.querySelector('[name=unmasked]').value;
         customEl.querySelector('[name=unmasked]').value = '';
 
-        customMask.mask = mask;
-        customMask.placeholder = ph;
-        if (rawValue) customMask.rawValue = rawValue;
+        customMask.update({
+          mask: mask,
+          placeholder: ph
+        })
+        if (value) customMask.value = value;
         if (unmaskedValue) customMask.unmaskedValue = unmaskedValue;
       });
 

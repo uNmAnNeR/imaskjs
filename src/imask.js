@@ -1,7 +1,7 @@
-import Masked from './core/masked';
-import PatternMasked from './core/pattern-masked';
+import Masked from './masked/base';
+import PatternMasked from './masked/pattern';
 
-import InputMask from './masks/input';
+import InputMask from './controls/input';
 
 
 export default

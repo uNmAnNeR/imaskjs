@@ -1,4 +1,4 @@
-import {refreshValue} from './utils';
+import {refreshValueOnSet} from '../core/utils';
 
 
 export default
@@ -14,7 +14,7 @@ class Masked {
     return this._mask;
   }
 
-  @refreshValue
+  @refreshValueOnSet
   set mask (mask) {
     this._mask = mask;
   }
@@ -141,4 +141,20 @@ class Masked {
     this.clear(start);
     return this.appendWithTail(inserted, tail);
   }
+
+  withValueRefresh (fn) {
+    if (this._refreshing) return fn();
+    this._refreshing = true;
+
+    const unmasked = this.isInitialized ? this.unmaskedValue : null;
+
+    const ret = fn();
+
+    if (unmasked != null) this.unmaskedValue = unmasked;
+    delete this._refreshing;
+    return ret;
+  }
+
+  // TODO
+  // resolve (inputRaw) -> outputRaw
 }

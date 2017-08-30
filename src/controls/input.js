@@ -1,6 +1,5 @@
-import {DIRECTION} from '../core/utils';
 import ActionDetails from '../core/action-details';
-import createMask from '../core/factory';
+import createMask from '../masked/factory';
 
 
 export default
@@ -19,6 +18,21 @@ class InputMask {
     this._onDrop = this._onDrop.bind(this);
     this._alignCursor = this._alignCursor.bind(this);
     this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
+  }
+
+  update (opts) {
+    const unmasked = this.masked ? this.masked.unmaskedValue : null;
+
+    const mask = opts.mask;
+    if (mask) this.mask = mask;
+
+    for (const k in opts) {
+      if (k === 'mask') continue;
+      this.masked[k] = opts[k];
+    }
+
+    if (unmasked != null) this.masked.unmaskedValue = unmasked;
+    this.updateControl();
   }
 
   on (ev, handler) {
@@ -40,8 +54,7 @@ class InputMask {
 
   get mask () { return this.masked.mask; }
   set mask (mask) {
-    // TODO check
-    this.masked.mask = mask;
+    if (typeof mask === typeof this.masked.mask) this.masked.mask = mask;
     this.masked = createMask(this.masked);
   }
 
@@ -51,7 +64,7 @@ class InputMask {
 
   set value (str) {
     this.masked.value = str;
-    this.updateValue();
+    this.updateControl();
     this._alignCursor();
   }
 
@@ -97,9 +110,9 @@ class InputMask {
     this.saveSelection();
   }
 
-  saveSelection (ev) {
+  saveSelection (/* ev */) {
     if (this.value !== this.el.value) {
-      console.warn('Uncontrolled input change, refresh mask manually!');
+      console.warn('Uncontrolled input change, refresh mask manually!'); // eslint-disable-line no-console
     }
     this._selection = {
       start: this.selectionStart,
@@ -118,11 +131,11 @@ class InputMask {
 
   set unmaskedValue (str) {
     this.masked.unmaskedValue = str;
-    this.updateValue();
+    this.updateControl();
     this._alignCursor();
   }
 
-  updateValue () {
+  updateControl () {
     const newUnmaskedValue = this.masked.unmaskedValue;
     const newValue = this.masked.value;
     const isChanged = (this.unmaskedValue !== newUnmaskedValue ||
@@ -157,7 +170,7 @@ class InputMask {
     }, 10);
   }
 
-  _abortUpdateCursor() {
+  _abortUpdateCursor () {
     if (this._cursorChanging) {
       clearTimeout(this._cursorChanging);
       delete this._cursorChanging;
@@ -191,9 +204,9 @@ class InputMask {
     const cursorPos = this.masked.nearestInputPos(
       details.startChangePos + insertedCount,
       // if none was removed - align to right
-      details.removeDirection || DIRECTION.RIGHT);
+      details.removeDirection);
 
-    this.updateValue();
+    this.updateControl();
     this.updateCursor(cursorPos);
   }
 

@@ -1,7 +1,7 @@
-import {isString} from './utils';
+import {isString} from '../core/utils';
 
-import Masked from './masked';
-import PatternMasked from './pattern-masked';
+import Masked from './base';
+import PatternMasked from './pattern';
 
 
 export default

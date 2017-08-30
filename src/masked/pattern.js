@@ -1,6 +1,6 @@
-import {conform, DIRECTION, indexInDirection, refreshValue} from './utils';
-import PatternDefinition from './pattern-definition';
-import Masked from './masked';
+import {conform, DIRECTION, indexInDirection, refreshValueOnSet} from '../core/utils';
+import Masked from './base';
+import PatternDefinition from './pattern/definition';
 
 
 export default
@@ -20,7 +20,7 @@ class PatternMasked extends Masked {
     return this._placeholder;
   }
 
-  @refreshValue
+  @refreshValueOnSet
   set placeholder (ph) {
     this._placeholder = {
       ...PatternMasked.DEFAULT_PLACEHOLDER,
@@ -32,7 +32,7 @@ class PatternMasked extends Masked {
     return this._definitions;
   }
 
-  @refreshValue
+  @refreshValueOnSet
   set definitions (defs) {
     defs = {
       ...PatternDefinition.DEFAULTS,
@@ -47,7 +47,7 @@ class PatternMasked extends Masked {
     return this._mask;
   }
 
-  @refreshValue
+  @refreshValueOnSet
   set mask (mask) {
     this._mask = mask;
     this._updateMask();
@@ -158,7 +158,7 @@ class PatternMasked extends Masked {
       const def = this._charDefs[di];
 
       if (def.isHiddenHollow) continue;
-      if (def.unmasking && !def.isHollow) unmasked += ch;
+      if (def.mask && !def.isHollow) unmasked += ch;
       ++ci;
     }
 
@@ -274,7 +274,7 @@ class PatternMasked extends Masked {
       this.extractInput(
         this.mapDefIndexToPos(s),
         this.mapDefIndexToPos(stops[++i]))
-    ]);
+    ]).filter(([stop, input]) => stop != null || input);
   }
 
   _appendPlaceholder (toDefIndex) {
