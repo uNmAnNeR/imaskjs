@@ -4,7 +4,7 @@ import PatternDefinition from './pattern/definition';
 
 
 export default
-class PatternMasked extends Masked {
+class MaskedPattern extends Masked {
   constructor (opts) {
     const {definitions, placeholder} = opts;
     super(opts);
@@ -23,7 +23,7 @@ class PatternMasked extends Masked {
   @refreshValueOnSet
   set placeholder (ph) {
     this._placeholder = {
-      ...PatternMasked.DEFAULT_PLACEHOLDER,
+      ...MaskedPattern.DEFAULT_PLACEHOLDER,
       ...ph
     };
   }
@@ -71,7 +71,7 @@ class PatternMasked extends Masked {
       const unmasking = type === PatternDefinition.TYPES.INPUT || unmaskingBlock;
       const optional = type === PatternDefinition.TYPES.INPUT && optionalBlock;
 
-      if (char === PatternMasked.STOP_CHAR) {
+      if (char === MaskedPattern.STOP_CHAR) {
         stopAlign = true;
         continue;
       }
@@ -86,7 +86,7 @@ class PatternMasked extends Masked {
         continue;
       }
 
-      if (char === PatternMasked.ESCAPE_CHAR) {
+      if (char === MaskedPattern.ESCAPE_CHAR) {
         ++i;
         char = pattern[i];
         // TODO validation
@@ -110,7 +110,7 @@ class PatternMasked extends Masked {
   }
 
   clone () {
-    const m = new PatternMasked(this);
+    const m = new MaskedPattern(this);
     m._value = this.value.slice();
     m._charDefs.forEach((d, i) => Object.assign(d, this._charDefs[i]));
     return m;
@@ -362,10 +362,10 @@ class PatternMasked extends Masked {
   }
 }
 
-PatternMasked.DEFAULT_PLACEHOLDER = {
+MaskedPattern.DEFAULT_PLACEHOLDER = {
   show: 'lazy',
   char: '_'
 };
-PatternMasked.STOP_CHAR = '`';
-PatternMasked.ESCAPE_CHAR = '\\';
-PatternMasked.Definition = PatternDefinition;
+MaskedPattern.STOP_CHAR = '`';
+MaskedPattern.ESCAPE_CHAR = '\\';
+MaskedPattern.Definition = PatternDefinition;

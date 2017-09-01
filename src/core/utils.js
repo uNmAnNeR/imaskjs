@@ -32,3 +32,8 @@ function refreshValueOnSet (target, key, descriptor) {
     return this.withValueRefresh(method.bind(this, ...args));
   };
 }
+
+export
+function escapeRegExp(str) {
+  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}

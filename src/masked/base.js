@@ -19,8 +19,8 @@ class Masked {
     this._mask = mask;
   }
 
-  _validate () {
-    return this.validate(this);
+  _validate (soft) {
+    return this.validate(this, soft);
   }
 
   clone () {
@@ -79,7 +79,7 @@ class Masked {
 
     for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
-      if (this._validate() === false) {
+      if (this._validate(soft) === false) {
         Object.assign(this, consistentValue);
         if (!soft) return false;
       }
@@ -90,9 +90,6 @@ class Masked {
     return this.value.length - oldValueLength;
 
   }
-
-  // TODO
-  // insert (str, fromPos, skipUnresolved)
 
   appendWithTail (str, tail) {
     // TODO refactor
@@ -106,7 +103,7 @@ class Masked {
       const appended = this.append(ch, true);
       consistentAppended = this.clone();
       const tailAppended = appended !== false && this._appendTail(tail) !== false;
-      if (tailAppended === false) {
+      if (tailAppended === false || this._validate(true) === false) {
         Object.assign(this, consistentValue);
         break;
       }
@@ -129,17 +126,9 @@ class Masked {
     return this.value;
   }
 
+  // TODO rename - refactor
   clear (from=0, to=this.value.length) {
     this._value = this.value.slice(0, from) + this.value.slice(to);
-  }
-
-  splice (start, deleteCount, inserted, removeDirection) {
-    const tailPos = start + deleteCount;
-    const tail = this._extractTail(tailPos);
-
-    start = this.nearestInputPos(start, removeDirection);
-    this.clear(start);
-    return this.appendWithTail(inserted, tail);
   }
 
   withValueRefresh (fn) {
@@ -155,6 +144,20 @@ class Masked {
     return ret;
   }
 
+  commit () {}
+
   // TODO
   // resolve (inputRaw) -> outputRaw
+
+  // TODO
+  // insert (str, fromPos, soft)
+
+  // splice (start, deleteCount, inserted, removeDirection) {
+  //   const tailPos = start + deleteCount;
+  //   const tail = this._extractTail(tailPos);
+
+  //   start = this.nearestInputPos(start, removeDirection);
+  //   this.clear(start);
+  //   return this.appendWithTail(inserted, tail);
+  // }
 }

@@ -18,20 +18,25 @@ class InputMask {
     this._onDrop = this._onDrop.bind(this);
     this._alignCursor = this._alignCursor.bind(this);
     this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
+
+    this.bindEvents();
+
+    // refresh
+    this.updateValue();
+    this._onChange();
   }
 
   update (opts) {
-    const unmasked = this.masked ? this.masked.unmaskedValue : null;
-
     const mask = opts.mask;
     if (mask) this.mask = mask;
 
-    for (const k in opts) {
-      if (k === 'mask') continue;
-      this.masked[k] = opts[k];
-    }
+    this.masked.withValueRefresh(() => {
+      for (const k in opts) {
+        if (k === 'mask') continue;
+        this.masked[k] = opts[k];
+      }
+    });
 
-    if (unmasked != null) this.masked.unmaskedValue = unmasked;
     this.updateControl();
   }
 
@@ -54,8 +59,10 @@ class InputMask {
 
   get mask () { return this.masked.mask; }
   set mask (mask) {
+    const unmasked = this.masked ? this.masked.unmaskedValue : null;
     if (typeof mask === typeof this.masked.mask) this.masked.mask = mask;
     this.masked = createMask(this.masked);
+    if (unmasked != null) this.masked.unmaskedValue = unmasked;
   }
 
   get value () {
@@ -195,23 +202,38 @@ class InputMask {
       // old state
       this.value, this._selection);
 
-    const insertedCount = this.masked.splice(
-      details.startChangePos,
-      details.removed.length,
-      details.inserted,
-      details.removeDirection);
+    // const insertedCount = this.masked.splice(
+    //   this.masked.nearestInputPos(details.startChangePos, details.removeDirection),
+    //   details.removed.length,
+    //   details.inserted);
+
+
+    const tailPos = details.startChangePos + details.removed.length;
+    const tail = this.masked._extractTail(tailPos);
+
+    const lastInputPos = this.masked.nearestInputPos(details.startChangePos, details.removeDirection);
+    this.masked.clear(lastInputPos);
+    const insertedCount = this.masked.appendWithTail(details.inserted, tail);
+
 
     const cursorPos = this.masked.nearestInputPos(
-      details.startChangePos + insertedCount,
-      // if none was removed - align to right
+      lastInputPos + insertedCount,
       details.removeDirection);
 
     this.updateControl();
     this.updateCursor(cursorPos);
   }
 
+  updateValue () {
+    this.masked.value = this.el.value;
+  }
+
   _onChange () {
-    if (this.value !== this.el.value) this.value = this.el.value;
+    if (this.value !== this.el.value) {
+      this.updateValue();
+    }
+    this.masked.commit();
+    this.updateControl();
   }
 
   _onDrop (ev) {

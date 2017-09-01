@@ -1,22 +1,21 @@
 import Masked from './masked/base';
-import PatternMasked from './masked/pattern';
+import MaskedPattern from './masked/pattern';
+import MaskedNumber from './masked/number';
 
 import InputMask from './controls/input';
 
 
 export default
 function IMask (el, opts={}) {
-  const mask = new InputMask(el, opts);
-  mask.bindEvents();
-  // refresh
-  mask.value = el.value;
-  return mask;
+	// currently available only for input elements
+  return new InputMask(el, opts);
 }
 
 
 IMask.InputMask = InputMask;
 
 IMask.Masked = Masked;
-IMask.PatternMasked = PatternMasked;
+IMask.MaskedPattern = MaskedPattern;
+IMask.MaskedNumber = MaskedNumber;
 
 window.IMask = IMask;

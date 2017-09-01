@@ -1,7 +1,7 @@
 import {isString} from '../core/utils';
 
 import Masked from './base';
-import PatternMasked from './pattern';
+import MaskedPattern from './pattern';
 
 
 export default
@@ -12,7 +12,7 @@ function createMask (opts) {
     ...opts,
     validate: (masked) => mask.test(masked.value)
   });
-  if (isString(mask)) return new PatternMasked(opts);
+  if (isString(mask)) return new MaskedPattern(opts);
   if (mask.prototype instanceof Masked) return new mask(opts);
   if (mask instanceof Function) return new Masked({
     ...opts,

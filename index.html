@@ -185,6 +185,7 @@ var mask = new IMask(element, {
           <div class="form-item">
             <label>Type here</label>
             <input id="numbers-mask" type="text" value="">
+            <div class="desc">number: <span id="number-unmasked"></span></div>
           </div>
         </form>
 
@@ -270,8 +271,22 @@ var mask = new IMask(element, {
         document.getElementById('phone-complete').style.display = 'inline-block';
       });
 
-      new IMask(document.getElementById('numbers-mask'), {
-        mask: /^\d{0,5}$/
+      var numberMask = new IMask(document.getElementById('numbers-mask'), {
+        mask: IMask.MaskedNumber,
+        scale: 2,
+        signed: true,
+        thousandsSeparator: ' ',
+        postFormat: {
+          // padFractionalZeros: true,
+          normalizeZeros: true,
+        },
+        // min: 1,
+        // max: 31,
+        // radix: ',',
+        // mapToRadix: [',', '.']
+      });
+      numberMask.on('accept', function() {
+        document.getElementById('number-unmasked').innerHTML = numberMask.masked.number;
       });
 
       new IMask(document.getElementById('uppercase-mask'), {
