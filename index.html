@@ -88,7 +88,7 @@ var mask = new IMask(element, {
 
           <p>Configure with options:</p>
           <pre><code>placeholder: {
-  show: 'always' | 'lazy'  // defaults to 'lazy'
+  lazy: boolean
   char: &lt;any single char&gt;  // defaults to '_'
 }</code></pre>
           <pre><code>definitions: {
@@ -233,10 +233,7 @@ var mask = new IMask(element, {
               <div class="col col-4">
                 <div class="form-item">
                   <label>Placeholder mode</label>
-                  <select name="ph-show">
-                    <option value="always" selected>always</option>
-                    <option value="lazy">lazy</option>
-                  </select>
+                  <label class="checkbox"><input type="checkbox" name="ph-show">lazy</label>
                 </div>
               </div>
               <div class="col col-4">
@@ -300,7 +297,7 @@ var mask = new IMask(element, {
           // min: 1,
           // max: 31,
           // radix: ',',
-          // mapToRadix: [',', '.']
+          // mapToRadix: ['.']
         })
       });
       numberMask.on('accept', function() {
@@ -309,8 +306,26 @@ var mask = new IMask(element, {
 
       var dateMask = new IMask(document.getElementById('date-mask'), {
         mask: new IMask.MaskedDate({
-          min: new Date(1900, 3, 3),
-          max: new Date(2205, 5, 5)
+          mask: 'Y/m/d',
+          placeholder: {
+            lazy: false
+          },
+          format: date => {
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+
+            if (day < 10) day = "0" + day;
+            if (month < 10) month = "0" + month;
+
+            return [year, month, day].join('/');
+          },
+          parse: str => {
+            var [year, month, day] = str.split('/');
+            return new Date(year, month - 1, day);
+          },
+          min: new Date(2000, 0, 1),
+          max: new Date(2020, 0, 1)
         })
       });
       dateMask.on('accept', function() {
@@ -324,23 +339,22 @@ var mask = new IMask(element, {
       });
 
       new IMask(document.getElementById('uppercase-mask'), {
-        mask: function (state) {
+        mask: function (value, masked) {
           // TODO why not public API?
-          state._value = state.value.toUpperCase();
+          masked._value = masked.value.toUpperCase();
         }
       });
 
       var customMask = new IMask(document.getElementById('custom-mask'), {
           mask: '000[aaa]XXX`***',
           placeholder: {
-            show: 'always'
+            lazy: false
           }
       });
       customMask.on('accept', function() {
         document.getElementById('custom-complete').style.display = '';
         document.getElementById('custom-unmasked').innerHTML = customMask.unmaskedValue;
-      });
-      customMask.on('complete', function() {
+      }).on('complete', function() {
         document.getElementById('custom-complete').style.display = 'inline-block';
       });
 
@@ -348,7 +362,7 @@ var mask = new IMask(element, {
       customEl.querySelector('[name=apply]').addEventListener('click', function (e) {
         var mask = customEl.querySelector('[name=mask]').value;
         var ph = {
-          show: customEl.querySelector('[name=ph-show]').value,
+          lazy: customEl.querySelector('[name=ph-show]').checked,
           char: customEl.querySelector('[name=ph-char]').value || '_'
         };
         var value = customEl.querySelector('[name=raw]').value;

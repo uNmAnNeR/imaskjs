@@ -83,14 +83,14 @@ class MaskedDate extends MaskedPattern {
 MaskedDate.DEFAULTS = {
   mask: 'd{.}`m{.}`Y',
   format: date => {
-    var day = ('' + date.getDate()).padStart(2, '0');
-    var month = ('' + (date.getMonth() + 1)).padStart(2, '0');
-    var year = date.getFullYear();
+    const day = ('' + date.getDate()).padStart(2, '0');
+    const month = ('' + (date.getMonth() + 1)).padStart(2, '0');
+    const year = date.getFullYear();
 
     return [day, month, year].join('.');
   },
   parse: str => {
-    let [day, month, year] = str.split('.');
+    const [day, month, year] = str.split('.');
     return new Date(year, month - 1, day);
   },
   groups: {

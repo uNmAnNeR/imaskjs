@@ -311,7 +311,7 @@ class MaskedPattern extends Masked {
       const def = this._charDefs[di];
       if (def.isInput) def.isHollow = true;
 
-      if (this.placeholder.show === 'always' || toDefIndex) {
+      if (!this.placeholder.lazy || toDefIndex) {
         this._value += !def.isInput ?
           def.char :
           !def.optional ?
@@ -407,7 +407,7 @@ class MaskedPattern extends Masked {
 }
 
 MaskedPattern.DEFAULT_PLACEHOLDER = {
-  show: 'lazy',
+  lazy: true,
   char: '_'
 };
 MaskedPattern.STOP_CHAR = '`';

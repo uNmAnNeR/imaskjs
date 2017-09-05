@@ -1335,7 +1335,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
       var def = this._charDefs[di];
       if (def.isInput) def.isHollow = true;
 
-      if (this.placeholder.show === 'always' || toDefIndex) {
+      if (!this.placeholder.lazy || toDefIndex) {
         this._value += !def.isInput ? def.char : !def.optional ? this.placeholder.char : '';
       }
     }
@@ -1469,7 +1469,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
   return MaskedPattern;
 }(Masked), (_applyDecoratedDescriptor$1(_class$1.prototype, 'placeholder', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'placeholder'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'definitions', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'definitions'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'mask'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'groups', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'groups'), _class$1.prototype)), _class$1);
 MaskedPattern.DEFAULT_PLACEHOLDER = {
-  show: 'lazy',
+  lazy: true,
   char: '_'
 };
 MaskedPattern.STOP_CHAR = '`';
