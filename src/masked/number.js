@@ -4,7 +4,7 @@ import Masked from './base';
 
 export default
 class MaskedNumber extends Masked {
-  constructor (opts) {
+  constructor (opts={}) {
     opts = Object.assign({}, MaskedNumber.DEFAULTS, opts);
     super(opts);
     delete this.isInitialized;
@@ -27,24 +27,24 @@ class MaskedNumber extends Masked {
 
   _updateNumberRegExp () {
     // TODO refactor?
-    let regExpStrSoft = "^";
-    let regExpStr = "^";
+    let regExpStrSoft = '^';
+    let regExpStr = '^';
 
     if (this.signed) {
-      regExpStrSoft += "([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))";
-      regExpStr += "[+|\\-]?";
+      regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
+      regExpStr += '[+|\\-]?';
     } else {
-      regExpStrSoft += "(0|([1-9]+\\d*))";
+      regExpStrSoft += '(0|([1-9]+\\d*))';
     }
-    regExpStr += "\\d*";
+    regExpStr += '\\d*';
 
     if (this.scale) {
-      regExpStrSoft += "(" + this.radix + "\\d{0," + this.scale + "})?";
-      regExpStr += "(" + this.radix + "\\d{0," + this.scale + "})?";
+      regExpStrSoft += '(' + this.radix + '\\d{0,' + this.scale + '})?';
+      regExpStr += '(' + this.radix + '\\d{0,' + this.scale + '})?';
     }
 
-    regExpStrSoft += "$";
-    regExpStr += "$";
+    regExpStrSoft += '$';
+    regExpStr += '$';
 
     this._numberRegExpSoft = new RegExp(regExpStrSoft);
     this._numberRegExp = new RegExp(regExpStr)
@@ -183,7 +183,7 @@ class MaskedNumber extends Masked {
   }
 
   set number (number) {
-    this.unmaskedValue = "" + number;
+    this.unmaskedValue = '' + number;
   }
 
   get min () {
@@ -251,9 +251,9 @@ class MaskedNumber extends Masked {
   @refreshValueOnSet
   set mapToRadix (mapToRadix) {
     this._mapToRadix = mapToRadix;
-    this._mapToRadixRegExp = new RegExp("[" +
-      mapToRadix.map(escapeRegExp).join("") +
-    "]", "g");
+    this._mapToRadixRegExp = new RegExp('[' +
+      mapToRadix.map(escapeRegExp).join('') +
+    ']', 'g');
   }
 
   get thousandsSeparator () {
@@ -263,13 +263,13 @@ class MaskedNumber extends Masked {
   @refreshValueOnSet
   set thousandsSeparator (thousandsSeparator) {
     this._thousandsSeparator = thousandsSeparator;
-    this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), "g");
+    this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), 'g');
   }
 }
 MaskedNumber.DEFAULTS = {
   radix: ',',
   thousandsSeparator: '',
-  mapToRadix: [',', '.'],
+  mapToRadix: ['.'],
   scale: 2,
   postFormat: {
     normalizeZeros: true,

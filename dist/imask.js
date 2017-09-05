@@ -935,7 +935,7 @@ var Range = function () {
   function Range(_ref2) {
     var from = _ref2[0],
         to = _ref2[1];
-    var maxlen = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : (to + "").length;
+    var maxlen = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : (to + '').length;
     classCallCheck(this, Range);
 
     this._from = from;
@@ -1045,7 +1045,8 @@ function _applyDecoratedDescriptor$1(target, property, decorators, descriptor, c
 var MaskedPattern = (_class$1 = function (_Masked) {
   inherits(MaskedPattern, _Masked);
 
-  function MaskedPattern(opts) {
+  function MaskedPattern() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     classCallCheck(this, MaskedPattern);
     var definitions = opts.definitions,
         placeholder = opts.placeholder,
@@ -1128,8 +1129,8 @@ var MaskedPattern = (_class$1 = function (_Masked) {
         type: type,
         optional: optional,
         stopAlign: stopAlign,
-        mask: unmasking && (type === PatternDefinition.TYPES.INPUT ? defs[char] : function (m) {
-          return m.value === char;
+        mask: unmasking && (type === PatternDefinition.TYPES.INPUT ? defs[char] : function (value) {
+          return value === char;
         })
       }));
 
@@ -1516,7 +1517,8 @@ function _applyDecoratedDescriptor$2(target, property, decorators, descriptor, c
 var MaskedNumber = (_class$2 = function (_Masked) {
   inherits(MaskedNumber, _Masked);
 
-  function MaskedNumber(opts) {
+  function MaskedNumber() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     classCallCheck(this, MaskedNumber);
 
     opts = _extends({}, MaskedNumber.DEFAULTS, opts);
@@ -1553,24 +1555,24 @@ var MaskedNumber = (_class$2 = function (_Masked) {
 
   MaskedNumber.prototype._updateNumberRegExp = function _updateNumberRegExp() {
     // TODO refactor?
-    var regExpStrSoft = "^";
-    var regExpStr = "^";
+    var regExpStrSoft = '^';
+    var regExpStr = '^';
 
     if (this.signed) {
-      regExpStrSoft += "([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))";
-      regExpStr += "[+|\\-]?";
+      regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
+      regExpStr += '[+|\\-]?';
     } else {
-      regExpStrSoft += "(0|([1-9]+\\d*))";
+      regExpStrSoft += '(0|([1-9]+\\d*))';
     }
-    regExpStr += "\\d*";
+    regExpStr += '\\d*';
 
     if (this.scale) {
-      regExpStrSoft += "(" + this.radix + "\\d{0," + this.scale + "})?";
-      regExpStr += "(" + this.radix + "\\d{0," + this.scale + "})?";
+      regExpStrSoft += '(' + this.radix + '\\d{0,' + this.scale + '})?';
+      regExpStr += '(' + this.radix + '\\d{0,' + this.scale + '})?';
     }
 
-    regExpStrSoft += "$";
-    regExpStr += "$";
+    regExpStrSoft += '$';
+    regExpStr += '$';
 
     this._numberRegExpSoft = new RegExp(regExpStrSoft);
     this._numberRegExp = new RegExp(regExpStr);
@@ -1708,7 +1710,7 @@ var MaskedNumber = (_class$2 = function (_Masked) {
       return Number(numstr);
     },
     set: function set$$1(number) {
-      this.unmaskedValue = "" + number;
+      this.unmaskedValue = '' + number;
     }
   }, {
     key: 'min',
@@ -1766,7 +1768,7 @@ var MaskedNumber = (_class$2 = function (_Masked) {
     },
     set: function set$$1(mapToRadix) {
       this._mapToRadix = mapToRadix;
-      this._mapToRadixRegExp = new RegExp("[" + mapToRadix.map(escapeRegExp).join("") + "]", "g");
+      this._mapToRadixRegExp = new RegExp('[' + mapToRadix.map(escapeRegExp).join('') + ']', 'g');
     }
   }, {
     key: 'thousandsSeparator',
@@ -1775,7 +1777,7 @@ var MaskedNumber = (_class$2 = function (_Masked) {
     },
     set: function set$$1(thousandsSeparator) {
       this._thousandsSeparator = thousandsSeparator;
-      this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), "g");
+      this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), 'g');
     }
   }]);
   return MaskedNumber;
@@ -1783,7 +1785,7 @@ var MaskedNumber = (_class$2 = function (_Masked) {
 MaskedNumber.DEFAULTS = {
   radix: ',',
   thousandsSeparator: '',
-  mapToRadix: [',', '.'],
+  mapToRadix: ['.'],
   scale: 2,
   postFormat: {
     normalizeZeros: true
@@ -1824,7 +1826,8 @@ function _applyDecoratedDescriptor$3(target, property, decorators, descriptor, c
 var MaskedDate = (_class$3 = function (_MaskedPattern) {
   inherits(MaskedDate, _MaskedPattern);
 
-  function MaskedDate(opts) {
+  function MaskedDate() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     classCallCheck(this, MaskedDate);
 
     var groups = opts.groups;
@@ -2186,8 +2189,12 @@ var InputMask = function () {
     },
     set: function set$$1(mask) {
       var unmasked = this.masked ? this.masked.unmaskedValue : null;
-      if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) === _typeof(this.masked.mask)) this.masked.mask = mask;
-      this.masked = createMask(this.masked);
+      var opts = { mask: mask };
+      if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) === _typeof(this.masked.mask)) {
+        this.masked.mask = mask;
+        opts = this.masked;
+      }
+      this.masked = createMask(opts);
       if (unmasked != null) this.masked.unmaskedValue = unmasked;
     }
   }, {

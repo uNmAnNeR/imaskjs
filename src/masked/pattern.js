@@ -6,7 +6,7 @@ import PatternGroup from './pattern/group';
 
 export default
 class MaskedPattern extends Masked {
-  constructor (opts) {
+  constructor (opts={}) {
     const {definitions, placeholder, groups} = opts;
     super(opts);
     delete this.isInitialized;
@@ -122,7 +122,7 @@ class MaskedPattern extends Masked {
         mask: unmasking &&
           (type === PatternDefinition.TYPES.INPUT ?
             defs[char] :
-            (m => m.value === char))
+            (value => value === char))
       }));
 
       stopAlign = false;

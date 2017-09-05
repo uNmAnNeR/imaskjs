@@ -60,8 +60,12 @@ class InputMask {
   get mask () { return this.masked.mask; }
   set mask (mask) {
     const unmasked = this.masked ? this.masked.unmaskedValue : null;
-    if (typeof mask === typeof this.masked.mask) this.masked.mask = mask;
-    this.masked = createMask(this.masked);
+    let opts = {mask};
+    if (typeof mask === typeof this.masked.mask) {
+      this.masked.mask = mask;
+      opts = this.masked;
+    }
+    this.masked = createMask(opts);
     if (unmasked != null) this.masked.unmaskedValue = unmasked;
   }
 

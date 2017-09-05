@@ -5,7 +5,7 @@ import PatternGroup from './pattern/group';
 
 export default
 class MaskedDate extends MaskedPattern {
-  constructor (opts) {
+  constructor (opts={}) {
     const groups = opts.groups;
     opts = Object.assign({}, MaskedDate.DEFAULTS, opts);
     const {min, max, format, parse} = opts;

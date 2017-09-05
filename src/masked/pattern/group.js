@@ -26,7 +26,7 @@ class PatternGroup {
 }
 
 export class Range {
-  constructor ([from, to], maxlen=(to+"").length) {
+  constructor ([from, to], maxlen=(to+'').length) {
     this._from = from;
     this._to = to;
     this._maxLength = maxlen;
