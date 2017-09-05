@@ -1,17 +1,19 @@
 import {conform, DIRECTION, indexInDirection, refreshValueOnSet} from '../core/utils';
 import Masked from './base';
 import PatternDefinition from './pattern/definition';
+import PatternGroup from './pattern/group';
 
 
 export default
 class MaskedPattern extends Masked {
   constructor (opts) {
-    const {definitions, placeholder} = opts;
+    const {definitions, placeholder, groups} = opts;
     super(opts);
     delete this.isInitialized;
 
     this.placeholder = placeholder;
     this.definitions = definitions;
+    this.groups = groups;
 
     this.isInitialized = true;
   }
@@ -56,14 +58,32 @@ class MaskedPattern extends Masked {
   _updateMask () {
     const defs = this._definitions;
     this._charDefs = [];
+    this._groupDefs = [];
 
-    const pattern = this.mask;
+    let pattern = this.mask;
     if (!pattern || !defs) return;
 
     let unmaskingBlock = false;
     let optionalBlock = false;
     let stopAlign = false;
+
+
     for (let i=0; i<pattern.length; ++i) {
+      if (this._groups) {
+        const p = pattern.slice(i);
+        const gName = Object.keys(this._groups).find(gName => p.indexOf(gName) === 0);
+        if (gName) {
+          const group = this._groups[gName];
+          this._groupDefs.push(new PatternGroup(this, {
+            name: gName,
+            offset: this._charDefs.length,
+            mask: group.mask,
+            validate: group.validate
+          }));
+          pattern = pattern.replace(gName, group.mask);
+        }
+      }
+
       let char = pattern[i];
       let type = !unmaskingBlock && char in defs ?
         PatternDefinition.TYPES.INPUT :
@@ -109,10 +129,15 @@ class MaskedPattern extends Masked {
     }
   }
 
+  _validate (soft) {
+    return this._groupDefs.every(g => g._validate(soft)) && super._validate(soft);
+  }
+
   clone () {
     const m = new MaskedPattern(this);
-    m._value = this.value.slice();
+    m._value = this.value;
     m._charDefs.forEach((d, i) => Object.assign(d, this._charDefs[i]));
+    m._groupDefs.forEach((d, i) => Object.assign(d, this._groupDefs[i]));
     return m;
   }
 
@@ -122,8 +147,8 @@ class MaskedPattern extends Masked {
   }
 
   get isComplete () {
-    return !this._charDefs.some(d =>
-      d.isInput && !d.optional && d.isHollow);
+    return !this._charDefs.some((d, i) =>
+      d.isInput && !d.optional && (d.isHollow || !this.extractInput(i, i+1)));
   }
 
   hiddenHollowsBefore (defIndex) {
@@ -187,11 +212,10 @@ class MaskedPattern extends Masked {
 
       if (def.type === PatternDefinition.TYPES.INPUT) {
         if (chres) {
-          const m = this.clone();
           this._value += chres;
           if (!this._validate()) {
             chres = '';
-            Object.assign(this, m);
+            this._value = this.value.slice(0, -1);
           }
         }
 
@@ -237,7 +261,11 @@ class MaskedPattern extends Masked {
     let input = '';
 
     const toDefIndex = this.mapPosToDefIndex(toPos);
-    for (let ci=fromPos, di=this.mapPosToDefIndex(fromPos); ci<toPos && di < toDefIndex; ++di) {
+    for (
+      let ci=fromPos, di=this.mapPosToDefIndex(fromPos);
+      ci<toPos && ci<str.length && di < toDefIndex;
+      ++di)
+    {
       const ch = str[ci];
       const def = this._charDefs[di];
 
@@ -359,6 +387,22 @@ class MaskedPattern extends Masked {
     }
 
     return this.mapDefIndexToPos(di);
+  }
+
+  get groups () { return this._groups; }
+
+  @refreshValueOnSet
+  set groups (groups) {
+    this._groups = groups;
+    this._updateMask();
+  }
+
+  group (name) {
+    return this.allGroups(name)[0];
+  }
+
+  groupsByName (name) {
+    return this._groupDefs.filter(g => g.name === name);
   }
 }
 

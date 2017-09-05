@@ -1,6 +1,8 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 import eslint from 'rollup-plugin-eslint';
+import resolve from 'rollup-plugin-node-resolve';
+import commonjs from 'rollup-plugin-commonjs';
 import {minify} from 'uglify-es';
 
 
@@ -22,11 +24,15 @@ export default {
   moduleName: 'IMask',
   sourceMap: true,
   plugins: [
+    resolve({
+      jsnext: true,
+      main: true
+    }),
+    commonjs(),
     eslint({configFile: '.eslintrc'}),
     babel({
       exclude: 'node_modules/**',
     }),
-    isProd &&
-      uglify({}, minify)
+    isProd && uglify({}, minify)
   ]
 }

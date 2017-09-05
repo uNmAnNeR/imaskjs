@@ -1,3 +1,483 @@
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var _global = createCommonjsModule(function (module) {
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+});
+
+var _core = createCommonjsModule(function (module) {
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+});
+
+var _isObject = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+var _anObject = function(it){
+  if(!_isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+var _fails = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+
+// Thank's IE8 for his funny defineProperty
+var _descriptors = !_fails(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+var document$1 = _global.document;
+var is = _isObject(document$1) && _isObject(document$1.createElement);
+var _domCreate = function(it){
+  return is ? document$1.createElement(it) : {};
+};
+
+var _ie8DomDefine = !_descriptors && !_fails(function(){
+  return Object.defineProperty(_domCreate('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+var _toPrimitive = function(it, S){
+  if(!_isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !_isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+var dP             = Object.defineProperty;
+
+var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  _anObject(O);
+  P = _toPrimitive(P, true);
+  _anObject(Attributes);
+  if(_ie8DomDefine)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+
+var _objectDp = {
+	f: f
+};
+
+var _propertyDesc = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+
+var _hide = _descriptors ? function(object, key, value){
+  return _objectDp.f(object, key, _propertyDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+
+var hasOwnProperty = {}.hasOwnProperty;
+var _has = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+
+var id = 0;
+var px = Math.random();
+var _uid = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+var _redefine = createCommonjsModule(function (module) {
+var SRC       = _uid('src')
+  , TO_STRING = 'toString'
+  , $toString = Function[TO_STRING]
+  , TPL       = ('' + $toString).split(TO_STRING);
+
+_core.inspectSource = function(it){
+  return $toString.call(it);
+};
+
+(module.exports = function(O, key, val, safe){
+  var isFunction = typeof val == 'function';
+  if(isFunction)_has(val, 'name') || _hide(val, 'name', key);
+  if(O[key] === val)return;
+  if(isFunction)_has(val, SRC) || _hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
+  if(O === _global){
+    O[key] = val;
+  } else {
+    if(!safe){
+      delete O[key];
+      _hide(O, key, val);
+    } else {
+      if(O[key])O[key] = val;
+      else _hide(O, key, val);
+    }
+  }
+// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+})(Function.prototype, TO_STRING, function toString(){
+  return typeof this == 'function' && this[SRC] || $toString.call(this);
+});
+});
+
+var _aFunction = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+// optional / simple context binding
+
+var _ctx = function(fn, that, length){
+  _aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+
+var PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , target    = IS_GLOBAL ? _global : IS_STATIC ? _global[name] || (_global[name] = {}) : (_global[name] || {})[PROTOTYPE]
+    , exports   = IS_GLOBAL ? _core : _core[name] || (_core[name] = {})
+    , expProto  = exports[PROTOTYPE] || (exports[PROTOTYPE] = {})
+    , key, own, out, exp;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    // export native or passed
+    out = (own ? target : source)[key];
+    // bind timers to global for call from export context
+    exp = IS_BIND && own ? _ctx(out, _global) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
+    // extend global
+    if(target)_redefine(target, key, out, type & $export.U);
+    // export
+    if(exports[key] != out)_hide(exports, key, exp);
+    if(IS_PROTO && expProto[key] != out)expProto[key] = out;
+  }
+};
+_global.core = _core;
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+var _export = $export;
+
+var toString = {}.toString;
+
+var _cof = function(it){
+  return toString.call(it).slice(8, -1);
+};
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+
+var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+  return _cof(it) == 'String' ? it.split('') : Object(it);
+};
+
+// 7.2.1 RequireObjectCoercible(argument)
+var _defined = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+// 7.1.13 ToObject(argument)
+
+var _toObject = function(it){
+  return Object(_defined(it));
+};
+
+// 7.1.4 ToInteger
+var ceil  = Math.ceil;
+var floor = Math.floor;
+var _toInteger = function(it){
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+
+// 7.1.15 ToLength
+var min       = Math.min;
+var _toLength = function(it){
+  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+
+// 7.2.2 IsArray(argument)
+
+var _isArray = Array.isArray || function isArray(arg){
+  return _cof(arg) == 'Array';
+};
+
+var SHARED = '__core-js_shared__';
+var store  = _global[SHARED] || (_global[SHARED] = {});
+var _shared = function(key){
+  return store[key] || (store[key] = {});
+};
+
+var _wks = createCommonjsModule(function (module) {
+var store      = _shared('wks')
+  , Symbol     = _global.Symbol
+  , USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function(name){
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+});
+
+var SPECIES  = _wks('species');
+
+var _arraySpeciesConstructor = function(original){
+  var C;
+  if(_isArray(original)){
+    C = original.constructor;
+    // cross-realm fallback
+    if(typeof C == 'function' && (C === Array || _isArray(C.prototype)))C = undefined;
+    if(_isObject(C)){
+      C = C[SPECIES];
+      if(C === null)C = undefined;
+    }
+  } return C === undefined ? Array : C;
+};
+
+// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
+
+
+var _arraySpeciesCreate = function(original, length){
+  return new (_arraySpeciesConstructor(original))(length);
+};
+
+// 0 -> Array#forEach
+// 1 -> Array#map
+// 2 -> Array#filter
+// 3 -> Array#some
+// 4 -> Array#every
+// 5 -> Array#find
+// 6 -> Array#findIndex
+
+var _arrayMethods = function(TYPE, $create){
+  var IS_MAP        = TYPE == 1
+    , IS_FILTER     = TYPE == 2
+    , IS_SOME       = TYPE == 3
+    , IS_EVERY      = TYPE == 4
+    , IS_FIND_INDEX = TYPE == 6
+    , NO_HOLES      = TYPE == 5 || IS_FIND_INDEX
+    , create        = $create || _arraySpeciesCreate;
+  return function($this, callbackfn, that){
+    var O      = _toObject($this)
+      , self   = _iobject(O)
+      , f      = _ctx(callbackfn, that, 3)
+      , length = _toLength(self.length)
+      , index  = 0
+      , result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined
+      , val, res;
+    for(;length > index; index++)if(NO_HOLES || index in self){
+      val = self[index];
+      res = f(val, index, O);
+      if(TYPE){
+        if(IS_MAP)result[index] = res;            // map
+        else if(res)switch(TYPE){
+          case 3: return true;                    // some
+          case 5: return val;                     // find
+          case 6: return index;                   // findIndex
+          case 2: result.push(val);               // filter
+        } else if(IS_EVERY)return false;          // every
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+  };
+};
+
+// 22.1.3.31 Array.prototype[@@unscopables]
+var UNSCOPABLES = _wks('unscopables');
+var ArrayProto  = Array.prototype;
+if(ArrayProto[UNSCOPABLES] == undefined)_hide(ArrayProto, UNSCOPABLES, {});
+var _addToUnscopables = function(key){
+  ArrayProto[UNSCOPABLES][key] = true;
+};
+
+// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+var $find   = _arrayMethods(5);
+var KEY     = 'find';
+var forced  = true;
+// Shouldn't skip holes
+if(KEY in [])Array(1)[KEY](function(){ forced = false; });
+_export(_export.P + _export.F * forced, 'Array', {
+  find: function find(callbackfn/*, that = undefined */){
+    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+_addToUnscopables(KEY);
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+
+var _toIobject = function(it){
+  return _iobject(_defined(it));
+};
+
+var max       = Math.max;
+var min$1       = Math.min;
+var _toIndex = function(index, length){
+  index = _toInteger(index);
+  return index < 0 ? max(index + length, 0) : min$1(index, length);
+};
+
+// false -> Array#indexOf
+// true  -> Array#includes
+
+var _arrayIncludes = function(IS_INCLUDES){
+  return function($this, el, fromIndex){
+    var O      = _toIobject($this)
+      , length = _toLength(O.length)
+      , index  = _toIndex(fromIndex, length)
+      , value;
+    // Array#includes uses SameValueZero equality algorithm
+    if(IS_INCLUDES && el != el)while(length > index){
+      value = O[index++];
+      if(value != value)return true;
+    // Array#toIndex ignores holes, Array#includes - not
+    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+      if(O[index] === el)return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+
+var shared = _shared('keys');
+var _sharedKey = function(key){
+  return shared[key] || (shared[key] = _uid(key));
+};
+
+var arrayIndexOf = _arrayIncludes(false);
+var IE_PROTO     = _sharedKey('IE_PROTO');
+
+var _objectKeysInternal = function(object, names){
+  var O      = _toIobject(object)
+    , i      = 0
+    , result = []
+    , key;
+  for(key in O)if(key != IE_PROTO)_has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while(names.length > i)if(_has(O, key = names[i++])){
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+
+// IE 8- don't enum bug keys
+var _enumBugKeys = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+
+
+var _objectKeys = Object.keys || function keys(O){
+  return _objectKeysInternal(O, _enumBugKeys);
+};
+
+// most Object methods by ES6 should accept primitives
+
+var _objectSap = function(KEY, exec){
+  var fn  = (_core.Object || {})[KEY] || Object[KEY]
+    , exp = {};
+  exp[KEY] = exec(fn);
+  _export(_export.S + _export.F * _fails(function(){ fn(1); }), 'Object', exp);
+};
+
+// 19.1.2.14 Object.keys(O)
+
+
+_objectSap('keys', function(){
+  return function keys(it){
+    return _objectKeys(_toObject(it));
+  };
+});
+
+var _stringRepeat = function repeat(count){
+  var str = String(_defined(this))
+    , res = ''
+    , n   = _toInteger(count);
+  if(n < 0 || n == Infinity)throw RangeError("Count can't be negative");
+  for(;n > 0; (n >>>= 1) && (str += str))if(n & 1)res += str;
+  return res;
+};
+
+_export(_export.P, 'String', {
+  // 21.1.3.13 String.prototype.repeat(count)
+  repeat: _stringRepeat
+});
+
+// https://github.com/tc39/proposal-string-pad-start-end
+
+
+var _stringPad = function(that, maxLength, fillString, left){
+  var S            = String(_defined(that))
+    , stringLength = S.length
+    , fillStr      = fillString === undefined ? ' ' : String(fillString)
+    , intMaxLength = _toLength(maxLength);
+  if(intMaxLength <= stringLength || fillStr == '')return S;
+  var fillLen = intMaxLength - stringLength
+    , stringFiller = _stringRepeat.call(fillStr, Math.ceil(fillLen / fillStr.length));
+  if(stringFiller.length > fillLen)stringFiller = stringFiller.slice(0, fillLen);
+  return left ? stringFiller + S : S + stringFiller;
+};
+
+// https://github.com/tc39/proposal-string-pad-start-end
+
+
+_export(_export.P, 'String', {
+  padStart: function padStart(maxLength /*, fillString = ' ' */){
+    return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
+  }
+});
+
+// https://github.com/tc39/proposal-string-pad-start-end
+
+
+_export(_export.P, 'String', {
+  padEnd: function padEnd(maxLength /*, fillString = ' ' */){
+    return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, false);
+  }
+});
+
 function isString(str) {
   return typeof str === 'string' || str instanceof String;
 }
@@ -31,7 +511,7 @@ function refreshValueOnSet(target, key, descriptor) {
 }
 
 function escapeRegExp(str) {
-  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
 }
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -176,7 +656,7 @@ var Masked = (_class = function () {
   }
 
   Masked.prototype._validate = function _validate(soft) {
-    return this.validate(this, soft);
+    return this.validate(this.value, this, soft);
   };
 
   Masked.prototype.clone = function clone() {
@@ -345,15 +825,21 @@ function createMask(opts) {
   var mask = opts.mask;
   if (mask instanceof Masked) return mask;
   if (mask instanceof RegExp) return new Masked(_extends({}, opts, {
-    validate: function validate(masked) {
-      return mask.test(masked.value);
+    validate: function validate(value) {
+      return mask.test(value);
     }
   }));
   if (isString(mask)) return new MaskedPattern(opts);
-  if (mask.prototype instanceof Masked) return new mask(opts);
-  if (mask instanceof Function) return new Masked(_extends({}, opts, {
-    validate: mask
-  }));
+  if (mask.prototype instanceof Masked) {
+    opts = _extends({}, opts);
+    delete opts.mask;
+    return new mask(opts);
+  }
+  if (mask instanceof Function) {
+    return new Masked(_extends({}, opts, {
+      validate: mask
+    }));
+  }
   return new Masked(opts);
 }
 
@@ -404,6 +890,121 @@ PatternDefinition.TYPES = {
   FIXED: 'fixed'
 };
 
+var PatternGroup = function () {
+  function PatternGroup(masked, _ref) {
+    var name = _ref.name,
+        offset = _ref.offset,
+        mask = _ref.mask,
+        validate = _ref.validate;
+    classCallCheck(this, PatternGroup);
+
+    this.masked = masked;
+    this.name = name;
+    this.offset = offset;
+    this.mask = mask;
+    this.validate = validate || function () {
+      return true;
+    };
+  }
+
+  PatternGroup.prototype._validate = function _validate(soft) {
+    return this.validate(this.value, this, soft);
+  };
+
+  createClass(PatternGroup, [{
+    key: 'value',
+    get: function get$$1() {
+      return this.masked.value.slice(this.masked.mapDefIndexToPos(this.offset), this.masked.mapDefIndexToPos(this.offset + this.mask.length));
+    }
+  }, {
+    key: 'unmaskedValue',
+    get: function get$$1() {
+      return this.masked.extractInput(this.masked.mapDefIndexToPos(this.offset), this.masked.mapDefIndexToPos(this.offset + this.mask.length));
+    }
+  }]);
+  return PatternGroup;
+}();
+
+var Range = function () {
+  function Range(_ref2) {
+    var from = _ref2[0],
+        to = _ref2[1];
+    var maxlen = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : (to + "").length;
+    classCallCheck(this, Range);
+
+    this._from = from;
+    this._to = to;
+    this._maxLength = maxlen;
+    this.validate = this.validate.bind(this);
+
+    this._update();
+  }
+
+  Range.prototype._update = function _update() {
+    this._maxLength = Math.max(this._maxLength, (this.from + '').length);
+    this.mask = '0'.repeat(this._maxLength);
+  };
+
+  Range.prototype.validate = function validate(str) {
+    var minstr = '';
+    var maxstr = '';
+
+    var _str$match = str.match(/^(\D*)(\d*)(\D*)/),
+        placeholder = _str$match[1],
+        num = _str$match[2];
+
+    if (num) {
+      minstr = '0'.repeat(placeholder.length) + num;
+      maxstr = '9'.repeat(placeholder.length) + num;
+    }
+
+    var firstNonZero = str.search(/[^0]/);
+    if (firstNonZero === -1 && str.length <= this._matchFrom) return true;
+
+    minstr = minstr.padEnd(this._maxLength, '0');
+    maxstr = maxstr.padEnd(this._maxLength, '9');
+
+    return this.from <= Number(maxstr) && Number(minstr) <= this.to;
+  };
+
+  createClass(Range, [{
+    key: 'to',
+    get: function get$$1() {
+      return this._to;
+    },
+    set: function set$$1(to) {
+      this._to = to;
+      this._update();
+    }
+  }, {
+    key: 'from',
+    get: function get$$1() {
+      return this._from;
+    },
+    set: function set$$1(from) {
+      this._from = from;
+      this._update();
+    }
+  }, {
+    key: 'maxLength',
+    get: function get$$1() {
+      return this._maxLength;
+    },
+    set: function set$$1(maxLength) {
+      this._maxLength = maxLength;
+      this._update();
+    }
+  }, {
+    key: '_matchFrom',
+    get: function get$$1() {
+      return this.maxLength - (this.from + '').length;
+    }
+  }]);
+  return Range;
+}();
+
+PatternGroup.Range = Range;
+
 var _class$1;
 
 function _applyDecoratedDescriptor$1(target, property, decorators, descriptor, context) {
@@ -441,7 +1042,8 @@ var MaskedPattern = (_class$1 = function (_Masked) {
   function MaskedPattern(opts) {
     classCallCheck(this, MaskedPattern);
     var definitions = opts.definitions,
-        placeholder = opts.placeholder;
+        placeholder = opts.placeholder,
+        groups = opts.groups;
 
     var _this = possibleConstructorReturn(this, _Masked.call(this, opts));
 
@@ -449,6 +1051,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
 
     _this.placeholder = placeholder;
     _this.definitions = definitions;
+    _this.groups = groups;
 
     _this.isInitialized = true;
     return _this;
@@ -459,6 +1062,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
 
     var defs = this._definitions;
     this._charDefs = [];
+    this._groupDefs = [];
 
     var pattern = this.mask;
     if (!pattern || !defs) return;
@@ -468,6 +1072,23 @@ var MaskedPattern = (_class$1 = function (_Masked) {
     var stopAlign = false;
 
     var _loop = function _loop(_i) {
+      if (_this2._groups) {
+        var p = pattern.slice(_i);
+        var gName = Object.keys(_this2._groups).find(function (gName) {
+          return p.indexOf(gName) === 0;
+        });
+        if (gName) {
+          var group = _this2._groups[gName];
+          _this2._groupDefs.push(new PatternGroup(_this2, {
+            name: gName,
+            offset: _this2._charDefs.length,
+            mask: group.mask,
+            validate: group.validate
+          }));
+          pattern = pattern.replace(gName, group.mask);
+        }
+      }
+
       var char = pattern[_i];
       var type = !unmaskingBlock && char in defs ? PatternDefinition.TYPES.INPUT : PatternDefinition.TYPES.FIXED;
       var unmasking = type === PatternDefinition.TYPES.INPUT || unmaskingBlock;
@@ -522,13 +1143,22 @@ var MaskedPattern = (_class$1 = function (_Masked) {
     }
   };
 
+  MaskedPattern.prototype._validate = function _validate(soft) {
+    return this._groupDefs.every(function (g) {
+      return g._validate(soft);
+    }) && _Masked.prototype._validate.call(this, soft);
+  };
+
   MaskedPattern.prototype.clone = function clone() {
     var _this3 = this;
 
     var m = new MaskedPattern(this);
-    m._value = this.value.slice();
+    m._value = this.value;
     m._charDefs.forEach(function (d, i) {
       return _extends(d, _this3._charDefs[i]);
+    });
+    m._groupDefs.forEach(function (d, i) {
+      return _extends(d, _this3._groupDefs[i]);
     });
     return m;
   };
@@ -601,11 +1231,10 @@ var MaskedPattern = (_class$1 = function (_Masked) {
 
       if (def.type === PatternDefinition.TYPES.INPUT) {
         if (chres) {
-          var m = this.clone();
           this._value += chres;
           if (!this._validate()) {
             chres = '';
-            _extends(this, m);
+            this._value = this.value.slice(0, -1);
           }
         }
 
@@ -657,7 +1286,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
     var input = '';
 
     var toDefIndex = this.mapPosToDefIndex(toPos);
-    for (var ci = fromPos, di = this.mapPosToDefIndex(fromPos); ci < toPos && di < toDefIndex; ++di) {
+    for (var ci = fromPos, di = this.mapPosToDefIndex(fromPos); ci < toPos && ci < str.length && di < toDefIndex; ++di) {
       var ch = str[ci];
       var def = this._charDefs[di];
 
@@ -780,6 +1409,16 @@ var MaskedPattern = (_class$1 = function (_Masked) {
     return this.mapDefIndexToPos(di);
   };
 
+  MaskedPattern.prototype.group = function group(name) {
+    return this.allGroups(name)[0];
+  };
+
+  MaskedPattern.prototype.groupsByName = function groupsByName(name) {
+    return this._groupDefs.filter(function (g) {
+      return g.name === name;
+    });
+  };
+
   createClass(MaskedPattern, [{
     key: 'placeholder',
     get: function get$$1() {
@@ -811,13 +1450,24 @@ var MaskedPattern = (_class$1 = function (_Masked) {
   }, {
     key: 'isComplete',
     get: function get$$1() {
-      return !this._charDefs.some(function (d) {
-        return d.isInput && !d.optional && d.isHollow;
+      var _this5 = this;
+
+      return !this._charDefs.some(function (d, i) {
+        return d.isInput && !d.optional && (d.isHollow || !_this5.extractInput(i, i + 1));
       });
+    }
+  }, {
+    key: 'groups',
+    get: function get$$1() {
+      return this._groups;
+    },
+    set: function set$$1(groups) {
+      this._groups = groups;
+      this._updateMask();
     }
   }]);
   return MaskedPattern;
-}(Masked), (_applyDecoratedDescriptor$1(_class$1.prototype, 'placeholder', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'placeholder'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'definitions', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'definitions'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'mask'), _class$1.prototype)), _class$1);
+}(Masked), (_applyDecoratedDescriptor$1(_class$1.prototype, 'placeholder', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'placeholder'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'definitions', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'definitions'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'mask'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'groups', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'groups'), _class$1.prototype)), _class$1);
 MaskedPattern.DEFAULT_PLACEHOLDER = {
   show: 'lazy',
   char: '_'
@@ -863,19 +1513,22 @@ var MaskedNumber = (_class$2 = function (_Masked) {
   function MaskedNumber(opts) {
     classCallCheck(this, MaskedNumber);
 
-    var _MaskedNumber$DEFAULT = _extends({}, MaskedNumber.DEFAULTS, opts),
-        scale = _MaskedNumber$DEFAULT.scale,
-        radix = _MaskedNumber$DEFAULT.radix,
-        mapToRadix = _MaskedNumber$DEFAULT.mapToRadix,
-        min = _MaskedNumber$DEFAULT.min,
-        max = _MaskedNumber$DEFAULT.max,
-        signed = _MaskedNumber$DEFAULT.signed,
-        thousandsSeparator = _MaskedNumber$DEFAULT.thousandsSeparator,
-        postFormat = _MaskedNumber$DEFAULT.postFormat;
+    opts = _extends({}, MaskedNumber.DEFAULTS, opts);
 
     var _this = possibleConstructorReturn(this, _Masked.call(this, opts));
 
     delete _this.isInitialized;
+
+    var _opts = opts,
+        scale = _opts.scale,
+        radix = _opts.radix,
+        mapToRadix = _opts.mapToRadix,
+        min = _opts.min,
+        max = _opts.max,
+        signed = _opts.signed,
+        thousandsSeparator = _opts.thousandsSeparator,
+        postFormat = _opts.postFormat;
+
 
     _this.min = min;
     _this.max = max;
@@ -987,15 +1640,14 @@ var MaskedNumber = (_class$2 = function (_Masked) {
       this.max == null || this.max <= 0 || this.number <= this.max);
     }
 
-    return valid;
+    return valid && _Masked.prototype._validate.call(this, soft);
   };
 
   MaskedNumber.prototype.commit = function commit() {
-    // value is already ok, just additional check
     var number = this.number;
     var validnum = number;
 
-    // check min bound
+    // check bounds
     if (this.min != null) validnum = Math.max(validnum, this.min);
     if (this.max != null) validnum = Math.min(validnum, this.max);
 
@@ -1038,10 +1690,8 @@ var MaskedNumber = (_class$2 = function (_Masked) {
   MaskedNumber.prototype._padFractionalZeros = function _padFractionalZeros(value) {
     var parts = value.split(this.radix);
     if (parts.length < 2) parts.push('');
-    // TODO str.padEnd does not got shimed
-    while (parts[1].length < this.scale) {
-      parts[1] = parts[1] += '0';
-    }return parts.join(this.radix);
+    parts[1] = parts[1].padEnd(this.scale, '0');
+    return parts.join(this.radix);
   };
 
   createClass(MaskedNumber, [{
@@ -1131,6 +1781,145 @@ MaskedNumber.DEFAULTS = {
   scale: 2,
   postFormat: {
     normalizeZeros: true
+  }
+};
+
+var _class$3;
+
+function _applyDecoratedDescriptor$3(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var MaskedDate = (_class$3 = function (_MaskedPattern) {
+  inherits(MaskedDate, _MaskedPattern);
+
+  function MaskedDate(opts) {
+    classCallCheck(this, MaskedDate);
+
+    var groups = opts.groups;
+    opts = _extends({}, MaskedDate.DEFAULTS, opts);
+    var _opts = opts,
+        min = _opts.min,
+        max = _opts.max,
+        format = _opts.format,
+        parse = _opts.parse;
+
+
+    opts.groups = _extends({}, MaskedDate.DEFAULTS.groups);
+    if (opts.groups.Y) {
+      // adjust year group
+      if (min) opts.groups.Y.from = min.getFullYear();
+      if (max) opts.groups.Y.to = max.getFullYear();
+    }
+
+    _extends(opts.groups, groups);
+
+    var _this = possibleConstructorReturn(this, _MaskedPattern.call(this, opts));
+
+    delete _this.isInitialized;
+
+    _this.min = min;
+    _this.max = max;
+    _this.format = format;
+    _this.parse = parse;
+
+    _this.isInitialized = true;
+    return _this;
+  }
+
+  MaskedDate.prototype._validate = function _validate(soft) {
+    var valid = _MaskedPattern.prototype._validate.call(this, soft);
+    var date = this.date;
+
+    return valid && (!this.isComplete || this.isDateExist(this.value) && date && (this.max == null || date <= this.max));
+  };
+
+  MaskedDate.prototype.commit = function commit() {
+    if (!this.isComplete) return;
+
+    // check min date
+    if (this.min != null && this.date < this.min) {
+      this._value = this.format(this.min);
+    }
+  };
+
+  MaskedDate.prototype.isDateExist = function isDateExist(str) {
+    return this.format(this.parse(str)) === str;
+  };
+
+  createClass(MaskedDate, [{
+    key: 'date',
+    get: function get$$1() {
+      return this.isComplete ? this.parse(this.value) : null;
+    },
+    set: function set$$1(date) {
+      this.value = this.format(date);
+    }
+  }, {
+    key: 'min',
+    get: function get$$1() {
+      return this._min;
+    },
+    set: function set$$1(min) {
+      this._min = min;
+    }
+  }, {
+    key: 'max',
+    get: function get$$1() {
+      return this._max;
+    },
+    set: function set$$1(max) {
+      this._max = max;
+    }
+  }]);
+  return MaskedDate;
+}(MaskedPattern), (_applyDecoratedDescriptor$3(_class$3.prototype, 'min', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'min'), _class$3.prototype), _applyDecoratedDescriptor$3(_class$3.prototype, 'max', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'max'), _class$3.prototype)), _class$3);
+MaskedDate.DEFAULTS = {
+  mask: 'd{.}`m{.}`Y',
+  format: function format(date) {
+    var day = ('' + date.getDate()).padStart(2, '0');
+    var month = ('' + (date.getMonth() + 1)).padStart(2, '0');
+    var year = date.getFullYear();
+
+    return [day, month, year].join('.');
+  },
+  parse: function parse(str) {
+    var _str$split = str.split('.'),
+        day = _str$split[0],
+        month = _str$split[1],
+        year = _str$split[2];
+
+    return new Date(year, month - 1, day);
+  },
+  groups: {
+    d: new PatternGroup.Range([1, 31]),
+    m: new PatternGroup.Range([1, 12]),
+    Y: new PatternGroup.Range([1900, 2200])
   }
 };
 
@@ -1447,6 +2236,7 @@ IMask.InputMask = InputMask;
 IMask.Masked = Masked;
 IMask.MaskedPattern = MaskedPattern;
 IMask.MaskedNumber = MaskedNumber;
+IMask.MaskedDate = MaskedDate;
 
 window.IMask = IMask;
 

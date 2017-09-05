@@ -5,13 +5,11 @@ import Masked from './base';
 export default
 class MaskedNumber extends Masked {
   constructor (opts) {
-    const {scale, radix, mapToRadix, min, max, signed, thousandsSeparator, postFormat} = {
-      ...MaskedNumber.DEFAULTS,
-      ...opts
-    };
-
+    opts = Object.assign({}, MaskedNumber.DEFAULTS, opts);
     super(opts);
     delete this.isInitialized;
+
+    const {scale, radix, mapToRadix, min, max, signed, thousandsSeparator, postFormat} = opts;
 
     this.min = min;
     this.max = max;
@@ -122,15 +120,14 @@ class MaskedNumber extends Masked {
         (this.max == null || this.max <= 0 || this.number <= this.max);
     }
 
-    return valid;
+    return valid && super._validate(soft);
   }
 
   commit () {
-    // value is already ok, just additional check
     const number = this.number;
     let validnum = number;
 
-    // check min bound
+    // check bounds
     if (this.min != null) validnum = Math.max(validnum, this.min);
     if (this.max != null) validnum = Math.min(validnum, this.max);
 
@@ -171,8 +168,7 @@ class MaskedNumber extends Masked {
   _padFractionalZeros (value) {
     const parts = value.split(this.radix);
     if (parts.length < 2) parts.push('');
-    // TODO str.padEnd does not got shimed
-    while (parts[1].length < this.scale) parts[1] = parts[1] += '0';
+    parts[1] = parts[1].padEnd(this.scale, '0');
     return parts.join(this.radix);
   }
 

@@ -20,7 +20,7 @@ class Masked {
   }
 
   _validate (soft) {
-    return this.validate(this, soft);
+    return this.validate(this.value, this, soft);
   }
 
   clone () {

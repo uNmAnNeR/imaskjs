@@ -185,7 +185,24 @@ var mask = new IMask(element, {
           <div class="form-item">
             <label>Type here</label>
             <input id="numbers-mask" type="text" value="">
-            <div class="desc">number: <span id="number-unmasked"></span></div>
+            <div class="desc">number: <span id="number-value"></span></div>
+          </div>
+        </form>
+
+        <h3 id="demo-date" class="section-h"><a href="#demo-date">Date</a></h3>
+        <form class="form example-date">
+          <div class="form-item">
+            <label>Type here</label>
+            <input id="date-mask" type="text" value="">
+            <div class="desc">date: <span id="date-value"></span></div>
+          </div>
+        </form>
+
+        <h3 id="demo-func" class="section-h"><a href="#demo-func">Functional validator</a></h3>
+        <form class="form example-func">
+          <div class="form-item">
+            <label>Type here</label>
+            <input id="func-mask" type="text" value="">
           </div>
         </form>
 
@@ -272,21 +289,38 @@ var mask = new IMask(element, {
       });
 
       var numberMask = new IMask(document.getElementById('numbers-mask'), {
-        mask: IMask.MaskedNumber,
-        scale: 2,
-        signed: true,
-        thousandsSeparator: ' ',
-        postFormat: {
-          // padFractionalZeros: true,
-          normalizeZeros: true,
-        },
-        // min: 1,
-        // max: 31,
-        // radix: ',',
-        // mapToRadix: [',', '.']
+        mask: new IMask.MaskedNumber({
+          scale: 2,
+          signed: true,
+          thousandsSeparator: ' ',
+          postFormat: {
+            // padFractionalZeros: true,
+            normalizeZeros: true,
+          },
+          // min: 1,
+          // max: 31,
+          // radix: ',',
+          // mapToRadix: [',', '.']
+        })
       });
       numberMask.on('accept', function() {
-        document.getElementById('number-unmasked').innerHTML = numberMask.masked.number;
+        document.getElementById('number-value').innerHTML = numberMask.masked.number;
+      });
+
+      var dateMask = new IMask(document.getElementById('date-mask'), {
+        mask: new IMask.MaskedDate({
+          min: new Date(1900, 3, 3),
+          max: new Date(2205, 5, 5)
+        })
+      });
+      dateMask.on('accept', function() {
+        document.getElementById('date-value').innerHTML = dateMask.masked.date;
+      });
+
+      new IMask(document.getElementById('func-mask'), {
+        mask: function (str) {
+          return !!Number(str);
+        }
       });
 
       new IMask(document.getElementById('uppercase-mask'), {
