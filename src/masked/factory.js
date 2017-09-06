@@ -23,11 +23,15 @@ function createMask (opts) {
     return new mask(opts);
   }
   if (mask instanceof Number || typeof mask === 'number' || mask === Number) {
+    delete opts.mask;
     return new IMask.MaskedNumber(opts);
   }
   if (mask instanceof Date || mask === Date) {
-    opts.mask = opts.pattern;
-    delete opts.pattern;
+    delete opts.mask;
+    if (opts.pattern) {
+      opts.mask = opts.pattern;
+      delete opts.pattern;
+    }
     return new IMask.MaskedDate(opts);
   }
   if (mask instanceof Function){

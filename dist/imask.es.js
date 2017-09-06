@@ -843,11 +843,15 @@ function createMask(opts) {
     return new mask(opts);
   }
   if (mask instanceof Number || typeof mask === 'number' || mask === Number) {
+    delete opts.mask;
     return new IMask.MaskedNumber(opts);
   }
   if (mask instanceof Date || mask === Date) {
-    opts.mask = opts.pattern;
-    delete opts.pattern;
+    delete opts.mask;
+    if (opts.pattern) {
+      opts.mask = opts.pattern;
+      delete opts.pattern;
+    }
     return new IMask.MaskedDate(opts);
   }
   if (mask instanceof Function) {
@@ -942,12 +946,12 @@ var PatternGroup = function () {
   return PatternGroup;
 }();
 
-var Range = function () {
-  function Range(_ref2) {
+var RangeGroup = function () {
+  function RangeGroup(_ref2) {
     var from = _ref2[0],
         to = _ref2[1];
     var maxlen = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : (to + '').length;
-    classCallCheck(this, Range);
+    classCallCheck(this, RangeGroup);
 
     this._from = from;
     this._to = to;
@@ -957,12 +961,12 @@ var Range = function () {
     this._update();
   }
 
-  Range.prototype._update = function _update() {
+  RangeGroup.prototype._update = function _update() {
     this._maxLength = Math.max(this._maxLength, (this.from + '').length);
     this.mask = '0'.repeat(this._maxLength);
   };
 
-  Range.prototype.validate = function validate(str) {
+  RangeGroup.prototype.validate = function validate(str) {
     var minstr = '';
     var maxstr = '';
 
@@ -984,7 +988,7 @@ var Range = function () {
     return this.from <= Number(maxstr) && Number(minstr) <= this.to;
   };
 
-  createClass(Range, [{
+  createClass(RangeGroup, [{
     key: 'to',
     get: function get$$1() {
       return this._to;
@@ -1017,10 +1021,22 @@ var Range = function () {
       return this.maxLength - (this.from + '').length;
     }
   }]);
-  return Range;
+  return RangeGroup;
 }();
 
-PatternGroup.Range = Range;
+function EnumGroup(enums) {
+  return {
+    mask: '*'.repeat(enums[0].length),
+    validate: function validate(value, group) {
+      return enums.some(function (e) {
+        return e.indexOf(group.unmaskedValue) >= 0;
+      });
+    }
+  };
+}
+
+PatternGroup.Range = RangeGroup;
+PatternGroup.Enum = EnumGroup;
 
 var _class$1;
 
@@ -1428,7 +1444,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
   };
 
   MaskedPattern.prototype.group = function group(name) {
-    return this.allGroups(name)[0];
+    return this.groupsByName(name)[0];
   };
 
   MaskedPattern.prototype.groupsByName = function groupsByName(name) {
@@ -1493,6 +1509,7 @@ MaskedPattern.DEFAULT_PLACEHOLDER = {
 MaskedPattern.STOP_CHAR = '`';
 MaskedPattern.ESCAPE_CHAR = '\\';
 MaskedPattern.Definition = PatternDefinition;
+MaskedPattern.Group = PatternGroup;
 
 var _class$2;
 

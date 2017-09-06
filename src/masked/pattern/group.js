@@ -25,7 +25,8 @@ class PatternGroup {
   }
 }
 
-export class Range {
+export
+class RangeGroup {
   constructor ([from, to], maxlen=(to+'').length) {
     this._from = from;
     this._to = to;
@@ -92,4 +93,13 @@ export class Range {
   }
 }
 
-PatternGroup.Range = Range;
+export
+function EnumGroup (enums) {
+  return {
+    mask: '*'.repeat(enums[0].length),
+    validate: (value, group) => enums.some(e => e.indexOf(group.unmaskedValue) >= 0)
+  };
+}
+
+PatternGroup.Range = RangeGroup;
+PatternGroup.Enum = EnumGroup;

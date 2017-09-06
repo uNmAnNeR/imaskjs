@@ -398,7 +398,7 @@ class MaskedPattern extends Masked {
   }
 
   group (name) {
-    return this.allGroups(name)[0];
+    return this.groupsByName(name)[0];
   }
 
   groupsByName (name) {
@@ -413,3 +413,4 @@ MaskedPattern.DEFAULT_PLACEHOLDER = {
 MaskedPattern.STOP_CHAR = '`';
 MaskedPattern.ESCAPE_CHAR = '\\';
 MaskedPattern.Definition = PatternDefinition;
+MaskedPattern.Group = PatternGroup;
