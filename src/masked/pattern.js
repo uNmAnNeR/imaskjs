@@ -191,10 +191,10 @@ class MaskedPattern extends Masked {
   }
 
   _appendTail (tail) {
-    return (!tail || this.appendChunks(tail)) && this._appendPlaceholder();
+    return (!tail || this._appendChunks(tail)) && this._appendPlaceholder();
   }
 
-  append (str, soft) {
+  _append (str, soft) {
     const oldValueLength = this.value.length;
 
     for (let ci=0, di=this.mapPosToDefIndex(this.value.length); ci < str.length;) {
@@ -242,16 +242,16 @@ class MaskedPattern extends Masked {
     return this.value.length - oldValueLength;
   }
 
-  appendChunks (chunks, soft) {
+  _appendChunks (chunks, soft) {
     for (let ci=0; ci < chunks.length; ++ci) {
       const [fromDefIndex, input] = chunks[ci];
       if (fromDefIndex != null) this._appendPlaceholder(fromDefIndex);
-      if (this.append(input, soft) === false) return false;
+      if (this._append(input, soft) === false) return false;
     }
     return true;
   }
 
-  _extractTail (fromPos, toPos) {
+  extractTail (fromPos, toPos) {
     return this.extractInputChunks(fromPos, toPos);
   }
 

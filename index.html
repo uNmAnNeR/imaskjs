@@ -286,47 +286,45 @@ var mask = new IMask(element, {
       });
 
       var numberMask = new IMask(document.getElementById('numbers-mask'), {
-        mask: new IMask.MaskedNumber({
-          scale: 2,
-          signed: true,
-          thousandsSeparator: ' ',
-          postFormat: {
-            // padFractionalZeros: true,
-            normalizeZeros: true,
-          },
-          // min: 1,
-          // max: 31,
-          // radix: ',',
-          // mapToRadix: ['.']
-        })
+        mask: Number,
+        scale: 2,
+        signed: true,
+        thousandsSeparator: ' ',
+        postFormat: {
+          // padFractionalZeros: true,
+          normalizeZeros: true,
+        },
+        // min: 1,
+        // max: 31,
+        // radix: ',',
+        // mapToRadix: ['.']
       });
       numberMask.on('accept', function() {
         document.getElementById('number-value').innerHTML = numberMask.masked.number;
       });
 
       var dateMask = new IMask(document.getElementById('date-mask'), {
-        mask: new IMask.MaskedDate({
-          mask: 'Y/m/d',
-          placeholder: {
-            lazy: false
-          },
-          format: date => {
-            var day = date.getDate();
-            var month = date.getMonth() + 1;
-            var year = date.getFullYear();
+        mask: Date,
+        pattern: 'Y/m/d',
+        placeholder: {
+          lazy: false
+        },
+        format: date => {
+          var day = date.getDate();
+          var month = date.getMonth() + 1;
+          var year = date.getFullYear();
 
-            if (day < 10) day = "0" + day;
-            if (month < 10) month = "0" + month;
+          if (day < 10) day = "0" + day;
+          if (month < 10) month = "0" + month;
 
-            return [year, month, day].join('/');
-          },
-          parse: str => {
-            var [year, month, day] = str.split('/');
-            return new Date(year, month - 1, day);
-          },
-          min: new Date(2000, 0, 1),
-          max: new Date(2020, 0, 1)
-        })
+          return [year, month, day].join('/');
+        },
+        parse: str => {
+          var [year, month, day] = str.split('/');
+          return new Date(year, month - 1, day);
+        },
+        min: new Date(2000, 0, 1),
+        max: new Date(2020, 0, 1)
       });
       dateMask.on('accept', function() {
         document.getElementById('date-value').innerHTML = dateMask.masked.date;
@@ -371,10 +369,10 @@ var mask = new IMask(element, {
         var unmaskedValue = customEl.querySelector('[name=unmasked]').value;
         customEl.querySelector('[name=unmasked]').value = '';
 
-        customMask.update({
+        customMask.updateOptions({
           mask: mask,
           placeholder: ph
-        })
+        });
         if (value) customMask.value = value;
         if (unmaskedValue) customMask.unmaskedValue = unmaskedValue;
       });

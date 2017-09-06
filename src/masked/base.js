@@ -39,7 +39,7 @@ class Masked {
 
   set value (value) {
     this.reset();
-    this.append(value, true);
+    this._append(value, true);
     this._appendTail();
   }
 
@@ -49,7 +49,7 @@ class Masked {
 
   set unmaskedValue (value) {
     this.reset();
-    this.append(value);
+    this._append(value);
     this._appendTail();
   }
 
@@ -65,15 +65,15 @@ class Masked {
     return this.value.slice(fromPos, toPos);
   }
 
-  _extractTail (fromPos=0, toPos=this.value.length) {
+  extractTail (fromPos=0, toPos=this.value.length) {
     return this.extractInput(fromPos, toPos);
   }
 
   _appendTail (tail) {
-    return !tail || this.append(tail);
+    return !tail || this._append(tail);
   }
 
-  append (str, soft) {
+  _append (str, soft) {
     const oldValueLength = this.value.length;
     let consistentValue = this.clone();
 
@@ -100,7 +100,7 @@ class Masked {
     for (let ci=0; ci<str.length; ++ci) {
       const ch = str[ci];
 
-      const appended = this.append(ch, true);
+      const appended = this._append(ch, true);
       consistentAppended = this.clone();
       const tailAppended = appended !== false && this._appendTail(tail) !== false;
       if (tailAppended === false || this._validate(true) === false) {
@@ -154,7 +154,7 @@ class Masked {
 
   // splice (start, deleteCount, inserted, removeDirection) {
   //   const tailPos = start + deleteCount;
-  //   const tail = this._extractTail(tailPos);
+  //   const tail = this.extractTail(tailPos);
 
   //   start = this.nearestInputPos(start, removeDirection);
   //   this.clear(start);

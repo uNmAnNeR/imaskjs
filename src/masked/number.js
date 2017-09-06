@@ -50,8 +50,8 @@ class MaskedNumber extends Masked {
     this._numberRegExp = new RegExp(regExpStr)
   }
 
-  _extractTail (fromPos=0, toPos=this.value.length) {
-    return this._removeThousandsSeparators(super._extractTail(fromPos, toPos));
+  extractTail (fromPos=0, toPos=this.value.length) {
+    return this._removeThousandsSeparators(super.extractTail(fromPos, toPos));
   }
 
   _removeThousandsSeparators (value) {
@@ -65,8 +65,8 @@ class MaskedNumber extends Masked {
     return parts.join(this.radix);
   }
 
-  append (str, soft) {
-    return super.append(
+  _append (str, soft) {
+    return super._append(
       this._removeThousandsSeparators(
         str.replace(this._mapToRadixRegExp, this.radix)),
       soft);

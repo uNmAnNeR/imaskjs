@@ -1,28 +1,42 @@
 import {isString} from '../core/utils';
 
-import Masked from './base';
-import MaskedPattern from './pattern';
-
 
 export default
 function createMask (opts) {
+  opts = {...opts};  // clone
   const mask = opts.mask;
-  if (mask instanceof Masked) return mask;
-  if (mask instanceof RegExp) return new Masked({
-    ...opts,
-    validate: (value) => mask.test(value)
-  });
-  if (isString(mask)) return new MaskedPattern(opts);
-  if (mask.prototype instanceof Masked) {
-    opts = {...opts};
+
+  if (mask instanceof IMask.Masked) {
+    return mask;
+  }
+  if (mask instanceof RegExp) {
+    return new IMask.Masked({
+      ...opts,
+      validate: (value) => mask.test(value)
+    });
+  }
+  if (isString(mask)) {
+    return new IMask.MaskedPattern(opts);
+  }
+  if (mask.prototype instanceof IMask.Masked) {
     delete opts.mask;
     return new mask(opts);
   }
+  if (mask instanceof Number || typeof mask === 'number' || mask === Number) {
+    return new IMask.MaskedNumber(opts);
+  }
+  if (mask instanceof Date || mask === Date) {
+    opts.mask = opts.pattern;
+    delete opts.pattern;
+    return new IMask.MaskedDate(opts);
+  }
   if (mask instanceof Function){
-    return new Masked({
+    return new IMask.Masked({
       ...opts,
       validate: mask
     });
   }
-  return new Masked(opts);
+
+  console.warn('Mask not found for', opts);  // eslint-disable-line no-console
+  return new IMask.Masked(opts);
 }

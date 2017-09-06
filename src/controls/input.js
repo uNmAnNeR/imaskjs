@@ -26,37 +26,6 @@ class InputMask {
     this._onChange();
   }
 
-  update (opts) {
-    const mask = opts.mask;
-    if (mask) this.mask = mask;
-
-    this.masked.withValueRefresh(() => {
-      for (const k in opts) {
-        if (k === 'mask') continue;
-        this.masked[k] = opts[k];
-      }
-    });
-
-    this.updateControl();
-  }
-
-  on (ev, handler) {
-    if (!this._listeners[ev]) this._listeners[ev] = [];
-    this._listeners[ev].push(handler);
-    return this;
-  }
-
-  off (ev, handler) {
-    if (!this._listeners[ev]) return;
-    if (!handler) {
-      delete this._listeners[ev];
-      return;
-    }
-    const hIndex = this._listeners[ev].indexOf(handler);
-    if (hIndex >= 0) this._listeners.splice(hIndex, 1);
-    return this;
-  }
-
   get mask () { return this.masked.mask; }
   set mask (mask) {
     const unmasked = this.masked ? this.masked.unmaskedValue : null;
@@ -75,6 +44,16 @@ class InputMask {
 
   set value (str) {
     this.masked.value = str;
+    this.updateControl();
+    this._alignCursor();
+  }
+
+  get unmaskedValue () {
+    return this._unmaskedValue;
+  }
+
+  set unmaskedValue (str) {
+    this.masked.unmaskedValue = str;
     this.updateControl();
     this._alignCursor();
   }
@@ -131,19 +110,8 @@ class InputMask {
     };
   }
 
-  destroy () {
-    this.unbindEvents();
-    this._listeners.length = 0;
-  }
-
-  get unmaskedValue () {
-    return this._unmaskedValue;
-  }
-
-  set unmaskedValue (str) {
-    this.masked.unmaskedValue = str;
-    this.updateControl();
-    this._alignCursor();
+  updateValue () {
+    this.masked.value = this.el.value;
   }
 
   updateControl () {
@@ -159,9 +127,18 @@ class InputMask {
     if (isChanged) this._fireChangeEvents();
   }
 
-  _fireChangeEvents () {
-    this.fireEvent('accept');
-    if (this.masked.isComplete) this.fireEvent('complete');
+  updateOptions (opts) {
+    const mask = opts.mask;
+    if (mask) this.mask = mask;
+
+    this.masked.withValueRefresh(() => {
+      for (const k in opts) {
+        if (k === 'mask') continue;
+        this.masked[k] = opts[k];
+      }
+    });
+
+    this.updateControl();
   }
 
   updateCursor (cursorPos) {
@@ -181,6 +158,11 @@ class InputMask {
     }, 10);
   }
 
+  _fireChangeEvents () {
+    this.fireEvent('accept');
+    if (this.masked.isComplete) this.fireEvent('complete');
+  }
+
   _abortUpdateCursor () {
     if (this._cursorChanging) {
       clearTimeout(this._cursorChanging);
@@ -197,6 +179,23 @@ class InputMask {
     this._alignCursor();
   }
 
+  on (ev, handler) {
+    if (!this._listeners[ev]) this._listeners[ev] = [];
+    this._listeners[ev].push(handler);
+    return this;
+  }
+
+  off (ev, handler) {
+    if (!this._listeners[ev]) return;
+    if (!handler) {
+      delete this._listeners[ev];
+      return;
+    }
+    const hIndex = this._listeners[ev].indexOf(handler);
+    if (hIndex >= 0) this._listeners.splice(hIndex, 1);
+    return this;
+  }
+
   _onInput () {
     this._abortUpdateCursor();
 
@@ -206,14 +205,8 @@ class InputMask {
       // old state
       this.value, this._selection);
 
-    // const insertedCount = this.masked.splice(
-    //   this.masked.nearestInputPos(details.startChangePos, details.removeDirection),
-    //   details.removed.length,
-    //   details.inserted);
-
-
     const tailPos = details.startChangePos + details.removed.length;
-    const tail = this.masked._extractTail(tailPos);
+    const tail = this.masked.extractTail(tailPos);
 
     const lastInputPos = this.masked.nearestInputPos(details.startChangePos, details.removeDirection);
     this.masked.clear(lastInputPos);
@@ -228,10 +221,6 @@ class InputMask {
     this.updateCursor(cursorPos);
   }
 
-  updateValue () {
-    this.masked.value = this.el.value;
-  }
-
   _onChange () {
     if (this.value !== this.el.value) {
       this.updateValue();
@@ -243,5 +232,10 @@ class InputMask {
   _onDrop (ev) {
     ev.preventDefault();
     ev.stopPropagation();
+  }
+
+  destroy () {
+    this.unbindEvents();
+    this._listeners.length = 0;
   }
 }
