@@ -828,7 +828,6 @@ var Masked = (_class = function () {
 }(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
 
 function createMask(opts) {
-  opts = _extends({}, opts); // clone
   var mask = opts.mask;
 
   if (mask instanceof IMask.Masked) {
