@@ -1113,9 +1113,15 @@ var MaskedPattern = (_class$1 = function (_Masked) {
     var _loop = function _loop(_i) {
       if (_this2._groups) {
         var p = pattern.slice(_i);
-        var gName = Object.keys(_this2._groups).find(function (gName) {
+        var gNames = Object.keys(_this2._groups).filter(function (gName) {
           return p.indexOf(gName) === 0;
         });
+        // order by key length
+        gNames.sort(function (a, b) {
+          return b.length - a.length;
+        });
+        // use group name with max length
+        var gName = gNames[0];
         if (gName) {
           var group = _this2._groups[gName];
           _this2._groupDefs.push(new PatternGroup(_this2, {
@@ -1898,16 +1904,7 @@ var MaskedDate = (_class$3 = function (_MaskedPattern) {
     var valid = _MaskedPattern.prototype._validate.call(this, soft);
     var date = this.date;
 
-    return valid && (!this.isComplete || this.isDateExist(this.value) && date && (this.max == null || date <= this.max));
-  };
-
-  MaskedDate.prototype.commit = function commit() {
-    if (!this.isComplete) return;
-
-    // check min date
-    if (this.min != null && this.date < this.min) {
-      this._value = this.format(this.min);
-    }
+    return valid && (!this.isComplete || this.isDateExist(this.value) && date && (this.min == null || this.min <= date) && (this.max == null || date <= this.max));
   };
 
   MaskedDate.prototype.isDateExist = function isDateExist(str) {

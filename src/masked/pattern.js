@@ -71,7 +71,11 @@ class MaskedPattern extends Masked {
     for (let i=0; i<pattern.length; ++i) {
       if (this._groups) {
         const p = pattern.slice(i);
-        const gName = Object.keys(this._groups).find(gName => p.indexOf(gName) === 0);
+        const gNames = Object.keys(this._groups).filter(gName => p.indexOf(gName) === 0);
+        // order by key length
+        gNames.sort((a, b) => b.length - a.length);
+        // use group name with max length
+        const gName = gNames[0];
         if (gName) {
           const group = this._groups[gName];
           this._groupDefs.push(new PatternGroup(this, {

@@ -36,16 +36,9 @@ class MaskedDate extends MaskedPattern {
 
     return valid &&
       (!this.isComplete ||
-        this.isDateExist(this.value) && date && (this.max == null || date <= this.max));
-  }
-
-  commit () {
-    if (!this.isComplete) return;
-
-    // check min date
-    if (this.min != null && this.date < this.min) {
-      this._value = this.format(this.min);
-    }
+        this.isDateExist(this.value) && date &&
+        (this.min == null || this.min <= date) &&
+        (this.max == null || date <= this.max));
   }
 
   isDateExist (str) {
