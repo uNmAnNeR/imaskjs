@@ -437,6 +437,60 @@ _objectSap('keys', function(){
   };
 });
 
+var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties){
+  _anObject(O);
+  var keys   = _objectKeys(Properties)
+    , length = keys.length
+    , i = 0
+    , P;
+  while(length > i)_objectDp.f(O, P = keys[i++], Properties[P]);
+  return O;
+};
+
+var _html = _global.document && document.documentElement;
+
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var IE_PROTO$1    = _sharedKey('IE_PROTO');
+var Empty       = function(){ /* empty */ };
+var PROTOTYPE$1   = 'prototype';
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function(){
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = _domCreate('iframe')
+    , i      = _enumBugKeys.length
+    , lt     = '<'
+    , gt     = '>'
+    , iframeDocument;
+  iframe.style.display = 'none';
+  _html.appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while(i--)delete createDict[PROTOTYPE$1][_enumBugKeys[i]];
+  return createDict();
+};
+
+var _objectCreate = Object.create || function create(O, Properties){
+  var result;
+  if(O !== null){
+    Empty[PROTOTYPE$1] = _anObject(O);
+    result = new Empty;
+    Empty[PROTOTYPE$1] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO$1] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : _objectDps(result, Properties);
+};
+
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+_export(_export.S, 'Object', {create: _objectCreate});
+
 var _stringRepeat = function repeat(count){
   var str = String(_defined(this))
     , res = ''
@@ -828,17 +882,17 @@ var Masked = (_class = function () {
 }(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
 
 function createMask(opts) {
+  opts = Object.create(opts); // clone
   var mask = opts.mask;
 
   if (mask instanceof IMask.Masked) {
     return mask;
   }
   if (mask instanceof RegExp) {
-    return new IMask.Masked(_extends({}, opts, {
-      validate: function validate(value) {
-        return mask.test(value);
-      }
-    }));
+    opts.validate = function (value) {
+      return mask.test(value);
+    };
+    return new IMask.Masked(opts);
   }
   if (isString(mask)) {
     return new IMask.MaskedPattern(opts);
@@ -860,9 +914,8 @@ function createMask(opts) {
     return new IMask.MaskedDate(opts);
   }
   if (mask instanceof Function) {
-    return new IMask.Masked(_extends({}, opts, {
-      validate: mask
-    }));
+    opts.validate = mask;
+    return new IMask.Masked(opts);
   }
 
   console.warn('Mask not found for', opts); // eslint-disable-line no-console

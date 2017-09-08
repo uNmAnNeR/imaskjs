@@ -3,16 +3,15 @@ import {isString} from '../core/utils';
 
 export default
 function createMask (opts) {
+  opts = Object.create(opts);  // clone
   const mask = opts.mask;
 
   if (mask instanceof IMask.Masked) {
     return mask;
   }
   if (mask instanceof RegExp) {
-    return new IMask.Masked({
-      ...opts,
-      validate: (value) => mask.test(value)
-    });
+    opts.validate = (value) => mask.test(value);
+    return new IMask.Masked(opts);
   }
   if (isString(mask)) {
     return new IMask.MaskedPattern(opts);
@@ -34,10 +33,8 @@ function createMask (opts) {
     return new IMask.MaskedDate(opts);
   }
   if (mask instanceof Function){
-    return new IMask.Masked({
-      ...opts,
-      validate: mask
-    });
+    opts.validate = mask;
+    return new IMask.Masked(opts);
   }
 
   console.warn('Mask not found for', opts);  // eslint-disable-line no-console
