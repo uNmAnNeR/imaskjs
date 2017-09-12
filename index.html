@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Imaskjs by uNmAnNeR</title>
+    <title>Imaskjs - vanilla javascript imput mask</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/kube/6.5.2/css/kube.min.css">
     <link rel="stylesheet" href="gh-pages/css/main.css">
     <meta name="viewport" content="width=device-width">
@@ -12,268 +12,155 @@
     <![endif]-->
   </head>
   <body>
-    <nav>
-      <ul class="menu">
-        <li><a href="#getting-started">Getting Started</a></li>
-        <li><a href="#docs">Docs</a></li>
-        <li><a href="#examples">Examples</a></li>
-        <li><a href="#demo">Demo</a></li>
-        <li><a href="#under-the-hood">Under The Hood</a></li>
-      </ul>
-      <ul class="download-links">
-        <li><a href="https://github.com/uNmAnNeR/imaskjs/zipball/gh-pages">ZIP</a></li>
-        <li><a href="https://github.com/uNmAnNeR/imaskjs/tarball/gh-pages">TAR</a></li>
-        <li><a href="https://github.com/uNmAnNeR/imaskjs" class="gh-link"></a></li>
-      </ul>
-    </nav>
+    <header>
+      <div>
+        <h1 class="title"><a href="/">imask<sub>js</sub></a></h1>
+        <em>vanilla javascript input mask</em>
+      </div>
+      <nav class="breadcrumbs push-center">
+        <ul>
+          <li><a href="gh-pages/html/docs.html">docs</a></li>
+          <li><a href="https://github.com/uNmAnNeR/imaskjs">on Github</a></li>
+          <li><a href="https://github.com/uNmAnNeR/imaskjs/zipball/gh-pages">zip</a></li>
+        </ul>
+      </nav>
+    </header>
     <main>
-      <header>
-        <h1 class="title">Imaskjs</h1>
-        <em>vanilla JS input mask</em>
-      </header>
-      <section>
-        <h2 id="features" class="section-h"><a href="#features">Features</a></h2>
-        <ul>
-          <li>get and set <em>raw</em> and <em>unmasked</em> values easily</li>
-          <li>no external dependencies</li>
-          <li>show placeholders in <em>always</em> and <em>lazy</em> modes</li>
-          <li>unmasked value can contain fixed parts</li>
-          <li>optional input parts (greedy)</li>
-          <li>IE11+ support <span class="req">*<a href="#under-the-hood">support older</a></span></li>
-        </ul>
-        <p>May coming soon:</p>
-        <ul>
-          <li>jQuery integration</li>
-          <li>composite mask (for date, datetime etc.)</li>
-          <li>unit tests</li>
-          <li>?RTL</li>
-        </ul>
-
-        <h2 id="getting-started" class="section-h"><a href="#getting-started">Getting Started</a></h2>
-        <p>Include <code>imask.js</code> or <code>imask.min.js</code> from <code>dist</code> folder:</p>
-        <pre><code>&lt;script src=&quot;dist/imask.js&quot;&gt;&lt;/script&gt;</code></pre>
-        <p>Usage:</p>
-        <pre><code>var element = document.getElementById('selector');
-var mask = new IMask(element, {
-  mask: '+{7}(000)000-00-00'
-});</code></pre>
-
-        <h2 id="docs" class="section-h"><a href="#docs">Docs</a></h2>
-        <p>Mask lifecycle commonly consists of <a href="#docs-init">initialization</a>, <a href="#docs-events">subscribtion for events</a>, <a href="#docs-properties">accessing properties</a> and <a href="#docs-destroy">destruction</a>.</p>
-
-        <h3 id="docs-init" class="section-h"><a href="#docs-init">Initialize</a></h3>
-        <pre><code>var mask = new IMask(<em>element</em>, <em>opts</em>)</code></pre>
-        <p><code>opts</code> is an object in which single <code>mask</code> option is mandatory and can be one of following types:</p>
-        <dl>
-          <dt>RegExp</dt>
-          <dd>matches input against mask RegExp</dd>
-          <dt>Function</dt>
-          <dd>process input with mask <code>function (<em>input</em>, <em><a href="#docs-details">details</a></em>) {...}</code></dd>
-          <dt>Child of <code>BaseMask</code></dt>
-          <dd>custom mask resolver</dd>
-          <dt>String (Pattern)</dt>
-          <dd>use pattern for complex masks:
-          <pre><code>mask: '000[aaa]/{NIC-}*[**]'</code></pre>
-          where:
-          <ul class="unstyled">
-          <li><code>0</code> - any digit input</li>
-          <li><code>a</code> - any letter input</li>
-          <li><code>*</code> - any char input</li>
-          <li>other chars (not defined in custom options) supposed to be <em>fixed</em></li>
-          <li><code>[]</code> - make input optional</li>
-          <li><code>{}</code> - include fixed in unmasked value</li>
-          <li><code>'</code> - prevent symbols shift back</li>
+      <div class="row gutters">
+        <div class="col col-6">
+          <h4>Features</h4>
+          <ul>
+            <li>get and set <em>value</em> and <em>unmasked value</em> easily</li>
+            <li>no external dependencies</li>
+            <li>show placeholder always and only when necessary</li>
+            <li>unmasked value can contain fixed parts</li>
+            <li>optional input parts (greedy)</li>
+            <li>RegExp mask</li>
+            <li>Functional mask</li>
+            <li>Number mask (integer and decimal)</li>
+            <li>Date mask (various format support)</li>
+            <li>IE11+ support <span class="req">*<a href="#under-the-hood">consider support older</a></span></li>
           </ul>
-          <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
+          <h5>May coming soon</h5>
+          <ul>
+            <li>jQuery/Angular/React/Vue plugin</li>
+            <li>more unit tests</li>
+            <li>?RTL</li>
+          </ul>
+        </div>
 
-          <p>Configure with options:</p>
-          <pre><code>placeholder: {
-  lazy: boolean
-  char: &lt;any single char&gt;  // defaults to '_'
-}</code></pre>
-          <pre><code>definitions: {
-  &lt;any single char&gt;: &lt;same type as mask (RegExp, Function<span class="req">*</span>, etc.)&gt;
-  ...
-  // defaults are '0', 'a', '*'
-}</code></pre>
-          <p><span class="req">*</span>Function signature differs from base mask: <code>function (char, charIndex, str)</code>.</p>
-          </dd>
-        </dl>
-        Mask type used to build a resolver (or inherit BaseMask).
-        Resolver should define at least one method <code>resolve (<em>input</em>, <em>details</em>) {...}</code>.
-        <p id="docs-details">Details is an object:</p>
-        <pre><code>{
-  cursorPos: &lt;current cursor position&gt;,
-  oldSelection: {
-    start: &lt;index of the first previously selected character&gt;,
-    end: &lt;index of the character after the last previously selected character&gt;
-  },
-  oldValue: &lt;previous user input&gt;
-}</code></pre>
-        <p>Finally mask automatically start listening for element events. For manual control use <code>bindEvents</code>/<code>unbindEvents</code> methods.</p>
+        <div class="col col-6">
+          <form class="form">
+            <div class="form-item">
+              <label>RegExp <span class="desc">/^[1-6]\d{0,5}$/</span></label>
+              <input id="regexp-mask" type="text" value="">
 
-        <h3 id="docs-events" class="section-h"><a href="#docs-events">Events</a></h3>
-        <p>Subscription for <code>accept</code>, <code>complete</code> events are only available with <em>pattern</em> mask type or can be fired manually with <code>fireEvent (event)</code> method.</p>
-        <p>Use <code>on (event, handler)</code> method for subscribe.</p>
-        <p>Use <code>off (event [, handler])</code> for unsibscribe. Calling without handler argument removes all attached handlers.</p>
+              <div class="toggle-panel">
+                <label for="regexp-mask-source"><a class="muted">source</a></label>
+                <input id="regexp-mask-source" type="checkbox">
+                <div class="toggle-panel-content">
+                  <pre><code>var regExpMask = new IMask(
+  document.getElementById('regexp-mask'),
+  {
+    mask: /^[1-6]\d{0,5}$/
+  });</code></pre>
+                </div>
+              </div>
+            </div>
 
-        <h3 id="docs-properties" class="section-h"><a href="#docs-properties">Properties</a></h3>
-        <p>All mask options could be modified in run-time. Any modification applies mask with new options on input value.</p>
-        <p>For all mask types following properties available</p>
-        <ul class="unstyled">
-          <li><code>mask</code></li>
-          <li><code>unmaskedValue</code></li>
-          <li><code>value</code></li>
-        </ul>
-        <p>For pattern mask in addition can be used
-        <ul class="unstyled">
-          <li><code>placeholder</code>
-          <li><code>definitions</code></li>
-          <li><code>placeholderLabel<sub>get</sub></code></li>
-          <li><code>isComplete<sub>get</sub></code></li>
-        </ul>
-        <p>Commonly mask automatically reapplies. For manual mask refresh set <code>value</code> or <code>unmaskedValue</code>.</p>
-
-        <h3 id="docs-destroy" class="section-h"><a href="#docs-destroy">Destroy</a></h3>
-        <p>Call <code>destroy</code> method.</p>
-
-        <h2 id="examples" class="section-h"><a href="#examples">Examples</a></h2>
-        <h3 id="ex-phone" class="section-h"><a href="#ex-phone">Phone number</a></h3>
-        <pre><code>var phoneMask = new IMask(document.getElementById('phone-mask'), {
-  mask: '+{7}(000)000-00-00'
-}).on('accept', function() {/* ... */})
-.on('complete', function() {/* ... */});</code></pre>
-
-        <h3 id="ex-numbers" class="section-h"><a href="#ex-numbers">Only numbers</a></h3>
-        <pre><code>var numbersMask = new IMask(document.getElementById('numbers-mask'), {
-  mask: function (str, details) {
-    var inserted = details.inserted;
-    if (!inserted.length) return true;
-    var insertedNumbers = inserted.replace(/\D/g, '');
-
-    details.cursorPos -= inserted.length - insertedNumbers.length;
-    return details.head + insertedNumbers + details.tail;
-  }
-});</code></pre>
-
-        <h3 id="ex-uppercase" class="section-h"><a href="#ex-uppercase">Pipe uppercase</a></h3>
-        <pre><code>var uppercaseMask = new IMask(document.getElementById('uppercase-mask'), {
-  mask: [
-    {
-      mask: "aaa"
-    },
-    {
-      mask: function (str) {
-        return str.toUpperCase();
-      }
+            <div class="form-item">
+              <label>Number <span class="desc">in range [-1000, 1000]</span></label>
+              <input id="number-mask" type="text" value="">
+              <div class="unmasked-value desc">number: <span id="number-value"></span></div>
+              <div class="toggle-panel">
+                <label for="number-mask-source"><a class="muted">source</a></label>
+                <input id="number-mask-source" type="checkbox">
+                <div class="toggle-panel-content">
+                  <pre><code>var numberMask = new IMask(
+  document.getElementById('number-mask'),
+  {
+    mask: Number,
+    scale: 2,
+    min: -1000,
+    max: 1000,
+    thousandsSeparator: ' ',
+    postFormat: {
+      normalizeZeros: true,
     }
-  ]
+  });</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-item">
+              <label>Date <span class="desc">'yyyy-mm-dd' in range [2000-01-01, 2020-01-01]</span></label>
+              <input id="date-mask" type="text" value="">
+              <div class="unmasked-value desc">date: <span id="date-value"></span></div>
+              <div class="toggle-panel">
+                <label for="date-mask-source"><a class="muted">source</a></label>
+                <input id="date-mask-source" type="checkbox">
+                <div class="toggle-panel-content">
+                  <pre><code>var dateMask = new IMask(
+  document.getElementById('date-mask'),
+  {
+    mask: Date,
+    pattern: 'Y-`m-`d',
+    min: new Date(2000, 0, 1),
+    max: new Date(2020, 0, 1),
+    placeholder: {
+      lazy: false
+    },
+    format: date => {
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
+
+      if (day < 10) day = "0" + day;
+      if (month < 10) month = "0" + month;
+
+      return [year, month, day].join('-');
+    },
+    parse: str => {
+      var [year, month, day] = str.split('-');
+      return new Date(year, month - 1, day);
+    }
+  });</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-item">
+              <label>Pattern (Phone) <span class="desc">+{7}(000)000-00-00</span></label>
+              <input id="phone-mask" type="text" value="">
+              <div class="unmasked-value desc">unmasked: <span id="phone-unmasked"></span><span id="phone-complete" class="example__complete"></span></div>
+              <div class="toggle-panel">
+                <label for="phone-mask-source"><a class="muted">source</a></label>
+                <input id="phone-mask-source" type="checkbox">
+                <div class="toggle-panel-content">
+                  <pre><code>var phoneMask = new IMask(
+  document.getElementById('phone-mask'), {
+  mask: '+{7}(000)000-00-00'
 });</code></pre>
-
-        <h2 id="demo" class="section-h"><a href="#demo">Demo</a></h2>
-        <h3 id="demo-phone" class="section-h"><a href="#demo-phone">Phone number</a></h3>
-        <form class="form example-phone">
-          <div class="form-item">
-            <label>Type here against mask <span class="desc">+{7}(000)000-00-00</span></label>
-            <input id="phone-mask" type="text" value="">
-            <div class="desc">unmasked: <span id="phone-unmasked"></span><span id="phone-complete" class="example__complete"></span></div>
-          </div>
-        </form>
-
-        <h3 id="demo-numbers" class="section-h"><a href="#demo-numbers">Only numbers</a></h3>
-        <form class="form example-numbers">
-          <div class="form-item">
-            <label>Type here</label>
-            <input id="numbers-mask" type="text" value="">
-            <div class="desc">number: <span id="number-value"></span></div>
-          </div>
-        </form>
-
-        <h3 id="demo-date" class="section-h"><a href="#demo-date">Date</a></h3>
-        <form class="form example-date">
-          <div class="form-item">
-            <label>Type here</label>
-            <input id="date-mask" type="text" value="">
-            <div class="desc">date: <span id="date-value"></span></div>
-          </div>
-        </form>
-
-        <h3 id="demo-func" class="section-h"><a href="#demo-func">Functional validator</a></h3>
-        <form class="form example-func">
-          <div class="form-item">
-            <label>Type here</label>
-            <input id="func-mask" type="text" value="">
-          </div>
-        </form>
-
-        <h3 id="demo-uppercase" class="section-h"><a href="#demo-uppercase">Uppercase</a></h3>
-        <form class="form example-uppercase">
-          <div class="form-item">
-            <label>Type here</label>
-            <input id="uppercase-mask" type="text" value="">
-          </div>
-        </form>
-
-        <h3 id="demo-custom" class="section-h"><a href="#demo-custom">Custom mask</a></h3>
-        <form class="form example-custom">
-          <div class="form-item">
-            <label>Type here</label>
-            <input id="custom-mask" type="text" value="">
-            <div class="desc">unmasked: <span id="custom-unmasked"></span><span id="custom-complete" class="example__complete"></span></div>
-          </div>
-          <fieldset>
-            <legend>Options</legend>
-            <div class="row gutters">
-              <div class="col col-4">
-                <div class="form-item">
-                  <label>Mask</label>
-                  <input type="text" name="mask" value="000[aaa]XXX`***">
-                </div>
-              </div>
-              <div class="col col-4">
-                <div class="form-item">
-                  <label>Placeholder mode</label>
-                  <label class="checkbox"><input type="checkbox" name="ph-show">lazy</label>
-                </div>
-              </div>
-              <div class="col col-4">
-                <div class="form-item">
-                  <label>Placeholder char</label>
-                  <input type="text" maxlength="1" name="ph-char" value="_">
                 </div>
               </div>
             </div>
-          </fieldset>
-          <fieldset>
-            <legend>Values</legend>
-             <div class="row gutters align-middle">
-              <div class="col col-4">
-                <div class="form-item">
-                  <label>Set raw value</label>
-                  <input type="text" name="raw" value="">
-                </div>
-              </div>
-              <span class="desc">&nbsp;or&nbsp;</span>
-              <div class="col col-4">
-                <div class="form-item">
-                  <label>Set unmasked value</label>
-                  <input type="text" name="unmasked" value="">
-                </div>
-              </div>
-            </div>
-          </fieldset>
-          <div class="form-item">
-            <button name="apply" type="button">Apply</button>
-          </div>
-        </form>
-
-        <h2 id="under-the-hood" class="section-h"><a href="#under-the-hood">Under The Hood</a></h2>
-        <p>Coming soon</p>
-      </section>
-      <footer>
-        <p>Maintained by <a href="https://github.com/uNmAnNeR">uNmAnNeR</a></p>
-      </footer>
+          </form>
+        </div>
+      </div>
     </main>
+    <footer class="text-center">
+      <nav class="breadcrumbs push-center">
+        <ul>
+          <li><span class="active">donate</span></li>
+          <li><a href="https://www.paypal.me/alexeykryazhev/5" target="_blank">$5</a></li>
+          <li><a href="https://www.paypal.me/alexeykryazhev/10" target="_blank">$10</a></li>
+          <li><a href="https://www.paypal.me/alexeykryazhev/20" target="_blank">$20</a></li>
+          <li><a href="https://www.paypal.me/alexeykryazhev/50" target="_blank">$50</a></li>
+          <li><span class="active">to support</span></li>
+        </ul>
+      </nav>
+      <a href="https://github.com/uNmAnNeR">@Alexey Kryazhev</a>
+    </footer>
     <script src="dist/imask.js"></script>
     <script type="text/javascript">
       var phoneMask = new IMask(document.getElementById('phone-mask'), {
@@ -285,17 +172,21 @@ var mask = new IMask(element, {
         document.getElementById('phone-complete').style.display = 'inline-block';
       });
 
-      var numberMask = new IMask(document.getElementById('numbers-mask'), {
+      var regExpMask = new IMask(document.getElementById('regexp-mask'), {
+        mask: /^[1-6]\d{0,5}$/
+      });
+
+      var numberMask = new IMask(document.getElementById('number-mask'), {
         mask: Number,
         scale: 2,
-        signed: true,
+        // signed: true,
         thousandsSeparator: ' ',
         postFormat: {
           // padFractionalZeros: true,
           normalizeZeros: true,
         },
-        // min: 1,
-        // max: 31,
+        min: -1000,
+        max: 1000,
         // radix: ',',
         // mapToRadix: ['.']
       });
@@ -305,7 +196,7 @@ var mask = new IMask(element, {
 
       var dateMask = new IMask(document.getElementById('date-mask'), {
         mask: Date,
-        pattern: 'Y/m/d',
+        pattern: 'Y-`m-`d',
         placeholder: {
           lazy: false
         },
@@ -317,64 +208,17 @@ var mask = new IMask(element, {
           if (day < 10) day = "0" + day;
           if (month < 10) month = "0" + month;
 
-          return [year, month, day].join('/');
+          return [year, month, day].join('-');
         },
         parse: str => {
-          var [year, month, day] = str.split('/');
+          var [year, month, day] = str.split('-');
           return new Date(year, month - 1, day);
         },
         min: new Date(2000, 0, 1),
         max: new Date(2020, 0, 1)
       });
       dateMask.on('accept', function() {
-        document.getElementById('date-value').innerHTML = dateMask.masked.date;
-      });
-
-      new IMask(document.getElementById('func-mask'), {
-        mask: function (str) {
-          return !!Number(str);
-        }
-      });
-
-      new IMask(document.getElementById('uppercase-mask'), {
-        mask: function (value, masked) {
-          // TODO why not public API?
-          masked._value = masked.value.toUpperCase();
-        }
-      });
-
-      var customMask = new IMask(document.getElementById('custom-mask'), {
-          mask: '000[aaa]XXX`***',
-          placeholder: {
-            lazy: false
-          }
-      });
-      customMask.on('accept', function() {
-        document.getElementById('custom-complete').style.display = '';
-        document.getElementById('custom-unmasked').innerHTML = customMask.unmaskedValue;
-      }).on('complete', function() {
-        document.getElementById('custom-complete').style.display = 'inline-block';
-      });
-
-      var customEl = document.getElementsByClassName('example-custom')[0];
-      customEl.querySelector('[name=apply]').addEventListener('click', function (e) {
-        var mask = customEl.querySelector('[name=mask]').value;
-        var ph = {
-          lazy: customEl.querySelector('[name=ph-show]').checked,
-          char: customEl.querySelector('[name=ph-char]').value || '_'
-        };
-        var value = customEl.querySelector('[name=raw]').value;
-        customEl.querySelector('[name=raw]').value = '';
-
-        var unmaskedValue = customEl.querySelector('[name=unmasked]').value;
-        customEl.querySelector('[name=unmasked]').value = '';
-
-        customMask.updateOptions({
-          mask: mask,
-          placeholder: ph
-        });
-        if (value) customMask.value = value;
-        if (unmaskedValue) customMask.unmaskedValue = unmaskedValue;
+        document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
       });
 
     </script>

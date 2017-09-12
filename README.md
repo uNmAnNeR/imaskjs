@@ -4,14 +4,18 @@ vanilla JS input mask
 ## Features
 * get and set raw and unmasked values easily
 * no external dependencies
-* show placeholders in always and lazy modes
+* show placeholder always and only when necessary
 * unmasked value can contain fixed parts
-* optional input parts
+* optional input parts (greedy)
+* RegExp mask
+* Functional mask
+* Number mask (integer and decimal)
+* Date mask (various format support)
+* IE11+ support *support older
 
 May coming soon:
 
-* jQuery integration
-* composite mask (for date, datetime etc.)
+* jQuery/Angular/React/Vue plugin
 * more unit tests
 * ?RTL
 
@@ -27,6 +31,18 @@ IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
 
 ## Changes
+
+### 1.0.0
+* **major API changes and improvements**
+* new _Masked_ model abstraction
+* new _InputMask_ view abstraction
+* new Number mask
+* new Date mask
+* Pipe mask was removed (use function composition and/or inherite from _Masked_ instead)
+* Common: rename _rawValue_ prop to _value_
+* Common: use _updateOptions_ now to update any masked properties and sync with view
+* Pattern: change _quote_ (') definition to _back quote_ (`)
+* fix some bugs
 
 ### 0.4.0
 * **breaking change**: add _quote_ (') to definitions to prevent symbols shift back. Should be escaped from now.
