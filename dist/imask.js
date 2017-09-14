@@ -882,7 +882,10 @@ var Masked = (_class = function () {
 }(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
 
 function createMask(opts) {
-  opts = Object.create(opts); // clone
+  var _opts = opts;
+  // clone
+  opts = Object.create(opts);
+  _extends(opts, _opts);
   var mask = opts.mask;
 
   if (mask instanceof IMask.Masked) {
@@ -1775,9 +1778,8 @@ var MaskedNumber = (_class$2 = function (_Masked) {
     parts[0] = parts[0].replace(/^(\D*)(0*)(\d*)/, function (match, sign, zeros, num) {
       return sign + num;
     });
-
     // add leading zero
-    if (parts[0].length && !/\d$/.test(parts[0])) parts[0] = parts[0] + '0';
+    if (value.length && !/\d$/.test(parts[0])) parts[0] = parts[0] + '0';
 
     if (parts.length > 1) {
       parts[1] = parts[1].replace(/0*$/, ''); // remove trailing zeros

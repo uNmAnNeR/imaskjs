@@ -153,9 +153,8 @@ class MaskedNumber extends Masked {
 
     // remove leading zeros
     parts[0] = parts[0].replace(/^(\D*)(0*)(\d*)/, (match, sign, zeros, num) => sign + num);
-
     // add leading zero
-    if (parts[0].length && !/\d$/.test(parts[0])) parts[0] = parts[0] + '0';
+    if (value.length && !/\d$/.test(parts[0])) parts[0] = parts[0] + '0';
 
     if (parts.length > 1) {
       parts[1] = parts[1].replace(/0*$/, '');  // remove trailing zeros

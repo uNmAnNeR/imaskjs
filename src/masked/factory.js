@@ -3,7 +3,10 @@ import {isString} from '../core/utils';
 
 export default
 function createMask (opts) {
-  opts = Object.create(opts);  // clone
+  const _opts = opts;
+  // clone
+  opts = Object.create(opts);
+  Object.assign(opts, _opts);
   const mask = opts.mask;
 
   if (mask instanceof IMask.Masked) {
