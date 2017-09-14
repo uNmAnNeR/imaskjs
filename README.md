@@ -11,7 +11,6 @@ vanilla javascript input mask
 * Functional mask
 * Number mask (integer and decimal)
 * Date mask (various format support)
-* IE11+ support *support older
 
 May coming soon:
 

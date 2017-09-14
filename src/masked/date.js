@@ -89,6 +89,6 @@ MaskedDate.DEFAULTS = {
   groups: {
     d: new PatternGroup.Range([1, 31]),
     m: new PatternGroup.Range([1, 12]),
-    Y: new PatternGroup.Range([0, 9999]),
+    Y: new PatternGroup.Range([1900, 9999]),
   },
 };

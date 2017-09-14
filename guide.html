@@ -121,7 +121,7 @@ masked.reset(); // UI will NOT be updated</code></pre>
         <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
         <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model.</p>
         <p>Usually you don't need manually create instances of that type, because it will be done by IMask internally. But you can subclass from it to add some specific behavior like uppercasing for example.</p>
-        <p>Additionaly to <code>mask</code> option you could pass custom validator as <code>validate</code> option for some complex checks on any mask types except <code>Function</code> and <code>RegExp</code>, because they are already validators itself.</p>
+        <p>Additionaly to <code>mask</code> option you could pass custom validator as <code>validate</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themself.</p>
         <p><strong>Make sure that your mask or validator not just accept final value, but also any of intermediate states. Otherwise value will be cleared.</strong></p>
         <p>Example usage:</p>
         <pre><code>var masked = new IMask.Masked({
