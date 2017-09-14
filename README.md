@@ -42,6 +42,7 @@ IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
 * Common: rename _rawValue_ prop to _value_
 * Common: use _updateOptions_ now to update any masked properties and sync with view
 * Pattern: change _quote_ (') definition to _back quote_ (`)
+* Pattern: _lazy_ property is now of _Boolean_ type
 * fix some bugs
 
 ### 0.4.0

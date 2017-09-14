@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Imaskjs - vanilla javascript imput mask</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/kube/6.5.2/css/kube.min.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="gh-pages/css/main.css">
     <meta name="viewport" content="width=device-width">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -20,7 +20,7 @@
         </div>
         <nav class="breadcrumbs push-center">
           <ul>
-            <li><a href="common">common</a></li>
+            <li><a href="#common">common</a></li>
             <li><a href="#pattern">pattern</a></li>
             <li><a href="#number">number</a></li>
             <li><a href="#date">date</a></li>
@@ -31,59 +31,135 @@
         <h2 id="getting-started" class="section-h"><a href="#getting-started">Getting Started</a></h2>
         <p>Include <code>imask.js</code> or <code>imask.min.js</code> from <code>dist</code> folder:</p>
         <pre><code>&lt;script src=&quot;dist/imask.js&quot;&gt;&lt;/script&gt;</code></pre>
-        <p>Simple usage:</p>
+        <p>Simple usage case:</p>
         <pre><code>var element = document.getElementById('selector');
-var mask = new IMask(element, {
+var maskOptions = {
   mask: '+{7}(000)000-00-00'
-});
-// to destroy use
-mask.destroy();</code></pre>
+};
+var mask = new IMask(element, maskOptions);</code></pre>
 
-// TODO write about mask types (dispatching), input types
+<p>Since version 1.0.0 mask was splitted to model and view layers.<br>
+Model layer contains all masking facilities which could be used independently with no UI.<br>
+View layer is just a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
+<p>View layer currently consist only of a single component to support <code>input</code>-like API. Instance of that type is returned by calling IMask. Basic use case:</p>
+<pre><code>var mask = new IMask(element, maskOptions);
+
+<samp>// get/set value and unmasked value</samp>
+mask.value = "+7(999)999-99-99";
+console.log(mask.value);  // logs "+7(999)999-99-99"
+console.log(mask.unmaskedValue);  // logs "79999999999"
+
+mask.unmaskedValue = "70000000000";
+console.log(mask.value);  // logs "+7(000)000-00-00"
+console.log(mask.unmaskedValue);  // logs "70000000000"
+
+<samp>// get/set mask</samp>
+mask.mask = "999-999"; // auto-updates UI
+
+<samp>// update options</samp>
+mask.updateOptions({
+  mask: Number,
+  min: 0,
+  max: 100
+});  // also updates UI
+
+<samp>// clean and destroy</samp>
+mask.destroy();
+
+// TODO events accept, complete
+
+<samp>// get masked model</samp>
+var masked = mask.masked;
+masked.reset(); // UI will NOT be updated</code></pre>
+
+        <p>Finally mask automatically start listening for element events. For manual control use <code>bindEvents</code>/<code>unbindEvents</code> methods.</p>
+
+        <h3 id="docs-events" class="section-h"><a href="#docs-events">Events</a></h3>
+        <p>Subscription for <code>accept</code>, <code>complete</code> events are only available with <em>pattern</em> mask type or can be fired manually with <code>fireEvent (event)</code> method.</p>
+        <p>Use <code>on (event, handler)</code> method for subscribe.</p>
+        <p>Use <code>off (event [, handler])</code> for unsibscribe. Calling without handler argument removes all attached handlers.</p>
+
+
+        <p>In example above any changes are proxied to model layer at first and then UI gets updated.</p>
+        <p>The core of masking on model layer is <a href="#common">IMask.Masked</a> base class.
+        There are also several other model classes which corresponds to <code>mask</code> property type and provides additional functionality.</p>
+        <table>
+          <thead>
+            <tr>
+              <th><code>mask</code> prop</th>
+              <th>Model class</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>instance of <code>RegExp</code> or<br>
+              type of <code>Function</code> or<br>
+              child of <code>IMask.Masked</code> or<br>
+              instance of <code>IMask.Masked</code></td>
+              <td><a href="#common">IMask.Masked</a></td>
+            </tr>
+            <tr>
+              <td>type of <code>String</code></td>
+              <td><a href="#pattern">IMask.MaskedPattern</a></td>
+            </tr>
+            <tr>
+              <td><code>Number</code></td>
+              <td><a href="#number">IMask.MaskedNumber</a></td>
+            </tr>
+            <tr>
+              <td><code>Date</code></td>
+              <td><a href="#date">IMask.MaskedDate</a></td>
+            </tr>
+          </tbody>
+        </table>
 
         <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
-// write about mask, value, unmasked value, validate method, nearestInputPos, commit, lifecycle, events
+        <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model.</p>
+        <p>Usually you don't need manually create instances of that type, because it will be done by IMask internally. But you can subclass from it and add some specific behavior like uppercasing for example.</p>
+        <p>Additionaly to <code>mask</code> option you could pass custom validator as <code>validate</code> option for some complex checks on any mask types except <code>Function</code> and <code>RegExp</code>, because they are already validators itself.</p>
+        <p><strong>Make sure that your mask or validator not just accept final value, but also any of intermediate states. Otherwise value will be cleared.</strong></p>
+        <p>Example usage:</p>
+        <pre><code>var masked = new IMask.Masked({
+  mask: /^\d+$/,  // mask is mandatory
+  validate: function (value, masked) {  // optional validator
+    // let restrict input to start with '2'
+    return value.indexOf('2') === 0;
+  }
+});</code></pre>
+        <p>get/set mask (only same type allowed!)</p>
+        <pre><code>masked.mask = /^\s+$/;  // ok
+masked.mask = "0000";  // ERROR! changing mask type on existing mask is not allowed!</code></pre>
+        <p>get/set value and unmasked value</p>
+        <pre><code>masked.value = 'hello world!';
+console.log(masked.unmaskedValue);</code></pre>
+        <p>override <code>commit</code> method to make some postprocessing after UI is deactivated</p>
 
-        <p>Mask lifecycle commonly consists of <a href="#docs-init">initialization</a>, <a href="#docs-events">subscribtion for events</a>, <a href="#docs-properties">accessing properties</a> and <a href="#docs-destroy">destruction</a>.</p>
+        <dt>String (Pattern)</dt>
+        use pattern for complex masks:
+        <pre><code>mask: '000[aaa]/{NIC-}*[**]'</code></pre>
+        where:
+        <ul class="unstyled">
+        <li><code>0</code> - any digit input</li>
+        <li><code>a</code> - any letter input</li>
+        <li><code>*</code> - any char input</li>
+        <li>other chars (not defined in custom options) supposed to be <em>fixed</em></li>
+        <li><code>[]</code> - make input optional</li>
+        <li><code>{}</code> - include fixed in unmasked value</li>
+        <li><code>'</code> - prevent symbols shift back</li>
+        </ul>
+        <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
 
-        <h3 id="docs-init" class="section-h"><a href="#docs-init">Initialize</a></h3>
-        <pre><code>var mask = new IMask(<em>element</em>, <em>opts</em>)</code></pre>
-        <p><code>opts</code> is an object in which single <code>mask</code> option is mandatory and can be one of following types:</p>
-        <dl>
-          <dt>RegExp</dt>
-          <dd>matches input against mask RegExp</dd>
-          <dt>Function</dt>
-          <dd>process input with mask <code>function (<em>input</em>, <em><a href="#docs-details">details</a></em>) {...}</code></dd>
-          <dt>Child of <code>BaseMask</code></dt>
-          <dd>custom mask resolver</dd>
-          <dt>String (Pattern)</dt>
-          <dd>use pattern for complex masks:
-          <pre><code>mask: '000[aaa]/{NIC-}*[**]'</code></pre>
-          where:
-          <ul class="unstyled">
-          <li><code>0</code> - any digit input</li>
-          <li><code>a</code> - any letter input</li>
-          <li><code>*</code> - any char input</li>
-          <li>other chars (not defined in custom options) supposed to be <em>fixed</em></li>
-          <li><code>[]</code> - make input optional</li>
-          <li><code>{}</code> - include fixed in unmasked value</li>
-          <li><code>'</code> - prevent symbols shift back</li>
-          </ul>
-          <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
-
-          <p>Configure with options:</p>
-          <pre><code>placeholder: {
-  lazy: boolean
-  char: &lt;any single char&gt;  // defaults to '_'
+        <p>Configure with options:</p>
+        <pre><code>placeholder: {
+lazy: boolean
+char: &lt;any single char&gt;  // defaults to '_'
 }</code></pre>
-          <pre><code>definitions: {
-  &lt;any single char&gt;: &lt;same type as mask (RegExp, Function<span class="req">*</span>, etc.)&gt;
-  ...
-  // defaults are '0', 'a', '*'
+        <pre><code>definitions: {
+&lt;any single char&gt;: &lt;same type as mask (RegExp, Function<span class="req">*</span>, etc.)&gt;
+...
+// defaults are '0', 'a', '*'
 }</code></pre>
-          <p><span class="req">*</span>Function signature differs from base mask: <code>function (char, charIndex, str)</code>.</p>
-          </dd>
-        </dl>
+        <p><span class="req">*</span>Function signature differs from base mask: <code>function (char, charIndex, str)</code>.</p>
         Mask type used to build a resolver (or inherit BaseMask).
         Resolver should define at least one method <code>resolve (<em>input</em>, <em>details</em>) {...}</code>.
         <p id="docs-details">Details is an object:</p>
@@ -95,33 +171,7 @@ mask.destroy();</code></pre>
   },
   oldValue: &lt;previous user input&gt;
 }</code></pre>
-        <p>Finally mask automatically start listening for element events. For manual control use <code>bindEvents</code>/<code>unbindEvents</code> methods.</p>
-
-        <h3 id="docs-events" class="section-h"><a href="#docs-events">Events</a></h3>
-        <p>Subscription for <code>accept</code>, <code>complete</code> events are only available with <em>pattern</em> mask type or can be fired manually with <code>fireEvent (event)</code> method.</p>
-        <p>Use <code>on (event, handler)</code> method for subscribe.</p>
-        <p>Use <code>off (event [, handler])</code> for unsibscribe. Calling without handler argument removes all attached handlers.</p>
-
-        <h3 id="docs-properties" class="section-h"><a href="#docs-properties">Properties</a></h3>
-        <p>All mask options could be modified in run-time. Any modification applies mask with new options on input value.</p>
-        <p>For all mask types following properties available</p>
-        <ul class="unstyled">
-          <li><code>mask</code></li>
-          <li><code>unmaskedValue</code></li>
-          <li><code>value</code></li>
-        </ul>
-        <p>For pattern mask in addition can be used
-        <ul class="unstyled">
-          <li><code>placeholder</code>
-          <li><code>definitions</code></li>
-          <li><code>placeholderLabel<sub>get</sub></code></li>
-          <li><code>isComplete<sub>get</sub></code></li>
-        </ul>
-        <p>Commonly mask automatically reapplies. For manual mask refresh set <code>value</code> or <code>unmaskedValue</code>.</p>
-
-        <h3 id="docs-destroy" class="section-h"><a href="#docs-destroy">Destroy</a></h3>
-        <p>Call <code>destroy</code> method.</p>
-
+        
         <h2 id="examples" class="section-h"><a href="#examples">Examples</a></h2>
         <h3 id="ex-phone" class="section-h"><a href="#ex-phone">Phone number</a></h3>
         <pre><code>var phoneMask = new IMask(document.getElementById('phone-mask'), {
@@ -274,7 +324,7 @@ mask.destroy();</code></pre>
         <a href="https://github.com/uNmAnNeR">@Alexey Kryazhev</a>
       </footer>
     </main>
-    <script src="../../dist/imask.js"></script>
+    <script src="dist/imask.js"></script>
     <script type="text/javascript">
       var phoneMask = new IMask(document.getElementById('phone-mask'), {
         mask: '+{7}(000)000-00-00'
