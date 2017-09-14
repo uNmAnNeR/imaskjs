@@ -68,9 +68,8 @@ class RangeGroup {
   }
 
   _update() {
-    this._maxLength = Math.max(this._maxLength, (this.from + '').length);
+    this._maxLength = Math.max(this._maxLength, (this.to + '').length);
     this.mask = '0'.repeat(this._maxLength);
-
   }
 
   validate (str) {

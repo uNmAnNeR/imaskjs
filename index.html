@@ -69,7 +69,7 @@
             </div>
 
             <div class="form-item">
-              <label>Number <span class="desc">in range [-1000, 1000]</span></label>
+              <label>Number <span class="desc">in range [-10000, 10000]</span></label>
               <input id="number-mask" type="text" value="">
               <div class="unmasked-value desc">number: <span id="number-value"></span></div>
               <div class="toggle-panel">
@@ -81,8 +81,8 @@
   {
     mask: Number,
     scale: 2,
-    min: -1000,
-    max: 1000,
+    min: -10000,
+    max: 10000,
     thousandsSeparator: ' ',
     postFormat: {
       normalizeZeros: true,
@@ -107,10 +107,8 @@
     pattern: 'Y-`m-`d',
     min: new Date(2000, 0, 1),
     max: new Date(2020, 0, 1),
-    placeholder: {
-      lazy: false
-    },
-    format: date => {
+    placeholder: {lazy: false},
+    format: function (date) {
       var day = date.getDate();
       var month = date.getMonth() + 1;
       var year = date.getFullYear();
@@ -120,7 +118,7 @@
 
       return [year, month, day].join('-');
     },
-    parse: str => {
+    parse: function (str) {
       var [year, month, day] = str.split('-');
       return new Date(year, month - 1, day);
     }
@@ -185,8 +183,8 @@
           // padFractionalZeros: true,
           normalizeZeros: true,
         },
-        min: -1000,
-        max: 1000,
+        min: -10000,
+        max: 10000,
         // radix: ',',
         // mapToRadix: ['.']
       });
@@ -197,10 +195,10 @@
       var dateMask = new IMask(document.getElementById('date-mask'), {
         mask: Date,
         pattern: 'Y-`m-`d',
-        placeholder: {
-          lazy: false
-        },
-        format: date => {
+        min: new Date(2000, 0, 1),
+        max: new Date(2020, 0, 1),
+        placeholder: {lazy: false},
+        format: function (date) {
           var day = date.getDate();
           var month = date.getMonth() + 1;
           var year = date.getFullYear();
@@ -210,12 +208,10 @@
 
           return [year, month, day].join('-');
         },
-        parse: str => {
+        parse: function (str) {
           var [year, month, day] = str.split('-');
           return new Date(year, month - 1, day);
-        },
-        min: new Date(2000, 0, 1),
-        max: new Date(2020, 0, 1)
+        }
       });
       dateMask.on('accept', function() {
         document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';

@@ -38,51 +38,55 @@ var maskOptions = {
 };
 var mask = new IMask(element, maskOptions);</code></pre>
 
-<p>Since version 1.0.0 mask was splitted to model and view layers.<br>
-Model layer contains all masking facilities which could be used independently with no UI.<br>
-View layer is just a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
-<p>View layer currently consist only of a single component to support <code>input</code>-like API. Instance of that type is returned by calling IMask. Basic use case:</p>
-<pre><code>var mask = new IMask(element, maskOptions);
-
-<samp>// get/set value and unmasked value</samp>
-mask.value = "+7(999)999-99-99";
+        <p>Since version 1.0.0 mask was splitted up to model and view layers.<br>
+        Model layer contains all masking facilities which could be used independently with no UI.<br>
+        View layer is just a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
+        <p>View layer currently consist only of a single component to support <code>input</code>-like API. Instance of that type is returned by calling IMask.</p>
+        // TODO write about supporting older
+        <p>Basic use case:</p>
+        <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
+        <p>get/set value and unmasked value</p>
+        <pre><code>mask.value = "+7(999)999-99-99";
 console.log(mask.value);  // logs "+7(999)999-99-99"
 console.log(mask.unmaskedValue);  // logs "79999999999"
 
 mask.unmaskedValue = "70000000000";
 console.log(mask.value);  // logs "+7(000)000-00-00"
-console.log(mask.unmaskedValue);  // logs "70000000000"
+console.log(mask.unmaskedValue);  // logs "70000000000"</code></pre>
 
-<samp>// get/set mask</samp>
-mask.mask = "999-999"; // auto-updates UI
+        <p>get/set mask</p>
+        <pre><code>mask.mask = "000-000"; // auto-updates UI</code></pre>
 
-<samp>// update options</samp>
-mask.updateOptions({
+        <p>update options</p>
+        <pre><code>mask.updateOptions({
   mask: Number,
   min: 0,
   max: 100
-});  // also updates UI
+});  // also updates UI</code></pre>
 
-<samp>// clean and destroy</samp>
-mask.destroy();
+        <p>clean and destroy</p>
+        <pre><code>mask.destroy();</code></pre>
 
-// TODO events accept, complete
+        <p>listen to events</p>
+        <pre><code>// 'accept' event fired on input when mask value has changed
+function log () {console.log(mask.value)};
+mask.on("accept", log);
 
-<samp>// get masked model</samp>
-var masked = mask.masked;
+// 'complete' event fired when the value is completely filled
+// This makes sense only for Pattern-based masks
+mask.on("complete", function () {console.log(mask.value)});</code></pre>
+        <p>unlisten to events</p>
+        <pre><code>mask.off("accept", log);
+
+// omit handler argument to unlisten all
+mask.off("complete");</code></pre>
+
+        <p>get masked model</p>
+        <pre><code>var masked = mask.masked;
 masked.reset(); // UI will NOT be updated</code></pre>
 
-        <p>Finally mask automatically start listening for element events. For manual control use <code>bindEvents</code>/<code>unbindEvents</code> methods.</p>
-
-        <h3 id="docs-events" class="section-h"><a href="#docs-events">Events</a></h3>
-        <p>Subscription for <code>accept</code>, <code>complete</code> events are only available with <em>pattern</em> mask type or can be fired manually with <code>fireEvent (event)</code> method.</p>
-        <p>Use <code>on (event, handler)</code> method for subscribe.</p>
-        <p>Use <code>off (event [, handler])</code> for unsibscribe. Calling without handler argument removes all attached handlers.</p>
-
-
-        <p>In example above any changes are proxied to model layer at first and then UI gets updated.</p>
-        <p>The core of masking on model layer is <a href="#common">IMask.Masked</a> base class.
-        There are also several other model classes which corresponds to <code>mask</code> property type and provides additional functionality.</p>
+        <p>In example above any changes are proxied to model layer at first and then UI gets updated. The core of masking on model layer is <a href="#common">IMask.Masked</a> base class.
+        There are also several other model classes which corresponds to <code>mask</code> property type and provides additional functionality:</p>
         <table>
           <thead>
             <tr>
@@ -113,9 +117,10 @@ masked.reset(); // UI will NOT be updated</code></pre>
           </tbody>
         </table>
 
+
         <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
         <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model.</p>
-        <p>Usually you don't need manually create instances of that type, because it will be done by IMask internally. But you can subclass from it and add some specific behavior like uppercasing for example.</p>
+        <p>Usually you don't need manually create instances of that type, because it will be done by IMask internally. But you can subclass from it to add some specific behavior like uppercasing for example.</p>
         <p>Additionaly to <code>mask</code> option you could pass custom validator as <code>validate</code> option for some complex checks on any mask types except <code>Function</code> and <code>RegExp</code>, because they are already validators itself.</p>
         <p><strong>Make sure that your mask or validator not just accept final value, but also any of intermediate states. Otherwise value will be cleared.</strong></p>
         <p>Example usage:</p>
@@ -132,11 +137,26 @@ masked.mask = "0000";  // ERROR! changing mask type on existing mask is not allo
         <p>get/set value and unmasked value</p>
         <pre><code>masked.value = 'hello world!';
 console.log(masked.unmaskedValue);</code></pre>
-        <p>override <code>commit</code> method to make some postprocessing after UI is deactivated</p>
+        <p>Override <code>commit</code> method to make some postprocessing after UI was deactivated.</p>
 
-        <dt>String (Pattern)</dt>
-        use pattern for complex masks:
-        <pre><code>mask: '000[aaa]/{NIC-}*[**]'</code></pre>
+
+        <h2 id="pattern" class="section-h"><a href="#pattern">Pattern</a></h2>
+        Use pattern when:
+        <ul>
+          <li>mask is complex</li>
+          <li>mask is fixed in size (optional symbols gives some flexibility)</li>
+          <li>placeholder is needed</li>
+          <li>more reliability or flexibility on processing input is needed</li>
+        </ul>
+        <p>Pattern mask is just string:</p>
+        <pre><code>var patternMask = new IMask(element, {
+  mask: '{#}000[aaa]/NIC-`*[**]'
+});
+
+// or without UI
+var masked = new IMask.PatternMasked({
+  mask: '{#}000[aaa]/NIC-`*[**]'
+});</code></pre>
         where:
         <ul class="unstyled">
         <li><code>0</code> - any digit input</li>
@@ -145,33 +165,56 @@ console.log(masked.unmaskedValue);</code></pre>
         <li>other chars (not defined in custom options) supposed to be <em>fixed</em></li>
         <li><code>[]</code> - make input optional</li>
         <li><code>{}</code> - include fixed in unmasked value</li>
-        <li><code>'</code> - prevent symbols shift back</li>
+        <li><code>`</code> - prevent symbols shift back</li>
         </ul>
         <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
 
-        <p>Configure with options:</p>
-        <pre><code>placeholder: {
-lazy: boolean
-char: &lt;any single char&gt;  // defaults to '_'
-}</code></pre>
-        <pre><code>definitions: {
-&lt;any single char&gt;: &lt;same type as mask (RegExp, Function<span class="req">*</span>, etc.)&gt;
-...
-// defaults are '0', 'a', '*'
-}</code></pre>
-        <p><span class="req">*</span>Function signature differs from base mask: <code>function (char, charIndex, str)</code>.</p>
-        Mask type used to build a resolver (or inherit BaseMask).
-        Resolver should define at least one method <code>resolve (<em>input</em>, <em>details</em>) {...}</code>.
-        <p id="docs-details">Details is an object:</p>
-        <pre><code>{
-  cursorPos: &lt;current cursor position&gt;,
-  oldSelection: {
-    start: &lt;index of the first previously selected character&gt;,
-    end: &lt;index of the character after the last previously selected character&gt;
+        <p>Additionally you could provide custom <code>definitions</code>:</p>
+        <pre><code>var zipMask = new IMask(element, {
+  mask: '#00000',
+  definitions: {
+    // &lt;any single char&gt;: &lt;same type as mask (RegExp, Function, etc.)&gt;
+    // defaults are '0', 'a', '*'
+    '#': /[1-6]/
+  }
+});</code></pre>
+        <p>To configure placeholder use <code>placeholder</code> option:</p>
+        <pre><code>var phoneMask = new IMask(element, {
+  mask: '+{7}(000)000-00-00'
+  placeholder: {
+    lazy: false,  // make placeholder always visible
+    char: '#'  // defaults to '_'
+  }
+});</code></pre>
+        <p>One more custom options for pattern is <code>groups</code>:</p>
+        <pre><code>var groupsMask = new IMask(element, {
+  mask: 'Ple\\ase fill ye\\ar 19<ins>YY</ins>, month <ins>MM</ins> \\and v\\alue <ins>VL</ins>',
+  placeholder: {
+    lazy: false,  // make placeholder always visible
   },
-  oldValue: &lt;previous user input&gt;
-}</code></pre>
-        
+  groups: {
+    // custom group definition
+    <ins>YY</ins>: {
+      mask: '00',
+      // optional validator
+      // validate: function (value, group) {}
+    },
+
+    // use range to restrict input to numbers in range
+    // mask size is the length in chars of max bound or could be provided as second parameter
+    // to input smaller values pad zeros at beginning
+    <ins>MM</ins>: new IMask.MaskedPattern.Group.Range([1, 12], /* optional size */),
+
+    // restrict input to enum
+    // all values should be same length
+    <ins>VL</ins>: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR']),
+  }
+});</code></pre>
+
+// TODO Number mask
+// TODO Date mask
+// TODO demo for every code
+
         <h2 id="examples" class="section-h"><a href="#examples">Examples</a></h2>
         <h3 id="ex-phone" class="section-h"><a href="#ex-phone">Phone number</a></h3>
         <pre><code>var phoneMask = new IMask(document.getElementById('phone-mask'), {
@@ -363,7 +406,7 @@ char: &lt;any single char&gt;  // defaults to '_'
         placeholder: {
           lazy: false
         },
-        format: date => {
+        format: function (date) {
           var day = date.getDate();
           var month = date.getMonth() + 1;
           var year = date.getFullYear();
@@ -373,7 +416,7 @@ char: &lt;any single char&gt;  // defaults to '_'
 
           return [year, month, day].join('-');
         },
-        parse: str => {
+        parse: function (str) {
           var [year, month, day] = str.split('-');
           return new Date(year, month - 1, day);
         },
@@ -432,6 +475,5 @@ char: &lt;any single char&gt;  // defaults to '_'
       });
 
     </script>
-// TODO write about supporting older
   </body>
 </html>

@@ -1,5 +1,5 @@
 # imaskjs
-vanilla JS input mask
+vanilla javascript input mask
 
 ## Features
 * get and set raw and unmasked values easily

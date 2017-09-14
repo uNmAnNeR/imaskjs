@@ -1017,7 +1017,7 @@ var RangeGroup = function () {
   }
 
   RangeGroup.prototype._update = function _update() {
-    this._maxLength = Math.max(this._maxLength, (this.from + '').length);
+    this._maxLength = Math.max(this._maxLength, (this.to + '').length);
     this.mask = '0'.repeat(this._maxLength);
   };
 
@@ -2007,7 +2007,7 @@ MaskedDate.DEFAULTS = {
   groups: {
     d: new PatternGroup.Range([1, 31]),
     m: new PatternGroup.Range([1, 12]),
-    Y: new PatternGroup.Range([1900, 2200])
+    Y: new PatternGroup.Range([0, 9999])
   }
 };
 
