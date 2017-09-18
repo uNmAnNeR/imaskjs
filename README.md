@@ -18,6 +18,9 @@ May coming soon:
 * more unit tests
 * ?RTL
 
+## Install
+`npm install imaskjs` or download and include from `dist` folder
+
 ## Build & test
 `npm run build`
 
