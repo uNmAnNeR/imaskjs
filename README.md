@@ -24,7 +24,7 @@ May coming soon:
 `npm run test`
 
 ## Compatibility
-IE11+ [need support older?](https://unmanner.github.io/imaskjs/#under-the-hood)
+Supports all major browsers and IE11+ [need support older?](https://unmanner.github.io/imaskjs/guide.html#support-older)
 
 ## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
