@@ -37,6 +37,11 @@ a {
   text-decoration: none;
 }
 
+.toggle-panel {
+  position: relative;
+  z-index: 1;
+}
+
 .toggle-panel > label {
   display: inline-block;
   float: right;
@@ -72,6 +77,10 @@ body {
   clear: both;
 }
 
+.section-h {
+  margin-top: 50px;
+}
+
 .section-h a {
   text-decoration: none;
 }
@@ -92,6 +101,13 @@ body {
 
 .example__complete::after {
   content: '✔';
+}
+
+.learn-more {
+  position: absolute;
+  right: 1rem;
+  bottom: 0;
+  text-decoration: underline;
 }
 
 footer {
