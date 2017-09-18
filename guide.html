@@ -34,7 +34,7 @@
         <pre><code>&lt;script src=&quot;dist/imask.js&quot;&gt;&lt;/script&gt;</code></pre>
         <p>Simple use case:</p>
         <div class="toggle-panel">
-          <label for="start-phone-mask-demo"><a class="muted">demo</a></label>
+          <label for="start-phone-mask-demo" class="muted">demo</label>
           <input id="start-phone-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -48,7 +48,7 @@
         </div>
         <pre><code>var element = document.getElementById('selector');
 var maskOptions = {
-  mask: '+{7}(000)000-00-00',
+  mask: '+{7}(000)000-00-00'
 };
 var mask = new IMask(element, maskOptions);</code></pre>
 
@@ -136,7 +136,7 @@ masked.reset(); // UI will NOT be updated</code></pre>
         <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model.</p>
         <p>Example usage:</p>
         <div class="toggle-panel">
-          <label for="validate-mask-demo"><a class="muted">demo</a></label>
+          <label for="validate-mask-demo" class="muted">demo</label>
           <input id="validate-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -148,7 +148,7 @@ masked.reset(); // UI will NOT be updated</code></pre>
           </div>
         </div>
         <pre><code>var masked = new IMask.Masked({
-  mask: /^\d+$/,
+  mask: /^\d+$/
 });</code></pre>
         <p>get/set mask (only same type allowed!)</p>
         <pre><code>masked.mask = /^\s+$/;  // ok
@@ -162,13 +162,13 @@ console.log(masked.unmaskedValue);</code></pre>
         <fieldset>
           <p><strong>Make sure that your mask or validator works with any of intermediate states, not just final value. For example you want to restrict input to "123" and do:</strong></p>
           <pre><code>var masked = new IMask.Masked({
-  mask: /^123$/,
+  mask: /^123$/
 });</code></pre>
-          <p>But it will not allow to input any symbol at all, because it matches only whole string "123" and not "1" nor "12". Always think about intermediate values at first, otherwise it might not work as expected. In complex cases it is better to use <code>Pattern</code> or <code>Function</code> masks.</p>
+          <p>It will not allow to input any symbol at all, because it matches only whole string "123" and not "1" nor "12". Always think about intermediate values at first, otherwise it might not work as expected. In complex cases it is better to use <code>Pattern</code> or <code>Function</code> masks.</p>
         </fieldset>
         <p>Example of using <code>Function</code> mask to accept any growing sequence from 0 to 9:</p>
         <div class="toggle-panel">
-          <label for="sequence-mask-demo"><a class="muted">demo</a></label>
+          <label for="sequence-mask-demo" class="muted">demo</label>
           <input id="sequence-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -179,12 +179,12 @@ console.log(masked.unmaskedValue);</code></pre>
             </form>
           </div>
         </div>
-        <pre><code>var sequenceMask = new IMask(document.getElementById('sequence-mask'), {
+        <pre><code>var sequenceMask = new IMask(element, {
   mask: function (value) {
-    return /^\d*$/.test(value) &&
+    return /^\d*$/.test(value) &amp;&amp;
       value.split('').every(function(ch, i) {
         var prevCh = value[i-1];
-        return !prevCh || prevCh < ch;
+        return !prevCh || prevCh &lt; ch;
       });
   }
 });</code></pre>
@@ -201,7 +201,7 @@ console.log(masked.unmaskedValue);</code></pre>
         <p>Pattern mask is just a string:</p>
 
         <div class="toggle-panel">
-          <label for="pattern-nic-demo"><a class="muted">demo</a></label>
+          <label for="pattern-nic-demo" class="muted">demo</label>
           <input id="pattern-nic-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form pattern-nic-form">
@@ -280,7 +280,7 @@ var masked = new IMask.PatternMasked({
 
         <p>Additionally you could provide custom <code>definitions</code>:</p>
         <div class="toggle-panel">
-          <label for="pattern-zip-mask-demo"><a class="muted">demo</a></label>
+          <label for="pattern-zip-mask-demo" class="muted">demo</label>
           <input id="pattern-zip-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -302,7 +302,7 @@ var masked = new IMask.PatternMasked({
 });</code></pre>
         <p>To configure placeholder use <code>placeholder</code> option:</p>
         <div class="toggle-panel">
-          <label for="pattern-phone-mask-demo"><a class="muted">demo</a></label>
+          <label for="pattern-phone-mask-demo" class="muted">demo</label>
           <input id="pattern-phone-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -323,7 +323,7 @@ var masked = new IMask.PatternMasked({
 });</code></pre>
         <p>One more custom option for pattern is <code>groups</code>:</p>
         <div class="toggle-panel">
-          <label for="pattern-groups-mask-demo"><a class="muted">demo</a></label>
+          <label for="pattern-groups-mask-demo" class="muted">demo</label>
           <input id="pattern-groups-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -355,14 +355,14 @@ var masked = new IMask.PatternMasked({
 
     // restrict input to enum
     // all values should be same length
-    <ins>VL</ins>: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR']),
+    <ins>VL</ins>: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR'])
   }
 });</code></pre>
 
         <h2 id="number" class="section-h"><a href="#number">Number</a></h2>
         <p>Number mask restricts input to integer or decimal numbers.</p>
         <div class="toggle-panel">
-          <label for="numbers-mask-demo"><a class="muted">demo</a></label>
+          <label for="numbers-mask-demo" class="muted">demo</label>
           <input id="numbers-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form numbers-form">
@@ -434,20 +434,20 @@ var masked = new IMask.PatternMasked({
   thousandsSeparator: '',  // could be any single char
   postFormat: {
     padFractionalZeros: false,  // if true, then pads zeros at end to the length of scale
-    normalizeZeros: true,  // appends or removes zeros at ends
+    normalizeZeros: true  // appends or removes zeros at ends
   },
   radix: ',',  // fractional delimiter
   mapToRadix: ['.']  // symbols to process as radix
 
   // number interval options additionally could be set (e.g.)
   min: -10000,
-  max: 10000,
+  max: 10000
 });</code></pre>
 
         <h2 id="date" class="section-h"><a href="#date">Date</a></h2>
         <p>Date mask extends <a href="#pattern">Pattern</a> mask with more options.</p>
         <div class="toggle-panel">
-          <label for="date-mask-demo"><a class="muted">demo</a></label>
+          <label for="date-mask-demo" class="muted">demo</label>
           <input id="date-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -476,15 +476,15 @@ var masked = new IMask.PatternMasked({
     var month = date.getMonth() + 1;
     var year = date.getFullYear();
 
-    if (day < 10) day = "0" + day;
-    if (month < 10) month = "0" + month;
+    if (day &lt; 10) day = "0" + day;
+    if (month &lt; 10) month = "0" + month;
 
     return [year, month, day].join('-');
   },
   // define <em>str -> date</em> convertion
   parse: function (str) {
-    var [year, month, day] = str.split('-');
-    return new Date(year, month - 1, day);
+    var yearMonthDay = str.split('-');
+    return new Date(yearMonthDay[0], yearMonthDay[1] - 1, yearMonthDay[2]);
   },
 
   // optional interval options
@@ -496,7 +496,7 @@ var masked = new IMask.PatternMasked({
 });</code></pre>
       <p>Easy integration with <a href="https://momentjs.com/">Moment.js</a>:</p>
       <div class="toggle-panel">
-          <label for="moment-mask-demo"><a class="muted">demo</a></label>
+          <label for="moment-mask-demo" class="muted">demo</label>
           <input id="moment-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
             <form class="form">
@@ -560,7 +560,7 @@ var momentMask = new IMask(element, {
 
 
       new IMask(document.getElementById('validate-mask'), {
-        mask: /^\d+$/,  // mask is mandatory
+        mask: /^\d+$/  // mask is mandatory
       });
 
 
@@ -647,7 +647,7 @@ var momentMask = new IMask(element, {
         groups: {
           // custom group definition
           YY: {
-            mask: '00',
+            mask: '00'
             // optional validator
             // validate: function (value, group) {}
           },
@@ -655,11 +655,11 @@ var momentMask = new IMask(element, {
           // use range to restrict input to numbers in range
           // mask size is the length in chars of max bound or could be provided as second parameter
           // to input smaller values pad zeros at beginning
-          MM: new IMask.MaskedPattern.Group.Range([1, 12], /* optional size */),
+          MM: new IMask.MaskedPattern.Group.Range([1, 12] /*, optional size */),
 
           // restrict input to enum
           // all values should be same length
-          VL: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR']),
+          VL: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR'])
         }
       }).on('accept', function() {
         document.getElementById('pattern-groups-complete').style.display = '';
@@ -679,7 +679,7 @@ var momentMask = new IMask(element, {
           normalizeZeros: true,
         },
         min: -10000,
-        max: 10000,
+        max: 10000
         // radix: ',',
         // mapToRadix: ['.']
       });
@@ -723,8 +723,8 @@ var momentMask = new IMask(element, {
           return [year, month, day].join('-');
         },
         parse: function (str) {
-          var [year, month, day] = str.split('-');
-          return new Date(year, month - 1, day);
+          var yearMonthDay = str.split('-');
+          return new Date(yearMonthDay[0], yearMonthDay[1] - 1, yearMonthDay[2]);
         },
         min: new Date(2000, 0, 1),
         max: new Date(2020, 0, 1)
