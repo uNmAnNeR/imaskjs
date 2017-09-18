@@ -1,0 +1,764 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Imaskjs - vanilla javascript imput mask</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/kube/6.5.2/css/kube.min.css">
+    <link rel="stylesheet" href="gh-pages/css/main.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1 class="title"><a href="/">imask<sub>js</sub></a></h1>
+          <em>vanilla javascript input mask</em>
+        </div>
+        <nav class="breadcrumbs push-center">
+          <ul>
+            <li><a href="#common">common</a></li>
+            <li><a href="#pattern">pattern</a></li>
+            <li><a href="#number">number</a></li>
+            <li><a href="#date">date</a></li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <h2 id="getting-started" class="section-h"><a href="#getting-started">Getting Started</a></h2>
+        <p>Include <code>imask.js</code> or <code>imask.min.js</code> from <code>dist</code> folder:</p>
+        <pre><code>&lt;script src=&quot;dist/imask.js&quot;&gt;&lt;/script&gt;</code></pre>
+        <p>Simple use case:</p>
+        <div class="toggle-panel">
+          <label for="start-phone-mask-demo"><a class="muted">demo</a></label>
+          <input id="start-phone-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here against mask <span class="desc">+{7}(000)000-00-00</span></label>
+                <input id="start-phone-mask" type="text" value="">
+                <div class="desc">unmasked: <span id="start-phone-unmasked"></span><span id="start-phone-complete" class="example__complete"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var element = document.getElementById('selector');
+var maskOptions = {
+  mask: '+{7}(000)000-00-00',
+};
+var mask = new IMask(element, maskOptions);</code></pre>
+
+        <p>Since v1.0.0 IMask consists of two independent layers: model and view.<br>
+        Model layer contains all masking facilities which can be used independently without UI.</p>
+        <p id="support-older">View layer is a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
+        <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. In order to support older browsers manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
+        <p>View layer currently consist only of a single component to support html <code>input</code>-like API. Instance of that type is returned by calling IMask.</p>
+        <p>Basic use case:</p>
+        <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
+        <p>get/set value and unmasked value</p>
+        <pre><code>mask.value = "+7(999)999-99-99";
+console.log(mask.value);  // logs "+7(999)999-99-99"
+console.log(mask.unmaskedValue);  // logs "79999999999"
+
+mask.unmaskedValue = "70000000000";
+console.log(mask.value);  // logs "+7(000)000-00-00"
+console.log(mask.unmaskedValue);  // logs "70000000000"</code></pre>
+
+        <p>get/set mask</p>
+        <pre><code>mask.mask = "000-000"; // auto-updates UI</code></pre>
+
+        <p>update options</p>
+        <pre><code>mask.updateOptions({
+  mask: Number,
+  min: 0,
+  max: 100
+});  // also updates UI</code></pre>
+
+        <p>clean and destroy</p>
+        <pre><code>mask.destroy();</code></pre>
+
+        <p>listen to events</p>
+        <pre><code>// 'accept' event fired on input when mask value has changed
+function log () {console.log(mask.value)};
+mask.on("accept", log);
+
+// 'complete' event fired when the value is completely filled
+// This makes sense only for Pattern-based masks
+mask.on("complete", function () {console.log(mask.value)});</code></pre>
+        <p>unlisten to events</p>
+        <pre><code>mask.off("accept", log);
+
+// omit handler argument to unlisten all
+mask.off("complete");</code></pre>
+
+        <p>get masked model</p>
+        <pre><code>var masked = mask.masked;
+masked.reset(); // UI will NOT be updated</code></pre>
+
+        <p>In example above any changes are proxied to model layer at first and then UI gets updated. The core of masking on model layer is <a href="#common">IMask.Masked</a> base class.
+        There are also several other model classes which corresponds to <code>mask</code> property type and provides additional functionality:</p>
+        <table>
+          <thead>
+            <tr>
+              <th><code>mask</code> prop</th>
+              <th>Model class</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>instance of <code>RegExp</code> or<br>
+              type of <code>Function</code> or<br>
+              child of <code>IMask.Masked</code> or<br>
+              instance of <code>IMask.Masked</code></td>
+              <td><a href="#common">IMask.Masked</a></td>
+            </tr>
+            <tr>
+              <td>type of <code>String</code></td>
+              <td><a href="#pattern">IMask.MaskedPattern</a></td>
+            </tr>
+            <tr>
+              <td><code>Number</code></td>
+              <td><a href="#number">IMask.MaskedNumber</a></td>
+            </tr>
+            <tr>
+              <td><code>Date</code></td>
+              <td><a href="#date">IMask.MaskedDate</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
+        <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model.</p>
+        <p>Example usage:</p>
+        <div class="toggle-panel">
+          <label for="validate-mask-demo"><a class="muted">demo</a></label>
+          <input id="validate-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here against RegExp mask <span class="desc">/^\d+$/</span></label>
+                <input id="validate-mask" type="text" value="">
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var masked = new IMask.Masked({
+  mask: /^\d+$/,
+});</code></pre>
+        <p>get/set mask (only same type allowed!)</p>
+        <pre><code>masked.mask = /^\s+$/;  // ok
+masked.mask = "0000";  // ERROR! changing mask type on existing mask is not allowed!</code></pre>
+        <p>get/set value and unmasked value</p>
+        <pre><code>masked.value = 'hello world!';
+console.log(masked.unmaskedValue);</code></pre>
+        <p>Override <code>commit</code> method to make some postprocessing after UI was deactivated.</p>
+        <p>Usually you don't need to manually create instances of that type, because it will be done by IMask internally. But you can subclass from it to add some specific behavior like uppercasing for example.</p>
+        <p>Additionaly to <code>mask</code> option you can pass custom validator as <code>validate</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves.</p>
+        <fieldset>
+          <p><strong>Make sure that your mask or validator works with any of intermediate states, not just final value. For example you want to restrict input to "123" and do:</strong></p>
+          <pre><code>var masked = new IMask.Masked({
+  mask: /^123$/,
+});</code></pre>
+          <p>But it will not allow to input any symbol at all, because it matches only whole string "123" and not "1" nor "12". Always think about intermediate values at first, otherwise it might not work as expected. In complex cases it is better to use <code>Pattern</code> or <code>Function</code> masks.</p>
+        </fieldset>
+        <p>Example of using <code>Function</code> mask to accept any growing sequence from 0 to 9:</p>
+        <div class="toggle-panel">
+          <label for="sequence-mask-demo"><a class="muted">demo</a></label>
+          <input id="sequence-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here</label>
+                <input id="sequence-mask" type="text" value="">
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var sequenceMask = new IMask(document.getElementById('sequence-mask'), {
+  mask: function (value) {
+    return /^\d*$/.test(value) &&
+      value.split('').every(function(ch, i) {
+        var prevCh = value[i-1];
+        return !prevCh || prevCh < ch;
+      });
+  }
+});</code></pre>
+
+
+        <h2 id="pattern" class="section-h"><a href="#pattern">Pattern</a></h2>
+        Use pattern when:
+        <ul>
+          <li>mask is complex</li>
+          <li>mask is fixed in size (optional symbols gives some flexibility)</li>
+          <li>placeholder is needed</li>
+          <li>more reliability or flexibility on processing input is needed</li>
+        </ul>
+        <p>Pattern mask is just a string:</p>
+
+        <div class="toggle-panel">
+          <label for="pattern-nic-demo"><a class="muted">demo</a></label>
+          <input id="pattern-nic-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form pattern-nic-form">
+              <div class="form-item">
+                <label>Type here</label>
+                <input id="pattern-nic-mask" type="text" value="">
+                <div class="desc">unmasked: <span id="pattern-nic-unmasked"></span><span id="pattern-nic-complete" class="example__complete"></span></div>
+              </div>
+              <fieldset>
+                <legend>Options</legend>
+                <div class="row gutters">
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Mask</label>
+                      <input type="text" name="mask" value="{#}000[aaa]/NIC-`*[**]">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Placeholder mode</label>
+                      <label class="checkbox"><input type="checkbox" name="ph-show">lazy</label>
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Placeholder char</label>
+                      <input type="text" maxlength="1" name="ph-char" value="_">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Values</legend>
+                 <div class="row gutters align-middle">
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Set raw value</label>
+                      <input type="text" name="raw" value="">
+                    </div>
+                  </div>
+                  <span class="desc">&nbsp;or&nbsp;</span>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Set unmasked value</label>
+                      <input type="text" name="unmasked" value="">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <div class="form-item">
+                <button name="apply" type="button">Apply</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <pre><code>var patternMask = new IMask(element, {
+  mask: '{#}000[aaa]/NIC-`*[**]'
+});
+
+// or without UI
+var masked = new IMask.PatternMasked({
+  mask: '{#}000[aaa]/NIC-`*[**]'
+});</code></pre>
+        where:
+        <ul class="unstyled">
+        <li><code>0</code> - any digit input</li>
+        <li><code>a</code> - any letter input</li>
+        <li><code>*</code> - any char input</li>
+        <li>other chars (not defined in custom options) supposed to be <em>fixed</em></li>
+        <li><code>[]</code> - make optional</li>
+        <li><code>{}</code> - include fixed part in unmasked value</li>
+        <li><code>`</code> - prevent symbols shift back</li>
+        </ul>
+        <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
+
+        <p>Additionally you could provide custom <code>definitions</code>:</p>
+        <div class="toggle-panel">
+          <label for="pattern-zip-mask-demo"><a class="muted">demo</a></label>
+          <input id="pattern-zip-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here against mask <span class="desc">#00000</span></label>
+                <input id="pattern-zip-mask" type="text" value="">
+                <div class="desc">unmasked: <span id="pattern-zip-unmasked"></span><span id="pattern-zip-complete" class="example__complete"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var zipMask = new IMask(element, {
+  mask: '#00000',
+  definitions: {
+    // &lt;any single char&gt;: &lt;same type as mask (RegExp, Function, etc.)&gt;
+    // defaults are '0', 'a', '*'
+    '#': /[1-6]/
+  }
+});</code></pre>
+        <p>To configure placeholder use <code>placeholder</code> option:</p>
+        <div class="toggle-panel">
+          <label for="pattern-phone-mask-demo"><a class="muted">demo</a></label>
+          <input id="pattern-phone-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here against mask <span class="desc">+{7}(000)000-00-00</span> with custom placeholder</label>
+                <input id="pattern-phone-mask" type="text" value="">
+                <div class="desc">unmasked: <span id="pattern-phone-unmasked"></span><span id="pattern-phone-complete" class="example__complete"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var phoneMask = new IMask(element, {
+  mask: '+{7}(000)000-00-00',
+  placeholder: {
+    lazy: false,  // make placeholder always visible
+    char: '#'  // defaults to '_'
+  }
+});</code></pre>
+        <p>One more custom option for pattern is <code>groups</code>:</p>
+        <div class="toggle-panel">
+          <label for="pattern-groups-mask-demo"><a class="muted">demo</a></label>
+          <input id="pattern-groups-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here against mask</label>
+                <input id="pattern-groups-mask" type="text" value="">
+                <div class="desc">unmasked: <span id="pattern-groups-unmasked"></span><span id="pattern-groups-complete" class="example__complete"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var groupsMask = new IMask(element, {
+  mask: 'Ple\\ase fill ye\\ar 19<ins>YY</ins>, month <ins>MM</ins> \\and v\\alue <ins>VL</ins>',
+  placeholder: {lazy: false},  // make placeholder always visible
+
+  // let define groups
+  groups: {
+    // custom group definition
+    <ins>YY</ins>: {
+      mask: '00',
+      // optional validator
+      // validate: function (value, group) {}
+    },
+
+    // use range to restrict input to numbers in range
+    // mask size is the length in chars of max bound or could be provided as second parameter
+    // to input smaller values pad zeros at beginning
+    <ins>MM</ins>: new IMask.MaskedPattern.Group.Range([1, 12], /* optional size */),
+
+    // restrict input to enum
+    // all values should be same length
+    <ins>VL</ins>: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR']),
+  }
+});</code></pre>
+
+        <h2 id="number" class="section-h"><a href="#number">Number</a></h2>
+        <p>Number mask restricts input to integer or decimal numbers.</p>
+        <div class="toggle-panel">
+          <label for="numbers-mask-demo"><a class="muted">demo</a></label>
+          <input id="numbers-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form numbers-form">
+              <div class="form-item">
+                <label>Type number here</label>
+                <input id="numbers-mask" type="text" value="">
+                <div class="desc">number: <span id="number-value"></span></div>
+              </div>
+              <fieldset>
+                <legend>Options</legend>
+                <div class="row gutters">
+                  <div class="col col-2">
+                    <div class="form-item">
+                      <label>Scale</label>
+                      <input type="number" name="scale" value="2">
+                    </div>
+                  </div>
+                  <div class="col col-2">
+                    <div class="form-item">
+                      <label>Radix char</label>
+                      <input type="text" maxlength="1" name="radix" value=",">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Map to radix</label>
+                      <input type="text" name="mapToRadix" value=".">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label class="checkbox"><input type="checkbox" name="signed">Signed</label>
+                      <label class="checkbox"><input type="checkbox" name="padFractionalZeros">Pad fractional zeros</label>
+                      <label class="checkbox"><input type="checkbox" name="normalizeZeros">Normalize zeros</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row gutters">
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Min</label>
+                      <input type="number" name="min" value="-10000">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Max</label>
+                      <input type="number" name="max" value="10000">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Thousands separator</label>
+                      <input type="text" maxlength="1" name="thousandsSeparator" value=" ">
+                    </div>
+                  </div>
+                </div>
+                <button name="apply" type="button">Apply</button>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+        <pre><code>var numberMask = new IMask(element, {
+  mask: Number,  // enable number mask
+
+  // other options are optional with defaults
+  scale: 2,  // digits after point, 0 for integers
+  signed: false,  // disallow negative
+  thousandsSeparator: '',  // could be any single char
+  postFormat: {
+    padFractionalZeros: false,  // if true, then pads zeros at end to the length of scale
+    normalizeZeros: true,  // appends or removes zeros at ends
+  },
+  radix: ',',  // fractional delimiter
+  mapToRadix: ['.']  // symbols to process as radix
+
+  // number interval options additionally could be set (e.g.)
+  min: -10000,
+  max: 10000,
+});</code></pre>
+
+        <h2 id="date" class="section-h"><a href="#date">Date</a></h2>
+        <p>Date mask extends <a href="#pattern">Pattern</a> mask with more options.</p>
+        <div class="toggle-panel">
+          <label for="date-mask-demo"><a class="muted">demo</a></label>
+          <input id="date-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here</label>
+                <input id="date-mask" type="text" value="">
+                <div class="desc">date: <span id="date-value"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var dateMask = new IMask(element, {
+  mask: Date,  // enable date mask
+
+  // other options are optional
+  pattern: 'Y-`m-`d',  // Pattern mask with defined groups, default is 'd{.}`m{.}`Y'
+  // you could provide your own groups definitions, default groups for date mask are:
+  groups: {
+    d: new IMask.MaskedPattern.Group.Range([1, 31]),
+    m: new IMask.MaskedPattern.Group.Range([1, 12]),
+    Y: new IMask.MaskedPattern.Group.Range([1900, 9999])
+  },
+  // define <em>date -> str</em> convertion
+  format: function (date) {
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    if (day < 10) day = "0" + day;
+    if (month < 10) month = "0" + month;
+
+    return [year, month, day].join('-');
+  },
+  // define <em>str -> date</em> convertion
+  parse: function (str) {
+    var [year, month, day] = str.split('-');
+    return new Date(year, month - 1, day);
+  },
+
+  // optional interval options
+  min: new Date(2000, 0, 1),  // defaults to 1900-01-01
+  max: new Date(2020, 0, 1),  // defaults to 9999-01-01
+
+  // also Pattern options could be set
+  placeholder: {lazy: false}
+});</code></pre>
+      <p>Easy integration with <a href="https://momentjs.com/">Moment.js</a>:</p>
+      <div class="toggle-panel">
+          <label for="moment-mask-demo"><a class="muted">demo</a></label>
+          <input id="moment-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type here</label>
+                <input id="moment-mask" type="text" value="">
+                <div class="desc">date: <span id="moment-value"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var momentFormat = 'YYYY/MM/DD HH:mm';
+var momentMask = new IMask(element, {
+  mask: Date,
+  pattern: momentFormat,
+  placeholder: {lazy: false},
+  min: new Date(1970, 0, 1),
+  max: new Date(2030, 0, 1),
+
+  format: function (date) {
+    return moment(date).format(momentFormat);
+  },
+  parse: function (str) {
+    return moment(str, momentFormat);
+  },
+
+  groups: {
+    YYYY: new IMask.MaskedPattern.Group.Range([1970, 2030]),
+    MM: new IMask.MaskedPattern.Group.Range([1, 12]),
+    DD: new IMask.MaskedPattern.Group.Range([1, 31]),
+    HH: new IMask.MaskedPattern.Group.Range([0, 23]),
+    mm: new IMask.MaskedPattern.Group.Range([0, 59])
+  }
+});</code></pre>
+      </main>
+      <footer>
+        <nav class="breadcrumbs push-center">
+          <ul>
+            <li><span class="active">donate</span></li>
+            <li><a href="https://www.paypal.me/alexeykryazhev/5" target="_blank">$5</a></li>
+            <li><a href="https://www.paypal.me/alexeykryazhev/10" target="_blank">$10</a></li>
+            <li><a href="https://www.paypal.me/alexeykryazhev/20" target="_blank">$20</a></li>
+            <li><a href="https://www.paypal.me/alexeykryazhev/50" target="_blank">$50</a></li>
+            <li><span class="active">to support</span></li>
+          </ul>
+        </nav>
+        <a href="https://github.com/uNmAnNeR">@Alexey Kryazhev</a>
+      </footer>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="dist/imask.js"></script>
+    <script type="text/javascript">
+      var startPhoneMask = new IMask(document.getElementById('start-phone-mask'), {
+        mask: '+{7}(000)000-00-00'
+      }).on('accept', function() {
+        document.getElementById('start-phone-complete').style.display = '';
+        document.getElementById('start-phone-unmasked').innerHTML = startPhoneMask.unmaskedValue;
+      }).on('complete', function() {
+        document.getElementById('start-phone-complete').style.display = 'inline-block';
+      });
+
+
+      new IMask(document.getElementById('validate-mask'), {
+        mask: /^\d+$/,  // mask is mandatory
+      });
+
+
+      new IMask(document.getElementById('sequence-mask'), {
+        mask: function (value) {
+          return /^\d*$/.test(value) &&
+            value.split('').every(function(ch, i) {
+              var prevCh = value[i-1];
+              return !prevCh || prevCh < ch;
+            });
+        }
+      });
+
+
+      var customMask = new IMask(document.getElementById('pattern-nic-mask'), {
+          mask: '{#}000[aaa]/NIC-`*[**]',
+          placeholder: {
+            lazy: false
+          }
+      });
+      customMask.on('accept', function() {
+        document.getElementById('pattern-nic-complete').style.display = '';
+        document.getElementById('pattern-nic-unmasked').innerHTML = customMask.unmaskedValue;
+      }).on('complete', function() {
+        document.getElementById('pattern-nic-complete').style.display = 'inline-block';
+      });
+
+      var customEl = document.getElementsByClassName('pattern-nic-form')[0];
+      customEl.querySelector('[name=apply]').addEventListener('click', function (e) {
+        var mask = customEl.querySelector('[name=mask]').value;
+        var ph = {
+          lazy: customEl.querySelector('[name=ph-show]').checked,
+          char: customEl.querySelector('[name=ph-char]').value || '_'
+        };
+        var value = customEl.querySelector('[name=raw]').value;
+        customEl.querySelector('[name=raw]').value = '';
+
+        var unmaskedValue = customEl.querySelector('[name=unmasked]').value;
+        customEl.querySelector('[name=unmasked]').value = '';
+
+        customMask.updateOptions({
+          mask: mask,
+          placeholder: ph
+        });
+        if (value) customMask.value = value;
+        if (unmaskedValue) customMask.unmaskedValue = unmaskedValue;
+      });
+
+
+      var patternZipMask = new IMask(document.getElementById('pattern-zip-mask'), {
+        mask: '#00000',
+        definitions: {
+          // <any single char>: <same type as mask (RegExp, Function, etc.)>
+          // defaults are '0', 'a', '*'
+          '#': /[1-6]/
+        }
+      }).on('accept', function() {
+        document.getElementById('pattern-zip-complete').style.display = '';
+        document.getElementById('pattern-zip-unmasked').innerHTML = patternZipMask.unmaskedValue;
+      }).on('complete', function() {
+        document.getElementById('pattern-zip-complete').style.display = 'inline-block';
+      });
+
+
+      var patternPhoneMask = new IMask(document.getElementById('pattern-phone-mask'), {
+        mask: '+{7}(000)000-00-00',
+        placeholder: {
+          lazy: false,  // make placeholder always visible
+          char: '#'  // defaults to '_'
+        }
+      }).on('accept', function() {
+        document.getElementById('pattern-phone-complete').style.display = '';
+        document.getElementById('pattern-phone-unmasked').innerHTML = patternPhoneMask.unmaskedValue;
+      }).on('complete', function() {
+        document.getElementById('pattern-phone-complete').style.display = 'inline-block';
+      });
+
+
+      var patternGroupsMask = new IMask(document.getElementById('pattern-groups-mask'), {
+        mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',
+        placeholder: {lazy: false},  // make placeholder always visible
+
+        // let define groups
+        groups: {
+          // custom group definition
+          YY: {
+            mask: '00',
+            // optional validator
+            // validate: function (value, group) {}
+          },
+
+          // use range to restrict input to numbers in range
+          // mask size is the length in chars of max bound or could be provided as second parameter
+          // to input smaller values pad zeros at beginning
+          MM: new IMask.MaskedPattern.Group.Range([1, 12], /* optional size */),
+
+          // restrict input to enum
+          // all values should be same length
+          VL: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR']),
+        }
+      }).on('accept', function() {
+        document.getElementById('pattern-groups-complete').style.display = '';
+        document.getElementById('pattern-groups-unmasked').innerHTML = patternGroupsMask.unmaskedValue;
+      }).on('complete', function() {
+        document.getElementById('pattern-groups-complete').style.display = 'inline-block';
+      });
+
+
+      var numberMask = new IMask(document.getElementById('numbers-mask'), {
+        mask: Number,
+        scale: 2,
+        // signed: true,
+        thousandsSeparator: ' ',
+        postFormat: {
+          // padFractionalZeros: true,
+          normalizeZeros: true,
+        },
+        min: -10000,
+        max: 10000,
+        // radix: ',',
+        // mapToRadix: ['.']
+      });
+      numberMask.on('accept', function() {
+        document.getElementById('number-value').innerHTML = numberMask.masked.number;
+      });
+
+      var numberEl = document.getElementsByClassName('numbers-form')[0];
+      numberEl.querySelector('[name=apply]').addEventListener('click', function () {
+        numberMask.updateOptions({
+          scale: Number(numberEl.querySelector('[name=scale]').value),
+          radix: numberEl.querySelector('[name=radix]').value,
+          mapToRadix: numberEl.querySelector('[name=mapToRadix]').value.split(''),
+          signed: numberEl.querySelector('[name=signed]').checked,
+          thousandsSeparator: numberEl.querySelector('[name=thousandsSeparator]').value,
+          postFormat: {
+            padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
+            normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,
+          },
+          min: numberEl.querySelector('[name=min]').value ?
+            Number(numberEl.querySelector('[name=min]').value) : null,
+          max: numberEl.querySelector('[name=max]').value ?
+            Number(numberEl.querySelector('[name=max]').value) : null
+        });
+      });
+
+
+      var dateMask = new IMask(document.getElementById('date-mask'), {
+        mask: Date,
+        pattern: 'Y-`m-`d',
+        placeholder: {lazy: false},
+
+        format: function (date) {
+          var day = date.getDate();
+          var month = date.getMonth() + 1;
+          var year = date.getFullYear();
+
+          if (day < 10) day = "0" + day;
+          if (month < 10) month = "0" + month;
+
+          return [year, month, day].join('-');
+        },
+        parse: function (str) {
+          var [year, month, day] = str.split('-');
+          return new Date(year, month - 1, day);
+        },
+        min: new Date(2000, 0, 1),
+        max: new Date(2020, 0, 1)
+      });
+      dateMask.on('accept', function() {
+        document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
+      });
+
+
+      var momentFormat = 'YYYY/MM/DD HH:mm';
+      var momentMask = new IMask(document.getElementById('moment-mask'), {
+        mask: Date,
+        pattern: momentFormat,
+        placeholder: {lazy: false},
+        min: new Date(1970, 0, 1),
+        max: new Date(2030, 0, 1),
+
+        format: function (date) {
+          return moment(date).format(momentFormat);
+        },
+        parse: function (str) {
+          return moment(str, momentFormat);
+        },
+
+        groups: {
+          YYYY: new IMask.MaskedPattern.Group.Range([1970, 2030]),
+          MM: new IMask.MaskedPattern.Group.Range([1, 12]),
+          DD: new IMask.MaskedPattern.Group.Range([1, 31]),
+          HH: new IMask.MaskedPattern.Group.Range([0, 23]),
+          mm: new IMask.MaskedPattern.Group.Range([0, 59])
+        }
+      });
+      momentMask.on('accept', function() {
+        document.getElementById('moment-value').innerHTML = momentMask.masked.date || '-';
+      });
+    </script>
+  </body>
+</html>

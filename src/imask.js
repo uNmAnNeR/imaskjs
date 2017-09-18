@@ -1,33 +1,31 @@
-import {isString} from './utils';
+import 'core-js/fn/array/find';
+import 'core-js/fn/object/keys';
+import 'core-js/fn/object/create';
+import 'core-js/fn/string/repeat';
+import 'core-js/fn/string/pad-start';
+import 'core-js/fn/string/pad-end';
 
-import BaseMask from './masks/base';
-import RegExpMask from './masks/regexp';
-import FuncMask from './masks/func';
-import PatternMask from './masks/pattern';
-import PipeMask from './masks/pipe';
+
+import Masked from './masked/base';
+import MaskedPattern from './masked/pattern';
+import MaskedNumber from './masked/number';
+import MaskedDate from './masked/date';
+
+import InputMask from './controls/input';
 
 
 export default
 function IMask (el, opts={}) {
-  var mask = IMask.MaskFactory(el, opts);
-  mask.bindEvents();
-  // refresh
-  mask.rawValue = el.value;
-  return mask;
+	// currently available only for input elements
+  return new InputMask(el, opts);
 }
 
-IMask.MaskFactory = function (el, opts) {
-  var mask = opts.mask;
-  if (mask instanceof BaseMask) return mask;
-  if (mask instanceof RegExp) return new RegExpMask(el, opts);
-  if (mask instanceof Array) return new PipeMask(el, opts);
-  if (isString(mask)) return new PatternMask(el, opts);
-  if (mask.prototype instanceof BaseMask) return new mask(el, opts);
-  if (mask instanceof Function) return new FuncMask(el, opts);
-  return new BaseMask(el, opts);
-}
-IMask.BaseMask = BaseMask;
-IMask.FuncMask = FuncMask;
-IMask.RegExpMask = RegExpMask;
-IMask.PatternMask = PatternMask;
+
+IMask.InputMask = InputMask;
+
+IMask.Masked = Masked;
+IMask.MaskedPattern = MaskedPattern;
+IMask.MaskedNumber = MaskedNumber;
+IMask.MaskedDate = MaskedDate;
+
 window.IMask = IMask;

@@ -1,12 +1,26 @@
 header {
-  margin-bottom: 30px;
+  margin: 30px 0;
+  text-align: center;
 }
 
-.gh-link {
-  width: 32px;
-  height: 32px;
-  display: block;
-  background-image: url(../i/GitHub-Mark-32px.png);
+nav {
+  margin: 0;
+  padding: 20px 0;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+header nav {
+  margin-top: 30px;
+}
+
+h1 sub {
+  font-size: 30px;
+  font-style: italic;
+}
+
+main {
+  margin-bottom: 30px;
 }
 
 a:hover {
@@ -19,43 +33,52 @@ body {
   margin: 0 auto;
 }
 
-nav {
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  background-color: white;
-}
-
-nav ul {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-}
-
-nav .menu li {
-  margin-right: 40px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.download-links {
-  width: 50px;
-  margin: 10px 10px 10px auto;
-  justify-content: center;
-}
-
 a {
   text-decoration: none;
 }
 
-nav li a:hover {
-  color: #000;
+.toggle-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.toggle-panel > label {
+  display: inline-block;
+  float: right;
+}
+
+.toggle-panel > label > a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.toggle-panel > input[type=checkbox] {
+  display: none;
+}
+
+.toggle-panel .toggle-panel-content {
+  display: none;
+  clear: both;
+}
+
+.toggle-panel > input[type=checkbox]:checked + .toggle-panel-content {
+  display: block;
 }
 
 body {
   padding: 0 20px;
+}
+
+.unmasked-value {
+  float: left;
+}
+
+.form-item {
+  clear: both;
+}
+
+.section-h {
+  margin-top: 50px;
 }
 
 .section-h a {
@@ -78,4 +101,16 @@ body {
 
 .example__complete::after {
   content: '✔';
+}
+
+.learn-more {
+  position: absolute;
+  right: 1rem;
+  bottom: 0;
+  text-decoration: underline;
+}
+
+footer {
+  text-align: center;
+  margin-bottom: 30px;
 }
