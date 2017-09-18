@@ -51,11 +51,11 @@ var maskOptions = {
 };
 var mask = new IMask(element, maskOptions);</code></pre>
 
-        <p>Since version 1.0.0 mask was splitted up to model and view layers.<br>
-        Model layer contains all masking facilities which could be used independently without UI.<br>
-        View layer is a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
+        <p>Since v1.0.0 IMask consists of two independent layers: model and view.<br>
+        Model layer contains all masking facilities which can be used independently without UI.</p>
+        <p id="support-older">View layer is a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
+        <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. In order to support older browsers manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
         <p>View layer currently consist only of a single component to support html <code>input</code>-like API. Instance of that type is returned by calling IMask.</p>
-        // TODO write about supporting older
         <p>Basic use case:</p>
         <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
         <p>get/set value and unmasked value</p>
@@ -364,13 +364,63 @@ var masked = new IMask.PatternMasked({
           <label for="numbers-mask-demo"><a class="muted">demo</a></label>
           <input id="numbers-mask-demo" type="checkbox">
           <div class="toggle-panel-content">
-            <form class="form">
+            <form class="form numbers-form">
               <div class="form-item">
                 <label>Type number here</label>
                 <input id="numbers-mask" type="text" value="">
                 <div class="desc">number: <span id="number-value"></span></div>
               </div>
-              // TODO dynamic options
+              <fieldset>
+                <legend>Options</legend>
+                <div class="row gutters">
+                  <div class="col col-2">
+                    <div class="form-item">
+                      <label>Scale</label>
+                      <input type="number" name="scale" value="2">
+                    </div>
+                  </div>
+                  <div class="col col-2">
+                    <div class="form-item">
+                      <label>Radix char</label>
+                      <input type="text" maxlength="1" name="radix" value=",">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Map to radix</label>
+                      <input type="text" name="mapToRadix" value=".">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label class="checkbox"><input type="checkbox" name="signed">Signed</label>
+                      <label class="checkbox"><input type="checkbox" name="padFractionalZeros">Pad fractional zeros</label>
+                      <label class="checkbox"><input type="checkbox" name="normalizeZeros">Normalize zeros</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row gutters">
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Min</label>
+                      <input type="number" name="min" value="-10000">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Max</label>
+                      <input type="number" name="max" value="10000">
+                    </div>
+                  </div>
+                  <div class="col col-4">
+                    <div class="form-item">
+                      <label>Thousands separator</label>
+                      <input type="text" maxlength="1" name="thousandsSeparator" value=" ">
+                    </div>
+                  </div>
+                </div>
+                <button name="apply" type="button">Apply</button>
+              </fieldset>
             </form>
           </div>
         </div>
@@ -389,8 +439,8 @@ var masked = new IMask.PatternMasked({
   mapToRadix: ['.']  // symbols to process as radix
 
   // number interval options additionally could be set (e.g.)
-  min: -1000,
-  max: 1000,
+  min: -10000,
+  max: 10000,
 });</code></pre>
 
         <h2 id="date" class="section-h"><a href="#date">Date</a></h2>
@@ -627,13 +677,32 @@ var momentMask = new IMask(element, {
           // padFractionalZeros: true,
           normalizeZeros: true,
         },
-        min: -1000,
-        max: 1000,
+        min: -10000,
+        max: 10000,
         // radix: ',',
         // mapToRadix: ['.']
       });
       numberMask.on('accept', function() {
         document.getElementById('number-value').innerHTML = numberMask.masked.number;
+      });
+
+      var numberEl = document.getElementsByClassName('numbers-form')[0];
+      numberEl.querySelector('[name=apply]').addEventListener('click', function () {
+        numberMask.updateOptions({
+          scale: Number(numberEl.querySelector('[name=scale]').value),
+          radix: numberEl.querySelector('[name=radix]').value,
+          mapToRadix: numberEl.querySelector('[name=mapToRadix]').value.split(''),
+          signed: numberEl.querySelector('[name=signed]').checked,
+          thousandsSeparator: numberEl.querySelector('[name=thousandsSeparator]').value,
+          postFormat: {
+            padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
+            normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,
+          },
+          min: numberEl.querySelector('[name=min]').value ?
+            Number(numberEl.querySelector('[name=min]').value) : null,
+          max: numberEl.querySelector('[name=max]').value ?
+            Number(numberEl.querySelector('[name=max]').value) : null
+        });
       });
 
 

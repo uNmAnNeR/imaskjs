@@ -12,7 +12,7 @@ class InputMask {
     this._value = '';
     this._unmaskedValue = '';
 
-    this.saveSelection = this.saveSelection.bind(this);
+    this._saveSelection = this._saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
     this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
@@ -59,7 +59,7 @@ class InputMask {
   }
 
   bindEvents () {
-    this.el.addEventListener('keydown', this.saveSelection);
+    this.el.addEventListener('keydown', this._saveSelection);
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
     this.el.addEventListener('click', this._alignCursorFriendly);
@@ -67,7 +67,7 @@ class InputMask {
   }
 
   unbindEvents () {
-    this.el.removeEventListener('keydown', this.saveSelection);
+    this.el.removeEventListener('keydown', this._saveSelection);
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
     this.el.removeEventListener('click', this._alignCursorFriendly);
@@ -97,10 +97,10 @@ class InputMask {
     if (this.el !== document.activeElement) return;
 
     this.el.setSelectionRange(pos, pos);
-    this.saveSelection();
+    this._saveSelection();
   }
 
-  saveSelection (/* ev */) {
+  _saveSelection (/* ev */) {
     if (this.value !== this.el.value) {
       console.warn('Uncontrolled input change, refresh mask manually!'); // eslint-disable-line no-console
     }

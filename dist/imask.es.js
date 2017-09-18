@@ -815,7 +815,10 @@ var Masked = (_class = function () {
 
     var ret = fn();
 
-    if (unmasked != null) this.unmaskedValue = unmasked;
+    if (unmasked != null) {
+      this.unmaskedValue = unmasked;
+      this.commit();
+    }
     delete this._refreshing;
     return ret;
   };
@@ -853,8 +856,7 @@ var Masked = (_class = function () {
     },
     set: function set$$1(value) {
       this.reset();
-      this._append(value, true);
-      this._appendTail();
+      this.appendWithTail(value);
     }
   }, {
     key: 'unmaskedValue',
@@ -864,7 +866,7 @@ var Masked = (_class = function () {
     set: function set$$1(value) {
       this.reset();
       this._append(value);
-      this._appendTail();
+      this.appendWithTail("");
     }
   }, {
     key: 'isComplete',
@@ -2079,7 +2081,7 @@ var InputMask = function () {
     this._value = '';
     this._unmaskedValue = '';
 
-    this.saveSelection = this.saveSelection.bind(this);
+    this._saveSelection = this._saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
     this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
@@ -2094,7 +2096,7 @@ var InputMask = function () {
   }
 
   InputMask.prototype.bindEvents = function bindEvents() {
-    this.el.addEventListener('keydown', this.saveSelection);
+    this.el.addEventListener('keydown', this._saveSelection);
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
     this.el.addEventListener('click', this._alignCursorFriendly);
@@ -2102,7 +2104,7 @@ var InputMask = function () {
   };
 
   InputMask.prototype.unbindEvents = function unbindEvents() {
-    this.el.removeEventListener('keydown', this.saveSelection);
+    this.el.removeEventListener('keydown', this._saveSelection);
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
     this.el.removeEventListener('click', this._alignCursorFriendly);
@@ -2116,7 +2118,7 @@ var InputMask = function () {
     });
   };
 
-  InputMask.prototype.saveSelection = function saveSelection() /* ev */{
+  InputMask.prototype._saveSelection = function _saveSelection() /* ev */{
     if (this.value !== this.el.value) {
       console.warn('Uncontrolled input change, refresh mask manually!'); // eslint-disable-line no-console
     }
@@ -2304,7 +2306,7 @@ var InputMask = function () {
       if (this.el !== document.activeElement) return;
 
       this.el.setSelectionRange(pos, pos);
-      this.saveSelection();
+      this._saveSelection();
     }
   }]);
   return InputMask;
