@@ -55,10 +55,11 @@ var mask = new IMask(element, maskOptions);</code></pre>
         Model layer contains all masking facilities which can be used independently without UI.</p>
         <p id="support-older">View layer is a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
         <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. In order to support older browsers manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
-        <p>View layer currently consist only of a single component to support html <code>input</code>-like API. Instance of that type is returned by calling IMask.</p>
+        <p>Currently, view layer contains only one component <code>InputMask</code> to provide HTML input-like API. Instance of <code>InputMask</code> is returned when IMask constructor is called.</p>
         <p>Basic use case:</p>
         <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
-        <p>get/set value and unmasked value</p>
+
+        <p>Get/set value and unmasked value</p>
         <pre><code>mask.value = "+7(999)999-99-99";
 console.log(mask.value);  // logs "+7(999)999-99-99"
 console.log(mask.unmaskedValue);  // logs "79999999999"
@@ -67,7 +68,7 @@ mask.unmaskedValue = "70000000000";
 console.log(mask.value);  // logs "+7(000)000-00-00"
 console.log(mask.unmaskedValue);  // logs "70000000000"</code></pre>
 
-        <p>get/set mask</p>
+        <p>Get/set mask</p>
         <pre><code>mask.mask = "000-000"; // auto-updates UI</code></pre>
 
         <p>update options</p>
@@ -77,10 +78,10 @@ console.log(mask.unmaskedValue);  // logs "70000000000"</code></pre>
   max: 100
 });  // also updates UI</code></pre>
 
-        <p>clean and destroy</p>
+        <p>Clean and destroy</p>
         <pre><code>mask.destroy();</code></pre>
 
-        <p>listen to events</p>
+        <p>Listen to events</p>
         <pre><code>// 'accept' event fired on input when mask value has changed
 function log () {console.log(mask.value)};
 mask.on("accept", log);
@@ -88,18 +89,19 @@ mask.on("accept", log);
 // 'complete' event fired when the value is completely filled
 // This makes sense only for Pattern-based masks
 mask.on("complete", function () {console.log(mask.value)});</code></pre>
-        <p>unlisten to events</p>
+
+        <p>Stop listening to events</p>
         <pre><code>mask.off("accept", log);
 
 // omit handler argument to unlisten all
 mask.off("complete");</code></pre>
 
-        <p>get masked model</p>
+        <p>Get masked model</p>
         <pre><code>var masked = mask.masked;
 masked.reset(); // UI will NOT be updated</code></pre>
 
-        <p>In example above any changes are proxied to model layer at first and then UI gets updated. The core of masking on model layer is <a href="#common">IMask.Masked</a> base class.
-        There are also several other model classes which corresponds to <code>mask</code> property type and provides additional functionality:</p>
+        <p>In the above example all changes are proxied to the model layer first and then UI is updated. The core of masking on model layer is <a href="#common">IMask.Masked</a> base class.
+        There are also several other model classes for the different <code>mask</code> property types that provide additional functionality:</p>
         <table>
           <thead>
             <tr>
@@ -267,9 +269,9 @@ var masked = new IMask.PatternMasked({
 });</code></pre>
         where:
         <ul class="unstyled">
-        <li><code>0</code> - any digit input</li>
-        <li><code>a</code> - any letter input</li>
-        <li><code>*</code> - any char input</li>
+        <li><code>0</code> - any digit</li>
+        <li><code>a</code> - any letter</li>
+        <li><code>*</code> - any char</li>
         <li>other chars (not defined in custom options) supposed to be <em>fixed</em></li>
         <li><code>[]</code> - make optional</li>
         <li><code>{}</code> - include fixed part in unmasked value</li>
