@@ -1,3 +1,5 @@
+var resolve = require('rollup-plugin-node-resolve');
+var commonjs = require('rollup-plugin-commonjs');
 var babel = require('rollup-plugin-babel');
 
 
@@ -30,6 +32,11 @@ module.exports = function (config) {
     browsers: ['Chrome'],
     rollupPreprocessor: {
       plugins: [
+      resolve({
+        jsnext: true,
+        main: true
+      }),
+      commonjs(),
         babel({
           exclude: 'node_modules/**',
         })

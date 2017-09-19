@@ -829,30 +829,338 @@ var Masked = (_class = function () {
   return Masked;
 }(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
 
+var _class$2;
+
+function _applyDecoratedDescriptor$2(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var MaskedNumber = (_class$2 = function (_Masked) {
+  inherits(MaskedNumber, _Masked);
+
+  function MaskedNumber() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    classCallCheck(this, MaskedNumber);
+
+    opts = _extends({}, MaskedNumber.DEFAULTS, opts);
+
+    var _this = possibleConstructorReturn(this, _Masked.call(this, opts));
+
+    delete _this.isInitialized;
+
+    var _opts = opts,
+        scale = _opts.scale,
+        radix = _opts.radix,
+        mapToRadix = _opts.mapToRadix,
+        min = _opts.min,
+        max = _opts.max,
+        signed = _opts.signed,
+        thousandsSeparator = _opts.thousandsSeparator,
+        postFormat = _opts.postFormat;
+
+
+    _this.min = min;
+    _this.max = max;
+    _this.scale = scale;
+    _this.radix = radix;
+    _this.mapToRadix = mapToRadix;
+    _this.signed = signed;
+    _this.thousandsSeparator = thousandsSeparator;
+    _this.postFormat = postFormat;
+
+    _this._updateNumberRegExp();
+
+    _this.isInitialized = true;
+    return _this;
+  }
+
+  MaskedNumber.prototype._updateNumberRegExp = function _updateNumberRegExp() {
+    // TODO refactor?
+    var regExpStrSoft = '^';
+    var regExpStr = '^';
+
+    if (this.signed) {
+      regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
+      regExpStr += '[+|\\-]?';
+    } else {
+      regExpStrSoft += '(0|([1-9]+\\d*))';
+    }
+    regExpStr += '\\d*';
+
+    if (this.scale) {
+      regExpStrSoft += '(' + this.radix + '\\d{0,' + this.scale + '})?';
+      regExpStr += '(' + this.radix + '\\d{0,' + this.scale + '})?';
+    }
+
+    regExpStrSoft += '$';
+    regExpStr += '$';
+
+    this._numberRegExpSoft = new RegExp(regExpStrSoft);
+    this._numberRegExp = new RegExp(regExpStr);
+  };
+
+  MaskedNumber.prototype.extractTail = function extractTail() {
+    var fromPos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var toPos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.value.length;
+
+    return this._removeThousandsSeparators(_Masked.prototype.extractTail.call(this, fromPos, toPos));
+  };
+
+  MaskedNumber.prototype._removeThousandsSeparators = function _removeThousandsSeparators(value) {
+    return value.replace(this._thousandsSeparatorRegExp, '');
+  };
+
+  MaskedNumber.prototype._insertThousandsSeparators = function _insertThousandsSeparators(value) {
+    // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+    var parts = value.split(this.radix);
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, this.thousandsSeparator);
+    return parts.join(this.radix);
+  };
+
+  MaskedNumber.prototype._append = function _append(str, soft) {
+    return _Masked.prototype._append.call(this, this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), soft);
+  };
+
+  MaskedNumber.prototype.appendWithTail = function appendWithTail(str, tail) {
+    var oldValueLength = this.value.length;
+    this._value = this._removeThousandsSeparators(this.value);
+    var removedSeparatorsCount = oldValueLength - this.value.length;
+
+    var appended = _Masked.prototype.appendWithTail.call(this, str, tail);
+
+    this._value = this._insertThousandsSeparators(this.value);
+
+    var beforeTailPos = oldValueLength + appended - removedSeparatorsCount;
+    this._value = this._insertThousandsSeparators(this.value);
+    var insertedSeparatorsBeforeTailCount = 0;
+    for (var pos = 0; pos <= beforeTailPos; ++pos) {
+      if (this.value[pos] === this.thousandsSeparator) {
+        ++insertedSeparatorsBeforeTailCount;
+        ++beforeTailPos;
+      }
+    }
+
+    return appended - removedSeparatorsCount + insertedSeparatorsBeforeTailCount;
+  };
+
+  MaskedNumber.prototype.nearestInputPos = function nearestInputPos(cursorPos) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DIRECTION.LEFT;
+
+    if (!direction) return cursorPos;
+
+    var nextPos = indexInDirection(cursorPos, direction);
+    if (this.value[nextPos] === this.thousandsSeparator) cursorPos += direction;
+    return cursorPos;
+  };
+
+  MaskedNumber.prototype._validate = function _validate(soft) {
+    var regexp = soft ? this._numberRegExpSoft : this._numberRegExp;
+
+    // validate as string
+    var valid = regexp.test(this._removeThousandsSeparators(this.value));
+
+    if (valid) {
+      // validate as number
+      var number = this.number;
+      valid = valid && !isNaN(number) && (
+      // check min bound for negative values
+      this.min == null || this.min >= 0 || this.min <= this.number) && (
+      // check max bound for positive values
+      this.max == null || this.max <= 0 || this.number <= this.max);
+    }
+
+    return valid && _Masked.prototype._validate.call(this, soft);
+  };
+
+  MaskedNumber.prototype.commit = function commit() {
+    var number = this.number;
+    var validnum = number;
+
+    // check bounds
+    if (this.min != null) validnum = Math.max(validnum, this.min);
+    if (this.max != null) validnum = Math.min(validnum, this.max);
+
+    if (validnum !== number) {
+      this.unmaskedValue = '' + validnum;
+    }
+
+    var formatted = this.value;
+
+    if (this.postFormat.normalizeZeros) {
+      formatted = this._normalizeZeros(formatted);
+    }
+
+    if (this.postFormat.padFractionalZeros) {
+      formatted = this._padFractionalZeros(formatted);
+    }
+
+    this._value = formatted;
+  };
+
+  MaskedNumber.prototype._normalizeZeros = function _normalizeZeros(value) {
+    var parts = this._removeThousandsSeparators(value).split(this.radix);
+
+    // remove leading zeros
+    parts[0] = parts[0].replace(/^(\D*)(0*)(\d*)/, function (match, sign, zeros, num) {
+      return sign + num;
+    });
+    // add leading zero
+    if (value.length && !/\d$/.test(parts[0])) parts[0] = parts[0] + '0';
+
+    if (parts.length > 1) {
+      parts[1] = parts[1].replace(/0*$/, ''); // remove trailing zeros
+      if (!parts[1].length) parts.length = 1; // remove fractional
+    }
+
+    return this._insertThousandsSeparators(parts.join(this.radix));
+  };
+
+  MaskedNumber.prototype._padFractionalZeros = function _padFractionalZeros(value) {
+    var parts = value.split(this.radix);
+    if (parts.length < 2) parts.push('');
+    parts[1] = parts[1].padEnd(this.scale, '0');
+    return parts.join(this.radix);
+  };
+
+  createClass(MaskedNumber, [{
+    key: 'number',
+    get: function get$$1() {
+      var numstr = this._removeThousandsSeparators(this._normalizeZeros(this.unmaskedValue)).replace(this.radix, '.');
+
+      return Number(numstr);
+    },
+    set: function set$$1(number) {
+      this.unmaskedValue = '' + number;
+    }
+  }, {
+    key: 'min',
+    get: function get$$1() {
+      return this._min;
+    },
+    set: function set$$1(min) {
+      this._min = min;
+    }
+  }, {
+    key: 'max',
+    get: function get$$1() {
+      return this._max;
+    },
+    set: function set$$1(max) {
+      this._max = max;
+    }
+  }, {
+    key: 'scale',
+    get: function get$$1() {
+      return this._scale;
+    },
+    set: function set$$1(scale) {
+      this._scale = scale;
+    }
+  }, {
+    key: 'radix',
+    get: function get$$1() {
+      return this._radix;
+    },
+    set: function set$$1(radix) {
+      this._radix = radix;
+      this._updateNumberRegExp();
+    }
+  }, {
+    key: 'signed',
+    get: function get$$1() {
+      return this._signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
+    },
+    set: function set$$1(signed) {
+      this._signed = signed;
+    }
+  }, {
+    key: 'postFormat',
+    get: function get$$1() {
+      return this._postFormat;
+    },
+    set: function set$$1(postFormat) {
+      this._postFormat = _extends({}, MaskedNumber.DEFAULTS.postFormat, postFormat);
+    }
+  }, {
+    key: 'mapToRadix',
+    get: function get$$1() {
+      return this._mapToRadix;
+    },
+    set: function set$$1(mapToRadix) {
+      this._mapToRadix = mapToRadix;
+      this._mapToRadixRegExp = new RegExp('[' + mapToRadix.map(escapeRegExp).join('') + ']', 'g');
+    }
+  }, {
+    key: 'thousandsSeparator',
+    get: function get$$1() {
+      return this._thousandsSeparator;
+    },
+    set: function set$$1(thousandsSeparator) {
+      this._thousandsSeparator = thousandsSeparator;
+      this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), 'g');
+    }
+  }]);
+  return MaskedNumber;
+}(Masked), (_applyDecoratedDescriptor$2(_class$2.prototype, 'min', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'min'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'max', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'max'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'scale', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'scale'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'radix', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'radix'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'signed', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'signed'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'postFormat', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'postFormat'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'mapToRadix', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'mapToRadix'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'thousandsSeparator', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'thousandsSeparator'), _class$2.prototype)), _class$2);
+MaskedNumber.DEFAULTS = {
+  radix: ',',
+  thousandsSeparator: '',
+  mapToRadix: ['.'],
+  scale: 2,
+  postFormat: {
+    normalizeZeros: true
+  }
+};
+
 function createMask(opts) {
   opts = _extends({}, opts); // clone
 
   var mask = opts.mask;
 
-  if (mask instanceof IMask.Masked) {
+  if (mask instanceof Masked) {
     return mask;
   }
   if (mask instanceof RegExp) {
     opts.validate = function (value) {
       return mask.test(value);
     };
-    return new IMask.Masked(opts);
+    return new Masked(opts);
   }
   if (isString(mask)) {
     return new IMask.MaskedPattern(opts);
   }
-  if (mask.prototype instanceof IMask.Masked) {
+  if (mask.prototype instanceof Masked) {
     delete opts.mask;
     return new mask(opts);
   }
   if (mask instanceof Number || typeof mask === 'number' || mask === Number) {
     delete opts.mask;
-    return new IMask.MaskedNumber(opts);
+    return new MaskedNumber(opts);
   }
   if (mask instanceof Date || mask === Date) {
     delete opts.mask;
@@ -864,11 +1172,11 @@ function createMask(opts) {
   }
   if (mask instanceof Function) {
     opts.validate = mask;
-    return new IMask.Masked(opts);
+    return new Masked(opts);
   }
 
   console.warn('Mask not found for', opts); // eslint-disable-line no-console
-  return new IMask.Masked(opts);
+  return new Masked(opts);
 }
 
 var PatternDefinition = function () {
@@ -1523,314 +1831,6 @@ MaskedPattern.STOP_CHAR = '`';
 MaskedPattern.ESCAPE_CHAR = '\\';
 MaskedPattern.Definition = PatternDefinition;
 MaskedPattern.Group = PatternGroup;
-
-var _class$2;
-
-function _applyDecoratedDescriptor$2(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-var MaskedNumber = (_class$2 = function (_Masked) {
-  inherits(MaskedNumber, _Masked);
-
-  function MaskedNumber() {
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    classCallCheck(this, MaskedNumber);
-
-    opts = _extends({}, MaskedNumber.DEFAULTS, opts);
-
-    var _this = possibleConstructorReturn(this, _Masked.call(this, opts));
-
-    delete _this.isInitialized;
-
-    var _opts = opts,
-        scale = _opts.scale,
-        radix = _opts.radix,
-        mapToRadix = _opts.mapToRadix,
-        min = _opts.min,
-        max = _opts.max,
-        signed = _opts.signed,
-        thousandsSeparator = _opts.thousandsSeparator,
-        postFormat = _opts.postFormat;
-
-
-    _this.min = min;
-    _this.max = max;
-    _this.scale = scale;
-    _this.radix = radix;
-    _this.mapToRadix = mapToRadix;
-    _this.signed = signed;
-    _this.thousandsSeparator = thousandsSeparator;
-    _this.postFormat = postFormat;
-
-    _this._updateNumberRegExp();
-
-    _this.isInitialized = true;
-    return _this;
-  }
-
-  MaskedNumber.prototype._updateNumberRegExp = function _updateNumberRegExp() {
-    // TODO refactor?
-    var regExpStrSoft = '^';
-    var regExpStr = '^';
-
-    if (this.signed) {
-      regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
-      regExpStr += '[+|\\-]?';
-    } else {
-      regExpStrSoft += '(0|([1-9]+\\d*))';
-    }
-    regExpStr += '\\d*';
-
-    if (this.scale) {
-      regExpStrSoft += '(' + this.radix + '\\d{0,' + this.scale + '})?';
-      regExpStr += '(' + this.radix + '\\d{0,' + this.scale + '})?';
-    }
-
-    regExpStrSoft += '$';
-    regExpStr += '$';
-
-    this._numberRegExpSoft = new RegExp(regExpStrSoft);
-    this._numberRegExp = new RegExp(regExpStr);
-  };
-
-  MaskedNumber.prototype.extractTail = function extractTail() {
-    var fromPos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var toPos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.value.length;
-
-    return this._removeThousandsSeparators(_Masked.prototype.extractTail.call(this, fromPos, toPos));
-  };
-
-  MaskedNumber.prototype._removeThousandsSeparators = function _removeThousandsSeparators(value) {
-    return value.replace(this._thousandsSeparatorRegExp, '');
-  };
-
-  MaskedNumber.prototype._insertThousandsSeparators = function _insertThousandsSeparators(value) {
-    // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-    var parts = value.split(this.radix);
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, this.thousandsSeparator);
-    return parts.join(this.radix);
-  };
-
-  MaskedNumber.prototype._append = function _append(str, soft) {
-    return _Masked.prototype._append.call(this, this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), soft);
-  };
-
-  MaskedNumber.prototype.appendWithTail = function appendWithTail(str, tail) {
-    var oldValueLength = this.value.length;
-    this._value = this._removeThousandsSeparators(this.value);
-    var removedSeparatorsCount = oldValueLength - this.value.length;
-
-    var appended = _Masked.prototype.appendWithTail.call(this, str, tail);
-
-    this._value = this._insertThousandsSeparators(this.value);
-
-    var beforeTailPos = oldValueLength + appended - removedSeparatorsCount;
-    this._value = this._insertThousandsSeparators(this.value);
-    var insertedSeparatorsBeforeTailCount = 0;
-    for (var pos = 0; pos <= beforeTailPos; ++pos) {
-      if (this.value[pos] === this.thousandsSeparator) {
-        ++insertedSeparatorsBeforeTailCount;
-        ++beforeTailPos;
-      }
-    }
-
-    return appended - removedSeparatorsCount + insertedSeparatorsBeforeTailCount;
-  };
-
-  MaskedNumber.prototype.nearestInputPos = function nearestInputPos(cursorPos) {
-    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DIRECTION.LEFT;
-
-    if (!direction) return cursorPos;
-
-    var nextPos = indexInDirection(cursorPos, direction);
-    if (this.value[nextPos] === this.thousandsSeparator) cursorPos += direction;
-    return cursorPos;
-  };
-
-  MaskedNumber.prototype._validate = function _validate(soft) {
-    var regexp = soft ? this._numberRegExpSoft : this._numberRegExp;
-
-    // validate as string
-    var valid = regexp.test(this._removeThousandsSeparators(this.value));
-
-    if (valid) {
-      // validate as number
-      var number = this.number;
-      valid = valid && !isNaN(number) && (
-      // check min bound for negative values
-      this.min == null || this.min >= 0 || this.min <= this.number) && (
-      // check max bound for positive values
-      this.max == null || this.max <= 0 || this.number <= this.max);
-    }
-
-    return valid && _Masked.prototype._validate.call(this, soft);
-  };
-
-  MaskedNumber.prototype.commit = function commit() {
-    var number = this.number;
-    var validnum = number;
-
-    // check bounds
-    if (this.min != null) validnum = Math.max(validnum, this.min);
-    if (this.max != null) validnum = Math.min(validnum, this.max);
-
-    if (validnum !== number) {
-      this.unmaskedValue = '' + validnum;
-    }
-
-    var formatted = this.value;
-
-    if (this.postFormat.normalizeZeros) {
-      formatted = this._normalizeZeros(formatted);
-    }
-
-    if (this.postFormat.padFractionalZeros) {
-      formatted = this._padFractionalZeros(formatted);
-    }
-
-    this._value = formatted;
-  };
-
-  MaskedNumber.prototype._normalizeZeros = function _normalizeZeros(value) {
-    var parts = this._removeThousandsSeparators(value).split(this.radix);
-
-    // remove leading zeros
-    parts[0] = parts[0].replace(/^(\D*)(0*)(\d*)/, function (match, sign, zeros, num) {
-      return sign + num;
-    });
-    // add leading zero
-    if (value.length && !/\d$/.test(parts[0])) parts[0] = parts[0] + '0';
-
-    if (parts.length > 1) {
-      parts[1] = parts[1].replace(/0*$/, ''); // remove trailing zeros
-      if (!parts[1].length) parts.length = 1; // remove fractional
-    }
-
-    return this._insertThousandsSeparators(parts.join(this.radix));
-  };
-
-  MaskedNumber.prototype._padFractionalZeros = function _padFractionalZeros(value) {
-    var parts = value.split(this.radix);
-    if (parts.length < 2) parts.push('');
-    parts[1] = parts[1].padEnd(this.scale, '0');
-    return parts.join(this.radix);
-  };
-
-  createClass(MaskedNumber, [{
-    key: 'number',
-    get: function get$$1() {
-      var numstr = this._removeThousandsSeparators(this._normalizeZeros(this.unmaskedValue)).replace(this.radix, '.');
-
-      return Number(numstr);
-    },
-    set: function set$$1(number) {
-      this.unmaskedValue = '' + number;
-    }
-  }, {
-    key: 'min',
-    get: function get$$1() {
-      return this._min;
-    },
-    set: function set$$1(min) {
-      this._min = min;
-    }
-  }, {
-    key: 'max',
-    get: function get$$1() {
-      return this._max;
-    },
-    set: function set$$1(max) {
-      this._max = max;
-    }
-  }, {
-    key: 'scale',
-    get: function get$$1() {
-      return this._scale;
-    },
-    set: function set$$1(scale) {
-      this._scale = scale;
-    }
-  }, {
-    key: 'radix',
-    get: function get$$1() {
-      return this._radix;
-    },
-    set: function set$$1(radix) {
-      this._radix = radix;
-      this._updateNumberRegExp();
-    }
-  }, {
-    key: 'signed',
-    get: function get$$1() {
-      return this._signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
-    },
-    set: function set$$1(signed) {
-      this._signed = signed;
-    }
-  }, {
-    key: 'postFormat',
-    get: function get$$1() {
-      return this._postFormat;
-    },
-    set: function set$$1(postFormat) {
-      this._postFormat = _extends({}, MaskedNumber.DEFAULTS.postFormat, postFormat);
-    }
-  }, {
-    key: 'mapToRadix',
-    get: function get$$1() {
-      return this._mapToRadix;
-    },
-    set: function set$$1(mapToRadix) {
-      this._mapToRadix = mapToRadix;
-      this._mapToRadixRegExp = new RegExp('[' + mapToRadix.map(escapeRegExp).join('') + ']', 'g');
-    }
-  }, {
-    key: 'thousandsSeparator',
-    get: function get$$1() {
-      return this._thousandsSeparator;
-    },
-    set: function set$$1(thousandsSeparator) {
-      this._thousandsSeparator = thousandsSeparator;
-      this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), 'g');
-    }
-  }]);
-  return MaskedNumber;
-}(Masked), (_applyDecoratedDescriptor$2(_class$2.prototype, 'min', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'min'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'max', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'max'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'scale', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'scale'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'radix', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'radix'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'signed', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'signed'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'postFormat', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'postFormat'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'mapToRadix', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'mapToRadix'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'thousandsSeparator', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'thousandsSeparator'), _class$2.prototype)), _class$2);
-MaskedNumber.DEFAULTS = {
-  radix: ',',
-  thousandsSeparator: '',
-  mapToRadix: ['.'],
-  scale: 2,
-  postFormat: {
-    normalizeZeros: true
-  }
-};
 
 var _class$3;
 
