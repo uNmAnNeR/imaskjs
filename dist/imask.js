@@ -437,60 +437,6 @@ _objectSap('keys', function(){
   };
 });
 
-var _objectDps = _descriptors ? Object.defineProperties : function defineProperties(O, Properties){
-  _anObject(O);
-  var keys   = _objectKeys(Properties)
-    , length = keys.length
-    , i = 0
-    , P;
-  while(length > i)_objectDp.f(O, P = keys[i++], Properties[P]);
-  return O;
-};
-
-var _html = _global.document && document.documentElement;
-
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var IE_PROTO$1    = _sharedKey('IE_PROTO');
-var Empty       = function(){ /* empty */ };
-var PROTOTYPE$1   = 'prototype';
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function(){
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = _domCreate('iframe')
-    , i      = _enumBugKeys.length
-    , lt     = '<'
-    , gt     = '>'
-    , iframeDocument;
-  iframe.style.display = 'none';
-  _html.appendChild(iframe);
-  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-  // createDict = iframe.contentWindow.Object;
-  // html.removeChild(iframe);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-  iframeDocument.close();
-  createDict = iframeDocument.F;
-  while(i--)delete createDict[PROTOTYPE$1][_enumBugKeys[i]];
-  return createDict();
-};
-
-var _objectCreate = Object.create || function create(O, Properties){
-  var result;
-  if(O !== null){
-    Empty[PROTOTYPE$1] = _anObject(O);
-    result = new Empty;
-    Empty[PROTOTYPE$1] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO$1] = O;
-  } else result = createDict();
-  return Properties === undefined ? result : _objectDps(result, Properties);
-};
-
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-_export(_export.S, 'Object', {create: _objectCreate});
-
 var _stringRepeat = function repeat(count){
   var str = String(_defined(this))
     , res = ''
@@ -821,10 +767,8 @@ var Masked = (_class = function () {
 
     var ret = fn();
 
-    if (unmasked != null) {
-      this.unmaskedValue = unmasked;
-      this.commit();
-    }
+    if (unmasked != null) this.unmaskedValue = unmasked;
+
     delete this._refreshing;
     return ret;
   };
@@ -863,6 +807,7 @@ var Masked = (_class = function () {
     set: function set$$1(value) {
       this.reset();
       this.appendWithTail(value);
+      this.commit();
     }
   }, {
     key: 'unmaskedValue',
@@ -873,6 +818,7 @@ var Masked = (_class = function () {
       this.reset();
       this._append(value);
       this.appendWithTail("");
+      this.commit();
     }
   }, {
     key: 'isComplete',
@@ -884,10 +830,8 @@ var Masked = (_class = function () {
 }(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
 
 function createMask(opts) {
-  var _opts = opts;
-  // clone
-  opts = Object.create(opts);
-  _extends(opts, _opts);
+  opts = _extends({}, opts); // clone
+
   var mask = opts.mask;
 
   if (mask instanceof IMask.Masked) {
@@ -2269,13 +2213,13 @@ var InputMask = function () {
       return this.masked.mask;
     },
     set: function set$$1(mask) {
-      var unmasked = this.masked ? this.masked.unmaskedValue : null;
-      var opts = { mask: mask };
       if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) === _typeof(this.masked.mask)) {
         this.masked.mask = mask;
-        opts = this.masked;
+        return;
       }
-      this.masked = createMask(opts);
+
+      var unmasked = this.masked ? this.masked.unmaskedValue : null;
+      this.masked = createMask({ mask: mask });
       if (unmasked != null) this.masked.unmaskedValue = unmasked;
     }
   }, {

@@ -40,6 +40,7 @@ class Masked {
   set value (value) {
     this.reset();
     this.appendWithTail(value);
+    this.commit();
   }
 
   get unmaskedValue () {
@@ -50,6 +51,7 @@ class Masked {
     this.reset();
     this._append(value);
     this.appendWithTail("");
+    this.commit();
   }
 
   get isComplete () {
@@ -138,10 +140,8 @@ class Masked {
 
     const ret = fn();
 
-    if (unmasked != null) {
-      this.unmaskedValue = unmasked;
-      this.commit();
-    }
+    if (unmasked != null) this.unmaskedValue = unmasked;
+
     delete this._refreshing;
     return ret;
   }

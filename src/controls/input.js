@@ -28,13 +28,13 @@ class InputMask {
 
   get mask () { return this.masked.mask; }
   set mask (mask) {
-    const unmasked = this.masked ? this.masked.unmaskedValue : null;
-    let opts = {mask};
     if (typeof mask === typeof this.masked.mask) {
       this.masked.mask = mask;
-      opts = this.masked;
+      return;
     }
-    this.masked = createMask(opts);
+
+    const unmasked = this.masked ? this.masked.unmaskedValue : null;
+    this.masked = createMask({mask});
     if (unmasked != null) this.masked.unmaskedValue = unmasked;
   }
 
