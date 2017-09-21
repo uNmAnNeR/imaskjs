@@ -3,10 +3,17 @@ import {refreshValueOnSet} from '../core/utils';
 
 export default
 class Masked {
-  constructor ({mask, validate}) {
+  constructor ({
+    mask,
+    prepare=((val) => val),
+    validate=(() => true),
+    commit=(() => {}),
+  }) {
     this._value = '';
     this.mask = mask;
-    this.validate = validate || (() => true);
+    this.prepare = prepare;
+    this.validate = validate;
+    this.commit = commit;
     this.isInitialized = true;
   }
 
@@ -19,8 +26,31 @@ class Masked {
     this._mask = mask;
   }
 
-  _validate (soft) {
-    return this.validate(this.value, this, soft);
+  get prepare () {
+    return this._prepare;
+  }
+
+  @refreshValueOnSet
+  set prepare (prepare) {
+    this._prepare = prepare;
+  }
+
+  get validate () {
+    return this._validate;
+  }
+
+  @refreshValueOnSet
+  set validate (validate) {
+    this._validate = validate;
+  }
+
+  get commit () {
+    return this._commit;
+  }
+
+  @refreshValueOnSet
+  set commit (commit) {
+    this._commit = commit;
   }
 
   clone () {
@@ -40,7 +70,7 @@ class Masked {
   set value (value) {
     this.reset();
     this.appendWithTail(value);
-    this.commit();
+    this.doCommit();
   }
 
   get unmaskedValue () {
@@ -51,7 +81,7 @@ class Masked {
     this.reset();
     this._append(value);
     this.appendWithTail("");
-    this.commit();
+    this.doCommit();
   }
 
   get isComplete () {
@@ -78,9 +108,10 @@ class Masked {
     const oldValueLength = this.value.length;
     let consistentValue = this.clone();
 
+    str = this.doPrepare(str, soft);
     for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
-      if (this._validate(soft) === false) {
+      if (this.doValidate(soft) === false) {
         Object.assign(this, consistentValue);
         if (!soft) return false;
       }
@@ -104,7 +135,7 @@ class Masked {
       const appended = this._append(ch, true);
       consistentAppended = this.clone();
       const tailAppended = appended !== false && this._appendTail(tail) !== false;
-      if (tailAppended === false || this._validate(true) === false) {
+      if (tailAppended === false || this.doValidate(true) === false) {
         Object.assign(this, consistentValue);
         break;
       }
@@ -146,7 +177,17 @@ class Masked {
     return ret;
   }
 
-  commit () {}
+  doPrepare (str, soft) {
+    return this.prepare(str, this, soft);
+  }
+
+  doValidate (soft) {
+    return this.validate(this.value, this, soft);
+  }
+
+  doCommit () {
+    this.commit(this.value, this);
+  }
 
   // TODO
   // resolve (inputRaw) -> outputRaw

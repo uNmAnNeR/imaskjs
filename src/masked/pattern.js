@@ -133,8 +133,8 @@ class MaskedPattern extends Masked {
     }
   }
 
-  _validate (soft) {
-    return this._groupDefs.every(g => g._validate(soft)) && super._validate(soft);
+  doValidate (soft) {
+    return this._groupDefs.every(g => g.doValidate(soft)) && super.doValidate(soft);
   }
 
   clone () {
@@ -217,7 +217,7 @@ class MaskedPattern extends Masked {
       if (def.type === PatternDefinition.TYPES.INPUT) {
         if (chres) {
           this._value += chres;
-          if (!this._validate()) {
+          if (!this.doValidate()) {
             chres = '';
             this._value = this.value.slice(0, -1);
           }

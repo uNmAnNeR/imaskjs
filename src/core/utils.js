@@ -34,6 +34,6 @@ function refreshValueOnSet (target, key, descriptor) {
 }
 
 export
-function escapeRegExp(str) {
+function escapeRegExp (str) {
   return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
 }
