@@ -34,6 +34,9 @@ Supports all major browsers and IE11+ [need support older?](https://unmanner.git
 
 ## Changes
 
+### 1.1.0
+* new _prepare_ and _commit_ options
+
 ### 1.0.0
 * **major API changes and improvements**
 * new _Masked_ model abstraction

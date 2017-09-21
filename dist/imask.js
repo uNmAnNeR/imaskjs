@@ -650,20 +650,25 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 var Masked = (_class = function () {
   function Masked(_ref) {
     var mask = _ref.mask,
-        validate = _ref.validate;
+        _ref$prepare = _ref.prepare,
+        prepare = _ref$prepare === undefined ? function (val) {
+      return val;
+    } : _ref$prepare,
+        _ref$validate = _ref.validate,
+        validate = _ref$validate === undefined ? function () {
+      return true;
+    } : _ref$validate,
+        _ref$commit = _ref.commit,
+        commit = _ref$commit === undefined ? function () {} : _ref$commit;
     classCallCheck(this, Masked);
 
     this._value = '';
     this.mask = mask;
-    this.validate = validate || function () {
-      return true;
-    };
+    this.prepare = prepare;
+    this.validate = validate;
+    this.commit = commit;
     this.isInitialized = true;
   }
-
-  Masked.prototype._validate = function _validate(soft) {
-    return this.validate(this.value, this, soft);
-  };
 
   Masked.prototype.clone = function clone() {
     var m = new Masked(this);
@@ -701,9 +706,10 @@ var Masked = (_class = function () {
     var oldValueLength = this.value.length;
     var consistentValue = this.clone();
 
+    str = this.doPrepare(str, soft);
     for (var ci = 0; ci < str.length; ++ci) {
       this._value += str[ci];
-      if (this._validate(soft) === false) {
+      if (this.doValidate(soft) === false) {
         _extends(this, consistentValue);
         if (!soft) return false;
       }
@@ -726,7 +732,7 @@ var Masked = (_class = function () {
       var appended = this._append(ch, true);
       consistentAppended = this.clone();
       var tailAppended = appended !== false && this._appendTail(tail) !== false;
-      if (tailAppended === false || this._validate(true) === false) {
+      if (tailAppended === false || this.doValidate(true) === false) {
         _extends(this, consistentValue);
         break;
       }
@@ -773,7 +779,17 @@ var Masked = (_class = function () {
     return ret;
   };
 
-  Masked.prototype.commit = function commit() {};
+  Masked.prototype.doPrepare = function doPrepare(str, soft) {
+    return this.prepare(str, this, soft);
+  };
+
+  Masked.prototype.doValidate = function doValidate(soft) {
+    return this.validate(this.value, this, soft);
+  };
+
+  Masked.prototype.doCommit = function doCommit() {
+    this.commit(this.value, this);
+  };
 
   // TODO
   // resolve (inputRaw) -> outputRaw
@@ -800,6 +816,30 @@ var Masked = (_class = function () {
       this._mask = mask;
     }
   }, {
+    key: 'prepare',
+    get: function get$$1() {
+      return this._prepare;
+    },
+    set: function set$$1(prepare) {
+      this._prepare = prepare;
+    }
+  }, {
+    key: 'validate',
+    get: function get$$1() {
+      return this._validate;
+    },
+    set: function set$$1(validate) {
+      this._validate = validate;
+    }
+  }, {
+    key: 'commit',
+    get: function get$$1() {
+      return this._commit;
+    },
+    set: function set$$1(commit) {
+      this._commit = commit;
+    }
+  }, {
     key: 'value',
     get: function get$$1() {
       return this._value;
@@ -807,7 +847,7 @@ var Masked = (_class = function () {
     set: function set$$1(value) {
       this.reset();
       this.appendWithTail(value);
-      this.commit();
+      this.doCommit();
     }
   }, {
     key: 'unmaskedValue',
@@ -818,7 +858,7 @@ var Masked = (_class = function () {
       this.reset();
       this._append(value);
       this.appendWithTail("");
-      this.commit();
+      this.doCommit();
     }
   }, {
     key: 'isComplete',
@@ -827,7 +867,7 @@ var Masked = (_class = function () {
     }
   }]);
   return Masked;
-}(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype)), _class);
+}(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'prepare', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'prepare'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'validate', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'validate'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'commit', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'commit'), _class.prototype)), _class);
 
 var _class$2;
 
@@ -942,8 +982,8 @@ var MaskedNumber = (_class$2 = function (_Masked) {
     return parts.join(this.radix);
   };
 
-  MaskedNumber.prototype._append = function _append(str, soft) {
-    return _Masked.prototype._append.call(this, this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), soft);
+  MaskedNumber.prototype.doPrepare = function doPrepare(str, soft) {
+    return _Masked.prototype.doPrepare.call(this, this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), soft);
   };
 
   MaskedNumber.prototype.appendWithTail = function appendWithTail(str, tail) {
@@ -978,7 +1018,7 @@ var MaskedNumber = (_class$2 = function (_Masked) {
     return cursorPos;
   };
 
-  MaskedNumber.prototype._validate = function _validate(soft) {
+  MaskedNumber.prototype.doValidate = function doValidate(soft) {
     var regexp = soft ? this._numberRegExpSoft : this._numberRegExp;
 
     // validate as string
@@ -994,10 +1034,10 @@ var MaskedNumber = (_class$2 = function (_Masked) {
       this.max == null || this.max <= 0 || this.number <= this.max);
     }
 
-    return valid && _Masked.prototype._validate.call(this, soft);
+    return valid && _Masked.prototype.doValidate.call(this, soft);
   };
 
-  MaskedNumber.prototype.commit = function commit() {
+  MaskedNumber.prototype.doCommit = function doCommit() {
     var number = this.number;
     var validnum = number;
 
@@ -1020,6 +1060,7 @@ var MaskedNumber = (_class$2 = function (_Masked) {
     }
 
     this._value = formatted;
+    _Masked.prototype.doCommit.call(this);
   };
 
   MaskedNumber.prototype._normalizeZeros = function _normalizeZeros(value) {
@@ -1243,7 +1284,7 @@ var PatternGroup = function () {
     };
   }
 
-  PatternGroup.prototype._validate = function _validate(soft) {
+  PatternGroup.prototype.doValidate = function doValidate(soft) {
     return this.validate(this.value, this, soft);
   };
 
@@ -1498,10 +1539,10 @@ var MaskedPattern = (_class$1 = function (_Masked) {
     }
   };
 
-  MaskedPattern.prototype._validate = function _validate(soft) {
+  MaskedPattern.prototype.doValidate = function doValidate(soft) {
     return this._groupDefs.every(function (g) {
-      return g._validate(soft);
-    }) && _Masked.prototype._validate.call(this, soft);
+      return g.doValidate(soft);
+    }) && _Masked.prototype.doValidate.call(this, soft);
   };
 
   MaskedPattern.prototype.clone = function clone() {
@@ -1587,7 +1628,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
       if (def.type === PatternDefinition.TYPES.INPUT) {
         if (chres) {
           this._value += chres;
-          if (!this._validate()) {
+          if (!this.doValidate()) {
             chres = '';
             this._value = this.value.slice(0, -1);
           }
@@ -1901,8 +1942,8 @@ var MaskedDate = (_class$3 = function (_MaskedPattern) {
     return _this;
   }
 
-  MaskedDate.prototype._validate = function _validate(soft) {
-    var valid = _MaskedPattern.prototype._validate.call(this, soft);
+  MaskedDate.prototype.doValidate = function doValidate(soft) {
+    var valid = _MaskedPattern.prototype.doValidate.call(this, soft);
     var date = this.date;
 
     return valid && (!this.isComplete || this.isDateExist(this.value) && date && (this.min == null || this.min <= date) && (this.max == null || date <= this.max));
@@ -2193,7 +2234,7 @@ var InputMask = function () {
     if (this.value !== this.el.value) {
       this.updateValue();
     }
-    this.masked.commit();
+    this.masked.doCommit();
     this.updateControl();
   };
 

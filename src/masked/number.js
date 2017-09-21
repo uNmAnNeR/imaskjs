@@ -65,11 +65,8 @@ class MaskedNumber extends Masked {
     return parts.join(this.radix);
   }
 
-  _append (str, soft) {
-    return super._append(
-      this._removeThousandsSeparators(
-        str.replace(this._mapToRadixRegExp, this.radix)),
-      soft);
+  doPrepare (str, soft) {
+    return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), soft);
   }
 
   appendWithTail (str, tail) {
@@ -104,7 +101,7 @@ class MaskedNumber extends Masked {
     return cursorPos;
   }
 
-  _validate (soft) {
+  doValidate (soft) {
     const regexp = soft ? this._numberRegExpSoft : this._numberRegExp;
 
     // validate as string
@@ -120,10 +117,10 @@ class MaskedNumber extends Masked {
         (this.max == null || this.max <= 0 || this.number <= this.max);
     }
 
-    return valid && super._validate(soft);
+    return valid && super.doValidate(soft);
   }
 
-  commit () {
+  doCommit () {
     const number = this.number;
     let validnum = number;
 
@@ -146,6 +143,7 @@ class MaskedNumber extends Masked {
     }
 
     this._value = formatted;
+    super.doCommit();
   }
 
   _normalizeZeros (value) {

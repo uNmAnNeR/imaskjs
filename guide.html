@@ -149,20 +149,43 @@ masked.reset(); // UI will NOT be updated</code></pre>
             </form>
           </div>
         </div>
-        <pre><code>var masked = new IMask.Masked({
+        <pre><code>var digitsMask = new IMask(element, {
   mask: /^\d+$/
 });</code></pre>
         <p>get/set mask (only same type allowed!)</p>
-        <pre><code>masked.mask = /^\s+$/;  // ok
+        <pre><code>masked.mask = /^\w+$/;  // ok
 masked.mask = "0000";  // ERROR! changing mask type on existing mask is not allowed!</code></pre>
         <p>get/set value and unmasked value</p>
         <pre><code>masked.value = 'hello world!';
 console.log(masked.unmaskedValue);</code></pre>
-        <p>Override <code>commit</code> method to make some postprocessing after UI was deactivated.</p>
-        <p>Usually you don't need to manually create instances of that type, because it will be done by IMask internally. But you can subclass from it to add some specific behavior like uppercasing for example.</p>
-        <p>Additionaly to <code>mask</code> option you can pass custom validator as <code>validate</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves.</p>
+        <p>Use <code>prepare (value, masked)</code> option for preprocessing input and <code>commit (value, masked)</code> option for postprocessing after UI was deactivated:</p>
+        <div class="toggle-panel">
+          <label for="uppercase-mask-demo" class="muted">demo</label>
+          <input id="uppercase-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form">
+              <div class="form-item">
+                <label>Type to uppercase</label>
+                <input id="uppercase-mask" type="text" value="">
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var uppercaseMask = new IMask(element, {
+  mask: /^\w+$/,
+  prepare: function (str) {
+    return str.toUpperCase();
+  },
+  commit: function (value, masked) {
+    // Don't change value manually! All changes should be done in mask!
+    // But it works and could help to understand what is really changes
+    masked._value = value.toLowerCase();  // Don't do it
+  }
+});</code></pre>
+        <p>Usually you don't need to manually create instances of that type, because it will be done by IMask internally. But you can subclass from it to add some specific behavior.</p>
+        <p>Additionaly to <code>mask</code> option you can pass custom validator as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves. <strong>But don't change <code>masked</code> instance inside callbacks.</strong></p>
         <fieldset>
-          <p><strong>Make sure that your mask or validator works with any of intermediate states, not just final value. For example you want to restrict input to "123" and do:</strong></p>
+          <p><strong>Also make sure that your mask or validator works with any of intermediate states, not just final value. For example you want to restrict input to "123" and do:</strong></p>
           <pre><code>var masked = new IMask.Masked({
   mask: /^123$/
 });</code></pre>
@@ -563,6 +586,19 @@ var momentMask = new IMask(element, {
 
       new IMask(document.getElementById('validate-mask'), {
         mask: /^\d+$/  // mask is mandatory
+      });
+
+
+      new IMask(document.getElementById('uppercase-mask'), {
+        mask: /^\w+$/,
+        prepare: function (str) {
+          return str.toUpperCase();
+        },
+        commit: function (value, masked) {
+          // Don't change value manually! All changes should be done in mask!
+          // But it works and could help to understand what is really changes
+          masked._value = value.toLowerCase();
+        }
       });
 
 

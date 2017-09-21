@@ -225,7 +225,7 @@ class InputMask {
     if (this.value !== this.el.value) {
       this.updateValue();
     }
-    this.masked.commit();
+    this.masked.doCommit();
     this.updateControl();
   }
 

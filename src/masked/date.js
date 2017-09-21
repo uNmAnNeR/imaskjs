@@ -30,8 +30,8 @@ class MaskedDate extends MaskedPattern {
     this.isInitialized = true;
   }
 
-  _validate (soft) {
-    const valid = super._validate(soft);
+  doValidate (soft) {
+    const valid = super.doValidate(soft);
     const date = this.date;
 
     return valid &&
