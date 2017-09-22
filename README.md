@@ -34,9 +34,9 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
 
 ## Many thanks to
-[https://github.com/vcrazyV](@Viktor Yakovlev)
+[@Viktor Yakovlev](https://github.com/vcrazyV)
 
-[https://github.com/MaaKut](@Alexander Kiselev)
+[@Alexander Kiselev](https://github.com/MaaKut)
 
 ## Changes
 
@@ -56,7 +56,7 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 * Pipe mask was removed (use function composition and/or inherite from _Masked_ instead)
 * Common: rename _rawValue_ prop to _value_
 * Common: use _updateOptions_ now to update any masked properties and sync with view
-* Pattern: change _quote_ (') definition to _back quote_ (`)
+* Pattern: change _quote_ (') definition to _back quote_ (\`)
 * Pattern: _lazy_ property is now of _Boolean_ type
 * fix some bugs
 
