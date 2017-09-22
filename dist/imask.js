@@ -520,22 +520,6 @@ function escapeRegExp(str) {
   return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
 }
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
-
-
-
-
-
-
-
-
-
-
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -869,6 +853,36 @@ var Masked = (_class = function () {
   return Masked;
 }(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'prepare', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'prepare'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'validate', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'validate'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'commit', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'commit'), _class.prototype)), _class);
 
+var MaskedRegExp = function (_Masked) {
+  inherits(MaskedRegExp, _Masked);
+
+  function MaskedRegExp() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    classCallCheck(this, MaskedRegExp);
+
+    opts.validate = function (value) {
+      return opts.mask.test(value);
+    };
+    return possibleConstructorReturn(this, _Masked.call(this, opts));
+  }
+
+  return MaskedRegExp;
+}(Masked);
+
+var MaskedFunction = function (_Masked) {
+  inherits(MaskedFunction, _Masked);
+
+  function MaskedFunction() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    classCallCheck(this, MaskedFunction);
+
+    opts.validate = opts.mask;
+    return possibleConstructorReturn(this, _Masked.call(this, opts));
+  }
+
+  return MaskedFunction;
+}(Masked);
+
 var _class$2;
 
 function _applyDecoratedDescriptor$2(target, property, decorators, descriptor, context) {
@@ -1178,46 +1192,26 @@ MaskedNumber.DEFAULTS = {
   }
 };
 
+function maskedClass(mask) {
+  if (mask instanceof RegExp) return MaskedRegExp;
+  if (isString(mask)) return IMask.MaskedPattern;
+  if (mask.prototype instanceof Masked) return mask;
+  if (mask instanceof Number || typeof mask === 'number' || mask === Number) return MaskedNumber;
+  if (mask instanceof Date || mask === Date) return IMask.MaskedDate;
+  if (mask instanceof Function) return MaskedFunction;
+
+  console.warn('Mask not found for mask', mask); // eslint-disable-line no-console
+  return Masked;
+}
+
 function createMask(opts) {
   opts = _extends({}, opts); // clone
-
   var mask = opts.mask;
 
-  if (mask instanceof Masked) {
-    return mask;
-  }
-  if (mask instanceof RegExp) {
-    opts.validate = function (value) {
-      return mask.test(value);
-    };
-    return new Masked(opts);
-  }
-  if (isString(mask)) {
-    return new IMask.MaskedPattern(opts);
-  }
-  if (mask.prototype instanceof Masked) {
-    delete opts.mask;
-    return new mask(opts);
-  }
-  if (mask instanceof Number || typeof mask === 'number' || mask === Number) {
-    delete opts.mask;
-    return new MaskedNumber(opts);
-  }
-  if (mask instanceof Date || mask === Date) {
-    delete opts.mask;
-    if (opts.pattern) {
-      opts.mask = opts.pattern;
-      delete opts.pattern;
-    }
-    return new IMask.MaskedDate(opts);
-  }
-  if (mask instanceof Function) {
-    opts.validate = mask;
-    return new Masked(opts);
-  }
+  if (mask instanceof Masked) return mask;
 
-  console.warn('Mask not found for', opts); // eslint-disable-line no-console
-  return new Masked(opts);
+  var MaskedClass = maskedClass(mask);
+  return new MaskedClass(opts);
 }
 
 var PatternDefinition = function () {
@@ -1929,6 +1923,9 @@ var MaskedDate = (_class$3 = function (_MaskedPattern) {
 
     _extends(opts.groups, groups);
 
+    opts.mask = opts.pattern;
+    delete opts.pattern;
+
     var _this = possibleConstructorReturn(this, _MaskedPattern.call(this, opts));
 
     delete _this.isInitialized;
@@ -1977,11 +1974,31 @@ var MaskedDate = (_class$3 = function (_MaskedPattern) {
     set: function set$$1(max) {
       this._max = max;
     }
+  }, {
+    key: 'mask',
+    get: function get$$1() {
+      return _MaskedPattern.prototype.mask;
+    }
+
+    // check mask on set
+    ,
+    set: function set$$1(mask) {
+      if (mask === Date) return;
+      _MaskedPattern.prototype.mask = mask;
+    }
+  }, {
+    key: 'pattern',
+    get: function get$$1() {
+      return this.mask;
+    },
+    set: function set$$1(pattern) {
+      this.mask = pattern;
+    }
   }]);
   return MaskedDate;
-}(MaskedPattern), (_applyDecoratedDescriptor$3(_class$3.prototype, 'min', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'min'), _class$3.prototype), _applyDecoratedDescriptor$3(_class$3.prototype, 'max', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'max'), _class$3.prototype)), _class$3);
+}(MaskedPattern), (_applyDecoratedDescriptor$3(_class$3.prototype, 'min', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'min'), _class$3.prototype), _applyDecoratedDescriptor$3(_class$3.prototype, 'max', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'max'), _class$3.prototype), _applyDecoratedDescriptor$3(_class$3.prototype, 'pattern', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'pattern'), _class$3.prototype)), _class$3);
 MaskedDate.DEFAULTS = {
-  mask: 'd{.}`m{.}`Y',
+  pattern: 'd{.}`m{.}`Y',
   format: function format(date) {
     var day = ('' + date.getDate()).padStart(2, '0');
     var month = ('' + (date.getMonth() + 1)).padStart(2, '0');
@@ -2254,14 +2271,16 @@ var InputMask = function () {
       return this.masked.mask;
     },
     set: function set$$1(mask) {
-      if ((typeof mask === 'undefined' ? 'undefined' : _typeof(mask)) === _typeof(this.masked.mask)) {
+      if (mask == null || mask === this.masked.mask) return;
+
+      if (this.masked.constructor === maskedClass(mask)) {
         this.masked.mask = mask;
         return;
       }
 
-      var unmasked = this.masked ? this.masked.unmaskedValue : null;
-      this.masked = createMask({ mask: mask });
-      if (unmasked != null) this.masked.unmaskedValue = unmasked;
+      var masked = createMask({ mask: mask });
+      masked.unmaskedValue = this.masked.unmaskedValue;
+      this.masked = masked;
     }
   }, {
     key: 'value',
@@ -2316,6 +2335,8 @@ IMask$1.Masked = Masked;
 IMask$1.MaskedPattern = MaskedPattern;
 IMask$1.MaskedNumber = MaskedNumber;
 IMask$1.MaskedDate = MaskedDate;
+IMask$1.MaskedRegExp = MaskedRegExp;
+IMask$1.MaskedFunction = MaskedFunction;
 
 window.IMask = IMask$1;
 

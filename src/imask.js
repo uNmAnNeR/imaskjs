@@ -9,6 +9,8 @@ import Masked from './masked/base';
 import MaskedPattern from './masked/pattern';
 import MaskedNumber from './masked/number';
 import MaskedDate from './masked/date';
+import MaskedRegExp from './masked/regexp';
+import MaskedFunction from './masked/function';
 
 import InputMask from './controls/input';
 
@@ -26,5 +28,7 @@ IMask.Masked = Masked;
 IMask.MaskedPattern = MaskedPattern;
 IMask.MaskedNumber = MaskedNumber;
 IMask.MaskedDate = MaskedDate;
+IMask.MaskedRegExp = MaskedRegExp;
+IMask.MaskedFunction = MaskedFunction;
 
 window.IMask = IMask;

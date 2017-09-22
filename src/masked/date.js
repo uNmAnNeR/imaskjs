@@ -19,6 +19,9 @@ class MaskedDate extends MaskedPattern {
 
     Object.assign(opts.groups, groups);
 
+    opts.mask = opts.pattern;
+    delete opts.pattern;
+
     super(opts);
     delete this.isInitialized;
 
@@ -72,9 +75,26 @@ class MaskedDate extends MaskedPattern {
   set max (max) {
     this._max = max;
   }
+
+  get mask () {return super.mask;}
+
+  // check mask on set
+  set mask (mask) {
+    if (mask === Date) return;
+    super.mask = mask;
+  }
+
+  get pattern () {
+    return this.mask;
+  }
+
+  @refreshValueOnSet
+  set pattern (pattern) {
+    this.mask = pattern;
+  }
 }
 MaskedDate.DEFAULTS = {
-  mask: 'd{.}`m{.}`Y',
+  pattern: 'd{.}`m{.}`Y',
   format: date => {
     const day = ('' + date.getDate()).padStart(2, '0');
     const month = ('' + (date.getMonth() + 1)).padStart(2, '0');

@@ -1,5 +1,5 @@
 import ActionDetails from '../core/action-details';
-import createMask from '../masked/factory';
+import createMask, {maskedClass} from '../masked/factory';
 
 
 export default
@@ -28,14 +28,16 @@ class InputMask {
 
   get mask () { return this.masked.mask; }
   set mask (mask) {
-    if (typeof mask === typeof this.masked.mask) {
+    if (mask == null || mask === this.masked.mask) return;
+
+    if (this.masked.constructor === maskedClass(mask)) {
       this.masked.mask = mask;
       return;
     }
 
-    const unmasked = this.masked ? this.masked.unmaskedValue : null;
-    this.masked = createMask({mask});
-    if (unmasked != null) this.masked.unmaskedValue = unmasked;
+    const masked = createMask({mask});
+    masked.unmaskedValue = this.masked.unmaskedValue;
+    this.masked = masked;
   }
 
   get value () {

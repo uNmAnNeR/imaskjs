@@ -12,11 +12,12 @@ vanilla javascript input mask
 * Number mask (integer and decimal)
 * Date mask (various format support)
 
-May coming soon:
+Further plans:
 
 * jQuery/Angular/React/Vue plugin
+* on-the-fly/multimask
 * more unit tests
-* ?RTL
+* support RTL?
 
 ## Install
 `npm install imaskjs` or download and include from `dist` folder
@@ -27,12 +28,21 @@ May coming soon:
 `npm run test`
 
 ## Compatibility
-Supports all major browsers and IE11+ [need support older?](https://unmanner.github.io/imaskjs/guide.html#support-older)
+Supports all major browsers and IE11+ [need to support older?](https://unmanner.github.io/imaskjs/guide.html#support-older)
 
 ## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
 
+## Many thanks to
+[https://github.com/vcrazyV](@Viktor Yakovlev)
+
+[https://github.com/MaaKut](@Alexander Kiselev)
+
 ## Changes
+
+### 1.1.1
+* make _MaskedRegExp_ and _MaskedFunction_ as independent classes
+* fix set input mask when mask type changes, add some tests
 
 ### 1.1.0
 * new _prepare_ and _commit_ options
