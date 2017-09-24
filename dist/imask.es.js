@@ -5,71 +5,74 @@ function createCommonjsModule(fn, module) {
 var _global = createCommonjsModule(function (module) {
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 });
 
 var _core = createCommonjsModule(function (module) {
-var core = module.exports = {version: '2.4.0'};
-if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+var core = module.exports = { version: '2.5.1' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 });
 
-var _isObject = function(it){
+var _isObject = function (it) {
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
 
-var _anObject = function(it){
-  if(!_isObject(it))throw TypeError(it + ' is not an object!');
+var _anObject = function (it) {
+  if (!_isObject(it)) throw TypeError(it + ' is not an object!');
   return it;
 };
 
-var _fails = function(exec){
+var _fails = function (exec) {
   try {
     return !!exec();
-  } catch(e){
+  } catch (e) {
     return true;
   }
 };
 
 // Thank's IE8 for his funny defineProperty
-var _descriptors = !_fails(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+var _descriptors = !_fails(function () {
+  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
 });
 
 var document$1 = _global.document;
+// typeof document.createElement is 'object' in old IE
 var is = _isObject(document$1) && _isObject(document$1.createElement);
-var _domCreate = function(it){
+var _domCreate = function (it) {
   return is ? document$1.createElement(it) : {};
 };
 
-var _ie8DomDefine = !_descriptors && !_fails(function(){
-  return Object.defineProperty(_domCreate('div'), 'a', {get: function(){ return 7; }}).a != 7;
+var _ie8DomDefine = !_descriptors && !_fails(function () {
+  return Object.defineProperty(_domCreate('div'), 'a', { get: function () { return 7; } }).a != 7;
 });
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
 
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
-var _toPrimitive = function(it, S){
-  if(!_isObject(it))return it;
+var _toPrimitive = function (it, S) {
+  if (!_isObject(it)) return it;
   var fn, val;
-  if(S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it)))return val;
-  if(typeof (fn = it.valueOf) == 'function' && !_isObject(val = fn.call(it)))return val;
-  if(!S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it)))return val;
+  if (S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !_isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !_isObject(val = fn.call(it))) return val;
   throw TypeError("Can't convert object to primitive value");
 };
 
-var dP             = Object.defineProperty;
+var dP = Object.defineProperty;
 
-var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes){
+var f = _descriptors ? Object.defineProperty : function defineProperty(O, P, Attributes) {
   _anObject(O);
   P = _toPrimitive(P, true);
   _anObject(Attributes);
-  if(_ie8DomDefine)try {
+  if (_ie8DomDefine) try {
     return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
+  } catch (e) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
+  if ('value' in Attributes) O[P] = Attributes.value;
   return O;
 };
 
@@ -77,105 +80,104 @@ var _objectDp = {
 	f: f
 };
 
-var _propertyDesc = function(bitmap, value){
+var _propertyDesc = function (bitmap, value) {
   return {
-    enumerable  : !(bitmap & 1),
+    enumerable: !(bitmap & 1),
     configurable: !(bitmap & 2),
-    writable    : !(bitmap & 4),
-    value       : value
+    writable: !(bitmap & 4),
+    value: value
   };
 };
 
-var _hide = _descriptors ? function(object, key, value){
+var _hide = _descriptors ? function (object, key, value) {
   return _objectDp.f(object, key, _propertyDesc(1, value));
-} : function(object, key, value){
+} : function (object, key, value) {
   object[key] = value;
   return object;
 };
 
 var hasOwnProperty = {}.hasOwnProperty;
-var _has = function(it, key){
+var _has = function (it, key) {
   return hasOwnProperty.call(it, key);
 };
 
 var id = 0;
 var px = Math.random();
-var _uid = function(key){
+var _uid = function (key) {
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
 
 var _redefine = createCommonjsModule(function (module) {
-var SRC       = _uid('src')
-  , TO_STRING = 'toString'
-  , $toString = Function[TO_STRING]
-  , TPL       = ('' + $toString).split(TO_STRING);
+var SRC = _uid('src');
+var TO_STRING = 'toString';
+var $toString = Function[TO_STRING];
+var TPL = ('' + $toString).split(TO_STRING);
 
-_core.inspectSource = function(it){
+_core.inspectSource = function (it) {
   return $toString.call(it);
 };
 
-(module.exports = function(O, key, val, safe){
+(module.exports = function (O, key, val, safe) {
   var isFunction = typeof val == 'function';
-  if(isFunction)_has(val, 'name') || _hide(val, 'name', key);
-  if(O[key] === val)return;
-  if(isFunction)_has(val, SRC) || _hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
-  if(O === _global){
+  if (isFunction) _has(val, 'name') || _hide(val, 'name', key);
+  if (O[key] === val) return;
+  if (isFunction) _has(val, SRC) || _hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
+  if (O === _global) {
+    O[key] = val;
+  } else if (!safe) {
+    delete O[key];
+    _hide(O, key, val);
+  } else if (O[key]) {
     O[key] = val;
   } else {
-    if(!safe){
-      delete O[key];
-      _hide(O, key, val);
-    } else {
-      if(O[key])O[key] = val;
-      else _hide(O, key, val);
-    }
+    _hide(O, key, val);
   }
 // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-})(Function.prototype, TO_STRING, function toString(){
+})(Function.prototype, TO_STRING, function toString() {
   return typeof this == 'function' && this[SRC] || $toString.call(this);
 });
 });
 
-var _aFunction = function(it){
-  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+var _aFunction = function (it) {
+  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
   return it;
 };
 
 // optional / simple context binding
 
-var _ctx = function(fn, that, length){
+var _ctx = function (fn, that, length) {
   _aFunction(fn);
-  if(that === undefined)return fn;
-  switch(length){
-    case 1: return function(a){
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
       return fn.call(that, a);
     };
-    case 2: return function(a, b){
+    case 2: return function (a, b) {
       return fn.call(that, a, b);
     };
-    case 3: return function(a, b, c){
+    case 3: return function (a, b, c) {
       return fn.call(that, a, b, c);
     };
   }
-  return function(/* ...args */){
+  return function (/* ...args */) {
     return fn.apply(that, arguments);
   };
 };
 
 var PROTOTYPE = 'prototype';
 
-var $export = function(type, name, source){
-  var IS_FORCED = type & $export.F
-    , IS_GLOBAL = type & $export.G
-    , IS_STATIC = type & $export.S
-    , IS_PROTO  = type & $export.P
-    , IS_BIND   = type & $export.B
-    , target    = IS_GLOBAL ? _global : IS_STATIC ? _global[name] || (_global[name] = {}) : (_global[name] || {})[PROTOTYPE]
-    , exports   = IS_GLOBAL ? _core : _core[name] || (_core[name] = {})
-    , expProto  = exports[PROTOTYPE] || (exports[PROTOTYPE] = {})
-    , key, own, out, exp;
-  if(IS_GLOBAL)source = name;
-  for(key in source){
+var $export = function (type, name, source) {
+  var IS_FORCED = type & $export.F;
+  var IS_GLOBAL = type & $export.G;
+  var IS_STATIC = type & $export.S;
+  var IS_PROTO = type & $export.P;
+  var IS_BIND = type & $export.B;
+  var target = IS_GLOBAL ? _global : IS_STATIC ? _global[name] || (_global[name] = {}) : (_global[name] || {})[PROTOTYPE];
+  var exports = IS_GLOBAL ? _core : _core[name] || (_core[name] = {});
+  var expProto = exports[PROTOTYPE] || (exports[PROTOTYPE] = {});
+  var key, own, out, exp;
+  if (IS_GLOBAL) source = name;
+  for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
     // export native or passed
@@ -183,10 +185,10 @@ var $export = function(type, name, source){
     // bind timers to global for call from export context
     exp = IS_BIND && own ? _ctx(out, _global) : IS_PROTO && typeof out == 'function' ? _ctx(Function.call, out) : out;
     // extend global
-    if(target)_redefine(target, key, out, type & $export.U);
+    if (target) _redefine(target, key, out, type & $export.U);
     // export
-    if(exports[key] != out)_hide(exports, key, exp);
-    if(IS_PROTO && expProto[key] != out)expProto[key] = out;
+    if (exports[key] != out) _hide(exports, key, exp);
+    if (IS_PROTO && expProto[key] != out) expProto[key] = out;
   }
 };
 _global.core = _core;
@@ -198,64 +200,67 @@ $export.P = 8;   // proto
 $export.B = 16;  // bind
 $export.W = 32;  // wrap
 $export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
+$export.R = 128; // real proto method for `library`
 var _export = $export;
 
 var toString = {}.toString;
 
-var _cof = function(it){
+var _cof = function (it) {
   return toString.call(it).slice(8, -1);
 };
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
-var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+// eslint-disable-next-line no-prototype-builtins
+var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return _cof(it) == 'String' ? it.split('') : Object(it);
 };
 
 // 7.2.1 RequireObjectCoercible(argument)
-var _defined = function(it){
-  if(it == undefined)throw TypeError("Can't call method on  " + it);
+var _defined = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
   return it;
 };
 
 // 7.1.13 ToObject(argument)
 
-var _toObject = function(it){
+var _toObject = function (it) {
   return Object(_defined(it));
 };
 
 // 7.1.4 ToInteger
-var ceil  = Math.ceil;
+var ceil = Math.ceil;
 var floor = Math.floor;
-var _toInteger = function(it){
+var _toInteger = function (it) {
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
 
 // 7.1.15 ToLength
-var min       = Math.min;
-var _toLength = function(it){
+
+var min = Math.min;
+var _toLength = function (it) {
   return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
 
 // 7.2.2 IsArray(argument)
 
-var _isArray = Array.isArray || function isArray(arg){
+var _isArray = Array.isArray || function isArray(arg) {
   return _cof(arg) == 'Array';
 };
 
 var SHARED = '__core-js_shared__';
-var store  = _global[SHARED] || (_global[SHARED] = {});
-var _shared = function(key){
+var store = _global[SHARED] || (_global[SHARED] = {});
+var _shared = function (key) {
   return store[key] || (store[key] = {});
 };
 
 var _wks = createCommonjsModule(function (module) {
-var store      = _shared('wks')
-  , Symbol     = _global.Symbol
-  , USE_SYMBOL = typeof Symbol == 'function';
+var store = _shared('wks');
 
-var $exports = module.exports = function(name){
+var Symbol = _global.Symbol;
+var USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function (name) {
   return store[name] || (store[name] =
     USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
 };
@@ -263,17 +268,17 @@ var $exports = module.exports = function(name){
 $exports.store = store;
 });
 
-var SPECIES  = _wks('species');
+var SPECIES = _wks('species');
 
-var _arraySpeciesConstructor = function(original){
+var _arraySpeciesConstructor = function (original) {
   var C;
-  if(_isArray(original)){
+  if (_isArray(original)) {
     C = original.constructor;
     // cross-realm fallback
-    if(typeof C == 'function' && (C === Array || _isArray(C.prototype)))C = undefined;
-    if(_isObject(C)){
+    if (typeof C == 'function' && (C === Array || _isArray(C.prototype))) C = undefined;
+    if (_isObject(C)) {
       C = C[SPECIES];
-      if(C === null)C = undefined;
+      if (C === null) C = undefined;
     }
   } return C === undefined ? Array : C;
 };
@@ -281,7 +286,7 @@ var _arraySpeciesConstructor = function(original){
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
 
 
-var _arraySpeciesCreate = function(original, length){
+var _arraySpeciesCreate = function (original, length) {
   return new (_arraySpeciesConstructor(original))(length);
 };
 
@@ -293,33 +298,37 @@ var _arraySpeciesCreate = function(original, length){
 // 5 -> Array#find
 // 6 -> Array#findIndex
 
-var _arrayMethods = function(TYPE, $create){
-  var IS_MAP        = TYPE == 1
-    , IS_FILTER     = TYPE == 2
-    , IS_SOME       = TYPE == 3
-    , IS_EVERY      = TYPE == 4
-    , IS_FIND_INDEX = TYPE == 6
-    , NO_HOLES      = TYPE == 5 || IS_FIND_INDEX
-    , create        = $create || _arraySpeciesCreate;
-  return function($this, callbackfn, that){
-    var O      = _toObject($this)
-      , self   = _iobject(O)
-      , f      = _ctx(callbackfn, that, 3)
-      , length = _toLength(self.length)
-      , index  = 0
-      , result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined
-      , val, res;
-    for(;length > index; index++)if(NO_HOLES || index in self){
+
+
+
+
+var _arrayMethods = function (TYPE, $create) {
+  var IS_MAP = TYPE == 1;
+  var IS_FILTER = TYPE == 2;
+  var IS_SOME = TYPE == 3;
+  var IS_EVERY = TYPE == 4;
+  var IS_FIND_INDEX = TYPE == 6;
+  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+  var create = $create || _arraySpeciesCreate;
+  return function ($this, callbackfn, that) {
+    var O = _toObject($this);
+    var self = _iobject(O);
+    var f = _ctx(callbackfn, that, 3);
+    var length = _toLength(self.length);
+    var index = 0;
+    var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
+    var val, res;
+    for (;length > index; index++) if (NO_HOLES || index in self) {
       val = self[index];
       res = f(val, index, O);
-      if(TYPE){
-        if(IS_MAP)result[index] = res;            // map
-        else if(res)switch(TYPE){
-          case 3: return true;                    // some
-          case 5: return val;                     // find
-          case 6: return index;                   // findIndex
-          case 2: result.push(val);               // filter
-        } else if(IS_EVERY)return false;          // every
+      if (TYPE) {
+        if (IS_MAP) result[index] = res;   // map
+        else if (res) switch (TYPE) {
+          case 3: return true;             // some
+          case 5: return val;              // find
+          case 6: return index;            // findIndex
+          case 2: result.push(val);        // filter
+        } else if (IS_EVERY) return false; // every
       }
     }
     return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
@@ -328,20 +337,21 @@ var _arrayMethods = function(TYPE, $create){
 
 // 22.1.3.31 Array.prototype[@@unscopables]
 var UNSCOPABLES = _wks('unscopables');
-var ArrayProto  = Array.prototype;
-if(ArrayProto[UNSCOPABLES] == undefined)_hide(ArrayProto, UNSCOPABLES, {});
-var _addToUnscopables = function(key){
+var ArrayProto = Array.prototype;
+if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
+var _addToUnscopables = function (key) {
   ArrayProto[UNSCOPABLES][key] = true;
 };
 
 // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
-var $find   = _arrayMethods(5);
-var KEY     = 'find';
-var forced  = true;
+
+var $find = _arrayMethods(5);
+var KEY = 'find';
+var forced = true;
 // Shouldn't skip holes
-if(KEY in [])Array(1)[KEY](function(){ forced = false; });
+if (KEY in []) Array(1)[KEY](function () { forced = false; });
 _export(_export.P + _export.F * forced, 'Array', {
-  find: function find(callbackfn/*, that = undefined */){
+  find: function find(callbackfn /* , that = undefined */) {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
@@ -349,13 +359,14 @@ _addToUnscopables(KEY);
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 
-var _toIobject = function(it){
+
+var _toIobject = function (it) {
   return _iobject(_defined(it));
 };
 
-var max       = Math.max;
-var min$1       = Math.min;
-var _toIndex = function(index, length){
+var max = Math.max;
+var min$1 = Math.min;
+var _toAbsoluteIndex = function (index, length) {
   index = _toInteger(index);
   return index < 0 ? max(index + length, 0) : min$1(index, length);
 };
@@ -363,39 +374,44 @@ var _toIndex = function(index, length){
 // false -> Array#indexOf
 // true  -> Array#includes
 
-var _arrayIncludes = function(IS_INCLUDES){
-  return function($this, el, fromIndex){
-    var O      = _toIobject($this)
-      , length = _toLength(O.length)
-      , index  = _toIndex(fromIndex, length)
-      , value;
+
+
+var _arrayIncludes = function (IS_INCLUDES) {
+  return function ($this, el, fromIndex) {
+    var O = _toIobject($this);
+    var length = _toLength(O.length);
+    var index = _toAbsoluteIndex(fromIndex, length);
+    var value;
     // Array#includes uses SameValueZero equality algorithm
-    if(IS_INCLUDES && el != el)while(length > index){
+    // eslint-disable-next-line no-self-compare
+    if (IS_INCLUDES && el != el) while (length > index) {
       value = O[index++];
-      if(value != value)return true;
-    // Array#toIndex ignores holes, Array#includes - not
-    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
-      if(O[index] === el)return IS_INCLUDES || index || 0;
+      // eslint-disable-next-line no-self-compare
+      if (value != value) return true;
+    // Array#indexOf ignores holes, Array#includes - not
+    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
+      if (O[index] === el) return IS_INCLUDES || index || 0;
     } return !IS_INCLUDES && -1;
   };
 };
 
 var shared = _shared('keys');
-var _sharedKey = function(key){
+
+var _sharedKey = function (key) {
   return shared[key] || (shared[key] = _uid(key));
 };
 
 var arrayIndexOf = _arrayIncludes(false);
-var IE_PROTO     = _sharedKey('IE_PROTO');
+var IE_PROTO = _sharedKey('IE_PROTO');
 
-var _objectKeysInternal = function(object, names){
-  var O      = _toIobject(object)
-    , i      = 0
-    , result = []
-    , key;
-  for(key in O)if(key != IE_PROTO)_has(O, key) && result.push(key);
+var _objectKeysInternal = function (object, names) {
+  var O = _toIobject(object);
+  var i = 0;
+  var result = [];
+  var key;
+  for (key in O) if (key != IE_PROTO) _has(O, key) && result.push(key);
   // Don't enum bug & hidden keys
-  while(names.length > i)if(_has(O, key = names[i++])){
+  while (names.length > i) if (_has(O, key = names[i++])) {
     ~arrayIndexOf(result, key) || result.push(key);
   }
   return result;
@@ -409,34 +425,38 @@ var _enumBugKeys = (
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 
 
-var _objectKeys = Object.keys || function keys(O){
+
+var _objectKeys = Object.keys || function keys(O) {
   return _objectKeysInternal(O, _enumBugKeys);
 };
 
 // most Object methods by ES6 should accept primitives
 
-var _objectSap = function(KEY, exec){
-  var fn  = (_core.Object || {})[KEY] || Object[KEY]
-    , exp = {};
+
+
+var _objectSap = function (KEY, exec) {
+  var fn = (_core.Object || {})[KEY] || Object[KEY];
+  var exp = {};
   exp[KEY] = exec(fn);
-  _export(_export.S + _export.F * _fails(function(){ fn(1); }), 'Object', exp);
+  _export(_export.S + _export.F * _fails(function () { fn(1); }), 'Object', exp);
 };
 
 // 19.1.2.14 Object.keys(O)
 
 
-_objectSap('keys', function(){
-  return function keys(it){
+
+_objectSap('keys', function () {
+  return function keys(it) {
     return _objectKeys(_toObject(it));
   };
 });
 
-var _stringRepeat = function repeat(count){
-  var str = String(_defined(this))
-    , res = ''
-    , n   = _toInteger(count);
-  if(n < 0 || n == Infinity)throw RangeError("Count can't be negative");
-  for(;n > 0; (n >>>= 1) && (str += str))if(n & 1)res += str;
+var _stringRepeat = function repeat(count) {
+  var str = String(_defined(this));
+  var res = '';
+  var n = _toInteger(count);
+  if (n < 0 || n == Infinity) throw RangeError("Count can't be negative");
+  for (;n > 0; (n >>>= 1) && (str += str)) if (n & 1) res += str;
   return res;
 };
 
@@ -448,23 +468,26 @@ _export(_export.P, 'String', {
 // https://github.com/tc39/proposal-string-pad-start-end
 
 
-var _stringPad = function(that, maxLength, fillString, left){
-  var S            = String(_defined(that))
-    , stringLength = S.length
-    , fillStr      = fillString === undefined ? ' ' : String(fillString)
-    , intMaxLength = _toLength(maxLength);
-  if(intMaxLength <= stringLength || fillStr == '')return S;
-  var fillLen = intMaxLength - stringLength
-    , stringFiller = _stringRepeat.call(fillStr, Math.ceil(fillLen / fillStr.length));
-  if(stringFiller.length > fillLen)stringFiller = stringFiller.slice(0, fillLen);
+
+
+var _stringPad = function (that, maxLength, fillString, left) {
+  var S = String(_defined(that));
+  var stringLength = S.length;
+  var fillStr = fillString === undefined ? ' ' : String(fillString);
+  var intMaxLength = _toLength(maxLength);
+  if (intMaxLength <= stringLength || fillStr == '') return S;
+  var fillLen = intMaxLength - stringLength;
+  var stringFiller = _stringRepeat.call(fillStr, Math.ceil(fillLen / fillStr.length));
+  if (stringFiller.length > fillLen) stringFiller = stringFiller.slice(0, fillLen);
   return left ? stringFiller + S : S + stringFiller;
 };
 
 // https://github.com/tc39/proposal-string-pad-start-end
 
 
+
 _export(_export.P, 'String', {
-  padStart: function padStart(maxLength /*, fillString = ' ' */){
+  padStart: function padStart(maxLength /* , fillString = ' ' */) {
     return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
   }
 });
@@ -472,8 +495,9 @@ _export(_export.P, 'String', {
 // https://github.com/tc39/proposal-string-pad-start-end
 
 
+
 _export(_export.P, 'String', {
-  padEnd: function padEnd(maxLength /*, fillString = ' ' */){
+  padEnd: function padEnd(maxLength /* , fillString = ' ' */) {
     return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, false);
   }
 });
@@ -1506,9 +1530,10 @@ var MaskedPattern = (_class$1 = function (_Masked) {
         type: type,
         optional: optional,
         stopAlign: stopAlign,
-        mask: unmasking && (type === PatternDefinition.TYPES.INPUT ? defs[char] : function (value) {
+        unmasking: unmasking,
+        mask: type === PatternDefinition.TYPES.INPUT ? defs[char] : function (value) {
           return value === char;
-        })
+        }
       }));
 
       stopAlign = false;
@@ -1585,7 +1610,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
       var def = this._charDefs[di];
 
       if (def.isHiddenHollow) continue;
-      if (def.mask && !def.isHollow) unmasked += ch;
+      if (def.unmasking && !def.isHollow) unmasked += ch;
       ++ci;
     }
 
@@ -1635,7 +1660,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
         }
       } else {
         this._value += def.char;
-        resolved = chres && (def.mask || soft);
+        resolved = chres && (def.unmasking || soft);
       }
 
       if (!skipped) ++di;

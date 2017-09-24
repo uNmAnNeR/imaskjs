@@ -123,10 +123,10 @@ class MaskedPattern extends Masked {
         type,
         optional,
         stopAlign,
-        mask: unmasking &&
-          (type === PatternDefinition.TYPES.INPUT ?
-            defs[char] :
-            (value => value === char))
+        unmasking,
+        mask: type === PatternDefinition.TYPES.INPUT ?
+          defs[char] :
+          (value => value === char)
       }));
 
       stopAlign = false;
@@ -187,7 +187,7 @@ class MaskedPattern extends Masked {
       const def = this._charDefs[di];
 
       if (def.isHiddenHollow) continue;
-      if (def.mask && !def.isHollow) unmasked += ch;
+      if (def.unmasking && !def.isHollow) unmasked += ch;
       ++ci;
     }
 
@@ -236,7 +236,7 @@ class MaskedPattern extends Masked {
         }
       } else {
         this._value += def.char;
-        resolved = chres && (def.mask || soft);
+        resolved = chres && (def.unmasking || soft);
       }
 
       if (!skipped) ++di;
