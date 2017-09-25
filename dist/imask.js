@@ -2097,7 +2097,7 @@ var ActionDetails = function () {
   }, {
     key: 'removeDirection',
     get: function get$$1() {
-      return this.removedCount && (this.oldSelection.end === this.cursorPos || this.insertedCount ? DIRECTION.RIGHT : DIRECTION.LEFT);
+      return this.removedCount && !this.insertedCount && (this.oldSelection.end === this.cursorPos ? DIRECTION.RIGHT : DIRECTION.LEFT);
     }
   }]);
   return ActionDetails;

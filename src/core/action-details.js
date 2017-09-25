@@ -42,8 +42,8 @@ class ActionDetails {
   }
 
   get removeDirection () {
-    return this.removedCount &&
-      ((this.oldSelection.end === this.cursorPos || this.insertedCount) ?
+    return this.removedCount && !this.insertedCount &&
+      ((this.oldSelection.end === this.cursorPos) ?
         DIRECTION.RIGHT :
         DIRECTION.LEFT);
   }
