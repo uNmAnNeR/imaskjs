@@ -2048,6 +2048,11 @@ var ActionDetails = function () {
     this.cursorPos = cursorPos;
     this.oldValue = oldValue;
     this.oldSelection = oldSelection;
+
+    // double check if left part was changed (autofilling, other non-standard input triggers)
+    while (this.value.slice(0, this.startChangePos) !== this.oldValue.slice(0, this.startChangePos)) {
+      --this.oldSelection.start;
+    }
   }
 
   createClass(ActionDetails, [{
