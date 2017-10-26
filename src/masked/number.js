@@ -1,31 +1,26 @@
-import {escapeRegExp, refreshValueOnSet, DIRECTION, indexInDirection} from '../core/utils';
+import {escapeRegExp, DIRECTION, indexInDirection} from '../core/utils';
 import Masked from './base';
 
 
 export default
 class MaskedNumber extends Masked {
-  constructor (opts={}) {
-    opts = Object.assign({}, MaskedNumber.DEFAULTS, opts);
-    super(opts);
-    delete this.isInitialized;
-
-    const {scale, radix, mapToRadix, min, max, signed, thousandsSeparator, postFormat} = opts;
-
-    this.min = min;
-    this.max = max;
-    this.scale = scale;
-    this.radix = radix;
-    this.mapToRadix = mapToRadix;
-    this.signed = signed;
-    this.thousandsSeparator = thousandsSeparator;
-    this.postFormat = postFormat;
-
-    this._updateNumberRegExp();
-
-    this.isInitialized = true;
+  constructor (opts) {
+    super({
+      ...MaskedNumber.DEFAULTS,
+      ...opts
+    });
   }
 
-  _updateNumberRegExp () {
+  updateOptions (opts) {
+    opts._signed = opts.signed;
+    delete opts.signed;
+    opts.postFormat = Object.assign({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
+
+    super.updateOptions(opts);
+    this._updateRegExps();
+  }
+
+  _updateRegExps () {
     // TODO refactor?
     let regExpStrSoft = '^';
     let regExpStr = '^';
@@ -47,7 +42,11 @@ class MaskedNumber extends Masked {
     regExpStr += '$';
 
     this._numberRegExpSoft = new RegExp(regExpStrSoft);
-    this._numberRegExp = new RegExp(regExpStr)
+    this._numberRegExp = new RegExp(regExpStr);
+    this._mapToRadixRegExp = new RegExp('[' +
+      this.mapToRadix.map(escapeRegExp).join('') +
+    ']', 'g');
+    this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   }
 
   extractTail (fromPos=0, toPos=this.value.length) {
@@ -183,84 +182,10 @@ class MaskedNumber extends Masked {
     this.unmaskedValue = '' + number;
   }
 
-  get min () {
-    return this._min;
-  }
-
-  @refreshValueOnSet
-  set min (min) {
-    this._min = min;
-  }
-
-  get max () {
-    return this._max;
-  }
-
-  @refreshValueOnSet
-  set max (max) {
-    this._max = max;
-  }
-
-  get scale () {
-    return this._scale;
-  }
-
-  @refreshValueOnSet
-  set scale (scale) {
-    this._scale = scale;
-  }
-
-  get radix () {
-    return this._radix;
-  }
-
-  @refreshValueOnSet
-  set radix (radix) {
-    this._radix = radix;
-    this._updateNumberRegExp();
-  }
-
   get signed () {
-    return this._signed || (this.min != null && this.min < 0) || (this.max != null && this.max < 0);
-  }
-
-  @refreshValueOnSet
-  set signed (signed) {
-    this._signed = signed;
-  }
-
-  get postFormat () {
-    return this._postFormat;
-  }
-
-  @refreshValueOnSet
-  set postFormat (postFormat) {
-    this._postFormat = {
-      ...MaskedNumber.DEFAULTS.postFormat,
-      ...postFormat
-    };
-  }
-
-  get mapToRadix () {
-    return this._mapToRadix;
-  }
-
-  @refreshValueOnSet
-  set mapToRadix (mapToRadix) {
-    this._mapToRadix = mapToRadix;
-    this._mapToRadixRegExp = new RegExp('[' +
-      mapToRadix.map(escapeRegExp).join('') +
-    ']', 'g');
-  }
-
-  get thousandsSeparator () {
-    return this._thousandsSeparator;
-  }
-
-  @refreshValueOnSet
-  set thousandsSeparator (thousandsSeparator) {
-    this._thousandsSeparator = thousandsSeparator;
-    this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), 'g');
+    return this._signed ||
+      (this.min != null && this.min < 0) ||
+      (this.max != null && this.max < 0);
   }
 }
 MaskedNumber.DEFAULTS = {

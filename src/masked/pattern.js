@@ -1,4 +1,4 @@
-import {conform, DIRECTION, indexInDirection, refreshValueOnSet} from '../core/utils';
+import {conform, DIRECTION, indexInDirection} from '../core/utils';
 import Masked from './base';
 import PatternDefinition from './pattern/definition';
 import PatternGroup from './pattern/group';
@@ -6,57 +6,15 @@ import PatternGroup from './pattern/group';
 
 export default
 class MaskedPattern extends Masked {
-  constructor (opts={}) {
-    const {definitions, placeholder, groups} = opts;
-    super(opts);
-    delete this.isInitialized;
-
-    this.placeholder = placeholder;
-    this.definitions = definitions;
-    this.groups = groups;
-
-    this.isInitialized = true;
-  }
-
-  get placeholder () {
-    return this._placeholder;
-  }
-
-  @refreshValueOnSet
-  set placeholder (ph) {
-    this._placeholder = {
-      ...MaskedPattern.DEFAULT_PLACEHOLDER,
-      ...ph
-    };
-  }
-
-  get definitions () {
-    return this._definitions;
-  }
-
-  @refreshValueOnSet
-  set definitions (defs) {
-    defs = {
-      ...PatternDefinition.DEFAULTS,
-      ...defs
-    };
-
-    this._definitions = defs;
-    this._updateMask();
-  }
-
-  get mask () {
-    return this._mask;
-  }
-
-  @refreshValueOnSet
-  set mask (mask) {
-    this._mask = mask;
+  updateOptions (opts) {
+    opts.placeholder = Object.assign({}, MaskedPattern.DEFAULT_PLACEHOLDER, opts.placeholder);
+    opts.definitions = Object.assign({}, PatternDefinition.DEFAULTS, opts.definitions);
+    super.updateOptions(opts);
     this._updateMask();
   }
 
   _updateMask () {
-    const defs = this._definitions;
+    const defs = this.definitions;
     this._charDefs = [];
     this._groupDefs = [];
 
@@ -69,15 +27,15 @@ class MaskedPattern extends Masked {
 
 
     for (let i=0; i<pattern.length; ++i) {
-      if (this._groups) {
+      if (this.groups) {
         const p = pattern.slice(i);
-        const gNames = Object.keys(this._groups).filter(gName => p.indexOf(gName) === 0);
+        const gNames = Object.keys(this.groups).filter(gName => p.indexOf(gName) === 0);
         // order by key length
         gNames.sort((a, b) => b.length - a.length);
         // use group name with max length
         const gName = gNames[0];
         if (gName) {
-          const group = this._groups[gName];
+          const group = this.groups[gName];
           this._groupDefs.push(new PatternGroup(this, {
             name: gName,
             offset: this._charDefs.length,
@@ -391,14 +349,6 @@ class MaskedPattern extends Masked {
     }
 
     return this.mapDefIndexToPos(di);
-  }
-
-  get groups () { return this._groups; }
-
-  @refreshValueOnSet
-  set groups (groups) {
-    this._groups = groups;
-    this._updateMask();
   }
 
   group (name) {

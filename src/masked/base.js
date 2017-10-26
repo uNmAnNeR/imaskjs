@@ -1,56 +1,16 @@
-import {refreshValueOnSet} from '../core/utils';
-
-
 export default
 class Masked {
-  constructor ({
-    mask,
-    prepare=((val) => val),
-    validate=(() => true),
-    commit=(() => {}),
-  }) {
+  constructor (opts) {
     this._value = '';
-    this.mask = mask;
-    this.prepare = prepare;
-    this.validate = validate;
-    this.commit = commit;
+    this.updateOptions({
+      ...Masked.DEFAULTS,
+      ...opts
+    });
     this.isInitialized = true;
   }
 
-  get mask () {
-    return this._mask;
-  }
-
-  @refreshValueOnSet
-  set mask (mask) {
-    this._mask = mask;
-  }
-
-  get prepare () {
-    return this._prepare;
-  }
-
-  @refreshValueOnSet
-  set prepare (prepare) {
-    this._prepare = prepare;
-  }
-
-  get validate () {
-    return this._validate;
-  }
-
-  @refreshValueOnSet
-  set validate (validate) {
-    this._validate = validate;
-  }
-
-  get commit () {
-    return this._commit;
-  }
-
-  @refreshValueOnSet
-  set commit (commit) {
-    this._commit = commit;
+  updateOptions (opts) {
+    this.withValueRefresh(() => Object.assign(this, opts));
   }
 
   clone () {
@@ -204,3 +164,9 @@ class Masked {
   //   return this.appendWithTail(inserted, tail);
   // }
 }
+
+Masked.DEFAULTS = {
+  prepare: val => val,
+  validate: () => true,
+  commit: () => {},
+};

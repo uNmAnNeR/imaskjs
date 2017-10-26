@@ -130,16 +130,7 @@ class InputMask {
   }
 
   updateOptions (opts) {
-    const mask = opts.mask;
-    if (mask) this.mask = mask;
-
-    this.masked.withValueRefresh(() => {
-      for (const k in opts) {
-        if (k === 'mask') continue;
-        this.masked[k] = opts[k];
-      }
-    });
-
+    this.masked.updateOptions(opts);
     this.updateControl();
   }
 

@@ -26,14 +26,6 @@ function indexInDirection (pos, direction) {
 }
 
 export
-function refreshValueOnSet (target, key, descriptor) {
-  const method = descriptor.set;
-  descriptor.set = function (...args) {
-    return this.withValueRefresh(method.bind(this, ...args));
-  };
-}
-
-export
 function escapeRegExp (str) {
   return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
 }

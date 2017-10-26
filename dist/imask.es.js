@@ -502,42 +502,6 @@ _export(_export.P, 'String', {
   }
 });
 
-function isString(str) {
-  return typeof str === 'string' || str instanceof String;
-}
-
-function conform(res, str) {
-  var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-
-  return isString(res) ? res : res ? str : fallback;
-}
-
-var DIRECTION = {
-  NONE: 0,
-  LEFT: -1,
-  RIGHT: 1
-};
-
-function indexInDirection(pos, direction) {
-  if (direction === DIRECTION.LEFT) --pos;
-  return pos;
-}
-
-function refreshValueOnSet(target, key, descriptor) {
-  var method = descriptor.set;
-  descriptor.set = function () {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    return this.withValueRefresh(method.bind.apply(method, [this].concat(args)));
-  };
-}
-
-function escapeRegExp(str) {
-  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
-}
-
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -618,59 +582,22 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
-var _class;
-
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-var Masked = (_class = function () {
-  function Masked(_ref) {
-    var mask = _ref.mask,
-        _ref$prepare = _ref.prepare,
-        prepare = _ref$prepare === undefined ? function (val) {
-      return val;
-    } : _ref$prepare,
-        _ref$validate = _ref.validate,
-        validate = _ref$validate === undefined ? function () {
-      return true;
-    } : _ref$validate,
-        _ref$commit = _ref.commit,
-        commit = _ref$commit === undefined ? function () {} : _ref$commit;
+var Masked = function () {
+  function Masked(opts) {
     classCallCheck(this, Masked);
 
     this._value = '';
-    this.mask = mask;
-    this.prepare = prepare;
-    this.validate = validate;
-    this.commit = commit;
+    this.updateOptions(_extends({}, Masked.DEFAULTS, opts));
     this.isInitialized = true;
   }
+
+  Masked.prototype.updateOptions = function updateOptions(opts) {
+    var _this = this;
+
+    this.withValueRefresh(function () {
+      return _extends(_this, opts);
+    });
+  };
 
   Masked.prototype.clone = function clone() {
     var m = new Masked(this);
@@ -810,38 +737,6 @@ var Masked = (_class = function () {
 
 
   createClass(Masked, [{
-    key: 'mask',
-    get: function get$$1() {
-      return this._mask;
-    },
-    set: function set$$1(mask) {
-      this._mask = mask;
-    }
-  }, {
-    key: 'prepare',
-    get: function get$$1() {
-      return this._prepare;
-    },
-    set: function set$$1(prepare) {
-      this._prepare = prepare;
-    }
-  }, {
-    key: 'validate',
-    get: function get$$1() {
-      return this._validate;
-    },
-    set: function set$$1(validate) {
-      this._validate = validate;
-    }
-  }, {
-    key: 'commit',
-    get: function get$$1() {
-      return this._commit;
-    },
-    set: function set$$1(commit) {
-      this._commit = commit;
-    }
-  }, {
     key: 'value',
     get: function get$$1() {
       return this._value;
@@ -869,7 +764,42 @@ var Masked = (_class = function () {
     }
   }]);
   return Masked;
-}(), (_applyDecoratedDescriptor(_class.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'mask'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'prepare', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'prepare'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'validate', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'validate'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'commit', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class.prototype, 'commit'), _class.prototype)), _class);
+}();
+
+Masked.DEFAULTS = {
+  prepare: function prepare(val) {
+    return val;
+  },
+  validate: function validate() {
+    return true;
+  },
+  commit: function commit() {}
+};
+
+function isString(str) {
+  return typeof str === 'string' || str instanceof String;
+}
+
+function conform(res, str) {
+  var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+
+  return isString(res) ? res : res ? str : fallback;
+}
+
+var DIRECTION = {
+  NONE: 0,
+  LEFT: -1,
+  RIGHT: 1
+};
+
+function indexInDirection(pos, direction) {
+  if (direction === DIRECTION.LEFT) --pos;
+  return pos;
+}
+
+function escapeRegExp(str) {
+  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
+}
 
 var MaskedRegExp = function (_Masked) {
   inherits(MaskedRegExp, _Masked);
@@ -901,77 +831,24 @@ var MaskedFunction = function (_Masked) {
   return MaskedFunction;
 }(Masked);
 
-var _class$2;
-
-function _applyDecoratedDescriptor$2(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-var MaskedNumber = (_class$2 = function (_Masked) {
+var MaskedNumber = function (_Masked) {
   inherits(MaskedNumber, _Masked);
 
-  function MaskedNumber() {
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function MaskedNumber(opts) {
     classCallCheck(this, MaskedNumber);
-
-    opts = _extends({}, MaskedNumber.DEFAULTS, opts);
-
-    var _this = possibleConstructorReturn(this, _Masked.call(this, opts));
-
-    delete _this.isInitialized;
-
-    var _opts = opts,
-        scale = _opts.scale,
-        radix = _opts.radix,
-        mapToRadix = _opts.mapToRadix,
-        min = _opts.min,
-        max = _opts.max,
-        signed = _opts.signed,
-        thousandsSeparator = _opts.thousandsSeparator,
-        postFormat = _opts.postFormat;
-
-
-    _this.min = min;
-    _this.max = max;
-    _this.scale = scale;
-    _this.radix = radix;
-    _this.mapToRadix = mapToRadix;
-    _this.signed = signed;
-    _this.thousandsSeparator = thousandsSeparator;
-    _this.postFormat = postFormat;
-
-    _this._updateNumberRegExp();
-
-    _this.isInitialized = true;
-    return _this;
+    return possibleConstructorReturn(this, _Masked.call(this, _extends({}, MaskedNumber.DEFAULTS, opts)));
   }
 
-  MaskedNumber.prototype._updateNumberRegExp = function _updateNumberRegExp() {
+  MaskedNumber.prototype.updateOptions = function updateOptions(opts) {
+    opts._signed = opts.signed;
+    delete opts.signed;
+    opts.postFormat = _extends({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
+
+    _Masked.prototype.updateOptions.call(this, opts);
+    this._updateRegExps();
+  };
+
+  MaskedNumber.prototype._updateRegExps = function _updateRegExps() {
     // TODO refactor?
     var regExpStrSoft = '^';
     var regExpStr = '^';
@@ -994,6 +871,8 @@ var MaskedNumber = (_class$2 = function (_Masked) {
 
     this._numberRegExpSoft = new RegExp(regExpStrSoft);
     this._numberRegExp = new RegExp(regExpStr);
+    this._mapToRadixRegExp = new RegExp('[' + this.mapToRadix.map(escapeRegExp).join('') + ']', 'g');
+    this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   };
 
   MaskedNumber.prototype.extractTail = function extractTail() {
@@ -1131,75 +1010,14 @@ var MaskedNumber = (_class$2 = function (_Masked) {
       this.unmaskedValue = '' + number;
     }
   }, {
-    key: 'min',
-    get: function get$$1() {
-      return this._min;
-    },
-    set: function set$$1(min) {
-      this._min = min;
-    }
-  }, {
-    key: 'max',
-    get: function get$$1() {
-      return this._max;
-    },
-    set: function set$$1(max) {
-      this._max = max;
-    }
-  }, {
-    key: 'scale',
-    get: function get$$1() {
-      return this._scale;
-    },
-    set: function set$$1(scale) {
-      this._scale = scale;
-    }
-  }, {
-    key: 'radix',
-    get: function get$$1() {
-      return this._radix;
-    },
-    set: function set$$1(radix) {
-      this._radix = radix;
-      this._updateNumberRegExp();
-    }
-  }, {
     key: 'signed',
     get: function get$$1() {
       return this._signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
-    },
-    set: function set$$1(signed) {
-      this._signed = signed;
-    }
-  }, {
-    key: 'postFormat',
-    get: function get$$1() {
-      return this._postFormat;
-    },
-    set: function set$$1(postFormat) {
-      this._postFormat = _extends({}, MaskedNumber.DEFAULTS.postFormat, postFormat);
-    }
-  }, {
-    key: 'mapToRadix',
-    get: function get$$1() {
-      return this._mapToRadix;
-    },
-    set: function set$$1(mapToRadix) {
-      this._mapToRadix = mapToRadix;
-      this._mapToRadixRegExp = new RegExp('[' + mapToRadix.map(escapeRegExp).join('') + ']', 'g');
-    }
-  }, {
-    key: 'thousandsSeparator',
-    get: function get$$1() {
-      return this._thousandsSeparator;
-    },
-    set: function set$$1(thousandsSeparator) {
-      this._thousandsSeparator = thousandsSeparator;
-      this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), 'g');
     }
   }]);
   return MaskedNumber;
-}(Masked), (_applyDecoratedDescriptor$2(_class$2.prototype, 'min', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'min'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'max', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'max'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'scale', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'scale'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'radix', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'radix'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'signed', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'signed'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'postFormat', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'postFormat'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'mapToRadix', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'mapToRadix'), _class$2.prototype), _applyDecoratedDescriptor$2(_class$2.prototype, 'thousandsSeparator', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$2.prototype, 'thousandsSeparator'), _class$2.prototype)), _class$2);
+}(Masked);
+
 MaskedNumber.DEFAULTS = {
   radix: ',',
   thousandsSeparator: '',
@@ -1406,63 +1224,25 @@ function EnumGroup(enums) {
 PatternGroup.Range = RangeGroup;
 PatternGroup.Enum = EnumGroup;
 
-var _class$1;
-
-function _applyDecoratedDescriptor$1(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-var MaskedPattern = (_class$1 = function (_Masked) {
+var MaskedPattern = function (_Masked) {
   inherits(MaskedPattern, _Masked);
 
   function MaskedPattern() {
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     classCallCheck(this, MaskedPattern);
-    var definitions = opts.definitions,
-        placeholder = opts.placeholder,
-        groups = opts.groups;
-
-    var _this = possibleConstructorReturn(this, _Masked.call(this, opts));
-
-    delete _this.isInitialized;
-
-    _this.placeholder = placeholder;
-    _this.definitions = definitions;
-    _this.groups = groups;
-
-    _this.isInitialized = true;
-    return _this;
+    return possibleConstructorReturn(this, _Masked.apply(this, arguments));
   }
+
+  MaskedPattern.prototype.updateOptions = function updateOptions(opts) {
+    opts.placeholder = _extends({}, MaskedPattern.DEFAULT_PLACEHOLDER, opts.placeholder);
+    opts.definitions = _extends({}, PatternDefinition.DEFAULTS, opts.definitions);
+    _Masked.prototype.updateOptions.call(this, opts);
+    this._updateMask();
+  };
 
   MaskedPattern.prototype._updateMask = function _updateMask() {
     var _this2 = this;
 
-    var defs = this._definitions;
+    var defs = this.definitions;
     this._charDefs = [];
     this._groupDefs = [];
 
@@ -1474,9 +1254,9 @@ var MaskedPattern = (_class$1 = function (_Masked) {
     var stopAlign = false;
 
     var _loop = function _loop(_i) {
-      if (_this2._groups) {
+      if (_this2.groups) {
         var p = pattern.slice(_i);
-        var gNames = Object.keys(_this2._groups).filter(function (gName) {
+        var gNames = Object.keys(_this2.groups).filter(function (gName) {
           return p.indexOf(gName) === 0;
         });
         // order by key length
@@ -1486,7 +1266,7 @@ var MaskedPattern = (_class$1 = function (_Masked) {
         // use group name with max length
         var gName = gNames[0];
         if (gName) {
-          var group = _this2._groups[gName];
+          var group = _this2.groups[gName];
           _this2._groupDefs.push(new PatternGroup(_this2, {
             name: gName,
             offset: _this2._charDefs.length,
@@ -1829,34 +1609,6 @@ var MaskedPattern = (_class$1 = function (_Masked) {
   };
 
   createClass(MaskedPattern, [{
-    key: 'placeholder',
-    get: function get$$1() {
-      return this._placeholder;
-    },
-    set: function set$$1(ph) {
-      this._placeholder = _extends({}, MaskedPattern.DEFAULT_PLACEHOLDER, ph);
-    }
-  }, {
-    key: 'definitions',
-    get: function get$$1() {
-      return this._definitions;
-    },
-    set: function set$$1(defs) {
-      defs = _extends({}, PatternDefinition.DEFAULTS, defs);
-
-      this._definitions = defs;
-      this._updateMask();
-    }
-  }, {
-    key: 'mask',
-    get: function get$$1() {
-      return this._mask;
-    },
-    set: function set$$1(mask) {
-      this._mask = mask;
-      this._updateMask();
-    }
-  }, {
     key: 'isComplete',
     get: function get$$1() {
       var _this5 = this;
@@ -1865,18 +1617,10 @@ var MaskedPattern = (_class$1 = function (_Masked) {
         return d.isInput && !d.optional && (d.isHollow || !_this5.extractInput(i, i + 1));
       });
     }
-  }, {
-    key: 'groups',
-    get: function get$$1() {
-      return this._groups;
-    },
-    set: function set$$1(groups) {
-      this._groups = groups;
-      this._updateMask();
-    }
   }]);
   return MaskedPattern;
-}(Masked), (_applyDecoratedDescriptor$1(_class$1.prototype, 'placeholder', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'placeholder'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'definitions', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'definitions'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'mask', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'mask'), _class$1.prototype), _applyDecoratedDescriptor$1(_class$1.prototype, 'groups', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$1.prototype, 'groups'), _class$1.prototype)), _class$1);
+}(Masked);
+
 MaskedPattern.DEFAULT_PLACEHOLDER = {
   lazy: true,
   char: '_'
@@ -1886,77 +1630,30 @@ MaskedPattern.ESCAPE_CHAR = '\\';
 MaskedPattern.Definition = PatternDefinition;
 MaskedPattern.Group = PatternGroup;
 
-var _class$3;
-
-function _applyDecoratedDescriptor$3(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-var MaskedDate = (_class$3 = function (_MaskedPattern) {
+var MaskedDate = function (_MaskedPattern) {
   inherits(MaskedDate, _MaskedPattern);
 
-  function MaskedDate() {
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function MaskedDate(opts) {
     classCallCheck(this, MaskedDate);
+    return possibleConstructorReturn(this, _MaskedPattern.call(this, _extends({}, MaskedDate.DEFAULTS, opts)));
+  }
 
-    var groups = opts.groups;
-    opts = _extends({}, MaskedDate.DEFAULTS, opts);
-    var _opts = opts,
-        min = _opts.min,
-        max = _opts.max,
-        format = _opts.format,
-        parse = _opts.parse;
-
-
-    opts.groups = _extends({}, MaskedDate.DEFAULTS.groups);
-    if (opts.groups.Y) {
-      // adjust year group
-      if (min) opts.groups.Y.from = min.getFullYear();
-      if (max) opts.groups.Y.to = max.getFullYear();
+  MaskedDate.prototype.updateOptions = function updateOptions(opts) {
+    if (opts.mask === Date) delete opts.mask;
+    if (opts.pattern) {
+      opts.mask = opts.pattern;
+      delete opts.pattern;
     }
 
+    var groups = opts.groups;
+    opts.groups = _extends({}, MaskedDate.GET_DEFAULT_GROUPS());
+    // adjust year group
+    if (opts.min) opts.groups.Y.from = opts.min.getFullYear();
+    if (opts.max) opts.groups.Y.to = opts.max.getFullYear();
     _extends(opts.groups, groups);
 
-    opts.mask = opts.pattern;
-    delete opts.pattern;
-
-    var _this = possibleConstructorReturn(this, _MaskedPattern.call(this, opts));
-
-    delete _this.isInitialized;
-
-    _this.min = min;
-    _this.max = max;
-    _this.format = format;
-    _this.parse = parse;
-
-    _this.isInitialized = true;
-    return _this;
-  }
+    _MaskedPattern.prototype.updateOptions.call(this, opts);
+  };
 
   MaskedDate.prototype.doValidate = function doValidate(soft) {
     var valid = _MaskedPattern.prototype.doValidate.call(this, soft);
@@ -1977,45 +1674,10 @@ var MaskedDate = (_class$3 = function (_MaskedPattern) {
     set: function set$$1(date) {
       this.value = this.format(date);
     }
-  }, {
-    key: 'min',
-    get: function get$$1() {
-      return this._min;
-    },
-    set: function set$$1(min) {
-      this._min = min;
-    }
-  }, {
-    key: 'max',
-    get: function get$$1() {
-      return this._max;
-    },
-    set: function set$$1(max) {
-      this._max = max;
-    }
-  }, {
-    key: 'mask',
-    get: function get$$1() {
-      return _MaskedPattern.prototype.mask;
-    }
-
-    // check mask on set
-    ,
-    set: function set$$1(mask) {
-      if (mask === Date) return;
-      _MaskedPattern.prototype.mask = mask;
-    }
-  }, {
-    key: 'pattern',
-    get: function get$$1() {
-      return this.mask;
-    },
-    set: function set$$1(pattern) {
-      this.mask = pattern;
-    }
   }]);
   return MaskedDate;
-}(MaskedPattern), (_applyDecoratedDescriptor$3(_class$3.prototype, 'min', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'min'), _class$3.prototype), _applyDecoratedDescriptor$3(_class$3.prototype, 'max', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'max'), _class$3.prototype), _applyDecoratedDescriptor$3(_class$3.prototype, 'pattern', [refreshValueOnSet], Object.getOwnPropertyDescriptor(_class$3.prototype, 'pattern'), _class$3.prototype)), _class$3);
+}(MaskedPattern);
+
 MaskedDate.DEFAULTS = {
   pattern: 'd{.}`m{.}`Y',
   format: function format(date) {
@@ -2032,12 +1694,14 @@ MaskedDate.DEFAULTS = {
         year = _str$split[2];
 
     return new Date(year, month - 1, day);
-  },
-  groups: {
+  }
+};
+MaskedDate.GET_DEFAULT_GROUPS = function () {
+  return {
     d: new PatternGroup.Range([1, 31]),
     m: new PatternGroup.Range([1, 12]),
     Y: new PatternGroup.Range([1900, 9999])
-  }
+  };
 };
 
 var ActionDetails = function () {
@@ -2177,18 +1841,7 @@ var InputMask = function () {
   };
 
   InputMask.prototype.updateOptions = function updateOptions(opts) {
-    var _this = this;
-
-    var mask = opts.mask;
-    if (mask) this.mask = mask;
-
-    this.masked.withValueRefresh(function () {
-      for (var k in opts) {
-        if (k === 'mask') continue;
-        _this.masked[k] = opts[k];
-      }
-    });
-
+    this.masked.updateOptions(opts);
     this.updateControl();
   };
 
@@ -2201,13 +1854,13 @@ var InputMask = function () {
   };
 
   InputMask.prototype._delayUpdateCursor = function _delayUpdateCursor(cursorPos) {
-    var _this2 = this;
+    var _this = this;
 
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
     this._cursorChanging = setTimeout(function () {
-      _this2.cursorPos = _this2._changingCursorPos;
-      _this2._abortUpdateCursor();
+      _this.cursorPos = _this._changingCursorPos;
+      _this._abortUpdateCursor();
     }, 10);
   };
 
