@@ -1,10 +1,3 @@
-import 'core-js/fn/array/find';
-import 'core-js/fn/object/keys';
-import 'core-js/fn/string/repeat';
-import 'core-js/fn/string/pad-start';
-import 'core-js/fn/string/pad-end';
-
-
 import Masked from './masked/base';
 import MaskedPattern from './masked/pattern';
 import MaskedNumber from './masked/number';

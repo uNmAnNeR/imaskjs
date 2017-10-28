@@ -6,33 +6,65 @@ import commonjs from 'rollup-plugin-commonjs';
 import {minify} from 'uglify-es';
 
 
-const isProd = process.env.NODE_ENV === 'production';
-function destName (format) {
-  return 'dist/imask' +
-    (isProd ? '.min' : '') +
-    (format ? '.' + format : '') +
-    '.js';
-}
+const isProd = process.env.env === 'production';
+
+const format = process.env.format || 'umd';
+const isES = format === 'es';
+const file = 'dist/imask' +
+  (format !== 'umd' ? '.' + format : '') +
+  (isProd ? '.min' : '') +
+  '.js';
+
+const input = isES ? 'src/imask.js' : 'src/imask.shim.js';
+
+const babelConf = isES ? {
+  externalHelpersWhitelist: [
+    'extends',
+    'slicedToArray'
+  ],
+  presets: [
+    ['env', {
+      modules: false,
+      useBuiltIns: true,
+      targets: {
+        browsers: [
+          'Chrome >= 60',
+          'Safari >= 10.1',
+          'iOS >= 10.3',
+          'Firefox >= 54',
+          'Edge >= 15',
+        ],
+      },
+    }]
+  ],
+  // waiting for https://github.com/rollup/rollup/issues/1613
+  plugins: ['transform-object-rest-spread', 'external-helpers']
+} : {
+  presets: [
+    ['env', {
+      'modules': false,
+      'loose': true,
+      'useBuiltIns': true
+    }]
+  ],
+  exclude: 'node_modules/**',
+  plugins: ['transform-object-rest-spread', 'transform-object-assign', 'external-helpers']
+};
+
 
 export default {
-  // tell rollup our main entry point
-  entry: 'src/imask.js',
-  targets: [
-    { dest: destName(), format: 'umd' },
-    { dest: destName('es'), format: 'es' }
-  ],
-  moduleName: 'IMask',
-  sourceMap: true,
+  input,
+  output: [{ file, format }],
+  name: 'IMask',
+  sourcemap: true,
   plugins: [
+    eslint({configFile: '.eslintrc'}),
     resolve({
       jsnext: true,
       main: true
     }),
-    commonjs(),
-    eslint({configFile: '.eslintrc'}),
-    babel({
-      exclude: 'node_modules/**',
-    }),
+    babel(babelConf),
+    !isES && commonjs(),
     isProd && uglify({}, minify)
   ]
 }

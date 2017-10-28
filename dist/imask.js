@@ -4,6 +4,88 @@
 	(global.IMask = factory());
 }(this, (function () { 'use strict';
 
+// 7.2.1 RequireObjectCoercible(argument)
+var _defined = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+// 7.1.13 ToObject(argument)
+
+var _toObject = function (it) {
+  return Object(_defined(it));
+};
+
+var hasOwnProperty = {}.hasOwnProperty;
+var _has = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+var toString = {}.toString;
+
+var _cof = function (it) {
+  return toString.call(it).slice(8, -1);
+};
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+
+// eslint-disable-next-line no-prototype-builtins
+var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+  return _cof(it) == 'String' ? it.split('') : Object(it);
+};
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+
+
+var _toIobject = function (it) {
+  return _iobject(_defined(it));
+};
+
+// 7.1.4 ToInteger
+var ceil = Math.ceil;
+var floor = Math.floor;
+var _toInteger = function (it) {
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+
+// 7.1.15 ToLength
+
+var min = Math.min;
+var _toLength = function (it) {
+  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+
+var max = Math.max;
+var min$1 = Math.min;
+var _toAbsoluteIndex = function (index, length) {
+  index = _toInteger(index);
+  return index < 0 ? max(index + length, 0) : min$1(index, length);
+};
+
+// false -> Array#indexOf
+// true  -> Array#includes
+
+
+
+var _arrayIncludes = function (IS_INCLUDES) {
+  return function ($this, el, fromIndex) {
+    var O = _toIobject($this);
+    var length = _toLength(O.length);
+    var index = _toAbsoluteIndex(fromIndex, length);
+    var value;
+    // Array#includes uses SameValueZero equality algorithm
+    // eslint-disable-next-line no-self-compare
+    if (IS_INCLUDES && el != el) while (length > index) {
+      value = O[index++];
+      // eslint-disable-next-line no-self-compare
+      if (value != value) return true;
+    // Array#indexOf ignores holes, Array#includes - not
+    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
+      if (O[index] === el) return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
@@ -16,6 +98,53 @@ var global = module.exports = typeof window != 'undefined' && window.Math == Mat
   : Function('return this')();
 if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 });
+
+var SHARED = '__core-js_shared__';
+var store = _global[SHARED] || (_global[SHARED] = {});
+var _shared = function (key) {
+  return store[key] || (store[key] = {});
+};
+
+var id = 0;
+var px = Math.random();
+var _uid = function (key) {
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+var shared = _shared('keys');
+
+var _sharedKey = function (key) {
+  return shared[key] || (shared[key] = _uid(key));
+};
+
+var arrayIndexOf = _arrayIncludes(false);
+var IE_PROTO = _sharedKey('IE_PROTO');
+
+var _objectKeysInternal = function (object, names) {
+  var O = _toIobject(object);
+  var i = 0;
+  var result = [];
+  var key;
+  for (key in O) if (key != IE_PROTO) _has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while (names.length > i) if (_has(O, key = names[i++])) {
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+
+// IE 8- don't enum bug keys
+var _enumBugKeys = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+
+
+
+var _objectKeys = Object.keys || function keys(O) {
+  return _objectKeysInternal(O, _enumBugKeys);
+};
 
 var _core = createCommonjsModule(function (module) {
 var core = module.exports = { version: '2.5.1' };
@@ -100,17 +229,6 @@ var _hide = _descriptors ? function (object, key, value) {
 } : function (object, key, value) {
   object[key] = value;
   return object;
-};
-
-var hasOwnProperty = {}.hasOwnProperty;
-var _has = function (it, key) {
-  return hasOwnProperty.call(it, key);
-};
-
-var id = 0;
-var px = Math.random();
-var _uid = function (key) {
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
 
 var _redefine = createCommonjsModule(function (module) {
@@ -209,233 +327,6 @@ $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library`
 var _export = $export;
 
-var toString = {}.toString;
-
-var _cof = function (it) {
-  return toString.call(it).slice(8, -1);
-};
-
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
-
-// eslint-disable-next-line no-prototype-builtins
-var _iobject = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-  return _cof(it) == 'String' ? it.split('') : Object(it);
-};
-
-// 7.2.1 RequireObjectCoercible(argument)
-var _defined = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
-  return it;
-};
-
-// 7.1.13 ToObject(argument)
-
-var _toObject = function (it) {
-  return Object(_defined(it));
-};
-
-// 7.1.4 ToInteger
-var ceil = Math.ceil;
-var floor = Math.floor;
-var _toInteger = function (it) {
-  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-};
-
-// 7.1.15 ToLength
-
-var min = Math.min;
-var _toLength = function (it) {
-  return it > 0 ? min(_toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
-};
-
-// 7.2.2 IsArray(argument)
-
-var _isArray = Array.isArray || function isArray(arg) {
-  return _cof(arg) == 'Array';
-};
-
-var SHARED = '__core-js_shared__';
-var store = _global[SHARED] || (_global[SHARED] = {});
-var _shared = function (key) {
-  return store[key] || (store[key] = {});
-};
-
-var _wks = createCommonjsModule(function (module) {
-var store = _shared('wks');
-
-var Symbol = _global.Symbol;
-var USE_SYMBOL = typeof Symbol == 'function';
-
-var $exports = module.exports = function (name) {
-  return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : _uid)('Symbol.' + name));
-};
-
-$exports.store = store;
-});
-
-var SPECIES = _wks('species');
-
-var _arraySpeciesConstructor = function (original) {
-  var C;
-  if (_isArray(original)) {
-    C = original.constructor;
-    // cross-realm fallback
-    if (typeof C == 'function' && (C === Array || _isArray(C.prototype))) C = undefined;
-    if (_isObject(C)) {
-      C = C[SPECIES];
-      if (C === null) C = undefined;
-    }
-  } return C === undefined ? Array : C;
-};
-
-// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
-
-
-var _arraySpeciesCreate = function (original, length) {
-  return new (_arraySpeciesConstructor(original))(length);
-};
-
-// 0 -> Array#forEach
-// 1 -> Array#map
-// 2 -> Array#filter
-// 3 -> Array#some
-// 4 -> Array#every
-// 5 -> Array#find
-// 6 -> Array#findIndex
-
-
-
-
-
-var _arrayMethods = function (TYPE, $create) {
-  var IS_MAP = TYPE == 1;
-  var IS_FILTER = TYPE == 2;
-  var IS_SOME = TYPE == 3;
-  var IS_EVERY = TYPE == 4;
-  var IS_FIND_INDEX = TYPE == 6;
-  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
-  var create = $create || _arraySpeciesCreate;
-  return function ($this, callbackfn, that) {
-    var O = _toObject($this);
-    var self = _iobject(O);
-    var f = _ctx(callbackfn, that, 3);
-    var length = _toLength(self.length);
-    var index = 0;
-    var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
-    var val, res;
-    for (;length > index; index++) if (NO_HOLES || index in self) {
-      val = self[index];
-      res = f(val, index, O);
-      if (TYPE) {
-        if (IS_MAP) result[index] = res;   // map
-        else if (res) switch (TYPE) {
-          case 3: return true;             // some
-          case 5: return val;              // find
-          case 6: return index;            // findIndex
-          case 2: result.push(val);        // filter
-        } else if (IS_EVERY) return false; // every
-      }
-    }
-    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
-  };
-};
-
-// 22.1.3.31 Array.prototype[@@unscopables]
-var UNSCOPABLES = _wks('unscopables');
-var ArrayProto = Array.prototype;
-if (ArrayProto[UNSCOPABLES] == undefined) _hide(ArrayProto, UNSCOPABLES, {});
-var _addToUnscopables = function (key) {
-  ArrayProto[UNSCOPABLES][key] = true;
-};
-
-// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
-
-var $find = _arrayMethods(5);
-var KEY = 'find';
-var forced = true;
-// Shouldn't skip holes
-if (KEY in []) Array(1)[KEY](function () { forced = false; });
-_export(_export.P + _export.F * forced, 'Array', {
-  find: function find(callbackfn /* , that = undefined */) {
-    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-  }
-});
-_addToUnscopables(KEY);
-
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-
-
-var _toIobject = function (it) {
-  return _iobject(_defined(it));
-};
-
-var max = Math.max;
-var min$1 = Math.min;
-var _toAbsoluteIndex = function (index, length) {
-  index = _toInteger(index);
-  return index < 0 ? max(index + length, 0) : min$1(index, length);
-};
-
-// false -> Array#indexOf
-// true  -> Array#includes
-
-
-
-var _arrayIncludes = function (IS_INCLUDES) {
-  return function ($this, el, fromIndex) {
-    var O = _toIobject($this);
-    var length = _toLength(O.length);
-    var index = _toAbsoluteIndex(fromIndex, length);
-    var value;
-    // Array#includes uses SameValueZero equality algorithm
-    // eslint-disable-next-line no-self-compare
-    if (IS_INCLUDES && el != el) while (length > index) {
-      value = O[index++];
-      // eslint-disable-next-line no-self-compare
-      if (value != value) return true;
-    // Array#indexOf ignores holes, Array#includes - not
-    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
-      if (O[index] === el) return IS_INCLUDES || index || 0;
-    } return !IS_INCLUDES && -1;
-  };
-};
-
-var shared = _shared('keys');
-
-var _sharedKey = function (key) {
-  return shared[key] || (shared[key] = _uid(key));
-};
-
-var arrayIndexOf = _arrayIncludes(false);
-var IE_PROTO = _sharedKey('IE_PROTO');
-
-var _objectKeysInternal = function (object, names) {
-  var O = _toIobject(object);
-  var i = 0;
-  var result = [];
-  var key;
-  for (key in O) if (key != IE_PROTO) _has(O, key) && result.push(key);
-  // Don't enum bug & hidden keys
-  while (names.length > i) if (_has(O, key = names[i++])) {
-    ~arrayIndexOf(result, key) || result.push(key);
-  }
-  return result;
-};
-
-// IE 8- don't enum bug keys
-var _enumBugKeys = (
-  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-).split(',');
-
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-
-
-
-var _objectKeys = Object.keys || function keys(O) {
-  return _objectKeysInternal(O, _enumBugKeys);
-};
-
 // most Object methods by ES6 should accept primitives
 
 
@@ -456,6 +347,10 @@ _objectSap('keys', function () {
     return _objectKeys(_toObject(it));
   };
 });
+
+'use strict';
+
+
 
 var _stringRepeat = function repeat(count) {
   var str = String(_defined(this));
@@ -488,6 +383,7 @@ var _stringPad = function (that, maxLength, fillString, left) {
   return left ? stringFiller + S : S + stringFiller;
 };
 
+'use strict';
 // https://github.com/tc39/proposal-string-pad-start-end
 
 
@@ -498,6 +394,7 @@ _export(_export.P, 'String', {
   }
 });
 
+'use strict';
 // https://github.com/tc39/proposal-string-pad-start-end
 
 
@@ -507,6 +404,123 @@ _export(_export.P, 'String', {
     return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, false);
   }
 });
+
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
+
+
+
+
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -804,7 +818,7 @@ function indexInDirection(pos, direction) {
 }
 
 function escapeRegExp(str) {
-  return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
+  return str.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
 }
 
 var MaskedRegExp = function (_Masked) {
@@ -2005,25 +2019,25 @@ var InputMask = function () {
   return InputMask;
 }();
 
-function IMask$1(el) {
+function IMask$2(el) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   // currently available only for input elements
   return new InputMask(el, opts);
 }
 
-IMask$1.InputMask = InputMask;
+IMask$2.InputMask = InputMask;
 
-IMask$1.Masked = Masked;
-IMask$1.MaskedPattern = MaskedPattern;
-IMask$1.MaskedNumber = MaskedNumber;
-IMask$1.MaskedDate = MaskedDate;
-IMask$1.MaskedRegExp = MaskedRegExp;
-IMask$1.MaskedFunction = MaskedFunction;
+IMask$2.Masked = Masked;
+IMask$2.MaskedPattern = MaskedPattern;
+IMask$2.MaskedNumber = MaskedNumber;
+IMask$2.MaskedDate = MaskedDate;
+IMask$2.MaskedRegExp = MaskedRegExp;
+IMask$2.MaskedFunction = MaskedFunction;
 
-window.IMask = IMask$1;
+window.IMask = IMask$2;
 
-return IMask$1;
+return IMask$2;
 
 })));
 //# sourceMappingURL=imask.js.map
