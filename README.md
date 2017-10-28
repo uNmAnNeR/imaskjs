@@ -20,7 +20,7 @@ Further plans:
 * support RTL?
 
 ## Install
-`npm install imaskjs` or download and include from `dist` folder
+`npm install imask` or download and include from `dist` folder
 
 ## Build & test
 `npm run build`
