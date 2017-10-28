@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Imaskjs - vanilla javascript imput mask</title>
+    <title>imaskjs - vanilla javascript input mask</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/kube/6.5.2/css/kube.min.css">
     <link rel="stylesheet" href="gh-pages/css/main.css">
     <meta name="viewport" content="width=device-width">
@@ -158,43 +158,45 @@
       </nav>
       <span>by <a href="https://github.com/uNmAnNeR">@Alexey Kryazhev</a></span>
     </footer>
-    <script src="dist/imask.js"></script>
+    <script type="module" src="dist/imask.es.js"></script>
+    <script nomodule defer src="dist/imask.js"></script>
     <script type="text/javascript">
-      var phoneMask = new IMask(document.getElementById('phone-mask'), {
-        mask: '+{7}(000)000-00-00'
-      }).on('accept', function() {
-        document.getElementById('phone-complete').style.display = '';
-        document.getElementById('phone-unmasked').innerHTML = phoneMask.unmaskedValue;
-      }).on('complete', function() {
-        document.getElementById('phone-complete').style.display = 'inline-block';
-      });
-
-      var regExpMask = new IMask(document.getElementById('regexp-mask'), {
-        mask: /^[1-6]\d{0,5}$/
-      });
-
-      var numberMask = new IMask(document.getElementById('number-mask'), {
-        mask: Number,
-        min: -10000,
-        max: 10000,
-        thousandsSeparator: ' '
-      });
-      numberMask.on('accept', function() {
-        document.getElementById('number-value').innerHTML = numberMask.masked.number;
-      });
-
-      var dateMask = new IMask(
-        document.getElementById('date-mask'),
-        {
-          mask: Date,
-          min: new Date(2000, 0, 1),
-          max: new Date(2020, 0, 1),
-          placeholder: {lazy: false}
+      document.addEventListener("DOMContentLoaded", function () {
+        var phoneMask = new IMask(document.getElementById('phone-mask'), {
+          mask: '+{7}(000)000-00-00'
+        }).on('accept', function() {
+          document.getElementById('phone-complete').style.display = '';
+          document.getElementById('phone-unmasked').innerHTML = phoneMask.unmaskedValue;
+        }).on('complete', function() {
+          document.getElementById('phone-complete').style.display = 'inline-block';
         });
-      dateMask.on('accept', function() {
-        document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
-      });
 
+        var regExpMask = new IMask(document.getElementById('regexp-mask'), {
+          mask: /^[1-6]\d{0,5}$/
+        });
+
+        var numberMask = new IMask(document.getElementById('number-mask'), {
+          mask: Number,
+          min: -10000,
+          max: 10000,
+          thousandsSeparator: ' '
+        });
+        numberMask.on('accept', function() {
+          document.getElementById('number-value').innerHTML = numberMask.masked.number;
+        });
+
+        var dateMask = new IMask(
+          document.getElementById('date-mask'),
+          {
+            mask: Date,
+            min: new Date(2000, 0, 1),
+            max: new Date(2020, 0, 1),
+            placeholder: {lazy: false}
+          });
+        dateMask.on('accept', function() {
+          document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
+        });
+      });
     </script>
   </body>
 </html>

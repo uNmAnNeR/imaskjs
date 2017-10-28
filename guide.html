@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Imaskjs - vanilla javascript imput mask</title>
+    <title>imaskjs - vanilla javascript input mask guide</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/kube/6.5.2/css/kube.min.css">
     <link rel="stylesheet" href="gh-pages/css/main.css">
     <meta name="viewport" content="width=device-width">
@@ -32,6 +32,7 @@
         <p>Install from <a href="https://www.npmjs.com/package/imaskjs">npm</a> <code>npm install imaskjs</code> or <a href="https://github.com/uNmAnNeR/imaskjs/zipball/gh-pages">download</a>.</p>
         <p>Include <code>imask.js</code> or <code>imask.min.js</code> from <code>dist</code> folder:</p>
         <pre><code>&lt;script src=&quot;dist/imask.js&quot;&gt;&lt;/script&gt;</code></pre>
+        <p>For newest browsers <em>es2015</em> builds available (<code>imask.es.js</code> and <code>imask.es.min.js</code>).</p>
         <p>Simple use case:</p>
         <div class="toggle-panel">
           <label for="start-phone-mask-demo" class="muted">demo</label>
@@ -68,9 +69,6 @@ console.log(mask.unmaskedValue);  // logs "79999999999"
 mask.unmaskedValue = "70000000000";
 console.log(mask.value);  // logs "+7(000)000-00-00"
 console.log(mask.unmaskedValue);  // logs "70000000000"</code></pre>
-
-        <p>Get/set mask</p>
-        <pre><code>mask.mask = "000-000"; // auto-updates UI</code></pre>
 
         <p>Update options</p>
         <pre><code>mask.updateOptions({
@@ -140,7 +138,7 @@ masked.reset(); // UI will NOT be updated</code></pre>
 
 
         <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
-        <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model.</p>
+        <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model. All base class options are applicable to subclasses also.</p>
         <p>Example usage:</p>
         <div class="toggle-panel">
           <label for="validate-mask-demo" class="muted">demo</label>
@@ -157,9 +155,16 @@ masked.reset(); // UI will NOT be updated</code></pre>
         <pre><code>var digitsMask = new IMask(element, {
   mask: /^\d+$/
 });</code></pre>
-        <p>Get/set mask (only same type allowed!)</p>
-        <pre><code>masked.mask = /^\w+$/;  // ok
-masked.mask = "0000";  // ERROR! changing mask type on existing mask is not allowed!</code></pre>
+
+        <p>Update options</p>
+        <pre><code>mask.updateOptions({
+  // while changing mask only same type allowed
+  mask: /^\w+$/,  // ok
+  // mask: "0000",  // ERROR! changing mask type on existing mask is not allowed!
+
+  // ... other options
+});</code></pre>
+
         <p>Get/set value and unmasked value</p>
         <pre><code>masked.value = 'hello world!';
 console.log(masked.unmaskedValue);</code></pre>
@@ -183,7 +188,7 @@ console.log(masked.unmaskedValue);</code></pre>
   },
   commit: function (value, masked) {
     // Don't change value manually! All changes should be done in mask!
-    // But it works and could help to understand what is really changes
+    // This example helps to understand what is really changes, only for demo
     masked._value = value.toLowerCase();  // Don't do it
   }
 });</code></pre>
@@ -576,232 +581,235 @@ var momentMask = new IMask(element, {
         <span>by <a href="https://github.com/uNmAnNeR">@Alexey Kryazhev</a></span>
       </footer>
     </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script src="dist/imask.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="module" src="dist/imask.es.js"></script>
+    <script nomodule defer src="dist/imask.js"></script>
     <script type="text/javascript">
-      var startPhoneMask = new IMask(document.getElementById('start-phone-mask'), {
-        mask: '+{7}(000)000-00-00'
-      }).on('accept', function() {
-        document.getElementById('start-phone-complete').style.display = '';
-        document.getElementById('start-phone-unmasked').innerHTML = startPhoneMask.unmaskedValue;
-      }).on('complete', function() {
-        document.getElementById('start-phone-complete').style.display = 'inline-block';
-      });
+      document.addEventListener("DOMContentLoaded", function () {
+        var startPhoneMask = new IMask(document.getElementById('start-phone-mask'), {
+          mask: '+{7}(000)000-00-00'
+        }).on('accept', function() {
+          document.getElementById('start-phone-complete').style.display = '';
+          document.getElementById('start-phone-unmasked').innerHTML = startPhoneMask.unmaskedValue;
+        }).on('complete', function() {
+          document.getElementById('start-phone-complete').style.display = 'inline-block';
+        });
 
 
-      new IMask(document.getElementById('validate-mask'), {
-        mask: /^\d+$/  // mask is mandatory
-      });
+        new IMask(document.getElementById('validate-mask'), {
+          mask: /^\d+$/  // mask is mandatory
+        });
 
 
-      new IMask(document.getElementById('uppercase-mask'), {
-        mask: /^\w+$/,
-        prepare: function (str) {
-          return str.toUpperCase();
-        },
-        commit: function (value, masked) {
-          // Don't change value manually! All changes should be done in mask!
-          // But it works and helps to understand what is really change
-          masked._value = value.toLowerCase();
-        }
-      });
-
-
-      new IMask(document.getElementById('sequence-mask'), {
-        mask: function (value) {
-          return /^\d*$/.test(value) &&
-            value.split('').every(function(ch, i) {
-              var prevCh = value[i-1];
-              return !prevCh || prevCh < ch;
-            });
-        }
-      });
-
-
-      var customMask = new IMask(document.getElementById('pattern-nic-mask'), {
-          mask: '{#}000[aaa]/NIC-`*[**]',
-          placeholder: {
-            lazy: false
+        new IMask(document.getElementById('uppercase-mask'), {
+          mask: /^\w+$/,
+          prepare: function (str) {
+            return str.toUpperCase();
+          },
+          commit: function (value, masked) {
+            // Don't change value manually! All changes should be done in mask!
+            // But it works and helps to understand what is really change
+            masked._value = value.toLowerCase();
           }
-      });
-      customMask.on('accept', function() {
-        document.getElementById('pattern-nic-complete').style.display = '';
-        document.getElementById('pattern-nic-unmasked').innerHTML = customMask.unmaskedValue;
-      }).on('complete', function() {
-        document.getElementById('pattern-nic-complete').style.display = 'inline-block';
-      });
-
-      var customEl = document.getElementsByClassName('pattern-nic-form')[0];
-      customEl.querySelector('[name=apply]').addEventListener('click', function (e) {
-        var mask = customEl.querySelector('[name=mask]').value;
-        var ph = {
-          lazy: customEl.querySelector('[name=ph-show]').checked,
-          char: customEl.querySelector('[name=ph-char]').value || '_'
-        };
-        var value = customEl.querySelector('[name=raw]').value;
-        customEl.querySelector('[name=raw]').value = '';
-
-        var unmaskedValue = customEl.querySelector('[name=unmasked]').value;
-        customEl.querySelector('[name=unmasked]').value = '';
-
-        customMask.updateOptions({
-          mask: mask,
-          placeholder: ph
         });
-        if (value) customMask.value = value;
-        if (unmaskedValue) customMask.unmaskedValue = unmaskedValue;
-      });
 
 
-      var patternZipMask = new IMask(document.getElementById('pattern-zip-mask'), {
-        mask: '#00000',
-        definitions: {
-          // <any single char>: <same type as mask (RegExp, Function, etc.)>
-          // defaults are '0', 'a', '*'
-          '#': /[1-6]/
-        }
-      }).on('accept', function() {
-        document.getElementById('pattern-zip-complete').style.display = '';
-        document.getElementById('pattern-zip-unmasked').innerHTML = patternZipMask.unmaskedValue;
-      }).on('complete', function() {
-        document.getElementById('pattern-zip-complete').style.display = 'inline-block';
-      });
+        new IMask(document.getElementById('sequence-mask'), {
+          mask: function (value) {
+            return /^\d*$/.test(value) &&
+              value.split('').every(function(ch, i) {
+                var prevCh = value[i-1];
+                return !prevCh || prevCh < ch;
+              });
+          }
+        });
 
 
-      var patternPhoneMask = new IMask(document.getElementById('pattern-phone-mask'), {
-        mask: '+{7}(000)000-00-00',
-        placeholder: {
-          lazy: false,  // make placeholder always visible
-          char: '#'  // defaults to '_'
-        }
-      }).on('accept', function() {
-        document.getElementById('pattern-phone-complete').style.display = '';
-        document.getElementById('pattern-phone-unmasked').innerHTML = patternPhoneMask.unmaskedValue;
-      }).on('complete', function() {
-        document.getElementById('pattern-phone-complete').style.display = 'inline-block';
-      });
+        var customMask = new IMask(document.getElementById('pattern-nic-mask'), {
+            mask: '{#}000[aaa]/NIC-`*[**]',
+            placeholder: {
+              lazy: false
+            }
+        });
+        customMask.on('accept', function() {
+          document.getElementById('pattern-nic-complete').style.display = '';
+          document.getElementById('pattern-nic-unmasked').innerHTML = customMask.unmaskedValue;
+        }).on('complete', function() {
+          document.getElementById('pattern-nic-complete').style.display = 'inline-block';
+        });
+
+        var customEl = document.getElementsByClassName('pattern-nic-form')[0];
+        customEl.querySelector('[name=apply]').addEventListener('click', function (e) {
+          var mask = customEl.querySelector('[name=mask]').value;
+          var ph = {
+            lazy: customEl.querySelector('[name=ph-show]').checked,
+            char: customEl.querySelector('[name=ph-char]').value || '_'
+          };
+          var value = customEl.querySelector('[name=raw]').value;
+          customEl.querySelector('[name=raw]').value = '';
+
+          var unmaskedValue = customEl.querySelector('[name=unmasked]').value;
+          customEl.querySelector('[name=unmasked]').value = '';
+
+          customMask.updateOptions({
+            mask: mask,
+            placeholder: ph
+          });
+          if (value) customMask.value = value;
+          if (unmaskedValue) customMask.unmaskedValue = unmaskedValue;
+        });
 
 
-      var patternGroupsMask = new IMask(document.getElementById('pattern-groups-mask'), {
-        mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',
-        placeholder: {lazy: false},  // make placeholder always visible
-
-        // let define groups
-        groups: {
-          // custom group definition
-          YY: {
-            mask: '00'
-            // optional validator
-            // validate: function (value, group) {}
-          },
-
-          // use range to restrict input to numbers in range
-          // mask size is the length in chars of max bound or could be provided as second parameter
-          // to input smaller values pad zeros at beginning
-          MM: new IMask.MaskedPattern.Group.Range([1, 12] /*, optional size */),
-
-          // restrict input to enum
-          // all values should be same length
-          VL: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR'])
-        }
-      }).on('accept', function() {
-        document.getElementById('pattern-groups-complete').style.display = '';
-        document.getElementById('pattern-groups-unmasked').innerHTML = patternGroupsMask.unmaskedValue;
-      }).on('complete', function() {
-        document.getElementById('pattern-groups-complete').style.display = 'inline-block';
-      });
+        var patternZipMask = new IMask(document.getElementById('pattern-zip-mask'), {
+          mask: '#00000',
+          definitions: {
+            // <any single char>: <same type as mask (RegExp, Function, etc.)>
+            // defaults are '0', 'a', '*'
+            '#': /[1-6]/
+          }
+        }).on('accept', function() {
+          document.getElementById('pattern-zip-complete').style.display = '';
+          document.getElementById('pattern-zip-unmasked').innerHTML = patternZipMask.unmaskedValue;
+        }).on('complete', function() {
+          document.getElementById('pattern-zip-complete').style.display = 'inline-block';
+        });
 
 
-      var numberMask = new IMask(document.getElementById('numbers-mask'), {
-        mask: Number,
-        scale: 2,
-        // signed: true,
-        thousandsSeparator: ' ',
-        postFormat: {
-          // padFractionalZeros: true,
-          normalizeZeros: true,
-        },
-        min: -10000,
-        max: 10000
-        // radix: ',',
-        // mapToRadix: ['.']
-      });
-      numberMask.on('accept', function() {
-        document.getElementById('number-value').innerHTML = numberMask.masked.number;
-      });
+        var patternPhoneMask = new IMask(document.getElementById('pattern-phone-mask'), {
+          mask: '+{7}(000)000-00-00',
+          placeholder: {
+            lazy: false,  // make placeholder always visible
+            char: '#'  // defaults to '_'
+          }
+        }).on('accept', function() {
+          document.getElementById('pattern-phone-complete').style.display = '';
+          document.getElementById('pattern-phone-unmasked').innerHTML = patternPhoneMask.unmaskedValue;
+        }).on('complete', function() {
+          document.getElementById('pattern-phone-complete').style.display = 'inline-block';
+        });
 
-      var numberEl = document.getElementsByClassName('numbers-form')[0];
-      numberEl.querySelector('[name=apply]').addEventListener('click', function () {
-        numberMask.updateOptions({
-          scale: Number(numberEl.querySelector('[name=scale]').value),
-          radix: numberEl.querySelector('[name=radix]').value,
-          mapToRadix: numberEl.querySelector('[name=mapToRadix]').value.split(''),
-          signed: numberEl.querySelector('[name=signed]').checked,
-          thousandsSeparator: numberEl.querySelector('[name=thousandsSeparator]').value,
+
+        var patternGroupsMask = new IMask(document.getElementById('pattern-groups-mask'), {
+          mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',
+          placeholder: {lazy: false},  // make placeholder always visible
+
+          // let define groups
+          groups: {
+            // custom group definition
+            YY: {
+              mask: '00'
+              // optional validator
+              // validate: function (value, group) {}
+            },
+
+            // use range to restrict input to numbers in range
+            // mask size is the length in chars of max bound or could be provided as second parameter
+            // to input smaller values pad zeros at beginning
+            MM: new IMask.MaskedPattern.Group.Range([1, 12] /*, optional size */),
+
+            // restrict input to enum
+            // all values should be same length
+            VL: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR'])
+          }
+        }).on('accept', function() {
+          document.getElementById('pattern-groups-complete').style.display = '';
+          document.getElementById('pattern-groups-unmasked').innerHTML = patternGroupsMask.unmaskedValue;
+        }).on('complete', function() {
+          document.getElementById('pattern-groups-complete').style.display = 'inline-block';
+        });
+
+
+        var numberMask = new IMask(document.getElementById('numbers-mask'), {
+          mask: Number,
+          scale: 2,
+          // signed: true,
+          thousandsSeparator: ' ',
           postFormat: {
-            padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
-            normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,
+            // padFractionalZeros: true,
+            normalizeZeros: true,
           },
-          min: numberEl.querySelector('[name=min]').value ?
-            Number(numberEl.querySelector('[name=min]').value) : null,
-          max: numberEl.querySelector('[name=max]').value ?
-            Number(numberEl.querySelector('[name=max]').value) : null
+          min: -10000,
+          max: 10000
+          // radix: ',',
+          // mapToRadix: ['.']
         });
-      });
+        numberMask.on('accept', function() {
+          document.getElementById('number-value').innerHTML = numberMask.masked.number;
+        });
+
+        var numberEl = document.getElementsByClassName('numbers-form')[0];
+        numberEl.querySelector('[name=apply]').addEventListener('click', function () {
+          numberMask.updateOptions({
+            scale: Number(numberEl.querySelector('[name=scale]').value),
+            radix: numberEl.querySelector('[name=radix]').value,
+            mapToRadix: numberEl.querySelector('[name=mapToRadix]').value.split(''),
+            signed: numberEl.querySelector('[name=signed]').checked,
+            thousandsSeparator: numberEl.querySelector('[name=thousandsSeparator]').value,
+            postFormat: {
+              padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
+              normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,
+            },
+            min: numberEl.querySelector('[name=min]').value ?
+              Number(numberEl.querySelector('[name=min]').value) : null,
+            max: numberEl.querySelector('[name=max]').value ?
+              Number(numberEl.querySelector('[name=max]').value) : null
+          });
+        });
 
 
-      var dateMask = new IMask(document.getElementById('date-mask'), {
-        mask: Date,
-        pattern: 'Y-`m-`d',
-        placeholder: {lazy: false},
+        var dateMask = new IMask(document.getElementById('date-mask'), {
+          mask: Date,
+          pattern: 'Y-`m-`d',
+          placeholder: {lazy: false},
 
-        format: function (date) {
-          var day = date.getDate();
-          var month = date.getMonth() + 1;
-          var year = date.getFullYear();
+          format: function (date) {
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
 
-          if (day < 10) day = "0" + day;
-          if (month < 10) month = "0" + month;
+            if (day < 10) day = "0" + day;
+            if (month < 10) month = "0" + month;
 
-          return [year, month, day].join('-');
-        },
-        parse: function (str) {
-          var yearMonthDay = str.split('-');
-          return new Date(yearMonthDay[0], yearMonthDay[1] - 1, yearMonthDay[2]);
-        },
-        min: new Date(2000, 0, 1),
-        max: new Date(2020, 0, 1)
-      });
-      dateMask.on('accept', function() {
-        document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
-      });
+            return [year, month, day].join('-');
+          },
+          parse: function (str) {
+            var yearMonthDay = str.split('-');
+            return new Date(yearMonthDay[0], yearMonthDay[1] - 1, yearMonthDay[2]);
+          },
+          min: new Date(2000, 0, 1),
+          max: new Date(2020, 0, 1)
+        });
+        dateMask.on('accept', function() {
+          document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
+        });
 
 
-      var momentFormat = 'YYYY/MM/DD HH:mm';
-      var momentMask = new IMask(document.getElementById('moment-mask'), {
-        mask: Date,
-        pattern: momentFormat,
-        placeholder: {lazy: false},
-        min: new Date(1970, 0, 1),
-        max: new Date(2030, 0, 1),
+        var momentFormat = 'YYYY/MM/DD HH:mm';
+        var momentMask = new IMask(document.getElementById('moment-mask'), {
+          mask: Date,
+          pattern: momentFormat,
+          placeholder: {lazy: false},
+          min: new Date(1970, 0, 1),
+          max: new Date(2030, 0, 1),
 
-        format: function (date) {
-          return moment(date).format(momentFormat);
-        },
-        parse: function (str) {
-          return moment(str, momentFormat);
-        },
+          format: function (date) {
+            return moment(date).format(momentFormat);
+          },
+          parse: function (str) {
+            return moment(str, momentFormat);
+          },
 
-        groups: {
-          YYYY: new IMask.MaskedPattern.Group.Range([1970, 2030]),
-          MM: new IMask.MaskedPattern.Group.Range([1, 12]),
-          DD: new IMask.MaskedPattern.Group.Range([1, 31]),
-          HH: new IMask.MaskedPattern.Group.Range([0, 23]),
-          mm: new IMask.MaskedPattern.Group.Range([0, 59])
-        }
-      });
-      momentMask.on('accept', function() {
-        document.getElementById('moment-value').innerHTML = momentMask.masked.date || '-';
+          groups: {
+            YYYY: new IMask.MaskedPattern.Group.Range([1970, 2030]),
+            MM: new IMask.MaskedPattern.Group.Range([1, 12]),
+            DD: new IMask.MaskedPattern.Group.Range([1, 31]),
+            HH: new IMask.MaskedPattern.Group.Range([0, 23]),
+            mm: new IMask.MaskedPattern.Group.Range([0, 59])
+          }
+        });
+        momentMask.on('accept', function() {
+          document.getElementById('moment-value').innerHTML = momentMask.masked.date || '-';
+        });
       });
     </script>
   </body>
