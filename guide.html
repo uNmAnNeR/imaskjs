@@ -61,7 +61,7 @@ var mask = new IMask(element, maskOptions);</code></pre>
         <p>Basic use case:</p>
         <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
 
-        <p>Get/set value and unmasked value</p>
+        <p>Get/set value and unmasked value:</p>
         <pre><code>mask.value = "+7(999)999-99-99";
 console.log(mask.value);  // logs "+7(999)999-99-99"
 console.log(mask.unmaskedValue);  // logs "79999999999"
@@ -77,10 +77,10 @@ console.log(mask.unmaskedValue);  // logs "70000000000"</code></pre>
   max: 100
 });  // also updates UI</code></pre>
 
-        <p>Clean and destroy</p>
+        <p>Clean and destroy:</p>
         <pre><code>mask.destroy();</code></pre>
 
-        <p>Listen to events</p>
+        <p>Listen to events:</p>
         <pre><code>// 'accept' event fired on input when mask value has changed
 function log () {console.log(mask.value)};
 mask.on("accept", log);
@@ -89,13 +89,13 @@ mask.on("accept", log);
 // This makes sense only for Pattern-based masks
 mask.on("complete", function () {console.log(mask.value)});</code></pre>
 
-        <p>Stop listening to events</p>
+        <p>Stop listening to events:</p>
         <pre><code>mask.off("accept", log);
 
 // omit handler argument to unlisten all
 mask.off("complete");</code></pre>
 
-        <p>Get masked model</p>
+        <p>Get masked model:</p>
         <pre><code>var masked = mask.masked;
 masked.reset(); // UI will NOT be updated</code></pre>
 
@@ -168,7 +168,7 @@ masked.reset(); // UI will NOT be updated</code></pre>
         <p>Get/set value and unmasked value</p>
         <pre><code>masked.value = 'hello world!';
 console.log(masked.unmaskedValue);</code></pre>
-        <p>Use <code>prepare (value, masked)</code> option for preprocessing input and <code>commit (value, masked)</code> option for postprocessing after UI was deactivated:</p>
+        <p>Use <code>prepare (value, masked)</code> option for preprocessing input and <code>commit (value, masked)</code> option for postprocessing after UI is deactivated:</p>
         <div class="toggle-panel">
           <label for="uppercase-mask-demo" class="muted">demo</label>
           <input id="uppercase-mask-demo" type="checkbox">
@@ -192,7 +192,7 @@ console.log(masked.unmaskedValue);</code></pre>
     masked._value = value.toLowerCase();  // Don't do it
   }
 });</code></pre>
-        <p>Usually you don't need to manually create instances of that type, because it will be done by IMask internally. But you can subclass from it to add some specific behavior.</p>
+        <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from it to add some specific behavior.</p>
         <p>Additionaly to <code>mask</code> option you can pass custom validator as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves. <strong>But don't change <code>masked</code> instance inside callbacks.</strong></p>
         <fieldset>
           <p><strong>Also make sure that your mask or validator works with any of intermediate states, not just final value. For example you want to restrict input to "123" and do:</strong></p>
@@ -384,7 +384,7 @@ var masked = new IMask.PatternMasked({
     },
 
     // use range to restrict input to numbers in range
-    // mask size is the length in chars of max bound or could be provided as second parameter
+    // mask size is the length in chars of max bound or can be provided as second parameter
     // to input smaller values pad zeros at beginning
     <ins>MM</ins>: new IMask.MaskedPattern.Group.Range([1, 12], /* optional size */),
 
@@ -466,7 +466,7 @@ var masked = new IMask.PatternMasked({
   // other options are optional with defaults
   scale: 2,  // digits after point, 0 for integers
   signed: false,  // disallow negative
-  thousandsSeparator: '',  // could be any single char
+  thousandsSeparator: '',  // any single char
   postFormat: {
     padFractionalZeros: false,  // if true, then pads zeros at end to the length of scale
     normalizeZeros: true  // appends or removes zeros at ends
@@ -474,7 +474,7 @@ var masked = new IMask.PatternMasked({
   radix: ',',  // fractional delimiter
   mapToRadix: ['.']  // symbols to process as radix
 
-  // number interval options additionally could be set (e.g.)
+  // additional number interval options (e.g.)
   min: -10000,
   max: 10000
 });</code></pre>
@@ -526,7 +526,7 @@ var masked = new IMask.PatternMasked({
   min: new Date(2000, 0, 1),  // defaults to 1900-01-01
   max: new Date(2020, 0, 1),  // defaults to 9999-01-01
 
-  // also Pattern options could be set
+  // also Pattern options can be set
   placeholder: {lazy: false}
 });</code></pre>
       <p>Easy integration with <a href="https://momentjs.com/">Moment.js</a>:</p>
