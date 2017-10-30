@@ -1,8 +1,8 @@
-import {isString} from '../core/utils';
-import Masked from './base';
-import MaskedRegExp from './regexp';
-import MaskedFunction from './function';
-import MaskedNumber from './number';
+import {isString} from '../core/utils.js';
+import Masked from './base.js';
+import MaskedRegExp from './regexp.js';
+import MaskedFunction from './function.js';
+import MaskedNumber from './number.js';
 
 
 export

@@ -1,4 +1,4 @@
-import createMask from '../factory';
+import createMask from '../factory.js';
 
 
 export default

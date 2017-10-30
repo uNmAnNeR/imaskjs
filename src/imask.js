@@ -1,11 +1,11 @@
-import Masked from './masked/base';
-import MaskedPattern from './masked/pattern';
-import MaskedNumber from './masked/number';
-import MaskedDate from './masked/date';
-import MaskedRegExp from './masked/regexp';
-import MaskedFunction from './masked/function';
+import Masked from './masked/base.js';
+import MaskedPattern from './masked/pattern.js';
+import MaskedNumber from './masked/number.js';
+import MaskedDate from './masked/date.js';
+import MaskedRegExp from './masked/regexp.js';
+import MaskedFunction from './masked/function.js';
 
-import InputMask from './controls/input';
+import InputMask from './controls/input.js';
 
 
 export default

@@ -1,4 +1,4 @@
-import {DIRECTION} from './utils';
+import {DIRECTION} from './utils.js';
 
 
 export default

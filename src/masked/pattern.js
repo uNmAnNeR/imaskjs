@@ -1,7 +1,7 @@
-import {conform, DIRECTION, indexInDirection} from '../core/utils';
-import Masked from './base';
-import PatternDefinition from './pattern/definition';
-import PatternGroup from './pattern/group';
+import {conform, DIRECTION, indexInDirection} from '../core/utils.js';
+import Masked from './base.js';
+import PatternDefinition from './pattern/definition.js';
+import PatternGroup from './pattern/group.js';
 
 
 export default

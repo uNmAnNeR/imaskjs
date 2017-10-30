@@ -1,7 +1,7 @@
-import {objectIncludes} from '../core/utils';
-import ActionDetails from '../core/action-details';
-import MaskedDate from '../masked/date';
-import createMask, {maskedClass} from '../masked/factory';
+import {objectIncludes} from '../core/utils.js';
+import ActionDetails from '../core/action-details.js';
+import MaskedDate from '../masked/date.js';
+import createMask, {maskedClass} from '../masked/factory.js';
 
 
 export default

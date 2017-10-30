@@ -1,4 +1,4 @@
-import Masked from './base';
+import Masked from './base.js';
 
 
 export default

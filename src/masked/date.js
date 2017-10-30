@@ -1,5 +1,5 @@
-import MaskedPattern from './pattern';
-import PatternGroup from './pattern/group';
+import MaskedPattern from './pattern.js';
+import PatternGroup from './pattern/group.js';
 
 
 export default
