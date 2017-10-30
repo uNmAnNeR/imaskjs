@@ -171,14 +171,14 @@ class Masked {
   }
 
   withValueRefresh(fn) {
-    if (this._refreshing) return fn();
+    if (this._refreshing || !this.isInitialized) return fn();
     this._refreshing = true;
 
-    const unmasked = this.isInitialized ? this.unmaskedValue : null;
+    const unmasked = this.unmaskedValue;
 
     const ret = fn();
 
-    if (unmasked != null) this.unmaskedValue = unmasked;
+    this.unmaskedValue = unmasked;
 
     delete this._refreshing;
     return ret;
@@ -241,9 +241,49 @@ function escapeRegExp(str) {
   return str.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
 }
 
+// cloned from https://github.com/epoberezkin/fast-deep-equal with small changes
+function objectIncludes(b, a) {
+  if (a === b) return true;
+
+  var arrA = Array.isArray(a),
+      arrB = Array.isArray(b),
+      i;
+
+  if (arrA && arrB) {
+    if (a.length != b.length) return false;
+    for (i = 0; i < a.length; i++) if (!objectIncludes(a[i], b[i])) return false;
+    return true;
+  }
+
+  if (arrA != arrB) return false;
+
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    var keys = Object.keys(a);
+    // if (keys.length !== Object.keys(b).length) return false;
+
+    var dateA = a instanceof Date,
+        dateB = b instanceof Date;
+    if (dateA && dateB) return a.getTime() == b.getTime();
+    if (dateA != dateB) return false;
+
+    var regexpA = a instanceof RegExp,
+        regexpB = b instanceof RegExp;
+    if (regexpA && regexpB) return a.toString() == b.toString();
+    if (regexpA != regexpB) return false;
+
+    for (i = 0; i < keys.length; i++) if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
+
+    for (i = 0; i < keys.length; i++) if (!objectIncludes(a[keys[i]], b[keys[i]])) return false;
+
+    return true;
+  }
+
+  return false;
+}
+
 class MaskedRegExp extends Masked {
   constructor(opts = {}) {
-    opts.validate = value => opts.mask.test(value);
+    opts.validate = value => value.search(opts.mask) >= 0;
     super(opts);
   }
 }
@@ -261,8 +301,6 @@ class MaskedNumber extends Masked {
   }
 
   updateOptions(opts) {
-    opts._signed = opts.signed;
-    delete opts.signed;
     opts.postFormat = Object.assign({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
 
     super.updateOptions(opts);
@@ -274,7 +312,7 @@ class MaskedNumber extends Masked {
     let regExpStrSoft = '^';
     let regExpStr = '^';
 
-    if (this.signed) {
+    if (this.allowNegative) {
       regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
       regExpStr += '[+|\\-]?';
     } else {
@@ -325,7 +363,6 @@ class MaskedNumber extends Masked {
     this._value = this._insertThousandsSeparators(this.value);
 
     let beforeTailPos = oldValueLength + appended - removedSeparatorsCount;
-    this._value = this._insertThousandsSeparators(this.value);
     let insertedSeparatorsBeforeTailCount = 0;
     for (let pos = 0; pos <= beforeTailPos; ++pos) {
       if (this.value[pos] === this.thousandsSeparator) {
@@ -372,19 +409,12 @@ class MaskedNumber extends Masked {
     if (this.min != null) validnum = Math.max(validnum, this.min);
     if (this.max != null) validnum = Math.min(validnum, this.max);
 
-    if (validnum !== number) {
-      this.unmaskedValue = '' + validnum;
-    }
+    if (validnum !== number) this.unmaskedValue = '' + validnum;
 
     let formatted = this.value;
 
-    if (this.postFormat.normalizeZeros) {
-      formatted = this._normalizeZeros(formatted);
-    }
-
-    if (this.postFormat.padFractionalZeros) {
-      formatted = this._padFractionalZeros(formatted);
-    }
+    if (this.postFormat.normalizeZeros) formatted = this._normalizeZeros(formatted);
+    if (this.postFormat.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
     this._value = formatted;
     super.doCommit();
@@ -420,11 +450,11 @@ class MaskedNumber extends Masked {
   }
 
   set number(number) {
-    this.unmaskedValue = '' + number;
+    this.unmaskedValue = ('' + number).replace('.', this.radix);
   }
 
-  get signed() {
-    return this._signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
+  get allowNegative() {
+    return this.signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
   }
 }
 MaskedNumber.DEFAULTS = {
@@ -432,8 +462,10 @@ MaskedNumber.DEFAULTS = {
   thousandsSeparator: '',
   mapToRadix: ['.'],
   scale: 2,
+  signed: false,
   postFormat: {
-    normalizeZeros: true
+    normalizeZeros: true,
+    padFractionalZeros: false
   }
 };
 
@@ -774,7 +806,6 @@ class MaskedPattern extends Masked {
         resolved = !!chres;
         skipped = !chres && !def.optional;
 
-        // if ok - next di
         if (!chres) {
           if (!def.optional && !soft) {
             this._value += this.placeholder.char;
@@ -1169,6 +1200,13 @@ class InputMask {
   }
 
   updateOptions(opts) {
+    opts = Object.assign({}, opts); // clone
+    if (opts.mask === Date && this.masked instanceof MaskedDate) delete opts.mask;
+
+    // check if changed
+    // if (Object.keys(opts).every(o => this.masked[o] === opts[o])) return;
+    if (objectIncludes(this.masked, opts)) return;
+
     this.masked.updateOptions(opts);
     this.updateControl();
   }

@@ -1,4 +1,6 @@
+import {objectIncludes} from '../core/utils';
 import ActionDetails from '../core/action-details';
+import MaskedDate from '../masked/date';
 import createMask, {maskedClass} from '../masked/factory';
 
 
@@ -130,6 +132,12 @@ class InputMask {
   }
 
   updateOptions (opts) {
+    opts = Object.assign({}, opts);  // clone
+    if (opts.mask === Date && this.masked instanceof MaskedDate) delete opts.mask;
+
+    // check if changed
+    if (objectIncludes(this.masked, opts)) return;
+
     this.masked.updateOptions(opts);
     this.updateControl();
   }

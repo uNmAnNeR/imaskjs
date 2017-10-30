@@ -124,14 +124,14 @@ class Masked {
   }
 
   withValueRefresh (fn) {
-    if (this._refreshing) return fn();
+    if (this._refreshing || !this.isInitialized) return fn();
     this._refreshing = true;
 
-    const unmasked = this.isInitialized ? this.unmaskedValue : null;
+    const unmasked = this.unmaskedValue;
 
     const ret = fn();
 
-    if (unmasked != null) this.unmaskedValue = unmasked;
+    this.unmaskedValue = unmasked;
 
     delete this._refreshing;
     return ret;

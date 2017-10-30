@@ -25,7 +25,6 @@ class MaskedPattern extends Masked {
     let optionalBlock = false;
     let stopAlign = false;
 
-
     for (let i=0; i<pattern.length; ++i) {
       if (this.groups) {
         const p = pattern.slice(i);
@@ -184,7 +183,6 @@ class MaskedPattern extends Masked {
         resolved = !!chres;
         skipped = !chres && !def.optional;
 
-        // if ok - next di
         if (!chres) {
           if (!def.optional && !soft) {
             this._value += this.placeholder.char;

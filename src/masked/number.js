@@ -12,8 +12,6 @@ class MaskedNumber extends Masked {
   }
 
   updateOptions (opts) {
-    opts._signed = opts.signed;
-    delete opts.signed;
     opts.postFormat = Object.assign({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
 
     super.updateOptions(opts);
@@ -25,7 +23,7 @@ class MaskedNumber extends Masked {
     let regExpStrSoft = '^';
     let regExpStr = '^';
 
-    if (this.signed) {
+    if (this.allowNegative) {
       regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
       regExpStr += '[+|\\-]?';
     } else {
@@ -80,7 +78,6 @@ class MaskedNumber extends Masked {
     this._value = this._insertThousandsSeparators(this.value);
 
     let beforeTailPos = oldValueLength + appended - removedSeparatorsCount;
-    this._value = this._insertThousandsSeparators(this.value);
     let insertedSeparatorsBeforeTailCount = 0;
     for (let pos = 0; pos <= beforeTailPos; ++pos) {
       if (this.value[pos] === this.thousandsSeparator) {
@@ -127,19 +124,12 @@ class MaskedNumber extends Masked {
     if (this.min != null) validnum = Math.max(validnum, this.min);
     if (this.max != null) validnum = Math.min(validnum, this.max);
 
-    if (validnum !== number) {
-      this.unmaskedValue = '' + validnum;
-    }
+    if (validnum !== number) this.unmaskedValue = '' + validnum;
 
     let formatted = this.value;
 
-    if (this.postFormat.normalizeZeros) {
-      formatted = this._normalizeZeros(formatted);
-    }
-
-    if (this.postFormat.padFractionalZeros) {
-      formatted = this._padFractionalZeros(formatted);
-    }
+    if (this.postFormat.normalizeZeros) formatted = this._normalizeZeros(formatted);
+    if (this.postFormat.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
     this._value = formatted;
     super.doCommit();
@@ -179,11 +169,11 @@ class MaskedNumber extends Masked {
   }
 
   set number (number) {
-    this.unmaskedValue = '' + number;
+    this.unmaskedValue = ('' + number).replace('.', this.radix);
   }
 
-  get signed () {
-    return this._signed ||
+  get allowNegative () {
+    return this.signed ||
       (this.min != null && this.min < 0) ||
       (this.max != null && this.max < 0);
   }
@@ -193,7 +183,9 @@ MaskedNumber.DEFAULTS = {
   thousandsSeparator: '',
   mapToRadix: ['.'],
   scale: 2,
+  signed: false,
   postFormat: {
     normalizeZeros: true,
+    padFractionalZeros: false
   }
 };

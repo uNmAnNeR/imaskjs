@@ -405,6 +405,16 @@ _export(_export.P, 'String', {
   }
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
 var asyncGenerator = function () {
   function AwaitValue(value) {
     this.value = value;
@@ -715,14 +725,14 @@ var Masked = function () {
   };
 
   Masked.prototype.withValueRefresh = function withValueRefresh(fn) {
-    if (this._refreshing) return fn();
+    if (this._refreshing || !this.isInitialized) return fn();
     this._refreshing = true;
 
-    var unmasked = this.isInitialized ? this.unmaskedValue : null;
+    var unmasked = this.unmaskedValue;
 
     var ret = fn();
 
-    if (unmasked != null) this.unmaskedValue = unmasked;
+    this.unmaskedValue = unmasked;
 
     delete this._refreshing;
     return ret;
@@ -821,6 +831,47 @@ function escapeRegExp(str) {
   return str.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
 }
 
+// cloned from https://github.com/epoberezkin/fast-deep-equal with small changes
+function objectIncludes(b, a) {
+  if (a === b) return true;
+
+  var arrA = Array.isArray(a),
+      arrB = Array.isArray(b),
+      i;
+
+  if (arrA && arrB) {
+    if (a.length != b.length) return false;
+    for (i = 0; i < a.length; i++) {
+      if (!objectIncludes(a[i], b[i])) return false;
+    }return true;
+  }
+
+  if (arrA != arrB) return false;
+
+  if (a && b && (typeof a === 'undefined' ? 'undefined' : _typeof(a)) === 'object' && (typeof b === 'undefined' ? 'undefined' : _typeof(b)) === 'object') {
+    var keys = Object.keys(a);
+    // if (keys.length !== Object.keys(b).length) return false;
+
+    var dateA = a instanceof Date,
+        dateB = b instanceof Date;
+    if (dateA && dateB) return a.getTime() == b.getTime();
+    if (dateA != dateB) return false;
+
+    var regexpA = a instanceof RegExp,
+        regexpB = b instanceof RegExp;
+    if (regexpA && regexpB) return a.toString() == b.toString();
+    if (regexpA != regexpB) return false;
+
+    for (i = 0; i < keys.length; i++) {
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
+    }for (i = 0; i < keys.length; i++) {
+      if (!objectIncludes(a[keys[i]], b[keys[i]])) return false;
+    }return true;
+  }
+
+  return false;
+}
+
 var MaskedRegExp = function (_Masked) {
   inherits(MaskedRegExp, _Masked);
 
@@ -829,7 +880,7 @@ var MaskedRegExp = function (_Masked) {
     classCallCheck(this, MaskedRegExp);
 
     opts.validate = function (value) {
-      return opts.mask.test(value);
+      return value.search(opts.mask) >= 0;
     };
     return possibleConstructorReturn(this, _Masked.call(this, opts));
   }
@@ -860,8 +911,6 @@ var MaskedNumber = function (_Masked) {
   }
 
   MaskedNumber.prototype.updateOptions = function updateOptions(opts) {
-    opts._signed = opts.signed;
-    delete opts.signed;
     opts.postFormat = _extends({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
 
     _Masked.prototype.updateOptions.call(this, opts);
@@ -873,7 +922,7 @@ var MaskedNumber = function (_Masked) {
     var regExpStrSoft = '^';
     var regExpStr = '^';
 
-    if (this.signed) {
+    if (this.allowNegative) {
       regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
       regExpStr += '[+|\\-]?';
     } else {
@@ -927,7 +976,6 @@ var MaskedNumber = function (_Masked) {
     this._value = this._insertThousandsSeparators(this.value);
 
     var beforeTailPos = oldValueLength + appended - removedSeparatorsCount;
-    this._value = this._insertThousandsSeparators(this.value);
     var insertedSeparatorsBeforeTailCount = 0;
     for (var pos = 0; pos <= beforeTailPos; ++pos) {
       if (this.value[pos] === this.thousandsSeparator) {
@@ -976,19 +1024,12 @@ var MaskedNumber = function (_Masked) {
     if (this.min != null) validnum = Math.max(validnum, this.min);
     if (this.max != null) validnum = Math.min(validnum, this.max);
 
-    if (validnum !== number) {
-      this.unmaskedValue = '' + validnum;
-    }
+    if (validnum !== number) this.unmaskedValue = '' + validnum;
 
     var formatted = this.value;
 
-    if (this.postFormat.normalizeZeros) {
-      formatted = this._normalizeZeros(formatted);
-    }
-
-    if (this.postFormat.padFractionalZeros) {
-      formatted = this._padFractionalZeros(formatted);
-    }
+    if (this.postFormat.normalizeZeros) formatted = this._normalizeZeros(formatted);
+    if (this.postFormat.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
     this._value = formatted;
     _Masked.prototype.doCommit.call(this);
@@ -1027,12 +1068,12 @@ var MaskedNumber = function (_Masked) {
       return Number(numstr);
     },
     set: function set$$1(number) {
-      this.unmaskedValue = '' + number;
+      this.unmaskedValue = ('' + number).replace('.', this.radix);
     }
   }, {
-    key: 'signed',
+    key: 'allowNegative',
     get: function get$$1() {
-      return this._signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
+      return this.signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
     }
   }]);
   return MaskedNumber;
@@ -1043,8 +1084,10 @@ MaskedNumber.DEFAULTS = {
   thousandsSeparator: '',
   mapToRadix: ['.'],
   scale: 2,
+  signed: false,
   postFormat: {
-    normalizeZeros: true
+    normalizeZeros: true,
+    padFractionalZeros: false
   }
 };
 
@@ -1450,7 +1493,6 @@ var MaskedPattern = function (_Masked) {
         resolved = !!chres;
         skipped = !chres && !def.optional;
 
-        // if ok - next di
         if (!chres) {
           if (!def.optional && !soft) {
             this._value += this.placeholder.char;
@@ -1861,6 +1903,13 @@ var InputMask = function () {
   };
 
   InputMask.prototype.updateOptions = function updateOptions(opts) {
+    opts = _extends({}, opts); // clone
+    if (opts.mask === Date && this.masked instanceof MaskedDate) delete opts.mask;
+
+    // check if changed
+    // if (Object.keys(opts).every(o => this.masked[o] === opts[o])) return;
+    if (objectIncludes(this.masked, opts)) return;
+
     this.masked.updateOptions(opts);
     this.updateControl();
   };
