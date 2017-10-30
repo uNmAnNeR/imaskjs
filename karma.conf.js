@@ -24,26 +24,35 @@ module.exports = function (config) {
     },
     reporters: reporters,
     coverageReporter: {
-      type: 'html',
-      dir: 'coverage/'
+      type: 'lcov',
+      dir: 'coverage/',
+      subdir: '.'
     },
     colors: true,
     logLevel: config.LOG_INFO,
     browsers: ['Chrome'],
     rollupPreprocessor: {
       plugins: [
-      resolve({
-        jsnext: true,
-        main: true
-      }),
-      commonjs(),
+        resolve({
+          jsnext: true,
+          main: true
+        }),
         babel({
+          presets: [
+            ['env', {
+              'modules': false,
+              'loose': true,
+              'useBuiltIns': true
+            }]
+          ],
           exclude: 'node_modules/**',
-        })
+          plugins: ['transform-object-rest-spread', 'transform-object-assign', 'external-helpers']
+        }),
+        commonjs()
       ],
       format: 'iife',
-      moduleName: 'IMask',
-      sourceMap: 'inline'
+      name: 'IMask',
+      sourcemap: 'inline'
     }
   });
 };

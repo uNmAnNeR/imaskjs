@@ -5,16 +5,17 @@ import Masked from './base';
 export default
 class MaskedNumber extends Masked {
   constructor (opts) {
+    opts.postFormat = Object.assign({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
     super({
       ...MaskedNumber.DEFAULTS,
       ...opts
     });
   }
 
-  updateOptions (opts) {
-    opts.postFormat = Object.assign({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
+  _update (opts) {
+    opts.postFormat = Object.assign({}, this.postFormat, opts.postFormat);
 
-    super.updateOptions(opts);
+    super._update(opts);
     this._updateRegExps();
   }
 

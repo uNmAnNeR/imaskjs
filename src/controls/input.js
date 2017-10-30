@@ -18,8 +18,8 @@ class InputMask {
     this._onInput = this._onInput.bind(this);
     this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
-    this._alignCursor = this._alignCursor.bind(this);
-    this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
+    this.alignCursor = this.alignCursor.bind(this);
+    this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
 
     this.bindEvents();
 
@@ -49,7 +49,7 @@ class InputMask {
   set value (str) {
     this.masked.value = str;
     this.updateControl();
-    this._alignCursor();
+    this.alignCursor();
   }
 
   get unmaskedValue () {
@@ -59,14 +59,14 @@ class InputMask {
   set unmaskedValue (str) {
     this.masked.unmaskedValue = str;
     this.updateControl();
-    this._alignCursor();
+    this.alignCursor();
   }
 
   bindEvents () {
     this.el.addEventListener('keydown', this._saveSelection);
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
-    this.el.addEventListener('click', this._alignCursorFriendly);
+    this.el.addEventListener('click', this.alignCursorFriendly);
     this.el.addEventListener('change', this._onChange);
   }
 
@@ -74,7 +74,7 @@ class InputMask {
     this.el.removeEventListener('keydown', this._saveSelection);
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
-    this.el.removeEventListener('click', this._alignCursorFriendly);
+    this.el.removeEventListener('click', this.alignCursorFriendly);
     this.el.removeEventListener('change', this._onChange);
   }
 
@@ -171,13 +171,13 @@ class InputMask {
     }
   }
 
-  _alignCursor () {
+  alignCursor () {
     this.cursorPos = this.masked.nearestInputPos(this.cursorPos);
   }
 
-  _alignCursorFriendly () {
+  alignCursorFriendly () {
     if (this.selectionStart !== this.cursorPos) return;
-    this._alignCursor();
+    this.alignCursor();
   }
 
   on (ev, handler) {

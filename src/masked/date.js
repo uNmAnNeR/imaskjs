@@ -11,7 +11,7 @@ class MaskedDate extends MaskedPattern {
     });
   }
 
-  updateOptions (opts) {
+  _update (opts) {
     if (opts.mask === Date) delete opts.mask;
     if (opts.pattern) {
       opts.mask = opts.pattern;
@@ -25,7 +25,7 @@ class MaskedDate extends MaskedPattern {
     if (opts.max) opts.groups.Y.to = opts.max.getFullYear();
     Object.assign(opts.groups, groups);
 
-    super.updateOptions(opts);
+    super._update(opts);
   }
 
   doValidate (soft) {

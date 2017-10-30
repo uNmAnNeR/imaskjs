@@ -2,12 +2,8 @@
   "name": "imask",
   "version": "1.2.0",
   "description": "vanilla javascript input mask",
-  "main": "imask.js",
-  "dependencies": {
-    "babel-preset-env": "^1.6.1",
-    "rollup-plugin-commonjs": "^8.2.5",
-    "uglify-es": "^3.1.5"
-  },
+  "main": "dist/imask.js",
+  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-eslint": "^8.0.1",
@@ -15,8 +11,9 @@
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.5.2",
+    "babel-preset-env": "^1.6.1",
     "chai": "^4.0.2",
+    "coveralls": "^3.0.0",
     "karma": "^1.7.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -30,24 +27,26 @@
     "npm-run-all": "^4.0.2",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-commonjs": "^8.2.0",
+    "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-eslint": "^4.0.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1",
     "rollup-watch": "^4.0.0",
     "sinon": "^4.0.2",
-    "uglify-es": "^3.0.20"
+    "uglify-es": "^3.1.6"
   },
   "scripts": {
     "test": "karma start --single-run --browsers PhantomJS",
     "watch": "rollup -c -w",
-    "build": "npm-run-all -l build:*",
+    "build": "npm run build:dev && npm run build:prod",
     "build:dev": "npm-run-all -l build:dev:*",
     "build:prod": "npm-run-all -l build:prod:*",
     "build:dev:es": "rollup -c --environment format:es",
     "build:dev:umd": "rollup -c --environment format:umd",
     "build:prod:es": "rollup -c --environment format:es,env:production",
-    "build:prod:umd": "rollup -c --environment format:umd,env:production"
+    "build:prod:umd": "rollup -c --environment format:umd,env:production",
+    "prepublish": "npm run build",
+    "coveralls": "npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {
     "type": "git",

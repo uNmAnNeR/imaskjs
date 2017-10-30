@@ -2,7 +2,7 @@ export default
 class Masked {
   constructor (opts) {
     this._value = '';
-    this.updateOptions({
+    this._update({
       ...Masked.DEFAULTS,
       ...opts
     });
@@ -10,7 +10,11 @@ class Masked {
   }
 
   updateOptions (opts) {
-    this.withValueRefresh(() => Object.assign(this, opts));
+    this.withValueRefresh(this._update.bind(this, opts));
+  }
+
+  _update (opts) {
+    Object.assign(this, opts);
   }
 
   clone () {

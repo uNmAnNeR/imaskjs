@@ -50,7 +50,7 @@ describe('InputMask', function () {
         oldMasked = imask.masked;
 
         imask.mask = mask;
-        assert.equal(imask.mask, oldMask);
+        if (mask !== Date) assert.equal(imask.mask, oldMask);
         assert.equal(imask.masked, oldMasked);
       });
     });

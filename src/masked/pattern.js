@@ -6,10 +6,16 @@ import PatternGroup from './pattern/group';
 
 export default
 class MaskedPattern extends Masked {
-  updateOptions (opts) {
+  constructor (opts={}) {
     opts.placeholder = Object.assign({}, MaskedPattern.DEFAULT_PLACEHOLDER, opts.placeholder);
     opts.definitions = Object.assign({}, PatternDefinition.DEFAULTS, opts.definitions);
-    super.updateOptions(opts);
+    super(opts);
+  }
+
+  _update (opts) {
+    opts.placeholder = Object.assign({}, this.placeholder, opts.placeholder);
+    opts.definitions = Object.assign({}, this.definitions, opts.definitions);
+    super._update(opts);
     this._updateMask();
   }
 
