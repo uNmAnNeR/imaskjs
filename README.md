@@ -1,6 +1,11 @@
 # imaskjs
 vanilla javascript input mask
 
+[![Build Status](https://travis-ci.org/uNmAnNeR/imaskjs.svg?branch=gh-pages)](https://travis-ci.org/uNmAnNeR/imaskjs)
+[![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=gh-pages)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=gh-pages)
+[![npm version](https://badge.fury.io/js/imask.svg)](https://badge.fury.io/js/imask)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Features
 * get and set raw and unmasked values easily
 * no external dependencies
