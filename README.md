@@ -25,7 +25,9 @@ Further plans:
 * support RTL?
 
 ## Install
-`npm install imask` or download and include from `dist` folder
+`npm install imask` and include from `dist` folder or use CDN:
+
+`<script src="https://unpkg.com/imask"></script>`
 
 ## Build & test
 `npm run build`
