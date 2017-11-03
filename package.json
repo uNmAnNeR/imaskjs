@@ -35,6 +35,9 @@
     "sinon": "^4.0.2",
     "uglify-es": "^3.1.6"
   },
+  "engines": {
+    "npm": ">=4.0.0"
+  },
   "scripts": {
     "test": "karma start --single-run --browsers PhantomJS",
     "watch": "rollup -c -w",
