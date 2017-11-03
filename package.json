@@ -45,7 +45,7 @@
     "build:dev:umd": "rollup -c --environment format:umd",
     "build:prod:es": "rollup -c --environment format:es,env:production",
     "build:prod:umd": "rollup -c --environment format:umd,env:production",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "coveralls": "npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {
