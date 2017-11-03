@@ -3,8 +3,8 @@ import Masked from './base.js';
 
 export default
 class MaskedFunction extends Masked {
-  constructor (opts={}) {
+  _update (opts) {
     opts.validate = opts.mask;
-    super(opts);
+    super._update(opts);
   }
 }
