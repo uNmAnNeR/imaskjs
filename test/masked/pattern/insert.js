@@ -39,4 +39,14 @@ describe('Insert', function () {
     masked.value = '+79998887766';
     assert.equal(masked.unmaskedValue, '79998887766');
   });
+
+  it('should prepare value before insert', function () {
+    const prepareStub = sinon.stub().returnsArg(0);
+    masked.updateOptions({
+      mask: '+{7}(000)000-00-00',
+      prepare: prepareStub
+    });
+    masked.value = '+79998887766';
+    assert(prepareStub.called);
+  });
 });

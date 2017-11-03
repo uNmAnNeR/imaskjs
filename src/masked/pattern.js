@@ -164,6 +164,7 @@ class MaskedPattern extends Masked {
   _append (str, soft) {
     const oldValueLength = this.value.length;
 
+    str = this.doPrepare(str, soft);
     for (let ci=0, di=this.mapPosToDefIndex(this.value.length); ci < str.length;) {
       const ch = str[ci];
       const def = this._charDefs[di];
