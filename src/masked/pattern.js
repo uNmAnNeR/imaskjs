@@ -245,6 +245,15 @@ class MaskedPattern extends Masked {
     return input;
   }
 
+  get rawInputValue () {
+    return super.rawInputValue;
+  }
+
+  set rawInputValue (value) {
+    // TODO - skip fixed unmasking!
+    this.unmaskedValue = value;
+  }
+
   extractInputChunks (fromPos=0, toPos=this.value.length) {
     // TODO fromPos === toPos
     const fromDefIndex = this.mapPosToDefIndex(fromPos);

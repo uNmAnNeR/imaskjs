@@ -48,6 +48,14 @@ class Masked {
     this.doCommit();
   }
 
+  get rawInputValue () {
+    return this.extractInput();
+  }
+
+  set rawInputValue (value) {
+    this.unmaskedValue = value;
+  }
+
   get isComplete () {
     return true;
   }

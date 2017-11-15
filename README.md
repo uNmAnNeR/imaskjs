@@ -19,7 +19,7 @@ vanilla javascript input mask
 
 Further plans:
 
-* jQuery/Angular/React/Vue plugin
+* Angular/React/Vue plugin
 * on-the-fly/multimask
 * more unit tests
 * support RTL?

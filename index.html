@@ -43,8 +43,8 @@
           </ul>
           <h5>Further plans</h5>
           <ul>
-            <li>jQuery/Angular/React/Vue plugin</li>
-            <li>on-the-fly/multimask</li>
+            <li>Angular/React/Vue plugin</li>
+            <li>on-the-fly/dynamic mask</li>
             <li>more unit tests</li>
             <li>support RTL?</li>
           </ul>
@@ -130,14 +130,25 @@
             </div>
 
             <div class="form-item">
-              <label>Multimask <span class="desc">phone or email</span></label>
-              <input id="multi-mask" type="text" value="COMMING..." disabled>
-              <div class="unmasked-value desc">unmasked: <span id="multi-unmasked">soon</span><span id="multi-complete" class="example__complete"></span></div>
+              <label>Dynamic mask <span class="desc">phone or email</span></label>
+              <input id="dynamic-mask" type="text">
+              <div class="unmasked-value desc">unmasked: <span id="dynamic-value"></span><span id="dynamic-complete" class="example__complete"></span></div>
               <div class="toggle-panel">
-                <label for="multi-mask-source" class="muted">source</label>
-                <input id="multi-mask-source" type="checkbox">
+                <label for="dynamic-mask-source" class="muted">magic</label>
+                <input id="dynamic-mask-source" type="checkbox">
                 <div class="toggle-panel-content">
-                  <pre><code>this is something interesting, yeah?</code></pre>
+                  <pre><code>var dynamicMask = new IMask(
+  document.getElementById('dynamic-mask'),
+  {
+    mask: [
+      {
+        mask: '+{7}(000)000-00-00'
+      },
+      {
+        mask: /^\S*@?\S*$/
+      }
+    ]
+  });</code></pre>
                 </div>
               </div>
             </div>
@@ -180,8 +191,7 @@
           min: -10000,
           max: 10000,
           thousandsSeparator: ' '
-        });
-        numberMask.on('accept', function() {
+        }).on('accept', function() {
           document.getElementById('number-value').innerHTML = numberMask.masked.number;
         });
 
@@ -192,9 +202,25 @@
             min: new Date(2000, 0, 1),
             max: new Date(2020, 0, 1),
             placeholder: {lazy: false}
-          });
-        dateMask.on('accept', function() {
+          }
+        ).on('accept', function() {
           document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
+        });
+
+        var dynamicMask = new IMask(
+          document.getElementById('dynamic-mask'),
+          {
+            mask: [
+              {
+                mask: '+{7}(000)000-00-00'
+              },
+              {
+                mask: /^\S*@?\S*$/
+              }
+            ]
+          }
+        ).on('accept', function() {
+          document.getElementById('dynamic-value').innerHTML = dynamicMask.masked.unmaskedValue || '-';
         });
       });
     </script>

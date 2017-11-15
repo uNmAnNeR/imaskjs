@@ -7,9 +7,14 @@ import MaskedNumber from './number.js';
 
 export
 function maskedClass (mask) {
+  if (!mask) {
+    throw new Error('mask property should be defined');
+  }
+
   if (mask instanceof RegExp) return MaskedRegExp;
   if (isString(mask)) return IMask.MaskedPattern;
   if (mask.prototype instanceof Masked) return mask;
+  if (Array.isArray(mask) || mask === Array) return IMask.MaskedDynamic;
   if (mask instanceof Number || typeof mask === 'number' || mask === Number) return MaskedNumber;
   if (mask instanceof Date || mask === Date) return IMask.MaskedDate;
   if (mask instanceof Function) return MaskedFunction;
