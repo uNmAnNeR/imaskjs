@@ -1,6 +1,6 @@
 {
   "name": "imask",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
   "dependencies": {},
