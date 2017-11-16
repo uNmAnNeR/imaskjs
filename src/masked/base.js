@@ -83,10 +83,10 @@ class Masked {
     const oldValueLength = this.value.length;
     let consistentValue = this.clone();
 
-    str = this.doPrepare(str, flags.input);
+    str = this.doPrepare(str, flags);
     for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
-      if (this.doValidate(flags.input) === false) {
+      if (this.doValidate(flags) === false) {
         Object.assign(this, consistentValue);
         if (!flags.input) return false;
       }
