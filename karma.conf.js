@@ -18,6 +18,16 @@ module.exports = function (config) {
       'test/**/*.js'
     ],
     frameworks: ['mocha', 'chai', 'sinon'],
+    plugins: [
+      require('karma-rollup-plugin'),
+      require('karma-rollup-preprocessor'),
+      require('karma-mocha'),
+      require('karma-chai'),
+      require('karma-coverage'),
+      require('karma-sinon'),
+      require('karma-chrome-launcher'),
+      require('karma-phantomjs-launcher')
+    ],
     preprocessors: {
       'src/**/*.js': preprocessors,
       'test/**/*.js': ['rollup']
