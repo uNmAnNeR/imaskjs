@@ -28,8 +28,8 @@ class MaskedDate extends MaskedPattern {
     super._update(opts);
   }
 
-  doValidate (soft) {
-    const valid = super.doValidate(soft);
+  doValidate (...args) {
+    const valid = super.doValidate(...args);
     const date = this.date;
 
     return valid &&

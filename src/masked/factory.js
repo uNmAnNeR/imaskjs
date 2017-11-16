@@ -7,7 +7,7 @@ import MaskedNumber from './number.js';
 
 export
 function maskedClass (mask) {
-  if (!mask) {
+  if (mask == null) {
     throw new Error('mask property should be defined');
   }
 

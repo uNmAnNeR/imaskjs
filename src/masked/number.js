@@ -20,28 +20,25 @@ class MaskedNumber extends Masked {
   }
 
   _updateRegExps () {
-    // TODO refactor?
-    let regExpStrSoft = '^';
-    let regExpStr = '^';
+    // use different regexp to process user input (more strict, input suffix) and tail shifting
+    const start = '^'
 
+    let midInput = '';
+    let mid = '';
     if (this.allowNegative) {
-      regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
-      regExpStr += '[+|\\-]?';
+      midInput += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
+      mid += '[+|\\-]?';
     } else {
-      regExpStrSoft += '(0|([1-9]+\\d*))';
+      midInput += '(0|([1-9]+\\d*))';
     }
-    regExpStr += '\\d*';
+    mid += '\\d*';
 
-    if (this.scale) {
-      regExpStrSoft += '(' + this.radix + '\\d{0,' + this.scale + '})?';
-      regExpStr += '(' + this.radix + '\\d{0,' + this.scale + '})?';
-    }
+    let end = (this.scale ?
+      '(' + this.radix + '\\d{0,' + this.scale + '})?' :
+      '') + '$';
 
-    regExpStrSoft += '$';
-    regExpStr += '$';
-
-    this._numberRegExpSoft = new RegExp(regExpStrSoft);
-    this._numberRegExp = new RegExp(regExpStr);
+    this._numberRegExpInput = new RegExp(start + midInput + end);
+    this._numberRegExp = new RegExp(start + mid + end);
     this._mapToRadixRegExp = new RegExp('[' +
       this.mapToRadix.map(escapeRegExp).join('') +
     ']', 'g');
@@ -63,8 +60,8 @@ class MaskedNumber extends Masked {
     return parts.join(this.radix);
   }
 
-  doPrepare (str, soft) {
-    return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), soft);
+  doPrepare (str, ...args) {
+    return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
   appendWithTail (str, tail) {
@@ -98,8 +95,8 @@ class MaskedNumber extends Masked {
     return cursorPos;
   }
 
-  doValidate (soft) {
-    const regexp = soft ? this._numberRegExpSoft : this._numberRegExp;
+  doValidate (flags) {
+    const regexp = flags.input ? this._numberRegExpInput : this._numberRegExp;
 
     // validate as string
     let valid = regexp.test(this._removeThousandsSeparators(this.value));
@@ -114,7 +111,7 @@ class MaskedNumber extends Masked {
         (this.max == null || this.max <= 0 || this.number <= this.max);
     }
 
-    return valid && super.doValidate(soft);
+    return valid && super.doValidate(flags);
   }
 
   doCommit () {

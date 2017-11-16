@@ -96,8 +96,8 @@ class MaskedPattern extends Masked {
     }
   }
 
-  doValidate (soft) {
-    return this._groupDefs.every(g => g.doValidate(soft)) && super.doValidate(soft);
+  doValidate (...args) {
+    return this._groupDefs.every(g => g.doValidate(...args)) && super.doValidate(...args);
   }
 
   clone () {
@@ -158,13 +158,13 @@ class MaskedPattern extends Masked {
   }
 
   _appendTail (tail) {
-    return (!tail || this._appendChunks(tail)) && this._appendPlaceholder();
+    return (!tail || this._appendChunks(tail, {tail: true})) && this._appendPlaceholder();
   }
 
-  _append (str, soft) {
+  _append (str, flags={}) {
     const oldValueLength = this.value.length;
 
-    str = this.doPrepare(str, soft);
+    str = this.doPrepare(str, flags.input);
     for (let ci=0, di=this.mapPosToDefIndex(this.value.length); ci < str.length;) {
       const ch = str[ci];
       const def = this._charDefs[di];
@@ -191,7 +191,7 @@ class MaskedPattern extends Masked {
         skipped = !chres && !def.optional;
 
         if (!chres) {
-          if (!def.optional && !soft) {
+          if (!def.optional && !flags.input) {
             this._value += this.placeholder.char;
             skipped = false;
           }
@@ -199,7 +199,8 @@ class MaskedPattern extends Masked {
         }
       } else {
         this._value += def.char;
-        resolved = chres && (def.unmasking || soft);
+        resolved = chres && (def.unmasking || flags.input) && !flags.tail;
+        def.isRawInput = resolved && (flags.raw || def.unmasking && flags.input);
       }
 
       if (!skipped) ++di;
@@ -209,11 +210,11 @@ class MaskedPattern extends Masked {
     return this.value.length - oldValueLength;
   }
 
-  _appendChunks (chunks, soft) {
+  _appendChunks (chunks, ...args) {
     for (let ci=0; ci < chunks.length; ++ci) {
       const [fromDefIndex, input] = chunks[ci];
       if (fromDefIndex != null) this._appendPlaceholder(fromDefIndex);
-      if (this._append(input, soft) === false) return false;
+      if (this._append(input, ...args) === false) return false;
     }
     return true;
   }
@@ -222,7 +223,7 @@ class MaskedPattern extends Masked {
     return this.extractInputChunks(fromPos, toPos);
   }
 
-  extractInput (fromPos=0, toPos=this.value.length) {
+  extractInput (fromPos=0, toPos=this.value.length, flags={}) {
     // TODO fromPos === toPos
     const str = this.value;
     let input = '';
@@ -231,27 +232,19 @@ class MaskedPattern extends Masked {
     for (
       let ci=fromPos, di=this.mapPosToDefIndex(fromPos);
       ci<toPos && ci<str.length && di < toDefIndex;
-      ++di)
-    {
+      ++di
+    ) {
       const ch = str[ci];
       const def = this._charDefs[di];
 
       if (!def) break;
       if (def.isHiddenHollow) continue;
 
-      if (def.isInput && !def.isHollow) input += ch;
+      if (def.isInput && !def.isHollow ||
+        flags.raw && !def.isInput && def.isRawInput) input += ch;
       ++ci;
     }
     return input;
-  }
-
-  get rawInputValue () {
-    return super.rawInputValue;
-  }
-
-  set rawInputValue (value) {
-    // TODO - skip fixed unmasking!
-    this.unmaskedValue = value;
   }
 
   extractInputChunks (fromPos=0, toPos=this.value.length) {
@@ -318,7 +311,11 @@ class MaskedPattern extends Masked {
         nextdi;
 
     // search forward
-    for (nextdi = indexInDirection(di, direction); 0 <= nextdi && nextdi < this._charDefs.length; di += direction, nextdi += direction) {
+    for (
+      nextdi = indexInDirection(di, direction);
+      0 <= nextdi && nextdi < this._charDefs.length;
+      di += direction, nextdi += direction
+    ) {
       const nextDef = this._charDefs[nextdi];
       if (firstInputIndex == null && nextDef.isInput) firstInputIndex = di;
       if (firstVisibleHollowIndex == null && nextDef.isHollow && !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
@@ -334,10 +331,11 @@ class MaskedPattern extends Masked {
       let overflow = false;
 
       // find hollows only before initial pos
-      for (nextdi = indexInDirection(di, direction);
+      for (
+        nextdi = indexInDirection(di, direction);
         0 <= nextdi && nextdi < this._charDefs.length;
-        di += direction, nextdi += direction)
-      {
+        di += direction, nextdi += direction
+      ) {
         const nextDef = this._charDefs[nextdi];
         if (nextDef.isInput) {
           firstInputIndex = di;

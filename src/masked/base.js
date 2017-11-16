@@ -49,11 +49,14 @@ class Masked {
   }
 
   get rawInputValue () {
-    return this.extractInput();
+    return this.extractInput(0, this.value.length, {raw: true});
   }
 
   set rawInputValue (value) {
-    this.unmaskedValue = value;
+    this.reset();
+    this._append(value, {raw: true});
+    this.appendWithTail("");
+    this.doCommit();
   }
 
   get isComplete () {
@@ -64,7 +67,7 @@ class Masked {
     return cursorPos;
   }
 
-  extractInput (fromPos=0, toPos=this.value.length) {
+  extractInput (fromPos=0, toPos=this.value.length /*, flags */) {
     return this.value.slice(fromPos, toPos);
   }
 
@@ -73,19 +76,19 @@ class Masked {
   }
 
   _appendTail (tail) {
-    return !tail || this._append(tail);
+    return !tail || this._append(tail, {tail: true});
   }
 
-  _append (str, soft) {
+  _append (str, flags={}) {
     const oldValueLength = this.value.length;
     let consistentValue = this.clone();
 
-    str = this.doPrepare(str, soft);
+    str = this.doPrepare(str, flags.input);
     for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
-      if (this.doValidate(soft) === false) {
+      if (this.doValidate(flags.input) === false) {
         Object.assign(this, consistentValue);
-        if (!soft) return false;
+        if (!flags.input) return false;
       }
 
       consistentValue = this.clone();
@@ -104,7 +107,7 @@ class Masked {
     for (let ci=0; ci<str.length; ++ci) {
       const ch = str[ci];
 
-      const appended = this._append(ch, true);
+      const appended = this._append(ch, {input: true});
       consistentAppended = this.clone();
       const tailAppended = appended !== false && this._appendTail(tail) !== false;
       if (tailAppended === false || this.doValidate(true) === false) {
@@ -149,12 +152,12 @@ class Masked {
     return ret;
   }
 
-  doPrepare (str, soft) {
-    return this.prepare(str, this, soft);
+  doPrepare (str, flags) {
+    return this.prepare(str, this, flags);
   }
 
-  doValidate (soft) {
-    return this.validate(this.value, this, soft);
+  doValidate (flags) {
+    return this.validate(this.value, this, flags);
   }
 
   doCommit () {
@@ -165,7 +168,7 @@ class Masked {
   // resolve (inputRaw) -> outputRaw
 
   // TODO
-  // insert (str, fromPos, soft)
+  // insert (str, fromPos, flags)
 
   // splice (start, deleteCount, inserted, removeDirection) {
   //   const tailPos = start + deleteCount;

@@ -11,22 +11,26 @@ class MaskedDynamic extends Masked {
     });
 
     this.currentMasked = null;
+  }
+
+  _update (opts) {
+    super._update(opts);
     this._compiledMasks = Array.isArray(opts.mask) ?
       opts.mask.map(m => createMask(m)) :
       [];
   }
 
-  _append (str, soft) {
+  _append (str, ...args) {
     const oldValueLength = this.value.length;
 
-    str = this.doPrepare(str, soft);
+    str = this.doPrepare(str, ...args);
 
     const inputValue = this.rawInputValue;
-    this.currentMasked = this.doDispatch(str, soft);
+    this.currentMasked = this.doDispatch(str, ...args);
 
     // update current mask
     this.currentMasked.rawInputValue = inputValue;
-    return this.value.length - oldValueLength + this.currentMasked._append(str, soft);
+    return this.value.length - oldValueLength + this.currentMasked._append(str, ...args);
   }
 
   appendWithTail (str, tail) {
@@ -36,8 +40,8 @@ class MaskedDynamic extends Masked {
     return offset + super.appendWithTail(str, tail);
   }
 
-  doDispatch(appended, soft) {
-    return this.dispatch(appended, this, soft);
+  doDispatch(appended, flags) {
+    return this.dispatch(appended, this, flags);
   }
 
   clone () {
@@ -87,7 +91,7 @@ class MaskedDynamic extends Masked {
 }
 
 MaskedDynamic.DEFAULTS = {
-  dispatch: (appended, masked, soft) => {
+  dispatch: (appended, masked, flags) => {
     if (!masked._compiledMasks.length) return;
 
     const inputValue = masked.rawInputValue;
@@ -95,7 +99,7 @@ MaskedDynamic.DEFAULTS = {
     // update all
     masked._compiledMasks.forEach(cm => {
       cm.rawInputValue = inputValue;
-      cm._append(appended, soft);
+      cm._append(appended, flags);
     });
 
     // pop masks with longer values first

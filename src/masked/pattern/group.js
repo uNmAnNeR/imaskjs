@@ -20,8 +20,8 @@ class PatternGroup {
       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
   }
 
-  doValidate (soft) {
-    return this.validate(this.value, this, soft);
+  doValidate (opts) {
+    return this.validate(this.value, this, opts);
   }
 }
 

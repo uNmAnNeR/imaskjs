@@ -13,6 +13,7 @@ class PatternDefinition {
 
   reset () {
     this.isHollow = false;
+    this.isRawInput = false;
     if (this._masked) this._masked.reset();
   }
 

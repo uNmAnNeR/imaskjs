@@ -3,8 +3,7 @@ node_js: node
 cache:
   directories:
     - "node_modules"
-script: npm run build
-after_success: npm run coveralls
+script: npm run build && npm run coveralls
 branches:
   only:
   - gh-pages
