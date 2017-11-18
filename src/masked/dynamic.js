@@ -91,6 +91,12 @@ class MaskedDynamic extends Masked {
     if (this.currentMask) this.currentMask.doCommit();
     super.doCommit();
   }
+
+  nearestInputPos(...args) {
+    return this.currentMask ?
+      this.currentMask.nearestInputPos(...args) :
+      super.nearestInputPos(...args);
+  }
 }
 
 MaskedDynamic.DEFAULTS = {
