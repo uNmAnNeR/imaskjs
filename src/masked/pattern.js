@@ -1,4 +1,5 @@
 import {conform, DIRECTION, indexInDirection} from '../core/utils.js';
+import ChangeDetails from '../core/change-details.js';
 import Masked from './base.js';
 import PatternDefinition from './pattern/definition.js';
 import PatternGroup from './pattern/group.js';
@@ -158,11 +159,14 @@ class MaskedPattern extends Masked {
   }
 
   _appendTail (tail) {
-    return (!tail || this._appendChunks(tail, {tail: true})) && this._appendPlaceholder();
+    return (!tail ? new ChangeDetails() : this._appendChunks(tail, {tail: true}))
+      .aggregate(this._appendPlaceholder());
   }
 
   _append (str, flags={}) {
     const oldValueLength = this.value.length;
+    let rawInserted = '';
+    let overflow = false;
 
     str = this.doPrepare(str, flags.input);
     for (let ci=0, di=this.mapPosToDefIndex(this.value.length); ci < str.length;) {
@@ -170,7 +174,10 @@ class MaskedPattern extends Masked {
       const def = this._charDefs[di];
 
       // check overflow
-      if (!def) return false;
+      if (!def) {
+        overflow = true;
+        break;
+      }
 
       // reset
       def.isHollow = false;
@@ -196,27 +203,35 @@ class MaskedPattern extends Masked {
             skipped = false;
           }
           if (!skipped) def.isHollow = true;
+        } else {
+          rawInserted += chres;
         }
       } else {
         this._value += def.char;
         resolved = chres && (def.unmasking || flags.input) && !flags.tail;
         def.isRawInput = resolved && (flags.raw || def.unmasking && flags.input);
+        if (def.isRawInput) rawInserted += chres;
       }
 
       if (!skipped) ++di;
       if (resolved || skipped) ++ci;
     }
 
-    return this.value.length - oldValueLength;
+    return new ChangeDetails({
+      inserted: this.value.slice(oldValueLength),
+      rawInserted,
+      overflow
+    });
   }
 
   _appendChunks (chunks, ...args) {
+    const details = new ChangeDetails();
     for (let ci=0; ci < chunks.length; ++ci) {
       const [fromDefIndex, input] = chunks[ci];
-      if (fromDefIndex != null) this._appendPlaceholder(fromDefIndex);
-      if (this._append(input, ...args) === false) return false;
+      if (fromDefIndex != null) details.aggregate(this._appendPlaceholder(fromDefIndex));
+      if (details.aggregate(this._append(input, ...args)).overflow) break;
     }
-    return true;
+    return details;
   }
 
   extractTail (fromPos, toPos) {
@@ -275,6 +290,7 @@ class MaskedPattern extends Masked {
   }
 
   _appendPlaceholder (toDefIndex) {
+    const oldValueLength = this.value.length;
     const maxDefIndex = toDefIndex || this._charDefs.length;
     for (let di=this.mapPosToDefIndex(this.value.length); di < maxDefIndex; ++di) {
       const def = this._charDefs[di];
@@ -288,9 +304,13 @@ class MaskedPattern extends Masked {
             '';
       }
     }
+    return new ChangeDetails({
+      inserted: this.value.slice(oldValueLength)
+    });
   }
 
-  clear (from=0, to=this.value.length) {
+  remove (from=0, count=this.value.length-from) {
+    const to = from + count;
     this._value = this.value.slice(0, from) + this.value.slice(to);
     const fromDefIndex = this.mapPosToDefIndex(from);
     const toDefIndex = this.mapPosToDefIndex(to);
@@ -299,7 +319,7 @@ class MaskedPattern extends Masked {
       .forEach(d => d.reset());
   }
 
-   nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
+  nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
     if (!direction) return cursorPos;
 
     const initialDefIndex = this.mapPosToDefIndex(cursorPos);

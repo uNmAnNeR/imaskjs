@@ -206,16 +206,15 @@ class InputMask {
       // old state
       this.value, this._selection);
 
-    const tailPos = details.startChangePos + details.removed.length;
-    const tail = this.masked.extractTail(tailPos);
-
-    const lastInputPos = this.masked.nearestInputPos(details.startChangePos, details.removeDirection);
-    this.masked.clear(lastInputPos);
-    const insertedCount = this.masked.appendWithTail(details.inserted, tail);
+    const offset = this.masked.splice(
+      details.startChangePos,
+      details.removed.length,
+      details.inserted,
+      details.removeDirection).offset;
 
 
     const cursorPos = this.masked.nearestInputPos(
-      lastInputPos + insertedCount,
+      details.startChangePos + offset,
       details.removeDirection);
 
     this.updateControl();

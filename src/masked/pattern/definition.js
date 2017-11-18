@@ -27,9 +27,7 @@ class PatternDefinition {
 
   resolve (ch) {
     if (!this._masked) return false;
-    // TODO seems strange
-    this._masked.value = ch;
-    return this._masked.value;
+    return this._masked.resolve(ch);
   }
 }
 

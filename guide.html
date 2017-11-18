@@ -24,6 +24,7 @@
             <li><a href="#pattern">pattern</a></li>
             <li><a href="#number">number</a></li>
             <li><a href="#date">date</a></li>
+            <li><a href="#dynamic">dynamic</a></li>
           </ul>
         </nav>
       </header>
@@ -33,7 +34,7 @@
         <pre><code>&lt;script src=&quot;dist/imask.js&quot;&gt;&lt;/script&gt;</code></pre>
         <p>or use CDN:</p>
         <pre><code>&lt;script src=&quot;https://unpkg.com/imask&quot;&gt;&lt;/script&gt;</code></pre>
-        <p>For newest browsers <em>es2015</em> builds available (<code>imask.es.js</code> and <code>imask.es.min.js</code>).</p>
+        <p>For newest browsers <em>es201X</em> builds available (<code>imask.es.js</code> and <code>imask.es.min.js</code>).</p>
         <p>Simple use case:</p>
         <div class="toggle-panel">
           <label for="start-phone-mask-demo" class="muted">demo</label>
@@ -56,10 +57,10 @@ var mask = new IMask(element, maskOptions);</code></pre>
 
         <p>Since v1.0.0 IMask consists of two independent layers: model and view.<br>
         Model layer contains all masking facilities which can be used independently without UI.</p>
-        <p id="support-older">View layer is a glue between UI component and model, it connects listeners and controls changes in both directions.</p>
+        <p id="support-older">View layer is a glue between UI element and model, it connects listeners and controls changes in both directions.</p>
         <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. In order to support older browsers manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
-        <p>Currently, view layer contains only one component <code>InputMask</code> to provide HTML input-like API. Instance of <code>InputMask</code> is returned when IMask constructor is called.</p>
-        <p>Basic use case:</p>
+        <p>Currently, view layer contains only one component <code>InputMask</code> which supports HTML input-like API. Instance of <code>InputMask</code> is returned when IMask constructor is called.</p>
+        <p>To create new mask on element use:</p>
         <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
 
         <p>Get/set value and unmasked value:</p>
@@ -71,7 +72,7 @@ mask.unmaskedValue = "70000000000";
 console.log(mask.value);  // logs "+7(000)000-00-00"
 console.log(mask.unmaskedValue);  // logs "70000000000"</code></pre>
 
-        <p>Update options</p>
+        <p>Update options:</p>
         <pre><code>mask.updateOptions({
   mask: Number,
   min: 0,
@@ -87,13 +88,13 @@ function log () {console.log(mask.value)};
 mask.on("accept", log);
 
 // 'complete' event fired when the value is completely filled
-// This makes sense only for Pattern-based masks
+// Note: this makes sense only for Pattern-based masks
 mask.on("complete", function () {console.log(mask.value)});</code></pre>
 
         <p>Stop listening to events:</p>
         <pre><code>mask.off("accept", log);
 
-// omit handler argument to unlisten all
+// omit handler argument to unbind all handlers
 mask.off("complete");</code></pre>
 
         <p>Get masked model:</p>
@@ -134,12 +135,16 @@ masked.reset(); // UI will NOT be updated</code></pre>
               <td><code>Date</code></td>
               <td><a href="#date">IMask.MaskedDate</a></td>
             </tr>
+            <tr>
+              <td><code>Array</code> of masks</td>
+              <td><a href="#dynamic">IMask.MaskedDynamic</a></td>
+            </tr>
           </tbody>
         </table>
 
 
         <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
-        <p><a href="#common">IMask.Masked</a> is a base class of all other *Masked. When you call IMask with mask options they are just directly passed to Masked model. All base class options are applicable to subclasses also.</p>
+        <p><a href="#common">IMask.Masked</a> is a base class of all other Masked* classes. Almost all base class options are applicable to subclasses.</p>
         <p>Example usage:</p>
         <div class="toggle-panel">
           <label for="validate-mask-demo" class="muted">demo</label>
@@ -157,7 +162,7 @@ masked.reset(); // UI will NOT be updated</code></pre>
   mask: /^\d+$/
 });</code></pre>
 
-        <p>Update options</p>
+        <p>Update options:</p>
         <pre><code>mask.updateOptions({
   // while changing mask only same type allowed
   mask: /^\w+$/,  // ok
@@ -166,7 +171,7 @@ masked.reset(); // UI will NOT be updated</code></pre>
   // ... other options
 });</code></pre>
 
-        <p>Get/set value and unmasked value</p>
+        <p>Get/set value and unmasked value:</p>
         <pre><code>masked.value = 'hello world!';
 console.log(masked.unmaskedValue);</code></pre>
         <p>Use <code>prepare (value, masked)</code> option for preprocessing input and <code>commit (value, masked)</code> option for postprocessing after UI is deactivated:</p>
@@ -194,13 +199,14 @@ console.log(masked.unmaskedValue);</code></pre>
   }
 });</code></pre>
         <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from it to add some specific behavior.</p>
-        <p>Additionaly to <code>mask</code> option you can pass custom validator as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves. <strong>But don't change <code>masked</code> instance inside callbacks.</strong></p>
+        <p>Additionaly to <code>mask</code> option custom validator can be set as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves. And also <code>Dynamic</code> mask can't use <code>validate</code> option, but children can.</p>
+        <p><strong>Note: don't change <code>masked</code> instance inside callbacks.</strong></p>
         <fieldset>
-          <p><strong>Also make sure that your mask or validator works with any of intermediate states, not just final value. For example you want to restrict input to "123" and do:</strong></p>
+          <p><strong>Also make sure that mask or validator works with any of intermediate states, not just final value. For example to restrict input to "123" you do:</strong></p>
           <pre><code>var masked = new IMask.Masked({
   mask: /^123$/
 });</code></pre>
-          <p>It will not allow to input any symbol at all, because it matches only whole string "123" and not "1" nor "12". Always think about intermediate values at first, otherwise it might not work as expected. In complex cases it is better to use <code>Pattern</code> or <code>Function</code> masks.</p>
+          <p>But it does not allow to input any symbol at all, because it matches only whole string "123" and not "1" nor "12". Always take care of intermediate values at first, otherwise it might not work as expected. In complex cases it is better to use <code>Pattern</code> or <code>Function</code> masks.</p>
         </fieldset>
         <p>Example of using <code>Function</code> mask to accept any growing sequence from 0 to 9:</p>
         <div class="toggle-panel">
@@ -298,7 +304,7 @@ console.log(masked.unmaskedValue);</code></pre>
   mask: '{#}000[aaa]/NIC-`*[**]'
 });
 
-// or without UI
+// or without UI element
 var masked = new IMask.PatternMasked({
   mask: '{#}000[aaa]/NIC-`*[**]'
 });</code></pre>
@@ -307,14 +313,14 @@ var masked = new IMask.PatternMasked({
         <li><code>0</code> - any digit</li>
         <li><code>a</code> - any letter</li>
         <li><code>*</code> - any char</li>
-        <li>other chars (not defined in custom options) supposed to be <em>fixed</em></li>
-        <li><code>[]</code> - make optional</li>
+        <li>other chars which is not in custom definitions supposed to be <em>fixed</em></li>
+        <li><code>[]</code> - make input optional</li>
         <li><code>{}</code> - include fixed part in unmasked value</li>
         <li><code>`</code> - prevent symbols shift back</li>
         </ul>
         <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
 
-        <p>Additionally you could provide custom <code>definitions</code>:</p>
+        <p>Additionally you can provide custom <code>definitions</code>:</p>
         <div class="toggle-panel">
           <label for="pattern-zip-mask-demo" class="muted">demo</label>
           <input id="pattern-zip-mask-demo" type="checkbox">
@@ -357,7 +363,7 @@ var masked = new IMask.PatternMasked({
     char: '#'  // defaults to '_'
   }
 });</code></pre>
-        <p>One more custom option for pattern is <code>groups</code>:</p>
+        <p>One more custom option for pattern is <code>groups</code> which is usefull for reusing parts of a mask or providing additional validator:</p>
         <div class="toggle-panel">
           <label for="pattern-groups-mask-demo" class="muted">demo</label>
           <input id="pattern-groups-mask-demo" type="checkbox">
@@ -396,7 +402,7 @@ var masked = new IMask.PatternMasked({
 });</code></pre>
 
         <h2 id="number" class="section-h"><a href="#number">Number</a></h2>
-        <p>Number mask restricts input to integer or decimal numbers.</p>
+        <p>Number mask restricts input to integer or decimal numbers in many ways:</p>
         <div class="toggle-panel">
           <label for="numbers-mask-demo" class="muted">demo</label>
           <input id="numbers-mask-demo" type="checkbox">
@@ -464,7 +470,7 @@ var masked = new IMask.PatternMasked({
         <pre><code>var numberMask = new IMask(element, {
   mask: Number,  // enable number mask
 
-  // other options are optional with defaults
+  // other options are optional with defaults below
   scale: 2,  // digits after point, 0 for integers
   signed: false,  // disallow negative
   thousandsSeparator: '',  // any single char
@@ -500,7 +506,7 @@ var masked = new IMask.PatternMasked({
 
   // other options are optional
   pattern: 'Y-`m-`d',  // Pattern mask with defined groups, default is 'd{.}`m{.}`Y'
-  // you could provide your own groups definitions, default groups for date mask are:
+  // you can provide your own groups definitions, default groups for date mask are:
   groups: {
     d: new IMask.MaskedPattern.Group.Range([1, 31]),
     m: new IMask.MaskedPattern.Group.Range([1, 12]),
@@ -530,7 +536,7 @@ var masked = new IMask.PatternMasked({
   // also Pattern options can be set
   placeholder: {lazy: false}
 });</code></pre>
-      <p>Easy integration with <a href="https://momentjs.com/">Moment.js</a>:</p>
+      <p>It is easy to use it with <a href="https://momentjs.com/">Moment.js</a>:</p>
       <div class="toggle-panel">
           <label for="moment-mask-demo" class="muted">demo</label>
           <input id="moment-mask-demo" type="checkbox">
@@ -567,6 +573,83 @@ var momentMask = new IMask(element, {
     mm: new IMask.MaskedPattern.Group.Range([0, 59])
   }
 });</code></pre>
+
+        <h2 id="dynamic" class="section-h"><a href="#dynamic">Dynamic</a></h2>
+        <p>Dynamic mask automatically selects appropriate mask from provided array of masks. Mask with the largest number of fitting characters is selected considering provided masks order.</p>
+        <div class="toggle-panel">
+          <label for="dynamic-mask-demo" class="muted">demo</label>
+          <input id="dynamic-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form dynamic-form">
+              <div class="form-item">
+                <label>Type color here <span class="desc">#HEX</span> or <span class="desc">RRR,GGG,BBB</span></label>
+                <div class="color-input">
+                  <input id="dynamic-mask" type="text" value="#ff0">
+                  <span id="color-box"></span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var dynamicMask = new IMask(element, {
+  mask: [
+    {
+      mask: 'RGB,RGB,RGB',
+      groups: {
+        RGB: new IMask.MaskedPattern.Group.Range([0, 255])
+      }
+    },
+    {
+      mask: /^#[0-9a-f]{0,6}$/i
+    }
+  ]
+});</code></pre>
+      <p>It is also possible to select mask manually via <code>dispatch</code> option:</p>
+      <div class="toggle-panel">
+          <label for="dispatch-mask-demo" class="muted">demo</label>
+          <input id="dispatch-mask-demo" type="checkbox">
+          <div class="toggle-panel-content">
+            <form class="form dispatch-form">
+              <div class="form-item">
+                <label>Type phone number here <span class="desc">Greece, India, Russia codes are recognized</span></label>
+                <input id="dispatch-mask" type="text" value="">
+                <div class="desc">country: <span id="dispatch-value"></span></div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <pre><code>var dispatchMask = new IMask(element, {
+    mask: [
+      {
+        mask: '+{3\\0} {21} 0 000 0000',
+        startsWith: '30',
+        country: 'Greece'
+      },
+      {
+        mask: '+{7} 000 000-00-00',
+        startsWith: '7',
+        country: 'Russia'
+      },
+      {
+        mask: '+{91}-0000-000000',
+        startsWith: '91',
+        country: 'India'
+      },
+      {
+        mask: '0000000000000',
+        startsWith: '',
+        country: 'unknown'
+      }
+    ],
+    dispatch: function (appended, dynamicMasked) {
+      var number = (dynamicMasked.value + appended).replace(/\D/g,'');
+
+      return dynamicMasked.compiledMasks.find(function (m) {
+        return number.indexOf(m.startsWith) === 0;
+      });
+    }
+  }
+)</code></pre>
       </main>
       <footer>
         <nav class="breadcrumbs push-center">
@@ -583,8 +666,7 @@ var momentMask = new IMask(element, {
       </footer>
     </main>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script type="module" src="src/imask.js"></script>
-    <script nomodule defer src="https://unpkg.com/imask/dist/imask.js"></script>
+    <script defer src="https://unpkg.com/imask"></script>
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function () {
         var startPhoneMask = new IMask(document.getElementById('start-phone-mask'), {
@@ -733,8 +815,7 @@ var momentMask = new IMask(element, {
           max: 10000
           // radix: ',',
           // mapToRadix: ['.']
-        });
-        numberMask.on('accept', function() {
+        }).on('accept', function() {
           document.getElementById('number-value').innerHTML = numberMask.masked.number;
         });
 
@@ -779,8 +860,7 @@ var momentMask = new IMask(element, {
           },
           min: new Date(2000, 0, 1),
           max: new Date(2020, 0, 1)
-        });
-        dateMask.on('accept', function() {
+        }).on('accept', function() {
           document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
         });
 
@@ -807,9 +887,73 @@ var momentMask = new IMask(element, {
             HH: new IMask.MaskedPattern.Group.Range([0, 23]),
             mm: new IMask.MaskedPattern.Group.Range([0, 59])
           }
-        });
-        momentMask.on('accept', function() {
+        }).on('accept', function() {
           document.getElementById('moment-value').innerHTML = momentMask.masked.date || '-';
+        });
+
+        
+        var dynamicMask = new IMask(
+          document.getElementById('dynamic-mask'),
+          {
+            mask: [
+              {
+                mask: 'RGB,RGB,RGB',
+                groups: {
+                  RGB: new IMask.MaskedPattern.Group.Range([0, 255])
+                }
+              },
+              {
+                mask: /^#[0-9a-f]{0,6}$/i
+              }
+            ]
+          }
+        ).on('accept', function() {
+          var color = dynamicMask.value;
+          if (!(dynamicMask.masked.currentMask.mask instanceof RegExp)) {
+            color = color.split(',');
+            while (color.length < 3) color.push('0');
+            color = 'rgb(' + color.join(',') + ')';
+          }
+
+          document.getElementById('color-box').style.backgroundColor = color;
+        });
+
+
+        var dispatchMask = new IMask(
+          document.getElementById('dispatch-mask'),
+          {
+            mask: [
+              {
+                mask: '+{3\\0} {21} 0 000 0000',
+                startsWith: '30',
+                country: 'Greece'
+              },
+              {
+                mask: '+{7} 000 000-00-00',
+                startsWith: '7',
+                country: 'Russia'
+              },
+              {
+                mask: '+{91}-0000-000000',
+                startsWith: '91',
+                country: 'India'
+              },
+              {
+                mask: '0000000000000',
+                startsWith: '',
+                country: 'unknown'
+              }
+            ],
+            dispatch: function (appended, dynamicMasked) {
+              var number = (dynamicMasked.value + appended).replace(/\D/g,'');
+
+              return dynamicMasked.compiledMasks.find(function (m) {
+                return number.indexOf(m.startsWith) === 0;
+              });
+            }
+          }
+        ).on('accept', function() {
+          document.getElementById('dispatch-value').innerHTML = dispatchMask.masked.currentMask.country;
         });
       });
     </script>

@@ -1,3 +1,6 @@
+import ChangeDetails from '../core/change-details.js';
+
+
 export default
 class Masked {
   constructor (opts) {
@@ -32,9 +35,14 @@ class Masked {
   }
 
   set value (value) {
+    this.resolve(value);
+  }
+
+  resolve (value) {
     this.reset();
     this.appendWithTail(value);
     this.doCommit();
+    return this.value;
   }
 
   get unmaskedValue () {
@@ -76,66 +84,73 @@ class Masked {
   }
 
   _appendTail (tail) {
-    return !tail || this._append(tail, {tail: true});
+    return !tail ? new ChangeDetails() : this._append(tail, {tail: true});
   }
 
   _append (str, flags={}) {
     const oldValueLength = this.value.length;
     let consistentValue = this.clone();
+    let overflow = false;
 
     str = this.doPrepare(str, flags);
     for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
       if (this.doValidate(flags) === false) {
         Object.assign(this, consistentValue);
-        if (!flags.input) return false;
+        if (!flags.input) {
+          overflow = true;
+          break;
+        }
       }
 
       consistentValue = this.clone();
     }
 
-    return this.value.length - oldValueLength;
-
+    return new ChangeDetails({
+      inserted: this.value.slice(oldValueLength),
+      overflow
+    });
   }
 
   appendWithTail (str, tail) {
     // TODO refactor
-    let appendCount = 0;
+    const aggregateDetails = new ChangeDetails();
     let consistentValue = this.clone();
     let consistentAppended;
 
     for (let ci=0; ci<str.length; ++ci) {
       const ch = str[ci];
 
-      const appended = this._append(ch, {input: true});
+      const appendDetails = this._append(ch, {input: true});
       consistentAppended = this.clone();
-      const tailAppended = appended !== false && this._appendTail(tail) !== false;
-      if (tailAppended === false || this.doValidate(true) === false) {
+      const tailAppended = !appendDetails.overflow && !this._appendTail(tail).overflow;
+      if (!tailAppended || this.doValidate({tail: true}) === false) {
         Object.assign(this, consistentValue);
         break;
       }
 
       consistentValue = this.clone();
       Object.assign(this, consistentAppended);
-      appendCount += appended;
+      aggregateDetails.aggregate(appendDetails);
     }
 
     // TODO needed for cases when
     // 1) REMOVE ONLY AND NO LOOP AT ALL
     // 2) last loop iteration removes tail
     // 3) when breaks on tail insert
-    this._appendTail(tail);
+    
+    // aggregate only shift from tail
+    aggregateDetails.shift += this._appendTail(tail).shift;
 
-    return appendCount;
+    return aggregateDetails;
   }
 
   _unmask () {
     return this.value;
   }
 
-  // TODO rename - refactor
-  clear (from=0, to=this.value.length) {
-    this._value = this.value.slice(0, from) + this.value.slice(to);
+  remove (from=0, count=this.value.length-from) {
+    this._value = this.value.slice(0, from) + this.value.slice(from + count);
   }
 
   withValueRefresh (fn) {
@@ -165,19 +180,20 @@ class Masked {
   }
 
   // TODO
-  // resolve (inputRaw) -> outputRaw
-
-  // TODO
   // insert (str, fromPos, flags)
 
-  // splice (start, deleteCount, inserted, removeDirection) {
-  //   const tailPos = start + deleteCount;
-  //   const tail = this.extractTail(tailPos);
+  splice (start, deleteCount, inserted, removeDirection) {
+    const tailPos = start + deleteCount;
+    const tail = this.extractTail(tailPos);
 
-  //   start = this.nearestInputPos(start, removeDirection);
-  //   this.clear(start);
-  //   return this.appendWithTail(inserted, tail);
-  // }
+    const startChangePos = this.nearestInputPos(start, removeDirection);
+    this.remove(startChangePos);
+    const changeDetails = this.appendWithTail(inserted, tail);
+
+    // adjust shift if start was aligned
+    changeDetails.shift += startChangePos - start;
+    return changeDetails;
+  }
 }
 
 Masked.DEFAULTS = {

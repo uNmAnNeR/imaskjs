@@ -27,7 +27,7 @@ class PatternGroup {
 
 export
 class RangeGroup {
-  constructor ([from, to], maxlen=(to+'').length) {
+  constructor ([from, to], maxlen=String(to).length) {
     this._from = from;
     this._to = to;
     this._maxLength = maxlen;
@@ -64,11 +64,11 @@ class RangeGroup {
   }
 
   get _matchFrom () {
-    return this.maxLength - (this.from + '').length;
+    return this.maxLength - String(this.from).length;
   }
 
   _update() {
-    this._maxLength = Math.max(this._maxLength, (this.to + '').length);
+    this._maxLength = Math.max(this._maxLength, String(this.to).length);
     this.mask = '0'.repeat(this._maxLength);
   }
 

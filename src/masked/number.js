@@ -67,24 +67,26 @@ class MaskedNumber extends Masked {
   appendWithTail (str, tail) {
     const oldValueLength = this.value.length;
     this._value = this._removeThousandsSeparators(this.value);
-    let removedSeparatorsCount = oldValueLength - this.value.length;
+    let startChangePos = this.value.length;
 
-
-    const appended = super.appendWithTail(str, tail);
-
-
+    const appendDetails = super.appendWithTail(str, tail);
     this._value = this._insertThousandsSeparators(this.value);
 
-    let beforeTailPos = oldValueLength + appended - removedSeparatorsCount;
-    let insertedSeparatorsBeforeTailCount = 0;
+    // calculate offsets after insert separators
+    let beforeTailPos = startChangePos + appendDetails.inserted.length;
     for (let pos = 0; pos <= beforeTailPos; ++pos) {
       if (this.value[pos] === this.thousandsSeparator) {
-        ++insertedSeparatorsBeforeTailCount;
+        if (pos <= startChangePos) ++startChangePos;
         ++beforeTailPos;
       }
     }
 
-    return appended - removedSeparatorsCount + insertedSeparatorsBeforeTailCount;
+    // adjust details with separators
+    appendDetails.rawInserted = appendDetails.inserted;
+    appendDetails.inserted = this.value.slice(startChangePos, beforeTailPos);
+    appendDetails.shift += startChangePos - oldValueLength;
+
+    return appendDetails;
   }
 
   nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
@@ -122,7 +124,7 @@ class MaskedNumber extends Masked {
     if (this.min != null) validnum = Math.max(validnum, this.min);
     if (this.max != null) validnum = Math.min(validnum, this.max);
 
-    if (validnum !== number) this.unmaskedValue = '' + validnum;
+    if (validnum !== number) this.unmaskedValue = String(validnum);
 
     let formatted = this.value;
 
@@ -167,7 +169,7 @@ class MaskedNumber extends Masked {
   }
 
   set number (number) {
-    this.unmaskedValue = ('' + number).replace('.', this.radix);
+    this.unmaskedValue = String(number).replace('.', this.radix);
   }
 
   get allowNegative () {

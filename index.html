@@ -32,21 +32,23 @@
           <ul>
             <li>get and set <em>value</em> and <em>unmasked value</em> easily</li>
             <li>no external dependencies</li>
-            <li>show placeholder always or only when needed</li>
-            <li>unmasked value can contain fixed parts</li>
-            <li>optional input parts (greedy)</li>
-            <li>RegExp mask</li>
-            <li>Functional mask</li>
-            <li>Number mask (integer and decimal support)</li>
-            <li>Date mask (with various format support)</li>
             <li>Supports all major browsers and IE11+ <span class="req">*<a href="guide.html#support-older">need older?</a></span></li>
+            <li><strong>RegExp</strong> mask</li>
+            <li><strong>Functional</strong> mask</li>
+            <li><strong>Number</strong> mask (integer and decimal support)</li>
+            <li><strong>Date</strong> mask (with various format support)</li>
+            <li><strong>Dynamic/on-the-fly</strong> mask</li>
+            <li><strong>Pattern</strong> mask</li>
+            <ul>
+              <li>show placeholder always or when needed</li>
+              <li>unmasked value can contain fixed parts</li>
+              <li>optional input parts (greedy)</li>
+            </ul>
           </ul>
           <h5>Further plans</h5>
           <ul>
-            <li>Angular/React/Vue plugin</li>
-            <li>on-the-fly/dynamic mask</li>
+            <li>Angular/React/Vue plugins</li>
             <li>more unit tests</li>
-            <li>support RTL?</li>
           </ul>
         </div>
 
@@ -130,11 +132,11 @@
             </div>
 
             <div class="form-item">
-              <label>Dynamic mask <span class="desc">phone or email</span></label>
+              <label>On-the-fly select <span class="desc">phone or email</span></label>
               <input id="dynamic-mask" type="text">
               <div class="unmasked-value desc">unmasked: <span id="dynamic-value"></span><span id="dynamic-complete" class="example__complete"></span></div>
               <div class="toggle-panel">
-                <label for="dynamic-mask-source" class="muted">magic</label>
+                <label for="dynamic-mask-source" class="muted">source</label>
                 <input id="dynamic-mask-source" type="checkbox">
                 <div class="toggle-panel-content">
                   <pre><code>var dynamicMask = new IMask(
@@ -148,7 +150,8 @@
         mask: /^\S*@?\S*$/
       }
     ]
-  });</code></pre>
+  });
+<a href="guide.html#dynamic" class="learn-more">learn more</a></code></pre>
                 </div>
               </div>
             </div>
@@ -169,8 +172,7 @@
       </nav>
       <span>by <a href="https://github.com/uNmAnNeR">@Alexey Kryazhev</a></span>
     </footer>
-    <script type="module" src="src/imask.js"></script>
-    <script nomodule defer src="https://unpkg.com/imask/dist/imask.js"></script>
+    <script defer src="https://unpkg.com/imask"></script>
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function () {
         var phoneMask = new IMask(document.getElementById('phone-mask'), {

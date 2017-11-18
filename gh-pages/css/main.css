@@ -115,3 +115,17 @@ footer {
   text-align: center;
   margin-bottom: 30px;
 }
+
+.color-input {
+  position: relative;
+}
+
+#color-box {
+  display: block;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;
+  width: 30px;
+  background-color: #ff0;
+}

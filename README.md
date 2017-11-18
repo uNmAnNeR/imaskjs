@@ -16,13 +16,12 @@ vanilla javascript input mask
 * Functional mask
 * Number mask (integer and decimal)
 * Date mask (various format support)
+* Dynamic/on-the-fly mask
 
 Further plans:
 
 * Angular/React/Vue plugin
-* on-the-fly/multimask
 * more unit tests
-* support RTL?
 
 ## Install
 `npm install imask` and include from `dist` folder or use CDN:
