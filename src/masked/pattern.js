@@ -208,9 +208,9 @@ class MaskedPattern extends Masked {
         }
       } else {
         this._value += def.char;
-        resolved = chres && (def.unmasking || flags.input) && !flags.tail;
-        def.isRawInput = resolved && (flags.raw || def.unmasking && flags.input);
-        if (def.isRawInput) rawInserted += chres;
+        resolved = chres && (def.unmasking || flags.input || flags.raw) && !flags.tail;
+        def.isRawInput = resolved && (flags.raw || flags.input);
+        if (def.isRawInput) rawInserted += def.char;
       }
 
       if (!skipped) ++di;
@@ -319,10 +319,11 @@ class MaskedPattern extends Masked {
       .forEach(d => d.reset());
   }
 
-  nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
-    if (!direction) return cursorPos;
+  nearestInputPos (cursorPos, direction=DIRECTION.NONE) {
+    let dir = direction || DIRECTION.LEFT;
 
     const initialDefIndex = this.mapPosToDefIndex(cursorPos);
+    const initialDef = this._charDefs[initialDefIndex];
     let di = initialDefIndex;
 
     let firstInputIndex,
@@ -332,9 +333,9 @@ class MaskedPattern extends Masked {
 
     // search forward
     for (
-      nextdi = indexInDirection(di, direction);
+      nextdi = indexInDirection(di, dir);
       0 <= nextdi && nextdi < this._charDefs.length;
-      di += direction, nextdi += direction
+      di += dir, nextdi += dir
     ) {
       const nextDef = this._charDefs[nextdi];
       if (firstInputIndex == null && nextDef.isInput) firstInputIndex = di;
@@ -345,16 +346,20 @@ class MaskedPattern extends Masked {
       }
     }
 
-    if (direction === DIRECTION.LEFT || firstInputIndex == null) {
-      // search backwards
-      direction = -direction;
+    // if has aligned left not inside fixed and has come to the start - use start position
+    if (direction === DIRECTION.LEFT && di === 0 &&
+      (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
+
+    if (direction === DIRECTION.NONE || firstInputIndex == null) {
+      // search backward
+      dir = -dir;
       let overflow = false;
 
       // find hollows only before initial pos
       for (
-        nextdi = indexInDirection(di, direction);
+        nextdi = indexInDirection(di, dir);
         0 <= nextdi && nextdi < this._charDefs.length;
-        di += direction, nextdi += direction
+        di += dir, nextdi += dir
       ) {
         const nextDef = this._charDefs[nextdi];
         if (nextDef.isInput) {

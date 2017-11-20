@@ -213,9 +213,7 @@ class InputMask {
       details.removeDirection).offset;
 
 
-    const cursorPos = this.masked.nearestInputPos(
-      details.startChangePos + offset,
-      details.removeDirection);
+    const cursorPos = this.masked.nearestInputPos(details.startChangePos + offset);
 
     this.updateControl();
     this.updateCursor(cursorPos);

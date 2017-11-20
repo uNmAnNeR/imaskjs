@@ -49,4 +49,16 @@ describe('Insert', function () {
     masked.value = '+79998887766';
     assert(prepareStub.called);
   });
+
+  describe('RAW', function () {
+    it('should set insert flag on fixed', function () {
+      masked.updateOptions({mask: '+120'});
+      masked.rawInputValue = '123';
+      assert.equal(masked.rawInputValue, '123');
+
+      masked.updateOptions({mask: '{+12}0'});
+      masked.rawInputValue = '123';
+      assert.equal(masked.rawInputValue, '123');
+    });
+  });
 });

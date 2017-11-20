@@ -7,20 +7,20 @@ vanilla javascript input mask
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
-* get and set raw and unmasked values easily
+* get and set *raw* and *unmasked* values easily
 * no external dependencies
-* show placeholder always and only when necessary
-* unmasked value can contain fixed parts
-* optional input parts (greedy)
-* RegExp mask
-* Functional mask
-* Number mask (integer and decimal)
-* Date mask (various format support)
-* Dynamic/on-the-fly mask
+* **RegExp** mask
+* **Functional** mask
+* **Number** mask (integer and decimal)
+* **Date** mask (various format support)
+* **Dynamic/on-the-fly** mask
+* **Pattern** mask
+  - show placeholder always and only when necessary
+  - unmasked value can contain fixed parts
+  - optional input parts (greedy)
 
-Further plans:
-
-* Angular/React/Vue plugin
+## Further plans
+* Angular/React/Vue plugins
 * more unit tests
 
 ## Install

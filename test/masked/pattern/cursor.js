@@ -1,4 +1,5 @@
 import MaskedPattern from '../../../src/masked/pattern';
+import {DIRECTION} from '../../../src/core/utils';
 
 
 describe('Align left', function () {
@@ -17,6 +18,15 @@ describe('Align left', function () {
       masked.updateOptions({mask});
       for (var pos=0; pos<masked._charDefs.length; ++pos) {
         assert.equal(masked.nearestInputPos(pos), 2);
+      }
+    });
+  });
+
+  it('should align before XX with DIRECTION.LEFT', function () {
+    ['XX*', 'XX[*]'].forEach(mask => {
+      masked.updateOptions({mask});
+      for (var pos=0; pos<masked._charDefs.length-1; ++pos) {
+        assert.equal(masked.nearestInputPos(pos, DIRECTION.LEFT), 0);
       }
     });
   });
