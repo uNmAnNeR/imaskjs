@@ -1,0 +1,21 @@
+{
+  "name": "react-imask",
+  "version": "0.0.1",
+  "description": "React input mask",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/react"
+  },
+  "keywords": [
+    "react",
+    "javascript",
+    "input",
+    "mask"
+  ],
+  "author": "Alexey Kryazhev",
+  "license": "MIT"
+}
