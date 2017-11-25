@@ -3,6 +3,7 @@
   "version": "2.0.1",
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
+  "module": "src/imask.js",
   "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -60,6 +61,10 @@
     "jquery",
     "input",
     "mask"
+  ],
+  "files": [
+    "dist",
+    "src"
   ],
   "author": "Alexey Kryazhev",
   "license": "MIT",
