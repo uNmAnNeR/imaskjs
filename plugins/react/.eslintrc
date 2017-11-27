@@ -1,0 +1,24 @@
+{
+  "extends": "eslint:recommended",
+
+  "parser": "babel-eslint",
+
+  "env": {
+    "browser": true,
+    "es6": true,
+    "mocha": true
+  },
+
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+
+    "ecmaFeatures": {
+      "classes": true
+    },
+  },
+
+  "globals": {
+    "IMask": false
+  }
+}

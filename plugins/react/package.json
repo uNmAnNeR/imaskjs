@@ -4,7 +4,8 @@
   "description": "React input mask",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -17,5 +18,20 @@
     "mask"
   ],
   "author": "Alexey Kryazhev",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "imask": "latest",
+    "prop-types": "^15.6.0"
+  },
+  "peerDependencies": {
+    "react": ">=0.14.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "rollup": "^0.52.0",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  }
 }
