@@ -19,14 +19,31 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   maskRef: any;
 
   @Input() imask;
-  @Output() onAccept = new EventEmitter();
-  @Output() onComplete = new EventEmitter();
+  @Input() unmask?: boolean;
+  @Output() accept = new EventEmitter();
+  @Output() complete = new EventEmitter();
 
   _onTouched = () => {};
   _onChange: any = () => {};
 
   constructor(private elementRef: ElementRef,
               private renderer: Renderer2) { }
+
+
+  get maskValue () {
+    if (!this.maskRef) return this.elementRef.nativeElement.value;
+
+    return this.unmask ? this.maskRef.value : this.maskRef.unmaskedValue;
+  }
+
+  set maskValue (value) {
+    if (this.maskRef) {
+      if (this.unmask) this.maskRef.unmaskedValue = value;
+      else this.maskRef.value = value;
+    } else {
+      this.renderer.setProperty(this.elementRef.nativeElement, 'value', value);
+    }
+  }
 
   ngAfterViewInit() {
     if (!this.imask) return;
@@ -55,10 +72,25 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   writeValue(value: any) {
     value = value == null ? '' : value;
 
-    if (this.maskRef) this.maskRef.value = value;
+    if (this.maskRef) this.maskValue = value;
     else this.renderer.setProperty(this.elementRef.nativeElement, 'value', value);
   }
 
+  _onAccept () {
+    this._onChange(this.maskValue);
+    this._onTouched();
+    this.accept.emit(this.maskValue, this.maskRef);
+  }
+
+  _onComplete () {
+    this.complete.emit(this.maskValue, this.maskRef);
+  }
+
+  private initMask () {
+    this.maskRef = new IMask(this.elementRef.nativeElement, this.imask)
+      .on('accept', this._onAccept.bind(this))
+      .on('complete', this._onComplete.bind(this));
+  }
 
   setDisabledState (isDisabled: boolean) {
     this.renderer.setProperty(this.elementRef.nativeElement, 'disabled', isDisabled)
@@ -66,21 +98,5 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
 
   registerOnChange(fn: (value: any) => any): void { this._onChange = fn; }
   registerOnTouched(fn: () => any): void { this._onTouched = fn; }
-  @HostListener('blur')
-  onBlur() { this._onTouched(); }
-
-  private initMask () {
-    this.maskRef = new IMask(this.elementRef.nativeElement, this.imask)
-      .on('accept', () => {
-        try {
-          this._onChange(this.maskRef.value);
-          this._onTouched();
-          this.onAccept.emit(this.maskRef.value);
-        } catch (e) {}
-      }).on('complete', () => {
-        try {
-          this.onComplete.emit(this.maskRef.value);
-        } catch (e) {}
-      });
-  }
+  @HostListener('blur') onBlur() { this._onTouched(); }
 }
