@@ -24,9 +24,9 @@ function IMaskMixin(ComposedComponent) {
 
     render () {
       return React.createElement(ComposedComponent, {
-        ...this._maskProps(this.props),
+        ...this._extractNonMaskProps(this.props),
         defaultValue: this.props.value,
-        inputRef: (el) => (this.element = el)
+        inputRef: (el) => this.element = el,
       });
     }
 
@@ -40,20 +40,10 @@ function IMaskMixin(ComposedComponent) {
       this._updateValues(values);
     }
 
-    _maskProps (props) {
+    _extractMaskProps (props) {
       props = {...props};
 
       // keep only non mask props
-      Object.keys(MaskedComponent.propTypes).forEach(maskProp => {
-        delete props[maskProp];
-      });
-
-      return props;
-    }
-
-    _nonMaskProps (props) {
-      props = {...props};
-
       Object.keys(props)
         .filter(prop => !MaskedComponent.propTypes.hasOwnProperty(prop))
         .forEach(nonMaskProp => {
@@ -63,16 +53,26 @@ function IMaskMixin(ComposedComponent) {
       return props;
     }
 
+    _extractNonMaskProps (props) {
+      props = {...props};
+
+      Object.keys(MaskedComponent.propTypes).forEach(maskProp => {
+        delete props[maskProp];
+      });
+
+      return props;
+    }
+
     _extractFromProps (props) {
       const value = props.value;
       const unmaskedValue = props.unmaskedValue;
 
-      const nonMaskProps = this._nonMaskProps(props);
+      const maskProps = this._extractMaskProps(props);
 
-      delete nonMaskProps.value;
-      delete nonMaskProps.unmaskedValue;
+      delete maskProps.value;
+      delete maskProps.unmaskedValue;
 
-      return {options: nonMaskProps, values: {value, unmaskedValue}};
+      return {options: maskProps, values: {value, unmaskedValue}};
     }
 
     _updateValues (values) {
@@ -88,7 +88,6 @@ function IMaskMixin(ComposedComponent) {
     _onComplete (...args) {
       if (this.props.onComplete) this.props.onComplete(...args);
     }
-
   };
 
   MaskedComponent.propTypes = {
@@ -134,6 +133,9 @@ function IMaskMixin(ComposedComponent) {
     // dynamic
     dispatch: PropTypes.func
   };
+
+  const nestedComponentName = ComposedComponent.displayName || ComposedComponent.name || 'Component';
+  MaskedComponent.displayName = `IMask(${nestedComponentName})`;
 
   return MaskedComponent;
 }
