@@ -1,10 +1,11 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import IMask from 'imask';
 
 
 export
-function IMaskMixin(Component) {
-  const MaskedComponent = class extends Component {
+function IMaskMixin(ComposedComponent) {
+  const MaskedComponent = class extends React.Component {
     componentDidMount () {
       this.initMask();
     }
@@ -22,20 +23,11 @@ function IMaskMixin(Component) {
     }
 
     render () {
-      const props = {...this.props};
-
-      // keep only non mask props
-      Object.keys(MaskedComponent.propTypes).forEach(maskProp => {
-        delete props[maskProp];
+      return React.createElement(ComposedComponent, {
+        ...this._maskProps(this.props),
+        defaultValue: this.props.value,
+        inputRef: (el) => (this.element = el)
       });
-
-      return (
-        <input
-          {...props}
-          defaultValue={this.props.value}
-          ref={(element) => (this.element = element)}
-        />
-      );
     }
 
     initMask () {
@@ -48,9 +40,19 @@ function IMaskMixin(Component) {
       this._updateValues(values);
     }
 
-    _extractFromProps (props) {
-      const value = props.value;
-      const unmaskedValue = props.unmaskedValue;
+    _maskProps (props) {
+      props = {...props};
+
+      // keep only non mask props
+      Object.keys(MaskedComponent.propTypes).forEach(maskProp => {
+        delete props[maskProp];
+      });
+
+      return props;
+    }
+
+    _nonMaskProps (props) {
+      props = {...props};
 
       Object.keys(props)
         .filter(prop => !MaskedComponent.propTypes.hasOwnProperty(prop))
@@ -58,10 +60,19 @@ function IMaskMixin(Component) {
           delete props[nonMaskProp];
         });
 
-      delete props.value;
-      delete props.unmaskedValue;
+      return props;
+    }
 
-      return {options: props, values: {value, unmaskedValue}};
+    _extractFromProps (props) {
+      const value = props.value;
+      const unmaskedValue = props.unmaskedValue;
+
+      const nonMaskProps = this._nonMaskProps(props);
+
+      delete nonMaskProps.value;
+      delete nonMaskProps.unmaskedValue;
+
+      return {options: nonMaskProps, values: {value, unmaskedValue}};
     }
 
     _updateValues (values) {
