@@ -1,0 +1,27 @@
+<html>
+<head></head>
+
+<body>
+  <h1>React IMask Plugin Demo</h1>
+  <main id="app"></main>
+
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15/prop-types.js"></script>
+  <script src="https://unpkg.com/imask"></script>
+  <script src="dist/react-imask.js"></script>
+  <script type="text/babel">
+    ReactDOM.render(
+      React.createElement(ReactIMask.IMaskInput, {
+        mask: Date,
+        onAccept: (...args) => console.log('accept', ...args),
+        onComplete: (...args) => console.log('complete!', ...args),
+
+        placeholder: 'Enter date here',
+      }),
+      document.getElementById('app')
+    );
+  </script>
+</body>
+</html>
