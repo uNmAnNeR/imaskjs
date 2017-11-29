@@ -2,35 +2,23 @@ import babel from 'rollup-plugin-babel';
 import eslint from 'rollup-plugin-eslint';
 
 
-const file = 'dist/react-imask.js';
-const input = 'src/index.js';
-
-const babelConf = {
-  presets: [
-    ['env', {
-      'modules': false,
-      'loose': true,
-      'useBuiltIns': true,
-    }],
-  ],
-  exclude: 'node_modules/**',
-  plugins: ['transform-object-rest-spread', 'transform-object-assign', 'external-helpers']
-};
-
-
 export default {
-  input,
+  input: 'src/index.js',
   name: 'ReactIMask',
   output: [{
-    file,
+    file: 'dist/react-imask.js',
     format: 'umd'
   }],
   sourcemap: true,
   plugins: [
     eslint({configFile: '.eslintrc'}),
-    babel(babelConf),
+    babel(),
   ],
-  external: ['react', 'imask', 'prop-types'],
+  external: [
+    'react',
+    'prop-types',
+    'imask',
+  ],
   globals: {
     react: 'React',
     imask: 'IMask',

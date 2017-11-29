@@ -34,8 +34,13 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
-    "rollup": "^0.52.0"
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "rollup": "^0.52.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-eslint": "^4.0.0"
   },
   "engines": {
     "npm": ">=4.0.0"
