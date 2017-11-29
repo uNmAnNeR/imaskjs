@@ -5,7 +5,7 @@ import {DIRECTION} from '../../../src/core/utils';
 describe('Align left', function () {
   const masked = new MaskedPattern({
     mask: '',
-    placeholder: {lazy: false}
+    placeholderLazy: false,
   });
 
   beforeEach(function () {

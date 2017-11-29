@@ -342,7 +342,7 @@ var masked = new IMask.PatternMasked({
     '#': /[1-6]/
   }
 });</code></pre>
-        <p>To configure placeholder use <code>placeholder</code> option:</p>
+        <p>To configure placeholder use:</p>
         <div class="toggle-panel">
           <label for="pattern-phone-mask-demo" class="muted">demo</label>
           <input id="pattern-phone-mask-demo" type="checkbox">
@@ -358,10 +358,8 @@ var masked = new IMask.PatternMasked({
         </div>
         <pre><code>var phoneMask = new IMask(element, {
   mask: '+{7}(000)000-00-00',
-  placeholder: {
-    lazy: false,  // make placeholder always visible
-    char: '#'  // defaults to '_'
-  }
+  placeholderLazy: false,  // make placeholder always visible
+  placeholderChar: '#'     // defaults to '_'
 });</code></pre>
         <p>One more custom option for pattern is <code>groups</code> which is usefull for reusing parts of a mask or providing additional validator:</p>
         <div class="toggle-panel">
@@ -379,7 +377,7 @@ var masked = new IMask.PatternMasked({
         </div>
         <pre><code>var groupsMask = new IMask(element, {
   mask: 'Ple\\ase fill ye\\ar 19<ins>YY</ins>, month <ins>MM</ins> \\and v\\alue <ins>VL</ins>',
-  placeholder: {lazy: false},  // make placeholder always visible
+  placeholderLazy: false,  // make placeholder always visible
 
   // let define groups
   groups: {
@@ -534,7 +532,7 @@ var masked = new IMask.PatternMasked({
   max: new Date(2020, 0, 1),  // defaults to 9999-01-01
 
   // also Pattern options can be set
-  placeholder: {lazy: false}
+  placeholderLazy: false
 });</code></pre>
       <p>It is easy to use it with <a href="https://momentjs.com/">Moment.js</a>:</p>
       <div class="toggle-panel">
@@ -554,7 +552,7 @@ var masked = new IMask.PatternMasked({
 var momentMask = new IMask(element, {
   mask: Date,
   pattern: momentFormat,
-  placeholder: {lazy: false},
+  placeholderLazy: false,
   min: new Date(1970, 0, 1),
   max: new Date(2030, 0, 1),
 
@@ -710,9 +708,7 @@ var momentMask = new IMask(element, {
 
         var customMask = new IMask(document.getElementById('pattern-nic-mask'), {
             mask: '{#}000[aaa]/NIC-`*[**]',
-            placeholder: {
-              lazy: false
-            }
+            placeholderLazy: false
         });
         customMask.on('accept', function() {
           document.getElementById('pattern-nic-complete').style.display = '';
@@ -722,12 +718,12 @@ var momentMask = new IMask(element, {
         });
 
         var customEl = document.getElementsByClassName('pattern-nic-form')[0];
-        customEl.querySelector('[name=apply]').addEventListener('click', function (e) {
+        customEl.querySelector('[name=apply]').addEventListener('click', function () {
           var mask = customEl.querySelector('[name=mask]').value;
-          var ph = {
-            lazy: customEl.querySelector('[name=ph-show]').checked,
-            char: customEl.querySelector('[name=ph-char]').value || '_'
-          };
+
+          var placeholderLazy = customEl.querySelector('[name=ph-show]').checked;
+          var placeholderChar = customEl.querySelector('[name=ph-char]').value || '_';
+
           var value = customEl.querySelector('[name=raw]').value;
           customEl.querySelector('[name=raw]').value = '';
 
@@ -736,7 +732,8 @@ var momentMask = new IMask(element, {
 
           customMask.updateOptions({
             mask: mask,
-            placeholder: ph
+            placeholderLazy: placeholderLazy,
+            placeholderChar: placeholderChar
           });
           if (value) customMask.value = value;
           if (unmaskedValue) customMask.unmaskedValue = unmaskedValue;
@@ -760,10 +757,8 @@ var momentMask = new IMask(element, {
 
         var patternPhoneMask = new IMask(document.getElementById('pattern-phone-mask'), {
           mask: '+{7}(000)000-00-00',
-          placeholder: {
-            lazy: false,  // make placeholder always visible
-            char: '#'  // defaults to '_'
-          }
+          placeholderLazy: false,  // make placeholder always visible
+          placeholderChar: '#'     // defaults to '_'
         }).on('accept', function() {
           document.getElementById('pattern-phone-complete').style.display = '';
           document.getElementById('pattern-phone-unmasked').innerHTML = patternPhoneMask.unmaskedValue;
@@ -774,7 +769,7 @@ var momentMask = new IMask(element, {
 
         var patternGroupsMask = new IMask(document.getElementById('pattern-groups-mask'), {
           mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',
-          placeholder: {lazy: false},  // make placeholder always visible
+          placeholderLazy: false,  // make placeholder always visible
 
           // let define groups
           groups: {
@@ -842,7 +837,7 @@ var momentMask = new IMask(element, {
         var dateMask = new IMask(document.getElementById('date-mask'), {
           mask: Date,
           pattern: 'Y-`m-`d',
-          placeholder: {lazy: false},
+          placeholderLazy: false,
 
           format: function (date) {
             var day = date.getDate();
@@ -869,7 +864,7 @@ var momentMask = new IMask(element, {
         var momentMask = new IMask(document.getElementById('moment-mask'), {
           mask: Date,
           pattern: momentFormat,
-          placeholder: {lazy: false},
+          placeholderLazy: false,
           min: new Date(1970, 0, 1),
           max: new Date(2030, 0, 1),
 
@@ -891,7 +886,7 @@ var momentMask = new IMask(element, {
           document.getElementById('moment-value').innerHTML = momentMask.masked.date || '-';
         });
 
-        
+
         var dynamicMask = new IMask(
           document.getElementById('dynamic-mask'),
           {

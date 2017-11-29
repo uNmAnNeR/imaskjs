@@ -8,14 +8,20 @@ import PatternGroup from './pattern/group.js';
 export default
 class MaskedPattern extends Masked {
   constructor (opts={}) {
-    opts.placeholder = Object.assign({}, MaskedPattern.DEFAULT_PLACEHOLDER, opts.placeholder);
     opts.definitions = Object.assign({}, PatternDefinition.DEFAULTS, opts.definitions);
-    super(opts);
+    super({
+      ...MaskedPattern.DEFAULTS,
+      ...opts
+    });
   }
 
   _update (opts) {
-    opts.placeholder = Object.assign({}, this.placeholder, opts.placeholder);
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
+    if (opts.placeholder) {
+      console.warn("'placeholder' option is deprecated and will be removed in next release, use 'placeholderChar' and 'placeholderLazy' instead.");
+      if ('char' in opts.placeholder) opts.placeholderChar = opts.placeholder.char;
+      if ('lazy' in opts.placeholder) opts.placeholderLazy = opts.placeholder.lazy;
+    }
     super._update(opts);
     this._updateMask();
   }
@@ -199,7 +205,7 @@ class MaskedPattern extends Masked {
 
         if (!chres) {
           if (!def.optional && !flags.input) {
-            this._value += this.placeholder.char;
+            this._value += this.placeholderChar;
             skipped = false;
           }
           if (!skipped) def.isHollow = true;
@@ -296,11 +302,11 @@ class MaskedPattern extends Masked {
       const def = this._charDefs[di];
       if (def.isInput) def.isHollow = true;
 
-      if (!this.placeholder.lazy || toDefIndex) {
+      if (!this.placeholderLazy || toDefIndex) {
         this._value += !def.isInput ?
           def.char :
           !def.optional ?
-            this.placeholder.char :
+            this.placeholderChar :
             '';
       }
     }
@@ -397,9 +403,9 @@ class MaskedPattern extends Masked {
   }
 }
 
-MaskedPattern.DEFAULT_PLACEHOLDER = {
-  lazy: true,
-  char: '_'
+MaskedPattern.DEFAULTS = {
+  placeholderLazy: true,
+  placeholderChar: '_'
 };
 MaskedPattern.STOP_CHAR = '`';
 MaskedPattern.ESCAPE_CHAR = '\\';

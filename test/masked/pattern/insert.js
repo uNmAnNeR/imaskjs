@@ -4,7 +4,7 @@ import MaskedPattern from '../../../src/masked/pattern';
 describe('Insert', function () {
   const masked = new MaskedPattern({
     mask: '',
-    placeholder: {lazy: false}
+    placeholderLazy: false,
   });
 
   beforeEach(function () {

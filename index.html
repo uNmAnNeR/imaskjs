@@ -34,7 +34,7 @@
             <li>no external dependencies</li>
             <li>Supports all major browsers and IE11+ <span class="req">*<a href="guide.html#support-older">need older?</a></span></li>
             <li><strong>RegExp</strong> mask</li>
-            <li><strong>Functional</strong> mask</li>
+            <li><strong>Function</strong> mask</li>
             <li><strong>Number</strong> mask (integer and decimal support)</li>
             <li><strong>Date</strong> mask (with various format support)</li>
             <li><strong>Dynamic/on-the-fly</strong> mask</li>
@@ -124,7 +124,7 @@
     mask: Date,
     min: new Date(2000, 0, 1),
     max: new Date(2020, 0, 1),
-    placeholder: {lazy: false}
+    placeholderLazy: false
   });
 <a href="guide.html#date" class="learn-more">learn more</a></code></pre>
                 </div>
@@ -203,7 +203,7 @@
             mask: Date,
             min: new Date(2000, 0, 1),
             max: new Date(2020, 0, 1),
-            placeholder: {lazy: false}
+            placeholderLazy: false
           }
         ).on('accept', function() {
           document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';

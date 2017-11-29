@@ -5,7 +5,6 @@ import Masked from './base.js';
 export default
 class MaskedNumber extends Masked {
   constructor (opts) {
-    opts.postFormat = Object.assign({}, MaskedNumber.DEFAULTS.postFormat, opts.postFormat);
     super({
       ...MaskedNumber.DEFAULTS,
       ...opts
@@ -13,8 +12,11 @@ class MaskedNumber extends Masked {
   }
 
   _update (opts) {
-    opts.postFormat = Object.assign({}, this.postFormat, opts.postFormat);
-
+    if (opts.postFormat) {
+      console.warn("'postFormat' option is deprecated and will be removed in next release, use plain options instead.");
+      Object.assign(opts, opts.postFormat);
+      delete opts.postFormat;
+    }
     super._update(opts);
     this._updateRegExps();
   }
@@ -128,8 +130,8 @@ class MaskedNumber extends Masked {
 
     let formatted = this.value;
 
-    if (this.postFormat.normalizeZeros) formatted = this._normalizeZeros(formatted);
-    if (this.postFormat.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
+    if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
+    if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
     this._value = formatted;
     super.doCommit();
@@ -184,8 +186,6 @@ MaskedNumber.DEFAULTS = {
   mapToRadix: ['.'],
   scale: 2,
   signed: false,
-  postFormat: {
-    normalizeZeros: true,
-    padFractionalZeros: false
-  }
+  normalizeZeros: true,
+  padFractionalZeros: false,
 };
