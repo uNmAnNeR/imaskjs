@@ -1,6 +1,6 @@
 {
   "name": "imask",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
   "module": "src/imask.js",
