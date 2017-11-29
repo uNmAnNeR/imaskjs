@@ -83,7 +83,6 @@ class MaskedPattern extends Masked {
       if (char === MaskedPattern.ESCAPE_CHAR) {
         ++i;
         char = pattern[i];
-        // TODO validation
         if (!char) break;
         type = PatternDefinition.TYPES.FIXED;
       }
@@ -164,9 +163,8 @@ class MaskedPattern extends Masked {
     return unmasked;
   }
 
-  _appendTail (tail) {
-    return (!tail ? new ChangeDetails() : this._appendChunks(tail, {tail: true}))
-      .aggregate(this._appendPlaceholder());
+  _appendTail (tail=[]) {
+    return this._appendChunks(tail, {tail: true}).aggregate(this._appendPlaceholder());
   }
 
   _append (str, flags={}) {
@@ -174,7 +172,8 @@ class MaskedPattern extends Masked {
     let rawInserted = '';
     let overflow = false;
 
-    str = this.doPrepare(str, flags.input);
+    str = this.doPrepare(str, flags);
+
     for (let ci=0, di=this.mapPosToDefIndex(this.value.length); ci < str.length;) {
       const ch = str[ci];
       const def = this._charDefs[di];
@@ -240,12 +239,13 @@ class MaskedPattern extends Masked {
     return details;
   }
 
-  extractTail (fromPos, toPos) {
-    return this.extractInputChunks(fromPos, toPos);
+  _extractTail (fromPos, toPos) {
+    return this._extractInputChunks(fromPos, toPos);
   }
 
   extractInput (fromPos=0, toPos=this.value.length, flags={}) {
-    // TODO fromPos === toPos
+    if (fromPos === toPos) return '';
+
     const str = this.value;
     let input = '';
 
@@ -268,8 +268,9 @@ class MaskedPattern extends Masked {
     return input;
   }
 
-  extractInputChunks (fromPos=0, toPos=this.value.length) {
-    // TODO fromPos === toPos
+  _extractInputChunks (fromPos=0, toPos=this.value.length) {
+    if (fromPos === toPos) return [];
+
     const fromDefIndex = this.mapPosToDefIndex(fromPos);
     const toDefIndex = this.mapPosToDefIndex(toPos);
     const stopDefIndices = this._charDefs

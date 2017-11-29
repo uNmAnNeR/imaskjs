@@ -47,8 +47,8 @@ class MaskedNumber extends Masked {
     this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   }
 
-  extractTail (fromPos=0, toPos=this.value.length) {
-    return this._removeThousandsSeparators(super.extractTail(fromPos, toPos));
+  _extractTail (fromPos=0, toPos=this.value.length) {
+    return this._removeThousandsSeparators(super._extractTail(fromPos, toPos));
   }
 
   _removeThousandsSeparators (value) {
@@ -66,12 +66,12 @@ class MaskedNumber extends Masked {
     return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
-  appendWithTail (str, tail) {
+  appendWithTail (...args) {
     const oldValueLength = this.value.length;
     this._value = this._removeThousandsSeparators(this.value);
     let startChangePos = this.value.length;
 
-    const appendDetails = super.appendWithTail(str, tail);
+    const appendDetails = super.appendWithTail(...args);
     this._value = this._insertThousandsSeparators(this.value);
 
     // calculate offsets after insert separators

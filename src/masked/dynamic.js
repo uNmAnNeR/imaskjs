@@ -39,12 +39,6 @@ class MaskedDynamic extends Masked {
     return details;
   }
 
-  appendWithTail (str, tail) {
-    // TODO seems strange
-    // call append to do dispatch and get offset
-    return this._append('').aggregate(super.appendWithTail(str, tail));
-  }
-
   doDispatch(appended, flags) {
     return this.dispatch(appended, this, flags);
   }

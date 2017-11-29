@@ -40,7 +40,8 @@ class Masked {
 
   resolve (value) {
     this.reset();
-    this.appendWithTail(value);
+    this._append(value, {input: true});
+    this._appendTail();
     this.doCommit();
     return this.value;
   }
@@ -52,7 +53,7 @@ class Masked {
   set unmaskedValue (value) {
     this.reset();
     this._append(value);
-    this.appendWithTail("");
+    this._appendTail();
     this.doCommit();
   }
 
@@ -63,7 +64,7 @@ class Masked {
   set rawInputValue (value) {
     this.reset();
     this._append(value, {raw: true});
-    this.appendWithTail("");
+    this._appendTail();
     this.doCommit();
   }
 
@@ -79,12 +80,12 @@ class Masked {
     return this.value.slice(fromPos, toPos);
   }
 
-  extractTail (fromPos=0, toPos=this.value.length) {
+  _extractTail (fromPos=0, toPos=this.value.length) {
     return this.extractInput(fromPos, toPos);
   }
 
-  _appendTail (tail) {
-    return !tail ? new ChangeDetails() : this._append(tail, {tail: true});
+  _appendTail (tail="") {
+    return this._append(tail, {tail: true});
   }
 
   _append (str, flags={}) {
@@ -93,11 +94,13 @@ class Masked {
     let overflow = false;
 
     str = this.doPrepare(str, flags);
+
     for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
       if (this.doValidate(flags) === false) {
         Object.assign(this, consistentValue);
         if (!flags.input) {
+          // in `input` mode dont skip invalid chars
           overflow = true;
           break;
         }
@@ -138,7 +141,7 @@ class Masked {
     // 1) REMOVE ONLY AND NO LOOP AT ALL
     // 2) last loop iteration removes tail
     // 3) when breaks on tail insert
-    
+
     // aggregate only shift from tail
     aggregateDetails.shift += this._appendTail(tail).shift;
 
@@ -184,7 +187,7 @@ class Masked {
 
   splice (start, deleteCount, inserted, removeDirection) {
     const tailPos = start + deleteCount;
-    const tail = this.extractTail(tailPos);
+    const tail = this._extractTail(tailPos);
 
     const startChangePos = this.nearestInputPos(start, removeDirection);
     this.remove(startChangePos);
