@@ -472,10 +472,8 @@ var masked = new IMask.PatternMasked({
   scale: 2,  // digits after point, 0 for integers
   signed: false,  // disallow negative
   thousandsSeparator: '',  // any single char
-  postFormat: {
-    padFractionalZeros: false,  // if true, then pads zeros at end to the length of scale
-    normalizeZeros: true  // appends or removes zeros at ends
-  },
+  padFractionalZeros: false,  // if true, then pads zeros at end to the length of scale
+  normalizeZeros: true,  // appends or removes zeros at ends
   radix: ',',  // fractional delimiter
   mapToRadix: ['.']  // symbols to process as radix
 
@@ -802,10 +800,8 @@ var momentMask = new IMask(element, {
           scale: 2,
           // signed: true,
           thousandsSeparator: ' ',
-          postFormat: {
-            // padFractionalZeros: true,
-            normalizeZeros: true,
-          },
+          // padFractionalZeros: true,
+          normalizeZeros: true,
           min: -10000,
           max: 10000
           // radix: ',',
@@ -822,10 +818,8 @@ var momentMask = new IMask(element, {
             mapToRadix: numberEl.querySelector('[name=mapToRadix]').value.split(''),
             signed: numberEl.querySelector('[name=signed]').checked,
             thousandsSeparator: numberEl.querySelector('[name=thousandsSeparator]').value,
-            postFormat: {
-              padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
-              normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,
-            },
+            padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
+            normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,
             min: numberEl.querySelector('[name=min]').value ?
               Number(numberEl.querySelector('[name=min]').value) : null,
             max: numberEl.querySelector('[name=max]').value ?
