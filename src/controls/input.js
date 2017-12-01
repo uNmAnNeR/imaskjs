@@ -1,5 +1,7 @@
-import ActionDetails from '../core/action-details';
-import createMask from '../masked/factory';
+import {objectIncludes} from '../core/utils.js';
+import ActionDetails from '../core/action-details.js';
+import MaskedDate from '../masked/date.js';
+import createMask, {maskedClass} from '../masked/factory.js';
 
 
 export default
@@ -16,8 +18,8 @@ class InputMask {
     this._onInput = this._onInput.bind(this);
     this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
-    this._alignCursor = this._alignCursor.bind(this);
-    this._alignCursorFriendly = this._alignCursorFriendly.bind(this);
+    this.alignCursor = this.alignCursor.bind(this);
+    this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
 
     this.bindEvents();
 
@@ -28,14 +30,16 @@ class InputMask {
 
   get mask () { return this.masked.mask; }
   set mask (mask) {
-    const unmasked = this.masked ? this.masked.unmaskedValue : null;
-    let opts = {mask};
-    if (typeof mask === typeof this.masked.mask) {
+    if (mask == null || mask === this.masked.mask) return;
+
+    if (this.masked.constructor === maskedClass(mask)) {
       this.masked.mask = mask;
-      opts = this.masked;
+      return;
     }
-    this.masked = createMask(opts);
-    if (unmasked != null) this.masked.unmaskedValue = unmasked;
+
+    const masked = createMask({mask});
+    masked.unmaskedValue = this.masked.unmaskedValue;
+    this.masked = masked;
   }
 
   get value () {
@@ -45,7 +49,7 @@ class InputMask {
   set value (str) {
     this.masked.value = str;
     this.updateControl();
-    this._alignCursor();
+    this.alignCursor();
   }
 
   get unmaskedValue () {
@@ -55,14 +59,14 @@ class InputMask {
   set unmaskedValue (str) {
     this.masked.unmaskedValue = str;
     this.updateControl();
-    this._alignCursor();
+    this.alignCursor();
   }
 
   bindEvents () {
     this.el.addEventListener('keydown', this._saveSelection);
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
-    this.el.addEventListener('click', this._alignCursorFriendly);
+    this.el.addEventListener('click', this.alignCursorFriendly);
     this.el.addEventListener('change', this._onChange);
   }
 
@@ -70,7 +74,7 @@ class InputMask {
     this.el.removeEventListener('keydown', this._saveSelection);
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
-    this.el.removeEventListener('click', this._alignCursorFriendly);
+    this.el.removeEventListener('click', this.alignCursorFriendly);
     this.el.removeEventListener('change', this._onChange);
   }
 
@@ -128,16 +132,13 @@ class InputMask {
   }
 
   updateOptions (opts) {
-    const mask = opts.mask;
-    if (mask) this.mask = mask;
+    opts = Object.assign({}, opts);  // clone
+    if (opts.mask === Date && this.masked instanceof MaskedDate) delete opts.mask;
 
-    this.masked.withValueRefresh(() => {
-      for (const k in opts) {
-        if (k === 'mask') continue;
-        this.masked[k] = opts[k];
-      }
-    });
+    // check if changed
+    if (objectIncludes(this.masked, opts)) return;
 
+    this.masked.updateOptions(opts);
     this.updateControl();
   }
 
@@ -170,13 +171,13 @@ class InputMask {
     }
   }
 
-  _alignCursor () {
+  alignCursor () {
     this.cursorPos = this.masked.nearestInputPos(this.cursorPos);
   }
 
-  _alignCursorFriendly () {
+  alignCursorFriendly () {
     if (this.selectionStart !== this.cursorPos) return;
-    this._alignCursor();
+    this.alignCursor();
   }
 
   on (ev, handler) {
@@ -205,17 +206,14 @@ class InputMask {
       // old state
       this.value, this._selection);
 
-    const tailPos = details.startChangePos + details.removed.length;
-    const tail = this.masked.extractTail(tailPos);
+    const offset = this.masked.splice(
+      details.startChangePos,
+      details.removed.length,
+      details.inserted,
+      details.removeDirection).offset;
 
-    const lastInputPos = this.masked.nearestInputPos(details.startChangePos, details.removeDirection);
-    this.masked.clear(lastInputPos);
-    const insertedCount = this.masked.appendWithTail(details.inserted, tail);
 
-
-    const cursorPos = this.masked.nearestInputPos(
-      lastInputPos + insertedCount,
-      details.removeDirection);
+    const cursorPos = this.masked.nearestInputPos(details.startChangePos + offset);
 
     this.updateControl();
     this.updateCursor(cursorPos);
@@ -225,7 +223,7 @@ class InputMask {
     if (this.value !== this.el.value) {
       this.updateValue();
     }
-    this.masked.commit();
+    this.masked.doCommit();
     this.updateControl();
   }
 

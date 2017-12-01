@@ -1,0 +1,21 @@
+{
+  "name": "vue-imask",
+  "version": "0.0.1",
+  "description": "Vue input mask",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/vue"
+  },
+  "keywords": [
+    "vue",
+    "javascript",
+    "input",
+    "mask"
+  ],
+  "author": "Alexey Kryazhev",
+  "license": "MIT"
+}

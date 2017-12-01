@@ -1,0 +1,7 @@
+*
+!LICENSE
+!README.md
+!dist
+!dist/**/*
+!src
+!src/**/*

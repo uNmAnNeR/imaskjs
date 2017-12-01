@@ -20,14 +20,14 @@ class PatternGroup {
       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
   }
 
-  _validate (soft) {
-    return this.validate(this.value, this, soft);
+  doValidate (opts) {
+    return this.validate(this.value, this, opts);
   }
 }
 
 export
 class RangeGroup {
-  constructor ([from, to], maxlen=(to+'').length) {
+  constructor ([from, to], maxlen=String(to).length) {
     this._from = from;
     this._to = to;
     this._maxLength = maxlen;
@@ -64,11 +64,11 @@ class RangeGroup {
   }
 
   get _matchFrom () {
-    return this.maxLength - (this.from + '').length;
+    return this.maxLength - String(this.from).length;
   }
 
   _update() {
-    this._maxLength = Math.max(this._maxLength, (this.to + '').length);
+    this._maxLength = Math.max(this._maxLength, String(this.to).length);
     this.mask = '0'.repeat(this._maxLength);
   }
 

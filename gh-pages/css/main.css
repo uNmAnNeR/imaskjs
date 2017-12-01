@@ -43,13 +43,14 @@ a {
 }
 
 .toggle-panel > label {
+  text-decoration: underline;
+  cursor: pointer;
   display: inline-block;
   float: right;
 }
 
-.toggle-panel > label > a {
-  text-decoration: underline;
-  cursor: pointer;
+.toggle-panel > label:hover {
+  color: #0d0d0e;
 }
 
 .toggle-panel > input[type=checkbox] {
@@ -113,4 +114,18 @@ body {
 footer {
   text-align: center;
   margin-bottom: 30px;
+}
+
+.color-input {
+  position: relative;
+}
+
+#color-box {
+  display: block;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;
+  width: 30px;
+  background-color: #ff0;
 }

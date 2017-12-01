@@ -1,12 +1,10 @@
-import PatternMasked from '../../../src/masked/pattern';
+import MaskedPattern from '../../../src/masked/pattern';
 
 
 describe('Extract', function () {
-  const mask = new PatternMasked({
+  const mask = new MaskedPattern({
     mask: '',
-    placeholder: {
-      show: 'always'
-    }
+    placeholderLazy: false,
   });
 
   beforeEach(function () {

@@ -1,53 +1,61 @@
-import PatternMasked from '../../../src/masked/pattern';
+import MaskedPattern from '../../../src/masked/pattern';
+import {DIRECTION} from '../../../src/core/utils';
 
 
 describe('Align left', function () {
-  const mask = new PatternMasked({
+  const masked = new MaskedPattern({
     mask: '',
-    placeholder: {
-      show: 'always'
-    }
+    placeholderLazy: false,
   });
 
   beforeEach(function () {
-    mask.mask = '';
-    mask.unmaskedValue = '';
+    masked.updateOptions({mask: ''});
+    masked.unmaskedValue = '';
   });
 
   it('should align after XX', function () {
-    ['XX*', 'XX[*]'].forEach(pattern => {
-      mask.mask = pattern;
-      for (var pos=0; pos<mask._charDefs.length; ++pos) {
-        assert.equal(mask.nearestInputPos(pos), 2);
+    ['XX*', 'XX[*]'].forEach(mask => {
+      masked.updateOptions({mask});
+      for (var pos=0; pos<masked._charDefs.length; ++pos) {
+        assert.equal(masked.nearestInputPos(pos), 2);
+      }
+    });
+  });
+
+  it('should align before XX with DIRECTION.LEFT', function () {
+    ['XX*', 'XX[*]'].forEach(mask => {
+      masked.updateOptions({mask});
+      for (var pos=0; pos<masked._charDefs.length-1; ++pos) {
+        assert.equal(masked.nearestInputPos(pos, DIRECTION.LEFT), 0);
       }
     });
   });
 
   it('should align before XX', function () {
-    ['*XX', '[*]XX'].forEach(pattern => {
-      mask.mask = pattern;
-      for (var pos=0; pos<mask._charDefs.length; ++pos) {
-        assert.isAtMost(mask.nearestInputPos(pos), 1);
+    ['*XX', '[*]XX'].forEach(mask => {
+      masked.updateOptions({mask});
+      for (var pos=0; pos<masked._charDefs.length; ++pos) {
+        assert.isAtMost(masked.nearestInputPos(pos), 1);
       }
     });
   });
 
   it('should align before required', function () {
-    mask.mask = '[*]XX*';
-    assert.equal(mask.nearestInputPos(mask.value.length), 2);
+    masked.updateOptions({mask: '[*]XX*'});
+    assert.equal(masked.nearestInputPos(masked.value.length), 2);
 
-    mask.mask = '*XX*';
-    assert.equal(mask.nearestInputPos(mask.value.length), 0);
+    masked.updateOptions({mask: '*XX*'});
+    assert.equal(masked.nearestInputPos(masked.value.length), 0);
   });
 
   it('should align after filled', function () {
-    mask.mask = '**X*';
-    mask.unmaskedValue = 'a';
-    assert.equal(mask.nearestInputPos(1), 1);
-    assert.equal(mask.nearestInputPos(mask.value.length), 1);
+    masked.updateOptions({mask: '**X*'});
+    masked.unmaskedValue = 'a';
+    assert.equal(masked.nearestInputPos(1), 1);
+    assert.equal(masked.nearestInputPos(masked.value.length), 1);
 
-    mask.unmaskedValue = 'aa';
-    assert.equal(mask.nearestInputPos(mask.value.length), 3);
-    assert.equal(mask.nearestInputPos(mask.value.length-1), 3);
+    masked.unmaskedValue = 'aa';
+    assert.equal(masked.nearestInputPos(masked.value.length), 3);
+    assert.equal(masked.nearestInputPos(masked.value.length-1), 3);
   });
 });

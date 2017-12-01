@@ -1,4 +1,4 @@
-import {DIRECTION} from './utils';
+import {DIRECTION} from './utils.js';
 
 
 export default
@@ -8,6 +8,11 @@ class ActionDetails {
     this.cursorPos = cursorPos;
     this.oldValue = oldValue;
     this.oldSelection = oldSelection;
+
+    // double check if left part was changed (autofilling, other non-standard input triggers)
+    while (this.value.slice(0, this.startChangePos) !== this.oldValue.slice(0, this.startChangePos)) {
+      --this.oldSelection.start;
+    }
   }
 
   get startChangePos () {
@@ -42,8 +47,8 @@ class ActionDetails {
   }
 
   get removeDirection () {
-    return this.removedCount &&
-      ((this.oldSelection.end === this.cursorPos || this.insertedCount) ?
+    return this.removedCount && !this.insertedCount &&
+      ((this.oldSelection.end === this.cursorPos) ?
         DIRECTION.RIGHT :
         DIRECTION.LEFT);
   }

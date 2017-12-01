@@ -1,45 +1,36 @@
-import {isString} from '../core/utils';
+import {isString} from '../core/utils.js';
+import Masked from './base.js';
+import MaskedRegExp from './regexp.js';
+import MaskedFunction from './function.js';
+import MaskedNumber from './number.js';
+
+
+export
+function maskedClass (mask) {
+  if (mask == null) {
+    throw new Error('mask property should be defined');
+  }
+
+  if (mask instanceof RegExp) return MaskedRegExp;
+  if (isString(mask)) return IMask.MaskedPattern;
+  if (mask.prototype instanceof Masked) return mask;
+  if (Array.isArray(mask) || mask === Array) return IMask.MaskedDynamic;
+  if (mask instanceof Number || typeof mask === 'number' || mask === Number) return MaskedNumber;
+  if (mask instanceof Date || mask === Date) return IMask.MaskedDate;
+  if (mask instanceof Function) return MaskedFunction;
+
+  console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
+  return Masked;
+}
 
 
 export default
 function createMask (opts) {
-  const _opts = opts;
-  // clone
-  opts = Object.create(opts);
-  Object.assign(opts, _opts);
+  opts = Object.assign({}, opts);  // clone
   const mask = opts.mask;
 
-  if (mask instanceof IMask.Masked) {
-    return mask;
-  }
-  if (mask instanceof RegExp) {
-    opts.validate = (value) => mask.test(value);
-    return new IMask.Masked(opts);
-  }
-  if (isString(mask)) {
-    return new IMask.MaskedPattern(opts);
-  }
-  if (mask.prototype instanceof IMask.Masked) {
-    delete opts.mask;
-    return new mask(opts);
-  }
-  if (mask instanceof Number || typeof mask === 'number' || mask === Number) {
-    delete opts.mask;
-    return new IMask.MaskedNumber(opts);
-  }
-  if (mask instanceof Date || mask === Date) {
-    delete opts.mask;
-    if (opts.pattern) {
-      opts.mask = opts.pattern;
-      delete opts.pattern;
-    }
-    return new IMask.MaskedDate(opts);
-  }
-  if (mask instanceof Function){
-    opts.validate = mask;
-    return new IMask.Masked(opts);
-  }
+  if (mask instanceof Masked) return mask;
 
-  console.warn('Mask not found for', opts);  // eslint-disable-line no-console
-  return new IMask.Masked(opts);
+  const MaskedClass = maskedClass(mask);
+  return new MaskedClass(opts);
 }

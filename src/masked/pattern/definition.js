@@ -1,4 +1,4 @@
-import createMask from '../factory';
+import createMask from '../factory.js';
 
 
 export default
@@ -13,6 +13,7 @@ class PatternDefinition {
 
   reset () {
     this.isHollow = false;
+    this.isRawInput = false;
     if (this._masked) this._masked.reset();
   }
 
@@ -26,9 +27,7 @@ class PatternDefinition {
 
   resolve (ch) {
     if (!this._masked) return false;
-    // TODO seems strange
-    this._masked.value = ch;
-    return this._masked.value;
+    return this._masked.resolve(ch);
   }
 }
 

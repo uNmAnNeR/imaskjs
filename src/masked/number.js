@@ -1,57 +1,54 @@
-import {escapeRegExp, refreshValueOnSet, DIRECTION, indexInDirection} from '../core/utils';
-import Masked from './base';
+import {escapeRegExp, DIRECTION, indexInDirection} from '../core/utils.js';
+import Masked from './base.js';
 
 
 export default
 class MaskedNumber extends Masked {
-  constructor (opts={}) {
-    opts = Object.assign({}, MaskedNumber.DEFAULTS, opts);
-    super(opts);
-    delete this.isInitialized;
-
-    const {scale, radix, mapToRadix, min, max, signed, thousandsSeparator, postFormat} = opts;
-
-    this.min = min;
-    this.max = max;
-    this.scale = scale;
-    this.radix = radix;
-    this.mapToRadix = mapToRadix;
-    this.signed = signed;
-    this.thousandsSeparator = thousandsSeparator;
-    this.postFormat = postFormat;
-
-    this._updateNumberRegExp();
-
-    this.isInitialized = true;
+  constructor (opts) {
+    super({
+      ...MaskedNumber.DEFAULTS,
+      ...opts
+    });
   }
 
-  _updateNumberRegExp () {
-    // TODO refactor?
-    let regExpStrSoft = '^';
-    let regExpStr = '^';
+  _update (opts) {
+    if (opts.postFormat) {
+      console.warn("'postFormat' option is deprecated and will be removed in next release, use plain options instead.");
+      Object.assign(opts, opts.postFormat);
+      delete opts.postFormat;
+    }
+    super._update(opts);
+    this._updateRegExps();
+  }
 
-    if (this.signed) {
-      regExpStrSoft += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
-      regExpStr += '[+|\\-]?';
+  _updateRegExps () {
+    // use different regexp to process user input (more strict, input suffix) and tail shifting
+    const start = '^'
+
+    let midInput = '';
+    let mid = '';
+    if (this.allowNegative) {
+      midInput += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
+      mid += '[+|\\-]?';
     } else {
-      regExpStrSoft += '(0|([1-9]+\\d*))';
+      midInput += '(0|([1-9]+\\d*))';
     }
-    regExpStr += '\\d*';
+    mid += '\\d*';
 
-    if (this.scale) {
-      regExpStrSoft += '(' + this.radix + '\\d{0,' + this.scale + '})?';
-      regExpStr += '(' + this.radix + '\\d{0,' + this.scale + '})?';
-    }
+    let end = (this.scale ?
+      '(' + this.radix + '\\d{0,' + this.scale + '})?' :
+      '') + '$';
 
-    regExpStrSoft += '$';
-    regExpStr += '$';
-
-    this._numberRegExpSoft = new RegExp(regExpStrSoft);
-    this._numberRegExp = new RegExp(regExpStr)
+    this._numberRegExpInput = new RegExp(start + midInput + end);
+    this._numberRegExp = new RegExp(start + mid + end);
+    this._mapToRadixRegExp = new RegExp('[' +
+      this.mapToRadix.map(escapeRegExp).join('') +
+    ']', 'g');
+    this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   }
 
-  extractTail (fromPos=0, toPos=this.value.length) {
-    return this._removeThousandsSeparators(super.extractTail(fromPos, toPos));
+  _extractTail (fromPos=0, toPos=this.value.length) {
+    return this._removeThousandsSeparators(super._extractTail(fromPos, toPos));
   }
 
   _removeThousandsSeparators (value) {
@@ -65,38 +62,40 @@ class MaskedNumber extends Masked {
     return parts.join(this.radix);
   }
 
-  _append (str, soft) {
-    return super._append(
-      this._removeThousandsSeparators(
-        str.replace(this._mapToRadixRegExp, this.radix)),
-      soft);
+  doPrepare (str, ...args) {
+    return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
-  appendWithTail (str, tail) {
-    const oldValueLength = this.value.length;
+  appendWithTail (...args) {
+    let wasStartChangePos = this.value.length;
     this._value = this._removeThousandsSeparators(this.value);
-    let removedSeparatorsCount = oldValueLength - this.value.length;
+    let startChangePos = this.value.length;
 
-
-    const appended = super.appendWithTail(str, tail);
-
-
+    const appendDetails = super.appendWithTail(...args);
     this._value = this._insertThousandsSeparators(this.value);
 
-    let beforeTailPos = oldValueLength + appended - removedSeparatorsCount;
-    this._value = this._insertThousandsSeparators(this.value);
-    let insertedSeparatorsBeforeTailCount = 0;
+    // calculate offsets after insert separators
+    let beforeTailPos = startChangePos + appendDetails.inserted.length;
     for (let pos = 0; pos <= beforeTailPos; ++pos) {
       if (this.value[pos] === this.thousandsSeparator) {
-        ++insertedSeparatorsBeforeTailCount;
-        ++beforeTailPos;
+        if (pos < startChangePos ||
+          // check high bound
+          (pos === startChangePos && pos < wasStartChangePos)) {
+          ++startChangePos;
+        }
+        if (pos < beforeTailPos) ++beforeTailPos;
       }
     }
 
-    return appended - removedSeparatorsCount + insertedSeparatorsBeforeTailCount;
+    // adjust details with separators
+    appendDetails.rawInserted = appendDetails.inserted;
+    appendDetails.inserted = this.value.slice(startChangePos, beforeTailPos);
+    appendDetails.shift += startChangePos - wasStartChangePos;
+
+    return appendDetails;
   }
 
-  nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
+  nearestInputPos (cursorPos, direction) {
     if (!direction) return cursorPos;
 
     const nextPos = indexInDirection(cursorPos, direction);
@@ -104,8 +103,8 @@ class MaskedNumber extends Masked {
     return cursorPos;
   }
 
-  _validate (soft) {
-    const regexp = soft ? this._numberRegExpSoft : this._numberRegExp;
+  doValidate (flags) {
+    const regexp = flags.input ? this._numberRegExpInput : this._numberRegExp;
 
     // validate as string
     let valid = regexp.test(this._removeThousandsSeparators(this.value));
@@ -120,10 +119,10 @@ class MaskedNumber extends Masked {
         (this.max == null || this.max <= 0 || this.number <= this.max);
     }
 
-    return valid && super._validate(soft);
+    return valid && super.doValidate(flags);
   }
 
-  commit () {
+  doCommit () {
     const number = this.number;
     let validnum = number;
 
@@ -131,21 +130,15 @@ class MaskedNumber extends Masked {
     if (this.min != null) validnum = Math.max(validnum, this.min);
     if (this.max != null) validnum = Math.min(validnum, this.max);
 
-    if (validnum !== number) {
-      this.unmaskedValue = '' + validnum;
-    }
+    if (validnum !== number) this.unmaskedValue = String(validnum);
 
     let formatted = this.value;
 
-    if (this.postFormat.normalizeZeros) {
-      formatted = this._normalizeZeros(formatted);
-    }
-
-    if (this.postFormat.padFractionalZeros) {
-      formatted = this._padFractionalZeros(formatted);
-    }
+    if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
+    if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
     this._value = formatted;
+    super.doCommit();
   }
 
   _normalizeZeros (value) {
@@ -182,87 +175,13 @@ class MaskedNumber extends Masked {
   }
 
   set number (number) {
-    this.unmaskedValue = '' + number;
+    this.unmaskedValue = String(number).replace('.', this.radix);
   }
 
-  get min () {
-    return this._min;
-  }
-
-  @refreshValueOnSet
-  set min (min) {
-    this._min = min;
-  }
-
-  get max () {
-    return this._max;
-  }
-
-  @refreshValueOnSet
-  set max (max) {
-    this._max = max;
-  }
-
-  get scale () {
-    return this._scale;
-  }
-
-  @refreshValueOnSet
-  set scale (scale) {
-    this._scale = scale;
-  }
-
-  get radix () {
-    return this._radix;
-  }
-
-  @refreshValueOnSet
-  set radix (radix) {
-    this._radix = radix;
-    this._updateNumberRegExp();
-  }
-
-  get signed () {
-    return this._signed || (this.min != null && this.min < 0) || (this.max != null && this.max < 0);
-  }
-
-  @refreshValueOnSet
-  set signed (signed) {
-    this._signed = signed;
-  }
-
-  get postFormat () {
-    return this._postFormat;
-  }
-
-  @refreshValueOnSet
-  set postFormat (postFormat) {
-    this._postFormat = {
-      ...MaskedNumber.DEFAULTS.postFormat,
-      ...postFormat
-    };
-  }
-
-  get mapToRadix () {
-    return this._mapToRadix;
-  }
-
-  @refreshValueOnSet
-  set mapToRadix (mapToRadix) {
-    this._mapToRadix = mapToRadix;
-    this._mapToRadixRegExp = new RegExp('[' +
-      mapToRadix.map(escapeRegExp).join('') +
-    ']', 'g');
-  }
-
-  get thousandsSeparator () {
-    return this._thousandsSeparator;
-  }
-
-  @refreshValueOnSet
-  set thousandsSeparator (thousandsSeparator) {
-    this._thousandsSeparator = thousandsSeparator;
-    this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(thousandsSeparator), 'g');
+  get allowNegative () {
+    return this.signed ||
+      (this.min != null && this.min < 0) ||
+      (this.max != null && this.max < 0);
   }
 }
 MaskedNumber.DEFAULTS = {
@@ -270,7 +189,7 @@ MaskedNumber.DEFAULTS = {
   thousandsSeparator: '',
   mapToRadix: ['.'],
   scale: 2,
-  postFormat: {
-    normalizeZeros: true,
-  }
+  signed: false,
+  normalizeZeros: true,
+  padFractionalZeros: false,
 };
