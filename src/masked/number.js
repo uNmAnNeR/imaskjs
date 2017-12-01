@@ -67,7 +67,7 @@ class MaskedNumber extends Masked {
   }
 
   appendWithTail (...args) {
-    const oldValueLength = this.value.length;
+    let wasStartChangePos = this.value.length;
     this._value = this._removeThousandsSeparators(this.value);
     let startChangePos = this.value.length;
 
@@ -78,20 +78,24 @@ class MaskedNumber extends Masked {
     let beforeTailPos = startChangePos + appendDetails.inserted.length;
     for (let pos = 0; pos <= beforeTailPos; ++pos) {
       if (this.value[pos] === this.thousandsSeparator) {
-        if (pos <= startChangePos) ++startChangePos;
-        ++beforeTailPos;
+        if (pos < startChangePos ||
+          // check high bound
+          (pos === startChangePos && pos < wasStartChangePos)) {
+          ++startChangePos;
+        }
+        if (pos < beforeTailPos) ++beforeTailPos;
       }
     }
 
     // adjust details with separators
     appendDetails.rawInserted = appendDetails.inserted;
     appendDetails.inserted = this.value.slice(startChangePos, beforeTailPos);
-    appendDetails.shift += startChangePos - oldValueLength;
+    appendDetails.shift += startChangePos - wasStartChangePos;
 
     return appendDetails;
   }
 
-  nearestInputPos (cursorPos, direction=DIRECTION.LEFT) {
+  nearestInputPos (cursorPos, direction) {
     if (!direction) return cursorPos;
 
     const nextPos = indexInDirection(cursorPos, direction);
