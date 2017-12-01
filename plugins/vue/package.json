@@ -4,7 +4,9 @@
   "description": "Vue input mask",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -17,5 +19,23 @@
     "mask"
   ],
   "author": "Alexey Kryazhev",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "imask": "latest",
+    "vue": "^2.5.9"
+  },
+  "peerDependencies": {
+    "vue": ">=2.5.9"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.2",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "rollup": "^0.52.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-eslint": "^4.0.0"
+  }
 }
