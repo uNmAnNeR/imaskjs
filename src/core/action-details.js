@@ -48,7 +48,8 @@ class ActionDetails {
 
   get removeDirection () {
     return this.removedCount && !this.insertedCount &&
-      ((this.oldSelection.end === this.cursorPos) ?
+      // align right if delete at right or if range removed (event with backspace)
+      ((this.oldSelection.end === this.cursorPos || this.oldSelection.start === this.cursorPos) ?
         DIRECTION.RIGHT :
         DIRECTION.LEFT);
   }

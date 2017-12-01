@@ -353,11 +353,11 @@ class MaskedPattern extends Masked {
       }
     }
 
-    // if has aligned left not inside fixed and has come to the start - use start position
+    // if has aligned left not inside fixed and has came to the start - use start position
     if (direction === DIRECTION.LEFT && di === 0 &&
       (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
 
-    if (direction === DIRECTION.NONE || firstInputIndex == null) {
+    if (direction !== DIRECTION.RIGHT || firstInputIndex == null) {
       // search backward
       dir = -dir;
       let overflow = false;

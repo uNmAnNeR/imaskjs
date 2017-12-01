@@ -1,4 +1,4 @@
-import {objectIncludes} from '../core/utils.js';
+import {objectIncludes, DIRECTION} from '../core/utils.js';
 import ActionDetails from '../core/action-details.js';
 import MaskedDate from '../masked/date.js';
 import createMask, {maskedClass} from '../masked/factory.js';
@@ -172,7 +172,7 @@ class InputMask {
   }
 
   alignCursor () {
-    this.cursorPos = this.masked.nearestInputPos(this.cursorPos);
+    this.cursorPos = this.masked.nearestInputPos(this.cursorPos, DIRECTION.LEFT);
   }
 
   alignCursorFriendly () {
