@@ -25,7 +25,7 @@ function IMaskMixin(ComposedComponent) {
     render () {
       return React.createElement(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
-        defaultValue: this.props.value,
+        defaultValue: this.props.unmaskedValue || this.props.value,
         inputRef: (el) => this.element = el,
       });
     }
@@ -81,12 +81,14 @@ function IMaskMixin(ComposedComponent) {
       }
     }
 
-    _onAccept (...args) {
-      if (this.props.onAccept) this.props.onAccept(...args);
+    _onAccept (value, ...args) {
+      if ('unmaskedValue' in this.props) value = this.maskRef.unmaskedValue;
+      if (this.props.onAccept) this.props.onAccept(value, ...args);
     }
 
-    _onComplete (...args) {
-      if (this.props.onComplete) this.props.onComplete(...args);
+    _onComplete (value, ...args) {
+      if ('unmaskedValue' in this.props) value = this.maskRef.unmaskedValue;
+      if (this.props.onComplete) this.props.onComplete(value, ...args);
     }
   };
 

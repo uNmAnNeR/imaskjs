@@ -1,17 +1,24 @@
 # React IMask Plugin
 react-imask
 
+[![npm version](https://badge.fury.io/js/react-imask.svg)](https://badge.fury.io/js/react-imask)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Install
 `npm install react-imask`
 
-## Simple usage example
+## Mask input example
 ```javascript
 import {IMaskInput} from 'react-imask';
 
 <IMaskInput
   mask=Number,
   radix=".",
-  onAccept={(value, mask) => console.log(value)},
+  value="123",  // possible to use `unmaskedValue`, but not both
+  onAccept={
+    // first argument is `value` or `unmaskedValue` depending on prop above
+    (value, mask) => console.log(value)
+  },
   // ...and more mask props in a guide
 
   // input props also available
@@ -19,7 +26,7 @@ import {IMaskInput} from 'react-imask';
 />
 ```
 
-## Use with existing components
+## Extend existing components
 ```javascript
 import {IMaskMixin} from 'react-imask';
 
@@ -31,7 +38,7 @@ const StyledInput = styled.input`
 const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
   <StyledInput
     ...props,
-    innerRef={inputRef}  // binds internal input
+    innerRef={inputRef}  // bind internal input
   />
 ));
 
@@ -44,3 +51,9 @@ const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
   // ...other styled props
 />
 ```
+More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
+
+## Many thanks to
+[@Yordis Prieto](https://github.com/yordis)
+
+[@Alexander Kiselev](https://github.com/MaaKut)
