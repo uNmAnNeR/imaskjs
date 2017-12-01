@@ -30,8 +30,10 @@
       </header>
       <main>
         <h2 id="getting-started" class="section-h"><a href="#getting-started">Getting Started</a></h2>
-        <p>Install from <a href="https://www.npmjs.com/package/imask">npm</a> <code>npm install imask</code>. Include <code>imask.js</code> or <code>imask.min.js</code> from <code>dist</code> folder:</p>
-        <pre><code>&lt;script src=&quot;dist/imask.js&quot;&gt;&lt;/script&gt;</code></pre>
+        <p>Install from <a href="https://www.npmjs.com/package/imask">npm</a>:</p>
+        <pre><code>npm install imask</code></pre>
+        <p>And import or require:</p>
+        <pre><code>import IMask from 'imask';</code></pre>
         <p>or use CDN:</p>
         <pre><code>&lt;script src=&quot;https://unpkg.com/imask&quot;&gt;&lt;/script&gt;</code></pre>
         <p>For modern browsers <em>es201X</em> builds available (<code>imask.es.js</code> and <code>imask.es.min.js</code>).</p>
@@ -58,7 +60,7 @@ var mask = new IMask(element, maskOptions);</code></pre>
         <p>Since v1.0.0 IMask consists of two independent layers: model and view.<br>
         Model layer contains all masking facilities which can be used independently without UI.</p>
         <p id="support-older">View layer is a glue between UI element and model, it connects listeners and controls changes in both directions.</p>
-        <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. In order to support older browsers manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
+        <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. <ins>In order to support older browsers</ins> manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
         <p>Currently, view layer contains only one component <code>InputMask</code> which supports HTML input-like API. Instance of <code>InputMask</code> is returned when IMask constructor is called.</p>
         <p>To create new mask on element use:</p>
         <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
