@@ -1,4 +1,4 @@
-import {escapeRegExp, DIRECTION, indexInDirection} from '../core/utils.js';
+import {escapeRegExp, indexInDirection} from '../core/utils.js';
 import Masked from './base.js';
 
 
