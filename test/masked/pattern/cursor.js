@@ -34,7 +34,7 @@ describe('Align left', function () {
   it('should align before XX', function () {
     ['*XX', '[*]XX'].forEach(mask => {
       masked.updateOptions({mask});
-      for (var pos=0; pos<masked._charDefs.length; ++pos) {
+      for (var pos=0; pos<masked._charDefs.length-1; ++pos) {
         assert.isAtMost(masked.nearestInputPos(pos), 1);
       }
     });
@@ -42,20 +42,20 @@ describe('Align left', function () {
 
   it('should align before required', function () {
     masked.updateOptions({mask: '[*]XX*'});
-    assert.equal(masked.nearestInputPos(masked.value.length), 2);
+    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 2);
 
     masked.updateOptions({mask: '*XX*'});
-    assert.equal(masked.nearestInputPos(masked.value.length), 0);
+    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 0);
   });
 
   it('should align after filled', function () {
     masked.updateOptions({mask: '**X*'});
     masked.unmaskedValue = 'a';
-    assert.equal(masked.nearestInputPos(1), 1);
-    assert.equal(masked.nearestInputPos(masked.value.length), 1);
+    assert.equal(masked.nearestInputPos(1, DIRECTION.LEFT), 1);
+    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 1);
 
     masked.unmaskedValue = 'aa';
-    assert.equal(masked.nearestInputPos(masked.value.length), 3);
-    assert.equal(masked.nearestInputPos(masked.value.length-1), 3);
+    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 3);
+    assert.equal(masked.nearestInputPos(masked.value.length-1, DIRECTION.LEFT), 3);
   });
 });
