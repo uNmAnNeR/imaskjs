@@ -154,6 +154,7 @@ class InputMask {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
     this._cursorChanging = setTimeout(() => {
+      if (!this.el) return; // if was destroyed
       this.cursorPos = this._changingCursorPos;
       this._abortUpdateCursor();
     }, 10);
@@ -235,5 +236,6 @@ class InputMask {
   destroy () {
     this.unbindEvents();
     this._listeners.length = 0;
+    delete this.el;
   }
 }
