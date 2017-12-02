@@ -132,8 +132,8 @@ class Masked {
         break;
       }
 
-      consistentValue = this.clone();
       Object.assign(this, consistentAppended);
+      consistentValue = this.clone();
       aggregateDetails.aggregate(appendDetails);
     }
 

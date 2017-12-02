@@ -327,7 +327,7 @@ class MaskedPattern extends Masked {
   }
 
   nearestInputPos (cursorPos, direction=DIRECTION.NONE) {
-    let dir = direction || DIRECTION.LEFT;
+    let step = direction || DIRECTION.LEFT;
 
     const initialDefIndex = this.mapPosToDefIndex(cursorPos);
     const initialDef = this._charDefs[initialDefIndex];
@@ -338,35 +338,46 @@ class MaskedPattern extends Masked {
         firstVisibleHollowIndex,
         nextdi;
 
-    // search forward
-    for (
-      nextdi = indexInDirection(di, dir);
-      0 <= nextdi && nextdi < this._charDefs.length;
-      di += dir, nextdi += dir
-    ) {
-      const nextDef = this._charDefs[nextdi];
-      if (firstInputIndex == null && nextDef.isInput) firstInputIndex = di;
-      if (firstVisibleHollowIndex == null && nextDef.isHollow && !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
-      if (nextDef.isInput && !nextDef.isHollow) {
-        firstFilledInputIndex = di;
-        break;
+    // check if chars at right is acceptable for LEFT and NONE directions
+    if (direction !== DIRECTION.RIGHT && 
+      (initialDef && initialDef.isInput ||
+        // in none direction latest position is acceptable also
+        direction === DIRECTION.NONE && cursorPos === this.value.length)) {
+      firstInputIndex = initialDefIndex;
+      if (initialDef && !initialDef.isHollow) firstFilledInputIndex = initialDefIndex;
+    }
+
+    if ((firstFilledInputIndex == null && direction == DIRECTION.LEFT) || firstInputIndex == null) {
+      // search forward
+      for (
+        nextdi = indexInDirection(di, step);
+        0 <= nextdi && nextdi < this._charDefs.length;
+        di += step, nextdi += step
+      ) {
+        const nextDef = this._charDefs[nextdi];
+        if (firstInputIndex == null && nextDef.isInput) firstInputIndex = di;
+        if (firstVisibleHollowIndex == null && nextDef.isHollow && !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
+        if (nextDef.isInput && !nextDef.isHollow) {
+          firstFilledInputIndex = di;
+          break;
+        }
       }
     }
 
-    // if has aligned left not inside fixed and has came to the start - use start position
+    // if has aligned left inside fixed and has came to the start - use start position
     if (direction === DIRECTION.LEFT && di === 0 &&
       (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
 
     if (direction !== DIRECTION.RIGHT || firstInputIndex == null) {
       // search backward
-      dir = -dir;
+      step = -step;
       let overflow = false;
 
       // find hollows only before initial pos
       for (
-        nextdi = indexInDirection(di, dir);
+        nextdi = indexInDirection(di, step);
         0 <= nextdi && nextdi < this._charDefs.length;
-        di += dir, nextdi += dir
+        di += step, nextdi += step
       ) {
         const nextDef = this._charDefs[nextdi];
         if (nextDef.isInput) {
