@@ -1,8 +1,4 @@
-import {isString} from '../core/utils.js';
-import Masked from './base.js';
-import MaskedRegExp from './regexp.js';
-import MaskedFunction from './function.js';
-import MaskedNumber from './number.js';
+import {g, isString} from '../core/utils.js';
 
 
 export
@@ -11,16 +7,16 @@ function maskedClass (mask) {
     throw new Error('mask property should be defined');
   }
 
-  if (mask instanceof RegExp) return MaskedRegExp;
-  if (isString(mask)) return IMask.MaskedPattern;
-  if (mask.prototype instanceof Masked) return mask;
-  if (Array.isArray(mask) || mask === Array) return IMask.MaskedDynamic;
-  if (mask instanceof Number || typeof mask === 'number' || mask === Number) return MaskedNumber;
-  if (mask instanceof Date || mask === Date) return IMask.MaskedDate;
-  if (mask instanceof Function) return MaskedFunction;
+  if (mask instanceof RegExp) return g.IMask.MaskedRegExp;
+  if (isString(mask)) return g.IMask.MaskedPattern;
+  if (mask.prototype instanceof g.IMask.Masked) return mask;
+  if (Array.isArray(mask) || mask === Array) return g.IMask.MaskedDynamic;
+  if (mask instanceof Number || typeof mask === 'number' || mask === Number) return g.IMask.MaskedNumber;
+  if (mask instanceof Date || mask === Date) return g.IMask.MaskedDate;
+  if (mask instanceof Function) return g.IMask.MaskedFunction;
 
   console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
-  return Masked;
+  return g.IMask.Masked;
 }
 
 
@@ -29,7 +25,7 @@ function createMask (opts) {
   opts = Object.assign({}, opts);  // clone
   const mask = opts.mask;
 
-  if (mask instanceof Masked) return mask;
+  if (mask instanceof g.IMask.Masked) return mask;
 
   const MaskedClass = maskedClass(mask);
   return new MaskedClass(opts);
