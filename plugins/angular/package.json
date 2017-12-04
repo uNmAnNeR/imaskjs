@@ -1,10 +1,12 @@
 {
   "name": "angular-imask",
   "version": "0.0.1",
-  "description": "Angular input mask",
-  "main": "index.js",
+  "description": "Angular IMask Plugin",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "build": "rimraf dist && ngc && mv dist/src/* dist/",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -12,10 +14,31 @@
   },
   "keywords": [
     "angular",
+    "imask",
     "javascript",
     "input",
     "mask"
   ],
   "author": "Alexey Kryazhev",
-  "license": "MIT"
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/core": ">=2.0.0",
+    "@angular/forms": ">=2.0.0"
+  },
+  "devDependencies": {
+    "@angular/common": "^5.0.5",
+    "@angular/compiler": "^5.0.5",
+    "@angular/compiler-cli": "^5.0.5",
+    "@angular/core": "^5.0.5",
+    "@angular/forms": "^5.0.5",
+    "rimraf": "^2.6.2",
+    "rxjs": "^5.5.3",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "imask": "latest"
+  },
+  "files": [
+    "dist"
+  ]
 }

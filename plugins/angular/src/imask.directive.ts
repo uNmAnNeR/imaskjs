@@ -1,8 +1,8 @@
 import {
-  Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2, 
+  Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
   HostListener, EventEmitter, OnDestroy, OnChanges, AfterViewInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import IMask from 'imask';
+import * as IMask from 'imask';
 
 
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
@@ -79,11 +79,11 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   _onAccept () {
     this._onChange(this.maskValue);
     this._onTouched();
-    this.accept.emit(this.maskValue, this.maskRef);
+    this.accept.emit(this.maskValue);
   }
 
   _onComplete () {
-    this.complete.emit(this.maskValue, this.maskRef);
+    this.complete.emit(this.maskValue);
   }
 
   private initMask () {
