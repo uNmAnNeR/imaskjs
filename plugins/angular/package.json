@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "npm run test",
-    "build": "rimraf dist && ngc && mv dist/src/* dist/",
+    "build": "rimraf dist && ngc",
     "prepublishOnly": "npm run build"
   },
   "repository": {

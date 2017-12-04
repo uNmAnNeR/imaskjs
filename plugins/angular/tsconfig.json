@@ -13,5 +13,8 @@
   },
   "files": [
     "./src/index.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "skipTemplateCodegen": true
+  }
 }
