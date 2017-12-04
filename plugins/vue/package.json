@@ -21,15 +21,15 @@
   "author": "Alexey Kryazhev",
   "license": "MIT",
   "dependencies": {
-    "imask": "latest",
-    "vue": "^2.5.9"
+    "imask": "^2.1.1",
+    "vue-types": "^1.0.2"
   },
   "peerDependencies": {
     "vue": ">=2.5.9"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.2",
+    "babel-eslint": "^8.0.3",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",

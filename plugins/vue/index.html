@@ -2,10 +2,23 @@
 <head></head>
 
 <body>
-  <h1>Vue IMask Plugin Demo</h1>
+  <!--<h1>Vue IMask Plugin Demo</h1>-->
   <main id="app"></main>
   <script src="https://unpkg.com/vue@2.5.9/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-types"></script>
   <script src="https://unpkg.com/imask"></script>
   <script src="dist/vue-imask.js"></script>
+ 	<script>
+    new Vue({
+			el: '#app',
+			template: `<MaskedInput :options="this.options" value="123" placeholder="123321" class="input"></MaskedInput>`,
+			components: {MaskedInput},
+			data: function() {
+				return{
+					options: {mask: /^\d+$/}
+				}
+			}
+		});
+  </script>
 </body>
 </html>

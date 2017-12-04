@@ -4,7 +4,7 @@ import eslint from 'rollup-plugin-eslint';
 
 export default {
   input: 'src/index.js',
-  name: 'maskedInput',
+  name: 'MaskedInput',
   output: [{
     file: 'dist/vue-imask.js',
     format: 'umd'
@@ -17,9 +17,11 @@ export default {
   external: [
     'vue',
     'imask',
+    'vue-types'
   ],
   globals: {
     vue: 'Vue',
-    imask: 'IMask'
+    imask: 'IMask',
+    'vue-types': 'VueTypes'
   }
 }
