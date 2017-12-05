@@ -11,11 +11,21 @@
  	<script>
     new Vue({
 			el: '#app',
-			template: `<MaskedInput :options="this.options" value="123" placeholder="123321" class="input"></MaskedInput>`,
+			template: `<MaskedInput :mask="this.mask" thousandsSeparator="^" :value="this.value" placeholder="123321" class="input" @accept="handler" @click.native="handler2"></MaskedInput>`,
 			components: {MaskedInput},
 			data: function() {
 				return{
-					options: {mask: /^\d+$/}
+					mask: '({999})000-00-00',
+					value: '123'
+				}
+			},
+			methods: {
+				handler: function(e) {
+					console.log(e);
+				},
+				handler2: function() {
+					this.mask = '+7({000})000-00-00';
+					this.value = '666';
 				}
 			}
 		});

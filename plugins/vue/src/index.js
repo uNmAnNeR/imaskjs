@@ -1,7 +1,9 @@
 import VueTypes from 'vue-types';
 import IMask from 'imask';
 
-const optionsTypes = VueTypes.shape({
+VueTypes.sensibleDefaults = false;
+
+const optionsTypes = {
   // common
   mask: VueTypes.oneOfType([
     VueTypes.array,
@@ -43,37 +45,82 @@ const optionsTypes = VueTypes.shape({
 
   // dynamic
   dispatch: VueTypes.func
-});
+};
 
 const component = {
-  render(fn) {
-    return fn('input', {
-      ref: 'input',
-      domProps: {
-        value: this.value
-      }
+  name: 'MaskedInput',
+  render(createElement) {
+    return createElement('input', {
+      domProps: this._extractNonMaskProps(this.$props)
     })
   },
-  name: 'MaskedInput',
-  props: {
-    options: optionsTypes
-  },
+  props: optionsTypes,
   mounted() {
-    this._mask = new IMask(this.$refs.input, this.options);
-    this._mask.on('accept', () => {this.$emit('accept', this._mask)});
-    this._mask.on('complete', () => {this.$emit('complete', this._mask)});
+    const {options, values} = this._extractFromProps(this.$props);
+
+    this._mask = new IMask(this.$el, options)
+      .on('accept', () => {this.$emit('accept', this._mask)})
+      .on('complete', () => {this.$emit('complete', this._mask)});
+
+    this._updateValues(values);
   },
   destroyed() {
     this._mask.destroy();
   },
   computed: {
     _options() {
-      return this.$props.options;
+      return this._extractFromProps(this.$props);
     }
   },
   watch: {
-    _options(val) {
-      this._mask.updateOptions(val);
+    _options(props) {
+      const {options, values} = props;
+      this._mask.updateOptions(options);
+      this._updateValues(values);
+    }
+  },
+  methods: {
+    _extractMaskProps (props) {
+      props = {...props};
+
+      // keep only non mask props
+      Object.keys(props)
+        .filter(prop => !optionsTypes.hasOwnProperty(prop) || props[prop] === undefined)
+        .forEach(nonMaskProp => {
+          delete props[nonMaskProp];
+        });
+
+      return props;
+    },
+
+    _extractNonMaskProps (props) {
+      props = {...props};
+
+      Object.keys(optionsTypes).forEach(maskProp => {
+        delete props[maskProp];
+      });
+
+      return props;
+    },
+
+    _extractFromProps (props) {
+      props = {...props};
+
+      const value = props.value;
+      const unmaskedValue = props.unmaskedValue;
+
+      const maskProps = this._extractMaskProps(props);
+
+      delete maskProps.value;
+      delete maskProps.unmaskedValue;
+
+      return {options: maskProps, values: {value, unmaskedValue}};
+    },
+
+    _updateValues (values) {
+      for (const prop in values) {
+        if (values[prop] != null) this._mask[prop] = values[prop];
+      }
     }
   }
 }
