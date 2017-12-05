@@ -49,11 +49,7 @@ const optionsTypes = {
 
 const component = {
   name: 'MaskedInput',
-  render(createElement) {
-    return createElement('input', {
-      domProps: this._extractNonMaskProps(this.$props)
-    })
-  },
+  template: '<input type="text">',
   props: optionsTypes,
   mounted() {
     const {options, values} = this._extractFromProps(this.$props);
@@ -80,41 +76,23 @@ const component = {
     }
   },
   methods: {
-    _extractMaskProps (props) {
-      props = {...props};
-
-      // keep only non mask props
-      Object.keys(props)
-        .filter(prop => !optionsTypes.hasOwnProperty(prop) || props[prop] === undefined)
-        .forEach(nonMaskProp => {
-          delete props[nonMaskProp];
-        });
-
-      return props;
-    },
-
-    _extractNonMaskProps (props) {
-      props = {...props};
-
-      Object.keys(optionsTypes).forEach(maskProp => {
-        delete props[maskProp];
-      });
-
-      return props;
-    },
-
     _extractFromProps (props) {
       props = {...props};
 
       const value = props.value;
       const unmaskedValue = props.unmaskedValue;
 
-      const maskProps = this._extractMaskProps(props);
+      // keep only defined props
+      Object.keys(props)
+        .filter(prop => props[prop] === undefined)
+        .forEach(undefinedProp => {
+          delete props[undefinedProp];
+        });
 
-      delete maskProps.value;
-      delete maskProps.unmaskedValue;
+      delete props.value;
+      delete props.unmaskedValue;
 
-      return {options: maskProps, values: {value, unmaskedValue}};
+      return {options: props, values: {value, unmaskedValue}};
     },
 
     _updateValues (values) {

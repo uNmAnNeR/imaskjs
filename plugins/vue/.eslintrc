@@ -20,5 +20,8 @@
 
   "globals": {
     "IMask": false
+  },
+  "rules": {
+    "no-console": 0
   }
 }
