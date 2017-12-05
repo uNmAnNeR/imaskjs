@@ -1,2 +1,2 @@
-export {IMaskDirective} from './imask.directive';
-export {IMaskModule} from './imask.module';
+export * from './imask.directive';
+export * from './imask.module';
