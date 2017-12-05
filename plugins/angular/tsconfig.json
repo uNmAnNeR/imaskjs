@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "umd",
+    "module": "commonjs",
     "sourceMap": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
@@ -15,6 +15,7 @@
     "./src/index.ts"
   ],
   "angularCompilerOptions": {
-    "skipTemplateCodegen": true
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit" : true
   }
 }
