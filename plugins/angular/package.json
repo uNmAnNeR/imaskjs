@@ -22,8 +22,9 @@
   "author": "Alexey Kryazhev",
   "license": "MIT",
   "peerDependencies": {
-    "@angular/core": ">=2.0.0",
-    "@angular/forms": ">=2.0.0"
+    "@angular/common": ">=4.0.0",
+    "@angular/core": ">=4.0.0",
+    "@angular/forms": ">=4.0.0"
   },
   "devDependencies": {
     "@angular/common": "^5.0.5",
