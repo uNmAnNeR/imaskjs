@@ -11,25 +11,37 @@
  	<script>
     new Vue({
 			el: '#app',
-			template: `<MaskedInput
-									:mask="this.mask" 
-									thousandsSeparator="^" 
-									class="input" 
-									@accept="handler" 
-									@click.native="handler2">
-								</MaskedInput>`,
+			template: `<div>
+									<MaskedInput
+										v-model="value"
+										:mask="mask" 
+										thousandsSeparator="^" 
+										class="input" 
+										@accept="handler3"
+									>
+									</MaskedInput>
+									<div>Input value is <span>{{ value }}</span></div>
+									<button @click="handler">Change value</button>
+									<button @click="handler2">Change mask</button>
+								</div>`,
 			components: {MaskedInput},
 			data: function() {
 				return{
-					mask: '({999})000-00-00'
+					mask: '({999})000-00-00',
+					value: '4444',
+					maskMode: false
 				}
 			},
 			methods: {
-				handler: function(e) {
-					console.log(e);
+				handler: function() {
+					this.value = '123';
 				},
 				handler2: function() {
-					this.mask = '+7({000})000-00-00';
+					this.mask = this.maskMode ? '+7(000)000-00-00' : '({999})000-00-00';
+					this.maskMode = !this.maskMode;
+				},
+				handler3: function(e) {
+					console.log(e);
 				}
 			}
 		});

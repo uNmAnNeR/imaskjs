@@ -49,14 +49,19 @@ const optionsTypes = {
 
 const component = {
   name: 'MaskedInput',
-  template: '<input type="text">',
+  template: '<input>',
   props: optionsTypes,
   mounted() {
     const {options, values} = this._extractFromProps(this.$props);
 
     this._mask = new IMask(this.$el, options)
-      .on('accept', () => {this.$emit('accept', this._mask)})
-      .on('complete', () => {this.$emit('complete', this._mask)});
+      .on('accept', () => {
+        this.$emit('accept', this._mask.unmaskedValue);
+        this.$emit('input', this._mask.unmaskedValue);
+      })
+      .on('complete', () => {
+        this.$emit('complete', this._mask.unmaskedValue)
+      });
 
     this._updateValues(values);
   },
@@ -73,6 +78,7 @@ const component = {
       const {options, values} = props;
       this._mask.updateOptions(options);
       this._updateValues(values);
+      this.$emit('input', this._mask.unmaskedValue);
     }
   },
   methods: {
