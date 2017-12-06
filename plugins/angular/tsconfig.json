@@ -12,7 +12,7 @@
     "lib": ["es2015", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@angular/core": ["node_modules/@angular/core"],
+      "@angular/*": ["node_modules/@angular/*"],
       "rxjs/*": ["node_modules/rxjs/*"]
     }
   },

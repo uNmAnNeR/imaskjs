@@ -23,6 +23,7 @@ const babelConf = isES ? {
     'slicedToArray'
   ],
   presets: [
+    'flow',
     ['env', {
       modules: false,
       useBuiltIns: true,
@@ -41,6 +42,7 @@ const babelConf = isES ? {
   plugins: ['transform-object-rest-spread', 'external-helpers']
 } : {
   presets: [
+    'flow',
     ['env', {
       'modules': false,
       'loose': true,

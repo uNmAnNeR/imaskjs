@@ -1,10 +1,12 @@
+// @flow
+
 export
-function isString (str) {
+function isString (str: string): boolean {
   return typeof str === 'string' || str instanceof String;
 }
 
 export
-function conform (res, str, fallback='') {
+function conform (res: string, str: string, fallback: string=''): string {
   return isString(res) ?
     res :
     res ?
