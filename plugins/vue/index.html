@@ -12,14 +12,15 @@
 </head>
 
 <body>
-  <h1>Vue IMask Plugin Demo</h1>
-  <main id="app"></main>
-  <script src="https://unpkg.com/vue@2.5.9/dist/vue.js"></script>
-  <script src="https://unpkg.com/vue-types"></script>
-  <script src="https://unpkg.com/imask"></script>
-  <script src="dist/vue-imask.js"></script>
- 	<script>
-    new Vue({
+  	<h1>Vue IMask Plugin Demo</h1>
+  	<main id="app"></main>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+  	<script src="https://unpkg.com/vue@2.5.9/dist/vue.js"></script>
+  	<script src="https://unpkg.com/vue-types"></script>
+  	<script src="https://unpkg.com/imask"></script>
+  	<script src="dist/vue-imask.js"></script>
+  	<script>
+    	new Vue({
 			el: '#app',
 			template: `<div>
 							<MaskedInput
@@ -33,7 +34,7 @@
 							<button @click="handler2">Change mask</button>
 						</div>`,
 			components: {MaskedInput},
-			data: function() {
+			data() {
 				return{
 					mask: '({999})000-00-00',
 					value: '4444',
@@ -41,18 +42,18 @@
 				}
 			},
 			methods: {
-				handler: function() {
+				handler() {
 					this.value = '';
 				},
-				handler2: function() {
+				handler2() {
 					this.mask = this.maskMode ? '+{7}(000)000-00-00' : '({999})000-00-00';
 					this.maskMode = !this.maskMode;
 				},
-				handler3: function(e) {
+				handler3(e) {
 					console.log(e);
 				}
 			}
 		});
-  </script>
+  	</script>
 </body>
 </html>
