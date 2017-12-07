@@ -52,7 +52,7 @@ const component = {
   template: '<input>',
   props: optionsTypes,
   mounted() {
-    const {options, values} = this._extractFromProps(this.$props);
+    const {options, values} = this._options;
 
     this._mask = new IMask(this.$el, options)
       .on('accept', () => {
