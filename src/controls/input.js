@@ -1,12 +1,40 @@
-import {objectIncludes, DIRECTION} from '../core/utils.js';
+// @flow
+import {objectIncludes, DIRECTION, type Selection} from '../core/utils.js';
 import ActionDetails from '../core/action-details.js';
 import MaskedDate from '../masked/date.js';
 import createMask, {maskedClass} from '../masked/factory.js';
+import type Masked from '../masked/base.js';
+import {type Mask} from '../masked/base.js';
 
+
+interface UIElement {
+  value: string;
+  selectionStart: number;
+  selectionEnd: number;
+  setSelectionRange (number, number): void;
+  addEventListener(string, Function): void;
+  removeEventListener(string, Function): void;
+}
 
 export default
 class InputMask {
-  constructor (el, opts) {
+  el: UIElement;
+  masked: Masked<*>;
+  alignCursor: () => void;
+  alignCursorFriendly: () => void;
+
+  _listeners: {[string]: Array<Function>};
+  _value: string;
+  _changingCursorPos: number;
+  _unmaskedValue: string;
+  _saveSelection: (?Event) => void;
+  _selection: Selection;
+  _onInput: (Event) => void;
+  _onChange: () => void;
+  _onDrop: (Event) => void;
+  _cursorChanging: number;
+
+  constructor (el: UIElement, opts: any) {
     this.el = el;
     this.masked = createMask(opts);
 
@@ -28,8 +56,10 @@ class InputMask {
     this._onChange();
   }
 
-  get mask () { return this.masked.mask; }
-  set mask (mask) {
+  get mask (): Mask {
+    return this.masked.mask;
+  }
+  set mask (mask: Mask) {
     if (mask == null || mask === this.masked.mask) return;
 
     if (this.masked.constructor === maskedClass(mask)) {
@@ -42,21 +72,21 @@ class InputMask {
     this.masked = masked;
   }
 
-  get value () {
+  get value (): string {
     return this._value;
   }
 
-  set value (str) {
+  set value (str: string) {
     this.masked.value = str;
     this.updateControl();
     this.alignCursor();
   }
 
-  get unmaskedValue () {
+  get unmaskedValue (): string {
     return this._unmaskedValue;
   }
 
-  set unmaskedValue (str) {
+  set unmaskedValue (str: string) {
     this.masked.unmaskedValue = str;
     this.updateControl();
     this.alignCursor();
@@ -78,26 +108,26 @@ class InputMask {
     this.el.removeEventListener('change', this._onChange);
   }
 
-  fireEvent (ev) {
+  fireEvent (ev: string) {
     const listeners = this._listeners[ev] || [];
     listeners.forEach(l => l());
   }
 
-  get selectionStart () {
+  get selectionStart (): number {
     return this._cursorChanging ?
       this._changingCursorPos :
 
       this.el.selectionStart;
   }
 
-  get cursorPos () {
+  get cursorPos (): number {
     return this._cursorChanging ?
       this._changingCursorPos :
 
       this.el.selectionEnd;
   }
 
-  set cursorPos (pos) {
+  set cursorPos (pos: number) {
     if (this.el !== document.activeElement) return;
 
     this.el.setSelectionRange(pos, pos);
@@ -131,7 +161,7 @@ class InputMask {
     if (isChanged) this._fireChangeEvents();
   }
 
-  updateOptions (opts) {
+  updateOptions (opts: any) {
     opts = Object.assign({}, opts);  // clone
     if (opts.mask === Date && this.masked instanceof MaskedDate) delete opts.mask;
 
@@ -142,7 +172,7 @@ class InputMask {
     this.updateControl();
   }
 
-  updateCursor (cursorPos) {
+  updateCursor (cursorPos: number) {
     if (cursorPos == null) return;
     this.cursorPos = cursorPos;
 
@@ -150,7 +180,7 @@ class InputMask {
     this._delayUpdateCursor(cursorPos);
   }
 
-  _delayUpdateCursor (cursorPos) {
+  _delayUpdateCursor (cursorPos: number) {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
     this._cursorChanging = setTimeout(() => {
@@ -181,20 +211,20 @@ class InputMask {
     this.alignCursor();
   }
 
-  on (ev, handler) {
+  on (ev: string, handler: Function) {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
     return this;
   }
 
-  off (ev, handler) {
+  off (ev: string, handler: Function) {
     if (!this._listeners[ev]) return;
     if (!handler) {
       delete this._listeners[ev];
       return;
     }
     const hIndex = this._listeners[ev].indexOf(handler);
-    if (hIndex >= 0) this._listeners.splice(hIndex, 1);
+    if (hIndex >= 0) this._listeners[ev].splice(hIndex, 1);
     return this;
   }
 
@@ -228,13 +258,14 @@ class InputMask {
     this.updateControl();
   }
 
-  _onDrop (ev) {
+  _onDrop (ev: Event) {
     ev.preventDefault();
     ev.stopPropagation();
   }
 
   destroy () {
     this.unbindEvents();
+    // $FlowFixMe why not do so?
     this._listeners.length = 0;
     delete this.el;
   }

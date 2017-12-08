@@ -1,17 +1,27 @@
+// @flow
 import MaskedPattern from './pattern.js';
 import PatternGroup from './pattern/group.js';
 
 
 export default
 class MaskedDate extends MaskedPattern {
-  constructor (opts) {
+  static GET_DEFAULT_GROUPS: () => {[string]: PatternGroup};
+  static DEFAULTS: any;
+
+  parse: (string) => Date;
+  format: (Date) => string;
+  pattern: string;
+  min: ?Date;
+  max: ?Date;
+
+  constructor (opts: any) {
     super({
       ...MaskedDate.DEFAULTS,
       ...opts
     });
   }
 
-  _update (opts) {
+  _update (opts: any) { // TODO pattern mask is string, but date mask is Date
     if (opts.mask === Date) delete opts.mask;
     if (opts.pattern) {
       opts.mask = opts.pattern;
@@ -28,7 +38,7 @@ class MaskedDate extends MaskedPattern {
     super._update(opts);
   }
 
-  doValidate (...args) {
+  doValidate (...args: *) {
     const valid = super.doValidate(...args);
     const date = this.date;
 
@@ -39,17 +49,17 @@ class MaskedDate extends MaskedPattern {
         (this.max == null || date <= this.max));
   }
 
-  isDateExist (str) {
+  isDateExist (str: string): boolean {
     return this.format(this.parse(str)) === str;
   }
 
-  get date () {
+  get date (): ?Date {
     return this.isComplete ?
       this.parse(this.value) :
       null;
   }
 
-  set date (date) {
+  set date (date: Date) {
     this.value = this.format(date);
   }
 }

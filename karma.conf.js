@@ -53,7 +53,8 @@ module.exports = function (config) {
               'modules': false,
               'loose': true,
               'useBuiltIns': true
-            }]
+            }],
+            'flow'
           ],
           exclude: 'node_modules/**',
           plugins: ['transform-object-rest-spread', 'transform-object-assign', 'external-helpers']
@@ -62,6 +63,7 @@ module.exports = function (config) {
       ],
       format: 'iife',
       name: 'IMask',
+      exports: 'named',
       sourcemap: 'inline'
     }
   });

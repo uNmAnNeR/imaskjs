@@ -1,17 +1,47 @@
-import {escapeRegExp, indexInDirection} from '../core/utils.js';
-import Masked from './base.js';
+// @flow
+import {escapeRegExp, indexInDirection, type Direction} from '../core/utils.js';
+import Masked, {type MaskedOptions, type AppendFlags} from './base.js';
 
+
+type MaskedNumberOptions = {
+  ...MaskedOptions<Number>,
+  radix: $PropertyType<MaskedNumber, 'radix'>,
+  thousandsSeparator: $PropertyType<MaskedNumber, 'thousandsSeparator'>,
+  mapToRadix: $PropertyType<MaskedNumber, 'mapToRadix'>,
+  scale: $PropertyType<MaskedNumber, 'scale'>,
+  signed: $PropertyType<MaskedNumber, 'signed'>,
+  normalizeZeros: $PropertyType<MaskedNumber, 'normalizeZeros'>,
+  padFractionalZeros: $PropertyType<MaskedNumber, 'padFractionalZeros'>,
+  postFormat: $PropertyType<MaskedNumber, 'postFormat'>, // TODO deprecarted, remove in 3.0
+};
 
 export default
-class MaskedNumber extends Masked {
-  constructor (opts) {
+class MaskedNumber extends Masked<Number> {
+  static DEFAULTS: $Shape<MaskedNumberOptions>;
+
+  radix: string;
+  thousandsSeparator: string;
+  mapToRadix: Array<string>;
+  min: number;
+  max: number;
+  scale: number;
+  signed: boolean;
+  normalizeZeros: boolean;
+  padFractionalZeros: boolean;
+  postFormat: any; // TODO deprecarted, remove in 3.0
+  _numberRegExp: RegExp;
+  _numberRegExpInput: RegExp;
+  _thousandsSeparatorRegExp: RegExp;
+  _mapToRadixRegExp: RegExp;
+
+  constructor (opts: $Shape<MaskedNumberOptions>) {
     super({
       ...MaskedNumber.DEFAULTS,
       ...opts
     });
   }
 
-  _update (opts) {
+  _update (opts: MaskedNumberOptions) {
     if (opts.postFormat) {
       console.warn("'postFormat' option is deprecated and will be removed in next release, use plain options instead.");
       Object.assign(opts, opts.postFormat);
@@ -47,26 +77,26 @@ class MaskedNumber extends Masked {
     this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   }
 
-  _extractTail (fromPos=0, toPos=this.value.length) {
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): string {
     return this._removeThousandsSeparators(super._extractTail(fromPos, toPos));
   }
 
-  _removeThousandsSeparators (value) {
+  _removeThousandsSeparators (value: string): string {
     return value.replace(this._thousandsSeparatorRegExp, '');
   }
 
-  _insertThousandsSeparators (value) {
+  _insertThousandsSeparators (value: string): string {
     // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
     const parts = value.split(this.radix);
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, this.thousandsSeparator);
     return parts.join(this.radix);
   }
 
-  doPrepare (str, ...args) {
+  doPrepare (str: string, ...args: *) {
     return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
-  appendWithTail (...args) {
+  appendWithTail (...args: *) {
     let previousValue = this.value;
     this._value = this._removeThousandsSeparators(this.value);
     let startChangePos = this.value.length;
@@ -96,7 +126,7 @@ class MaskedNumber extends Masked {
     return appendDetails;
   }
 
-  nearestInputPos (cursorPos, direction) {
+  nearestInputPos (cursorPos: number, direction?: Direction): number {
     if (!direction) return cursorPos;
 
     const nextPos = indexInDirection(cursorPos, direction);
@@ -104,7 +134,7 @@ class MaskedNumber extends Masked {
     return cursorPos;
   }
 
-  doValidate (flags) {
+  doValidate (flags: AppendFlags) {
     const regexp = flags.input ? this._numberRegExpInput : this._numberRegExp;
 
     // validate as string
@@ -142,7 +172,7 @@ class MaskedNumber extends Masked {
     super.doCommit();
   }
 
-  _normalizeZeros (value) {
+  _normalizeZeros (value: string): string {
     const parts = this._removeThousandsSeparators(value).split(this.radix);
 
     // remove leading zeros
@@ -158,14 +188,14 @@ class MaskedNumber extends Masked {
     return this._insertThousandsSeparators(parts.join(this.radix));
   }
 
-  _padFractionalZeros (value) {
+  _padFractionalZeros (value: string): string {
     const parts = value.split(this.radix);
     if (parts.length < 2) parts.push('');
     parts[1] = parts[1].padEnd(this.scale, '0');
     return parts.join(this.radix);
   }
 
-  get number () {
+  get number (): number {
     let numstr =
       this._removeThousandsSeparators(
         this._normalizeZeros(
@@ -175,11 +205,11 @@ class MaskedNumber extends Masked {
     return Number(numstr);
   }
 
-  set number (number) {
+  set number (number: number) {
     this.unmaskedValue = String(number).replace('.', this.radix);
   }
 
-  get allowNegative () {
+  get allowNegative (): boolean {
     return this.signed ||
       (this.min != null && this.min < 0) ||
       (this.max != null && this.max < 0);

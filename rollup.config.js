@@ -23,7 +23,6 @@ const babelConf = isES ? {
     'slicedToArray'
   ],
   presets: [
-    'flow',
     ['env', {
       modules: false,
       useBuiltIns: true,
@@ -36,18 +35,19 @@ const babelConf = isES ? {
           'Edge >= 15',
         ],
       },
-    }]
+    }],
+    'flow',
   ],
   // waiting for https://github.com/rollup/rollup/issues/1613
   plugins: ['transform-object-rest-spread', 'external-helpers']
 } : {
   presets: [
-    'flow',
     ['env', {
       'modules': false,
       'loose': true,
       'useBuiltIns': true
-    }]
+    }],
+    'flow',
   ],
   exclude: 'node_modules/**',
   plugins: ['transform-object-rest-spread', 'transform-object-assign', 'external-helpers']

@@ -1,13 +1,43 @@
-import {conform, DIRECTION, indexInDirection} from '../core/utils.js';
+// @flow
+import {conform, DIRECTION, indexInDirection, type Direction} from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
-import Masked from './base.js';
+import Masked, {type AppendFlags, type ExtractFlags, type MaskedOptions} from './base.js';
 import PatternDefinition from './pattern/definition.js';
-import PatternGroup from './pattern/group.js';
+import PatternGroup, {type PatternGroupTemplate} from './pattern/group.js';
 
+
+type MaskedPatternOptions = {
+  ...MaskedOptions<string>,
+  definitions: $PropertyType<MaskedPattern, 'definitions'>,
+  groups: $PropertyType<MaskedPattern, 'groups'>,
+  placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>,
+  placeholderLazy: $PropertyType<MaskedPattern, 'placeholderLazy'>,
+  // TODO deprecated, remove in 3.0
+  placeholder: $PropertyType<MaskedPattern, 'placeholder'>,
+};
+type InputChunk = [?number, string];
 
 export default
-class MaskedPattern extends Masked {
-  constructor (opts={}) {
+class MaskedPattern extends Masked<string> {
+  static DEFAULTS: any;
+  static STOP_CHAR: string;
+  static ESCAPE_CHAR: string;
+  static Definition: Class<PatternDefinition>;
+  static Group: Class<PatternGroup>;
+
+  groups: {[string]: PatternGroupTemplate};
+  definitions: {[string]: any};  // TODO mask type
+  placeholderChar: string;
+  placeholderLazy: boolean;
+  // TODO deprecated, remove in 3.0
+  placeholder: {
+    char: string,
+    lazy: boolean,
+  };
+  _charDefs: Array<PatternDefinition>;
+  _groupDefs: Array<PatternGroup>;
+
+  constructor (opts: any={}) {  // TODO type $Shape<MaskedPatternOptions>={} does not work
     opts.definitions = Object.assign({}, PatternDefinition.DEFAULTS, opts.definitions);
     super({
       ...MaskedPattern.DEFAULTS,
@@ -15,12 +45,13 @@ class MaskedPattern extends Masked {
     });
   }
 
-  _update (opts) {
+  _update (opts: $Shape<MaskedPatternOptions>={}) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
-    if (opts.placeholder) {
+    if (opts.placeholder != null) {
       console.warn("'placeholder' option is deprecated and will be removed in next release, use 'placeholderChar' and 'placeholderLazy' instead.");
       if ('char' in opts.placeholder) opts.placeholderChar = opts.placeholder.char;
       if ('lazy' in opts.placeholder) opts.placeholderLazy = opts.placeholder.lazy;
+      delete opts.placeholder;
     }
     super._update(opts);
     this._updateMask();
@@ -52,7 +83,7 @@ class MaskedPattern extends Masked {
             name: gName,
             offset: this._charDefs.length,
             mask: group.mask,
-            validate: group.validate
+            validate: group.validate,
           }));
           pattern = pattern.replace(gName, group.mask);
         }
@@ -102,14 +133,16 @@ class MaskedPattern extends Masked {
     }
   }
 
-  doValidate (...args) {
+  doValidate (...args: *) {
     return this._groupDefs.every(g => g.doValidate(...args)) && super.doValidate(...args);
   }
 
   clone () {
     const m = new MaskedPattern(this);
     m._value = this.value;
+    // $FlowFixMe
     m._charDefs.forEach((d, i) => Object.assign(d, this._charDefs[i]));
+    // $FlowFixMe
     m._groupDefs.forEach((d, i) => Object.assign(d, this._groupDefs[i]));
     return m;
   }
@@ -119,25 +152,23 @@ class MaskedPattern extends Masked {
     this._charDefs.forEach(d => {delete d.isHollow;});
   }
 
-  get isComplete () {
+  get isComplete (): boolean {
     return !this._charDefs.some((d, i) =>
       d.isInput && !d.optional && (d.isHollow || !this.extractInput(i, i+1)));
   }
 
-  hiddenHollowsBefore (defIndex) {
+  hiddenHollowsBefore (defIndex: number): number {
     return this._charDefs
       .slice(0, defIndex)
       .filter(d => d.isHiddenHollow)
       .length;
   }
 
-  mapDefIndexToPos (defIndex) {
-    if (defIndex == null) return;
+  mapDefIndexToPos (defIndex: number): number {
     return defIndex - this.hiddenHollowsBefore(defIndex);
   }
 
-  mapPosToDefIndex (pos) {
-    if (pos == null) return;
+  mapPosToDefIndex (pos: number): number {
     let defIndex = pos;
     for (let di=0; di<this._charDefs.length; ++di) {
       const def = this._charDefs[di];
@@ -147,7 +178,7 @@ class MaskedPattern extends Masked {
     return defIndex;
   }
 
-  _unmask () {
+  _unmask (): string {
     const str = this.value;
     let unmasked = '';
 
@@ -163,11 +194,11 @@ class MaskedPattern extends Masked {
     return unmasked;
   }
 
-  _appendTail (tail=[]) {
+  _appendTail (tail: Array<InputChunk>=[]): ChangeDetails {
     return this._appendChunks(tail, {tail: true}).aggregate(this._appendPlaceholder());
   }
 
-  _append (str, flags={}) {
+  _append (str: string, flags: AppendFlags={}): ChangeDetails {
     const oldValueLength = this.value.length;
     let rawInserted = '';
     let overflow = false;
@@ -179,7 +210,7 @@ class MaskedPattern extends Masked {
       const def = this._charDefs[di];
 
       // check overflow
-      if (!def) {
+      if (def == null) {
         overflow = true;
         break;
       }
@@ -229,7 +260,7 @@ class MaskedPattern extends Masked {
     });
   }
 
-  _appendChunks (chunks, ...args) {
+  _appendChunks (chunks: Array<InputChunk>, ...args: *) {
     const details = new ChangeDetails();
     for (let ci=0; ci < chunks.length; ++ci) {
       const [fromDefIndex, input] = chunks[ci];
@@ -239,11 +270,11 @@ class MaskedPattern extends Masked {
     return details;
   }
 
-  _extractTail (fromPos, toPos) {
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {
     return this._extractInputChunks(fromPos, toPos);
   }
 
-  extractInput (fromPos=0, toPos=this.value.length, flags={}) {
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {
     if (fromPos === toPos) return '';
 
     const str = this.value;
@@ -268,7 +299,7 @@ class MaskedPattern extends Masked {
     return input;
   }
 
-  _extractInputChunks (fromPos=0, toPos=this.value.length) {
+  _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {
     if (fromPos === toPos) return [];
 
     const fromDefIndex = this.mapPosToDefIndex(fromPos);
@@ -296,7 +327,7 @@ class MaskedPattern extends Masked {
     ]).filter(([stop, input]) => stop != null || input);
   }
 
-  _appendPlaceholder (toDefIndex) {
+  _appendPlaceholder (toDefIndex: ?number): ChangeDetails {
     const oldValueLength = this.value.length;
     const maxDefIndex = toDefIndex || this._charDefs.length;
     for (let di=this.mapPosToDefIndex(this.value.length); di < maxDefIndex; ++di) {
@@ -304,7 +335,7 @@ class MaskedPattern extends Masked {
       if (def.isInput) def.isHollow = true;
 
       if (!this.placeholderLazy || toDefIndex) {
-        this._value += !def.isInput ?
+        this._value += !def.isInput && def.char != null ?
           def.char :
           !def.optional ?
             this.placeholderChar :
@@ -316,7 +347,7 @@ class MaskedPattern extends Masked {
     });
   }
 
-  remove (from=0, count=this.value.length-from) {
+  remove (from: number=0, count: number=this.value.length-from) {
     const to = from + count;
     this._value = this.value.slice(0, from) + this.value.slice(to);
     const fromDefIndex = this.mapPosToDefIndex(from);
@@ -326,7 +357,7 @@ class MaskedPattern extends Masked {
       .forEach(d => d.reset());
   }
 
-  nearestInputPos (cursorPos, direction=DIRECTION.NONE) {
+  nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE) {
     let step = direction || DIRECTION.LEFT;
 
     const initialDefIndex = this.mapPosToDefIndex(cursorPos);
@@ -406,15 +437,14 @@ class MaskedPattern extends Masked {
     return this.mapDefIndexToPos(di);
   }
 
-  group (name) {
+  group (name: string): ?PatternGroup {
     return this.groupsByName(name)[0];
   }
 
-  groupsByName (name) {
+  groupsByName (name: string): Array<PatternGroup> {
     return this._groupDefs.filter(g => g.name === name);
   }
 }
-
 MaskedPattern.DEFAULTS = {
   placeholderLazy: true,
   placeholderChar: '_'

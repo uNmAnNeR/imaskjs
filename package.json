@@ -16,6 +16,7 @@
     "babel-preset-flow": "^6.23.0",
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
+    "eslint-plugin-flowtype": "^2.39.1",
     "flow-bin": "^0.60.1",
     "karma": "^1.7.0",
     "karma-chai": "^0.1.0",

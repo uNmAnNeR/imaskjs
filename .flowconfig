@@ -1,0 +1,16 @@
+[ignore]
+.*/node_modules/.*
+.*/test/.*
+.*/dist/.*
+
+[include]
+.*/src/.*
+
+[libs]
+
+[lints]
+
+[options]
+unsafe.enable_getters_and_setters=true
+
+[strict]

@@ -1,11 +1,16 @@
+// @flow
 import ChangeDetails from '../core/change-details.js';
 import createMask from './factory.js';
-import Masked from './base.js';
+import Masked, {type AppendFlags} from './base.js';
 
 
 export default
-class MaskedDynamic extends Masked {
-  constructor (opts) {
+class MaskedDynamic extends Masked<Array<{[string]: any}>> {
+  currentMask: ?Masked<*>;
+  compiledMasks: Array<Masked<*>>;
+  dispatch: (string, Masked<*>, AppendFlags) => Masked<*>;
+
+  constructor (opts: any) {
     super({
       ...MaskedDynamic.DEFAULTS,
       ...opts
@@ -14,14 +19,14 @@ class MaskedDynamic extends Masked {
     this.currentMask = null;
   }
 
-  _update (opts) {
+  _update (opts: any) {
     super._update(opts);
     this.compiledMasks = Array.isArray(opts.mask) ?
       opts.mask.map(m => createMask(m)) :
       [];
   }
 
-  _append (str, ...args) {
+  _append (str: string, ...args: *) {
     const oldValueLength = this.value.length;
     const details = new ChangeDetails();
 
@@ -39,7 +44,7 @@ class MaskedDynamic extends Masked {
     return details;
   }
 
-  doDispatch(appended, flags) {
+  doDispatch(appended: string, flags: AppendFlags={}) {
     return this.dispatch(appended, this, flags);
   }
 
@@ -55,15 +60,15 @@ class MaskedDynamic extends Masked {
     this.compiledMasks.forEach(cm => cm.reset());
   }
 
-  get value () {
+  get value (): string {
     return this.currentMask ? this.currentMask.value : '';
   }
 
-  set value (value) {
+  set value (value: string) {
     this.resolve(value);
   }
 
-  get isComplete () {
+  get isComplete (): boolean {
     return !!this.currentMask && this.currentMask.isComplete;
   }
 
@@ -71,11 +76,11 @@ class MaskedDynamic extends Masked {
     return this.currentMask ? this.currentMask._unmask() : '';
   }
 
-  remove (...args) {
+  remove (...args: *) {
     if (this.currentMask) this.currentMask.remove(...args);
   }
 
-  extractInput (...args) {
+  extractInput (...args: *) {
     return this.currentMask ?
       this.currentMask.extractInput(...args) :
       '';
@@ -86,7 +91,7 @@ class MaskedDynamic extends Masked {
     super.doCommit();
   }
 
-  nearestInputPos(...args) {
+  nearestInputPos(...args: *) {
     return this.currentMask ?
       this.currentMask.nearestInputPos(...args) :
       super.nearestInputPos(...args);

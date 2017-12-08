@@ -1,12 +1,12 @@
 // @flow
 
 export
-function isString (str: string): boolean {
+function isString (str: mixed): boolean %checks {
   return typeof str === 'string' || str instanceof String;
 }
 
 export
-function conform (res: string, str: string, fallback: string=''): string {
+function conform (res: ?string | boolean, str: string, fallback: string=''): string {
   return isString(res) ?
     res :
     res ?
@@ -20,22 +20,24 @@ const DIRECTION = {
   LEFT: -1,
   RIGHT: 1
 }
+export
+type Direction = $Values<typeof DIRECTION>;
 
 export
-function indexInDirection (pos, direction) {
+function indexInDirection (pos: number, direction: Direction): number {
   if (direction === DIRECTION.LEFT) --pos;
   return pos;
 }
 
 export
-function escapeRegExp (str) {
+function escapeRegExp (str: string): string {
   return str.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
 }
 
 
 // cloned from https://github.com/epoberezkin/fast-deep-equal with small changes
 export
-function objectIncludes (b, a) {
+function objectIncludes (b: any, a: any): boolean {
   if (a === b) return true;
 
   var arrA = Array.isArray(a)
@@ -79,8 +81,14 @@ function objectIncludes (b, a) {
 
 /* eslint-disable no-undef */
 export
-const g = typeof window !== 'undefined' && window ||
+const g: any = typeof window !== 'undefined' && window ||
   typeof global !== 'undefined' && global.global === global && global ||
   typeof self !== 'undefined' && self.self === self && self ||
   {};
 /* eslint-enable no-undef */
+
+export
+type Selection = {
+  start: number;
+  end: number;
+};

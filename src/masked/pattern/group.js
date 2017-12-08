@@ -1,6 +1,31 @@
+// @flow
+import type MaskedPattern from '../pattern.js';
+import {type AppendFlags} from '../base.js';
+
+
+export
+interface PatternGroupTemplate {
+  validate: $PropertyType<PatternGroup, 'validate'>;
+  mask: $PropertyType<PatternGroup, 'mask'>;
+}
+
+type PatternGroupOptions = PatternGroupTemplate & {
+  name: $PropertyType<PatternGroup, 'name'>,
+  offset: $PropertyType<PatternGroup, 'offset'>,
+};
+
 export default
 class PatternGroup {
-  constructor(masked, {name, offset, mask, validate}) {
+  static Range: Class<RangeGroup>;
+  static Enum: Class<EnumGroup>;
+
+  masked: MaskedPattern;
+  name: string;
+  offset: number;
+  mask: string;
+  validate: (string, PatternGroup, AppendFlags) => boolean;
+
+  constructor(masked: MaskedPattern, {name, offset, mask, validate}: PatternGroupOptions) {
     this.masked = masked;
     this.name = name;
     this.offset = offset;
@@ -8,26 +33,32 @@ class PatternGroup {
     this.validate = validate || (() => true);
   }
 
-  get value () {
+  get value (): string {
     return this.masked.value.slice(
       this.masked.mapDefIndexToPos(this.offset),
       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
   }
 
-  get unmaskedValue () {
+  get unmaskedValue (): string {
     return this.masked.extractInput(
       this.masked.mapDefIndexToPos(this.offset),
       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
   }
 
-  doValidate (opts) {
-    return this.validate(this.value, this, opts);
+  doValidate (flags: AppendFlags) {
+    return this.validate(this.value, this, flags);
   }
 }
 
 export
-class RangeGroup {
-  constructor ([from, to], maxlen=String(to).length) {
+class RangeGroup implements PatternGroupTemplate {
+  mask: $PropertyType<PatternGroup, 'mask'>;
+  validate: $PropertyType<PatternGroup, 'validate'>;
+  _maxLength: number;
+  _from: number;
+  _to: number;
+
+  constructor ([from, to]: [number, number], maxlen: number=String(to).length) {
     this._from = from;
     this._to = to;
     this._maxLength = maxlen;
@@ -36,34 +67,34 @@ class RangeGroup {
     this._update();
   }
 
-  get to () {
+  get to (): number {
     return this._to;
   }
 
-  set to (to) {
+  set to (to: number) {
     this._to = to;
     this._update();
   }
 
-  get from () {
+  get from (): number {
     return this._from;
   }
 
-  set from (from) {
+  set from (from: number) {
     this._from = from;
     this._update();
   }
 
-  get maxLength () {
+  get maxLength (): number {
     return this._maxLength;
   }
 
-  set maxLength (maxLength) {
+  set maxLength (maxLength: number) {
     this._maxLength = maxLength;
     this._update();
   }
 
-  get _matchFrom () {
+  get _matchFrom (): number {
     return this.maxLength - String(this.from).length;
   }
 
@@ -72,11 +103,11 @@ class RangeGroup {
     this.mask = '0'.repeat(this._maxLength);
   }
 
-  validate (str) {
+  validate (str: string): boolean {
     let minstr = '';
     let maxstr = '';
 
-    const [, placeholder, num] = str.match(/^(\D*)(\d*)(\D*)/);
+    const [, placeholder, num] = str.match(/^(\D*)(\d*)(\D*)/) || [];
     if (num) {
       minstr = ('0'.repeat(placeholder.length) + num);
       maxstr = ('9'.repeat(placeholder.length) + num);
@@ -93,10 +124,10 @@ class RangeGroup {
 }
 
 export
-function EnumGroup (enums) {
+function EnumGroup (enums: Array<string>): PatternGroupTemplate {
   return {
     mask: '*'.repeat(enums[0].length),
-    validate: (value, group) => enums.some(e => e.indexOf(group.unmaskedValue) >= 0)
+    validate: (value: string, group: PatternGroup, flags: AppendFlags) => enums.some(e => e.indexOf(group.unmaskedValue) >= 0)
   };
 }
 
