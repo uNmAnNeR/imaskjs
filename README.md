@@ -21,7 +21,7 @@ vanilla javascript input mask
 * [React](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/react)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/angular) plugins
 
 ## Further plans
-* Vue plugins
+* Vue plugin
 * more unit tests
 
 ## Install
