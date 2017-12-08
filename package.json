@@ -67,8 +67,7 @@
     "mask"
   ],
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "author": "Alexey Kryazhev",
   "license": "MIT",
