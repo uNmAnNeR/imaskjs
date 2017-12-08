@@ -3,7 +3,7 @@
   "version": "2.1.1",
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
-  "module": "src/imask.js",
+  "module": "dist/imask.es.js",
   "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -53,7 +53,7 @@
     "build:prod:es": "rollup -c --environment format:es,env:production",
     "build:prod:umd": "rollup -c --environment format:umd,env:production",
     "flow": "flow",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "flow check && npm run test && npm run build",
     "coveralls": "npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {
