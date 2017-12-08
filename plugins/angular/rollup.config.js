@@ -1,6 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
+
 const globals = {
   '@angular/core': 'ng.core',
   '@angular/common': 'ng.common',

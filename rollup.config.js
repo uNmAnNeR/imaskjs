@@ -56,7 +56,7 @@ const babelConf = isES ? {
 
 export default {
   input,
-  output: [{ file, format }],
+  output: { file, format },
   name: 'IMask',
   sourcemap: true,
   plugins: [

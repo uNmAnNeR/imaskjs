@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import eslint from 'rollup-plugin-eslint';
 
+
 const globals = {
   react: 'React',
   imask: 'IMask',

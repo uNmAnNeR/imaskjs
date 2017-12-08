@@ -18,10 +18,10 @@ vanilla javascript input mask
   - show placeholder always and only when necessary
   - unmasked value can contain fixed parts
   - optional input parts (greedy)
-* [React](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/react) plugin
+* [React](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/react)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/angular) plugins
 
 ## Further plans
-* Angular/Vue plugins
+* Vue plugins
 * more unit tests
 
 ## Install
