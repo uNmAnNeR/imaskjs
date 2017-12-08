@@ -37,7 +37,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   get maskValue () {
     if (!this.maskRef) return this.elementRef.nativeElement.value;
 
-    return this.unmask ? this.maskRef.value : this.maskRef.unmaskedValue;
+    return this.unmask ? this.maskRef.unmaskedValue : this.maskRef.value;
   }
 
   set maskValue (value) {

@@ -29,11 +29,11 @@
     "@angular/forms": ">=4.0.0"
   },
   "devDependencies": {
-    "@angular/common": "^5.0.5",
-    "@angular/compiler": "^5.0.5",
-    "@angular/compiler-cli": "^5.0.5",
-    "@angular/core": "^5.0.5",
-    "@angular/forms": "^5.0.5",
+    "@angular/common": "^4.0.0",
+    "@angular/compiler": "^4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
+    "@angular/core": "^4.0.0",
+    "@angular/forms": "^4.0.0",
     "rimraf": "^2.6.2",
     "rollup": "^0.52.1",
     "rollup-plugin-node-resolve": "^3.0.0",
