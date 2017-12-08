@@ -125,7 +125,7 @@
     mask: Date,
     min: new Date(2000, 0, 1),
     max: new Date(2020, 0, 1),
-    placeholderLazy: false
+    lazy: false
   });
 <a href="guide.html#date" class="learn-more">learn more</a></code></pre>
                 </div>
@@ -204,7 +204,7 @@
             mask: Date,
             min: new Date(2000, 0, 1),
             max: new Date(2020, 0, 1),
-            placeholderLazy: false
+            lazy: false
           }
         ).on('accept', function() {
           document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';

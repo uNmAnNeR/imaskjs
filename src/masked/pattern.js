@@ -11,9 +11,10 @@ type MaskedPatternOptions = {
   definitions: $PropertyType<MaskedPattern, 'definitions'>,
   groups: $PropertyType<MaskedPattern, 'groups'>,
   placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>,
-  placeholderLazy: $PropertyType<MaskedPattern, 'placeholderLazy'>,
+  lazy: $PropertyType<MaskedPattern, 'lazy'>,
   // TODO deprecated, remove in 3.0
   placeholder: $PropertyType<MaskedPattern, 'placeholder'>,
+  placeholderLazy: $PropertyType<MaskedPattern, 'placeholderLazy'>,
 };
 type InputChunk = [?number, string];
 
@@ -28,8 +29,9 @@ class MaskedPattern extends Masked<string> {
   groups: {[string]: PatternGroupTemplate};
   definitions: {[string]: any};  // TODO mask type
   placeholderChar: string;
-  placeholderLazy: boolean;
+  lazy: boolean;
   // TODO deprecated, remove in 3.0
+  placeholderLazy: boolean;
   placeholder: {
     char: string,
     lazy: boolean,
@@ -48,10 +50,15 @@ class MaskedPattern extends Masked<string> {
   _update (opts: $Shape<MaskedPatternOptions>={}) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
     if (opts.placeholder != null) {
-      console.warn("'placeholder' option is deprecated and will be removed in next release, use 'placeholderChar' and 'placeholderLazy' instead.");
+      console.warn("'placeholder' option is deprecated and will be removed in next major release, use 'placeholderChar' and 'lazy' instead.");
       if ('char' in opts.placeholder) opts.placeholderChar = opts.placeholder.char;
-      if ('lazy' in opts.placeholder) opts.placeholderLazy = opts.placeholder.lazy;
+      if ('lazy' in opts.placeholder) opts.lazy = opts.placeholder.lazy;
       delete opts.placeholder;
+    }
+    if (opts.placeholderLazy != null) {
+      console.warn("'placeholderLazy' option is deprecated and will be removed in next major release, use 'lazy' instead.");
+      opts.lazy = opts.placeholderLazy;
+      delete opts.placeholderLazy;
     }
     super._update(opts);
     this._updateMask();
@@ -334,7 +341,7 @@ class MaskedPattern extends Masked<string> {
       const def = this._charDefs[di];
       if (def.isInput) def.isHollow = true;
 
-      if (!this.placeholderLazy || toDefIndex) {
+      if (!this.lazy || toDefIndex) {
         this._value += !def.isInput && def.char != null ?
           def.char :
           !def.optional ?
@@ -446,7 +453,7 @@ class MaskedPattern extends Masked<string> {
   }
 }
 MaskedPattern.DEFAULTS = {
-  placeholderLazy: true,
+  lazy: true,
   placeholderChar: '_'
 };
 MaskedPattern.STOP_CHAR = '`';

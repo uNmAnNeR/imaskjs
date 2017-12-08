@@ -99,7 +99,7 @@ function IMaskMixin(ComposedComponent) {
       PropTypes.func,
       PropTypes.string,
       PropTypes.instanceOf(RegExp),
-      PropTypes.oneOf([Date, Number]),
+      PropTypes.oneOf([Date, Number, IMask.Masked]),
       PropTypes.instanceOf(IMask.Masked),
     ]).isRequired,
     value: PropTypes.string,
@@ -114,7 +114,7 @@ function IMaskMixin(ComposedComponent) {
 
     // pattern
     placeholderChar: PropTypes.string,
-    placeholderLazy: PropTypes.bool,
+    lazy: PropTypes.bool,
     definitions: PropTypes.object,
     groups: PropTypes.object,
 

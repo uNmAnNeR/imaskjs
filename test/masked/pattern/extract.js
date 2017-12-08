@@ -4,7 +4,7 @@ import MaskedPattern from '../../../src/masked/pattern';
 describe('Extract', function () {
   const mask = new MaskedPattern({
     mask: '',
-    placeholderLazy: false,
+    lazy: false,
   });
 
   beforeEach(function () {
