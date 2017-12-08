@@ -7,9 +7,26 @@ angular-imask
 ## Install
 `npm install angular-imask`
 
-## Mask input example
+## Setup
 ```javascript
 import {IMaskModule} from 'angular-imask';
 
-// TODO
+@NgModule({
+  imports: [
+    IMaskModule,
+    ...
+  ],
+  ...
+}) {...}
 ```
+
+## Usage
+```html
+<input
+  [imask]="{mask: '+{7}(000)000-00-00'}" // ...and more mask props in a guide
+  [unmask]="true"  // optionally use `unmaskedValue` or `value` otherwise
+  (accept)="onAccept"  // first argument is `value` or `unmaskedValue` depending on prop above
+  (complete)="onComplete"
+/>
+```
+More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
