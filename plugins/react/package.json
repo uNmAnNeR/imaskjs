@@ -1,6 +1,6 @@
 {
   "name": "react-imask",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "React input mask",
   "main": "dist/react-imask.js",
   "module": "src/index.js",
