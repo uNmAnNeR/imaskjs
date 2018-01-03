@@ -44,7 +44,6 @@ const babelConf = isES ? {
   presets: [
     ['env', {
       'modules': false,
-      'loose': true,
       'useBuiltIns': true
     }],
     'flow',

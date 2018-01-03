@@ -189,6 +189,8 @@ class MaskedNumber extends Masked<Number> {
   }
 
   _padFractionalZeros (value: string): string {
+    if (!value) return value;
+
     const parts = value.split(this.radix);
     if (parts.length < 2) parts.push('');
     parts[1] = parts[1].padEnd(this.scale, '0');
