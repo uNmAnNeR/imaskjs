@@ -197,18 +197,23 @@ class MaskedNumber extends Masked<Number> {
     return parts.join(this.radix);
   }
 
-  get number (): number {
-    let numstr =
-      this._removeThousandsSeparators(
-        this._normalizeZeros(
-          this.unmaskedValue))
+  get unmaskedValue (): string {
+    return this._removeThousandsSeparators(
+      this._normalizeZeros(
+        this.value))
       .replace(this.radix, '.');
+  }
 
-    return Number(numstr);
+  set unmaskedValue (unmaskedValue: string) {
+    super.unmaskedValue = unmaskedValue.replace('.', this.radix);
+  }
+
+  get number (): number {
+    return Number(this.unmaskedValue);
   }
 
   set number (number: number) {
-    this.unmaskedValue = String(number).replace('.', this.radix);
+    this.unmaskedValue = String(number);
   }
 
   get allowNegative (): boolean {

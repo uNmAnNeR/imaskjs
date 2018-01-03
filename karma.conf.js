@@ -51,7 +51,6 @@ module.exports = function (config) {
           presets: [
             ['env', {
               'modules': false,
-              'loose': true,
               'useBuiltIns': true
             }],
             'flow'

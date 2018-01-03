@@ -65,15 +65,19 @@ class MaskedDynamic extends Masked<Array<{[string]: any}>> {
   }
 
   set value (value: string) {
-    this.resolve(value);
+    super.value = value;
+  }
+
+  get unmaskedValue (): string {
+    return this.currentMask ? this.currentMask.unmaskedValue : '';
+  }
+
+  set unmaskedValue (unmaskedValue: string) {
+    super.unmaskedValue = unmaskedValue;
   }
 
   get isComplete (): boolean {
     return !!this.currentMask && this.currentMask.isComplete;
-  }
-
-  _unmask () {
-    return this.currentMask ? this.currentMask._unmask() : '';
   }
 
   remove (...args: *) {

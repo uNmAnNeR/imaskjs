@@ -82,7 +82,7 @@ class Masked<MaskType> {
   }
 
   get unmaskedValue (): string {
-    return this._unmask();
+    return this.value;
   }
 
   set unmaskedValue (value: string) {
@@ -184,10 +184,6 @@ class Masked<MaskType> {
     aggregateDetails.shift += this._appendTail(tail).shift;
 
     return aggregateDetails;
-  }
-
-  _unmask (): string {
-    return this.value;
   }
 
   remove (from: number=0, count: number=this.value.length-from) {

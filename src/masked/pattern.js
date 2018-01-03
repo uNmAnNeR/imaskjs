@@ -185,7 +185,7 @@ class MaskedPattern extends Masked<string> {
     return defIndex;
   }
 
-  _unmask (): string {
+  get unmaskedValue (): string {
     const str = this.value;
     let unmasked = '';
 
@@ -199,6 +199,10 @@ class MaskedPattern extends Masked<string> {
     }
 
     return unmasked;
+  }
+
+  set unmaskedValue (unmaskedValue: string) {
+    super.unmaskedValue = unmaskedValue;
   }
 
   _appendTail (tail: Array<InputChunk>=[]): ChangeDetails {
