@@ -1,6 +1,6 @@
 {
   "name": "angular-imask",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Angular IMask Plugin",
   "main": "dist/angular-imask.umd.js",
   "module": "dist/index.js",
