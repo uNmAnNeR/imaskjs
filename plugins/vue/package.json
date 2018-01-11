@@ -17,5 +17,9 @@
     "mask"
   ],
   "author": "Alexey Kryazhev",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "imask": "^2.0.1",
+    "lodash": "^4.17.4"
+  }
 }
