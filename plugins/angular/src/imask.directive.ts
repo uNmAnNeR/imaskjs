@@ -19,7 +19,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   maskRef: any;
   _onTouched: any;
   _onChange: any;
-  private viewInitialized = false;
+  private viewInitialized;
 
   @Input() imask;
   @Input() unmask?: boolean;
@@ -28,10 +28,12 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
 
   constructor(private elementRef: ElementRef,
               private renderer: Renderer2) {
+    // init here to support AOT
     this._onTouched = () => {};
     this._onChange = () => {};
     this.accept = new EventEmitter();
     this.complete = new EventEmitter();
+    this.viewInitialized = false;
   }
 
 
@@ -64,17 +66,21 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
       if (this.maskRef) this.maskRef.updateOptions(this.imask);
       else this.initMask();
     } else {
-      this.ngOnDestroy();
+      this.destroyMask();
     }
   }
 
-  ngOnDestroy() {
+  destroyMask () {
     if (this.maskRef) {
       this.maskRef.destroy();
-      this.accept.complete();
-      this.complete.complete();
       delete this.maskRef;
     }
+  }
+
+  ngOnDestroy () {
+    this.destroyMask();
+    this.accept.complete();
+    this.complete.complete();
   }
 
   writeValue(value: any) {
