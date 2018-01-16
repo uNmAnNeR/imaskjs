@@ -2,9 +2,12 @@
   "name": "vue-imask",
   "version": "0.0.1",
   "description": "Vue input mask",
-  "main": "index.js",
+  "main": "dist/vue-imask.js",
+  "module": "src/imask.directive.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -12,10 +15,29 @@
   },
   "keywords": [
     "vue",
+    "imask",
     "javascript",
     "input",
     "mask"
   ],
   "author": "Alexey Kryazhev",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "imask": "latest"
+  },
+  "peerDependencies": {
+    "vue": ">=2.1.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "rollup": "^0.54.0",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-eslint": "^4.0.0"
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
 }

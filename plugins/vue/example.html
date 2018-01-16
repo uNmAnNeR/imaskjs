@@ -1,0 +1,36 @@
+<html>
+<head></head>
+
+<body>
+  <h1>Vue IMask Plugin Demo</h1>
+  <main id="app">
+    <input type="text" v-imask="dateMask" @accept="onAccept" @complete="onComplete" :value="date">
+  </main>
+
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/imask"></script>
+  <script src="dist/vue-imask.js"></script>
+  <script type="text/javascript">
+    var app = new Vue({
+      el: '#app',
+      directives: {
+        imask: VueIMask
+      },
+      data: {
+        dateMask: {
+          mask: Date
+        },
+        date: '123'
+      },
+      methods: {
+        onAccept: function (e) {
+          console.log('accept', e.detail.value);
+        },
+        onComplete: function (e) {
+          console.log('complete!', e.detail.unmaskedValue);
+        },
+      }
+    });
+  </script>
+</body>
+</html>
