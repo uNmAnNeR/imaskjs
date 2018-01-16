@@ -1,0 +1,658 @@
+[
+  {
+    "name": "Masked#extractInput",
+    "filePath": "src/masked/base.js",
+    "lines": [
+      {
+        "lineNumber": 136,
+        "line": "  /** Extracts value in range considering flags */\r"
+      },
+      {
+        "lineNumber": 137,
+        "line": "  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {\r"
+      }
+    ],
+    "codeParams": [
+      "fromPos",
+      "toPos",
+      "flags"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined",
+      "flags"
+    ]
+  },
+  {
+    "name": "Masked#_extractTail",
+    "filePath": "src/masked/base.js",
+    "lines": [
+      {
+        "lineNumber": 141,
+        "line": "  /** Extracts tail in range */\r"
+      },
+      {
+        "lineNumber": 142,
+        "line": "  _extractTail (fromPos: number=0, toPos: number=this.value.length): any {\r"
+      }
+    ],
+    "codeParams": [
+      "fromPos",
+      "toPos"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined"
+    ]
+  },
+  {
+    "name": "Masked#_appendTail",
+    "filePath": "src/masked/base.js",
+    "lines": [
+      {
+        "lineNumber": 146,
+        "line": "  /** Appends tail */\r"
+      },
+      {
+        "lineNumber": 147,
+        "line": "  _appendTail (tail: any=\"\"): ChangeDetails {\r"
+      }
+    ],
+    "codeParams": [
+      "tail"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "Masked#_append",
+    "filePath": "src/masked/base.js",
+    "lines": [
+      {
+        "lineNumber": 151,
+        "line": "  /** Appends symbols considering flags */\r"
+      },
+      {
+        "lineNumber": 152,
+        "line": "  _append (str: string, flags: AppendFlags={}): ChangeDetails {\r"
+      }
+    ],
+    "codeParams": [
+      "str",
+      "flags"
+    ],
+    "docParams": [
+      "str",
+      "undefined"
+    ]
+  },
+  {
+    "name": "Masked#remove",
+    "filePath": "src/masked/base.js",
+    "lines": [
+      {
+        "lineNumber": 216,
+        "line": "  /** */\r"
+      },
+      {
+        "lineNumber": 217,
+        "line": "  remove (from: number=0, count: number=this.value.length-from) {\r"
+      }
+    ],
+    "codeParams": [
+      "from",
+      "count"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined"
+    ]
+  },
+  {
+    "name": "Masked#doPrepare",
+    "filePath": "src/masked/base.js",
+    "lines": [
+      {
+        "lineNumber": 236,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 237,
+        "line": "    Prepares string before mask processing\r"
+      },
+      {
+        "lineNumber": 238,
+        "line": "    @protected\r"
+      },
+      {
+        "lineNumber": 239,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 240,
+        "line": "  doPrepare (str: string, flags: AppendFlags={}): string {\r"
+      }
+    ],
+    "codeParams": [
+      "str",
+      "flags"
+    ],
+    "docParams": [
+      "str",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedDate#doValidate",
+    "filePath": "src/masked/date.js",
+    "lines": [
+      {
+        "lineNumber": 52,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 53,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 54,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 55,
+        "line": "  doValidate (...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "args"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedDynamic#_append",
+    "filePath": "src/masked/dynamic.js",
+    "lines": [
+      {
+        "lineNumber": 38,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 39,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 40,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 41,
+        "line": "  _append (str: string, ...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "str",
+      "args"
+    ],
+    "docParams": [
+      "str",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedDynamic#doDispatch",
+    "filePath": "src/masked/dynamic.js",
+    "lines": [
+      {
+        "lineNumber": 59,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 60,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 61,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 62,
+        "line": "  doDispatch(appended: string, flags: AppendFlags={}) {\r"
+      }
+    ],
+    "codeParams": [
+      "appended",
+      "flags"
+    ],
+    "docParams": [
+      "appended",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedDynamic#remove",
+    "filePath": "src/masked/dynamic.js",
+    "lines": [
+      {
+        "lineNumber": 113,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 114,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 115,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 116,
+        "line": "  remove (...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "args"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedDynamic#extractInput",
+    "filePath": "src/masked/dynamic.js",
+    "lines": [
+      {
+        "lineNumber": 120,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 121,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 122,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 123,
+        "line": "  extractInput (...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "args"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedDynamic#nearestInputPos",
+    "filePath": "src/masked/dynamic.js",
+    "lines": [
+      {
+        "lineNumber": 137,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 138,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 139,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 140,
+        "line": "  nearestInputPos(...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "args"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedNumber#_extractTail",
+    "filePath": "src/masked/number.js",
+    "lines": [
+      {
+        "lineNumber": 89,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 90,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 91,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 92,
+        "line": "  _extractTail (fromPos: number=0, toPos: number=this.value.length): string {\r"
+      }
+    ],
+    "codeParams": [
+      "fromPos",
+      "toPos"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedNumber#doPrepare",
+    "filePath": "src/masked/number.js",
+    "lines": [
+      {
+        "lineNumber": 109,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 110,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 111,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 112,
+        "line": "  doPrepare (str: string, ...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "str",
+      "args"
+    ],
+    "docParams": [
+      "str",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedNumber#appendWithTail",
+    "filePath": "src/masked/number.js",
+    "lines": [
+      {
+        "lineNumber": 116,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 117,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 118,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 119,
+        "line": "  appendWithTail (...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "args"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#doValidate",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 136,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 137,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 138,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 139,
+        "line": "  doValidate (...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "args"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#_appendTail",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 219,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 220,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 221,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 222,
+        "line": "  _appendTail (tail: Array<InputChunk>=[]): ChangeDetails {\r"
+      }
+    ],
+    "codeParams": [
+      "tail"
+    ],
+    "docParams": [
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#_append",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 226,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 227,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 228,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 229,
+        "line": "  _append (str: string, flags: AppendFlags={}): ChangeDetails {\r"
+      }
+    ],
+    "codeParams": [
+      "str",
+      "flags"
+    ],
+    "docParams": [
+      "str",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#_appendChunks",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 291,
+        "line": "  /** Appends chunks splitted by stop chars */\r"
+      },
+      {
+        "lineNumber": 292,
+        "line": "  _appendChunks (chunks: Array<InputChunk>, ...args: *) {\r"
+      }
+    ],
+    "codeParams": [
+      "chunks",
+      "args"
+    ],
+    "docParams": [
+      "chunks",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#_extractTail",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 302,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 303,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 304,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 305,
+        "line": "  _extractTail (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {\r"
+      }
+    ],
+    "codeParams": [
+      "fromPos",
+      "toPos"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#extractInput",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 309,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 310,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 311,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 312,
+        "line": "  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {\r"
+      }
+    ],
+    "codeParams": [
+      "fromPos",
+      "toPos",
+      "flags"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#_extractInputChunks",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 337,
+        "line": "  /** Extracts chunks from input splitted by stop chars */\r"
+      },
+      {
+        "lineNumber": 338,
+        "line": "  _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {\r"
+      }
+    ],
+    "codeParams": [
+      "fromPos",
+      "toPos"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#remove",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 387,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 388,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 389,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 390,
+        "line": "  remove (from: number=0, count: number=this.value.length-from) {\r"
+      }
+    ],
+    "codeParams": [
+      "from",
+      "count"
+    ],
+    "docParams": [
+      "undefined",
+      "undefined"
+    ]
+  },
+  {
+    "name": "MaskedPattern#nearestInputPos",
+    "filePath": "src/masked/pattern.js",
+    "lines": [
+      {
+        "lineNumber": 400,
+        "line": "  /**\r"
+      },
+      {
+        "lineNumber": 401,
+        "line": "    @override\r"
+      },
+      {
+        "lineNumber": 402,
+        "line": "  */\r"
+      },
+      {
+        "lineNumber": 403,
+        "line": "  nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE) {\r"
+      }
+    ],
+    "codeParams": [
+      "cursorPos",
+      "direction"
+    ],
+    "docParams": [
+      "cursorPos",
+      "undefined"
+    ]
+  }
+]

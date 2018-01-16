@@ -1,10 +1,13 @@
 // @flow
 
+
+/** Checks if value is string */
 export
 function isString (str: mixed): boolean %checks {
   return typeof str === 'string' || str instanceof String;
 }
 
+/** Conforms string with fallback */
 export
 function conform (res: ?string | boolean, str: string, fallback: string=''): string {
   return isString(res) ?
@@ -14,21 +17,33 @@ function conform (res: ?string | boolean, str: string, fallback: string=''): str
       fallback;
 }
 
+/**
+  Direction
+  @prop {number} NONE
+  @prop {number} LEFT
+  @prop {number} RIGHT
+*/
 export
 const DIRECTION = {
   NONE: 0,
   LEFT: -1,
   RIGHT: 1
 }
+/**
+  Direction
+  @enum {number}
+*/
 export
 type Direction = $Values<typeof DIRECTION>;
 
+/** Returns next char position in direction */
 export
 function indexInDirection (pos: number, direction: Direction): number {
   if (direction === DIRECTION.LEFT) --pos;
   return pos;
 }
 
+/** Escapes regular expression control chars */
 export
 function escapeRegExp (str: string): string {
   return str.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
@@ -87,6 +102,7 @@ const g: any = typeof window !== 'undefined' && window ||
   {};
 /* eslint-enable no-undef */
 
+/** Selection range */
 export
 type Selection = {
   start: number;

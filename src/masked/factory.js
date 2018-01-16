@@ -4,6 +4,7 @@ import type Masked from './base.js';
 import {type Mask} from './base.js';
 
 
+/** Get Masked class by mask type */
 export
 function maskedClass (mask: Mask): Class<Masked<*>> {
   if (mask == null) {
@@ -24,9 +25,9 @@ function maskedClass (mask: Mask): Class<Masked<*>> {
   return g.IMask.Masked;
 }
 
-
+/** Creates new {@link Masked} depending on mask type */
 export default
-function createMask (opts: {mask: Mask, ...any}): Masked<*> {
+function createMask (opts: {mask: Mask}): Masked<*> {
   opts = Object.assign({}, opts);  // clone
   const mask = opts.mask;
 

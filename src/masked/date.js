@@ -3,17 +3,26 @@ import MaskedPattern from './pattern.js';
 import PatternGroup from './pattern/group.js';
 
 
+/** Date mask */
 export default
 class MaskedDate extends MaskedPattern {
   static GET_DEFAULT_GROUPS: () => {[string]: PatternGroup};
   static DEFAULTS: any;
 
+  /** Parse string to Date */
   parse: (string) => Date;
+  /** Format Date to string */
   format: (Date) => string;
+  /** Pattern mask for date according to {@link MaskedDate#format} */
   pattern: string;
+  /** Start date */
   min: ?Date;
+  /** End date */
   max: ?Date;
 
+  /**
+    @param {Object} opts
+  */
   constructor (opts: any) {
     super({
       ...MaskedDate.DEFAULTS,
@@ -21,7 +30,10 @@ class MaskedDate extends MaskedPattern {
     });
   }
 
-  _update (opts: any) { // TODO pattern mask is string, but date mask is Date
+  /**
+    @override
+  */
+  _update (opts: any) {
     if (opts.mask === Date) delete opts.mask;
     if (opts.pattern) {
       opts.mask = opts.pattern;
@@ -38,6 +50,9 @@ class MaskedDate extends MaskedPattern {
     super._update(opts);
   }
 
+  /**
+    @override
+  */
   doValidate (...args: *) {
     const valid = super.doValidate(...args);
     const date = this.date;
@@ -49,10 +64,12 @@ class MaskedDate extends MaskedPattern {
         (this.max == null || date <= this.max));
   }
 
+  /** Checks if date is exists */
   isDateExist (str: string): boolean {
     return this.format(this.parse(str)) === str;
   }
 
+  /** Parsed Date */
   get date (): ?Date {
     return this.isComplete ?
       this.parse(this.value) :

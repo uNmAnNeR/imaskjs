@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/masked/pattern.js | imask</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="vanilla javascript input mask"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="imask"><meta property="twitter:description" content="vanilla javascript input mask"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/uNmAnNeR/imaskjs"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-IMask">IMask</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#controls">controls</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/controls/input.js~InputMask.html">InputMask</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#core">core</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/core/action-details.js~ActionDetails.html">ActionDetails</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/core/change-details.js~ChangeDetails.html">ChangeDetails</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-conform">conform</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-escapeRegExp">escapeRegExp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-indexInDirection">indexInDirection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isString">isString</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-objectIncludes">objectIncludes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DIRECTION">DIRECTION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-g">g</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#masked">masked</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/base.js~Masked.html">Masked</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/date.js~MaskedDate.html">MaskedDate</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/dynamic.js~MaskedDynamic.html">MaskedDynamic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/function.js~MaskedFunction.html">MaskedFunction</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/number.js~MaskedNumber.html">MaskedNumber</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern.js~MaskedPattern.html">MaskedPattern</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/regexp.js~MaskedRegExp.html">MaskedRegExp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createMask">createMask</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-maskedClass">maskedClass</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#masked-pattern">masked/pattern</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/definition.js~PatternDefinition.html">PatternDefinition</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/group.js~PatternGroup.html">PatternGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/group.js~RangeGroup.html">RangeGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-EnumGroup">EnumGroup</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/masked/pattern.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// @flow
+import {conform, DIRECTION, indexInDirection, type Direction} from &apos;../core/utils.js&apos;;
+import ChangeDetails from &apos;../core/change-details.js&apos;;
+import Masked, {type AppendFlags, type ExtractFlags, type MaskedOptions} from &apos;./base.js&apos;;
+import PatternDefinition from &apos;./pattern/definition.js&apos;;
+import PatternGroup, {type PatternGroupTemplate} from &apos;./pattern/group.js&apos;;
+
+
+type MaskedPatternOptions = {
+  ...MaskedOptions&lt;string&gt;,
+  definitions: $PropertyType&lt;MaskedPattern, &apos;definitions&apos;&gt;,
+  groups: $PropertyType&lt;MaskedPattern, &apos;groups&apos;&gt;,
+  placeholderChar: $PropertyType&lt;MaskedPattern, &apos;placeholderChar&apos;&gt;,
+  lazy: $PropertyType&lt;MaskedPattern, &apos;lazy&apos;&gt;,
+};
+type InputChunk = [?number, string];
+
+
+/** Pattern mask */
+export default
+class MaskedPattern extends Masked&lt;string&gt; {
+  static DEFAULTS: any;
+  static STOP_CHAR: string;
+  static ESCAPE_CHAR: string;
+  static Definition: Class&lt;PatternDefinition&gt;;
+  static Group: Class&lt;PatternGroup&gt;;
+
+  /** */
+  groups: {[string]: PatternGroupTemplate};
+  /** */
+  definitions: {[string]: any};  // TODO mask type
+  /** Single char for empty input */
+  placeholderChar: string;
+  /** Show placeholder only when needed */
+  lazy: boolean;
+  _charDefs: Array&lt;PatternDefinition&gt;;
+  _groupDefs: Array&lt;PatternGroup&gt;;
+
+  /**
+    @param {Object} opts
+  */
+  constructor (opts: any={}) {  // TODO type $Shape&lt;MaskedPatternOptions&gt;={} does not work
+    opts.definitions = Object.assign({}, PatternDefinition.DEFAULTS, opts.definitions);
+    super({
+      ...MaskedPattern.DEFAULTS,
+      ...opts
+    });
+  }
+
+  /**
+    @override
+    @param {Object} opts
+  */
+  _update (opts: $Shape&lt;MaskedPatternOptions&gt;={}) {
+    opts.definitions = Object.assign({}, this.definitions, opts.definitions);
+    super._update(opts);
+    this._rebuildMask();
+  }
+
+  /** */
+  _rebuildMask () {
+    const defs = this.definitions;
+    this._charDefs = [];
+    this._groupDefs = [];
+
+    let pattern = this.mask;
+    if (!pattern || !defs) return;
+
+    let unmaskingBlock = false;
+    let optionalBlock = false;
+    let stopAlign = false;
+
+    for (let i=0; i&lt;pattern.length; ++i) {
+      if (this.groups) {
+        const p = pattern.slice(i);
+        const gNames = Object.keys(this.groups).filter(gName =&gt; p.indexOf(gName) === 0);
+        // order by key length
+        gNames.sort((a, b) =&gt; b.length - a.length);
+        // use group name with max length
+        const gName = gNames[0];
+        if (gName) {
+          const group = this.groups[gName];
+          this._groupDefs.push(new PatternGroup(this, {
+            name: gName,
+            offset: this._charDefs.length,
+            mask: group.mask,
+            validate: group.validate,
+          }));
+          pattern = pattern.replace(gName, group.mask);
+        }
+      }
+
+      let char = pattern[i];
+      let type = !unmaskingBlock &amp;&amp; char in defs ?
+        PatternDefinition.TYPES.INPUT :
+        PatternDefinition.TYPES.FIXED;
+      const unmasking = type === PatternDefinition.TYPES.INPUT || unmaskingBlock;
+      const optional = type === PatternDefinition.TYPES.INPUT &amp;&amp; optionalBlock;
+
+      if (char === MaskedPattern.STOP_CHAR) {
+        stopAlign = true;
+        continue;
+      }
+
+      if (char === &apos;{&apos; || char === &apos;}&apos;) {
+        unmaskingBlock = !unmaskingBlock;
+        continue;
+      }
+
+      if (char === &apos;[&apos; || char === &apos;]&apos;) {
+        optionalBlock = !optionalBlock;
+        continue;
+      }
+
+      if (char === MaskedPattern.ESCAPE_CHAR) {
+        ++i;
+        char = pattern[i];
+        if (!char) break;
+        type = PatternDefinition.TYPES.FIXED;
+      }
+
+      this._charDefs.push(new PatternDefinition({
+        char,
+        type,
+        optional,
+        stopAlign,
+        unmasking,
+        mask: type === PatternDefinition.TYPES.INPUT ?
+          defs[char] :
+          (value =&gt; value === char)
+      }));
+
+      stopAlign = false;
+    }
+  }
+
+  /**
+    @override
+  */
+  doValidate (...args: *) {
+    return this._groupDefs.every(g =&gt; g.doValidate(...args)) &amp;&amp; super.doValidate(...args);
+  }
+
+  /**
+    @override
+  */
+  clone () {
+    const m = new MaskedPattern(this);
+    m._value = this.value;
+    // $FlowFixMe
+    m._charDefs.forEach((d, i) =&gt; Object.assign(d, this._charDefs[i]));
+    // $FlowFixMe
+    m._groupDefs.forEach((d, i) =&gt; Object.assign(d, this._groupDefs[i]));
+    return m;
+  }
+
+  /**
+    @override
+  */
+  reset () {
+    super.reset();
+    this._charDefs.forEach(d =&gt; {delete d.isHollow;});
+  }
+
+  /**
+    @override
+  */
+  get isComplete (): boolean {
+    return !this._charDefs.some((d, i) =&gt;
+      d.isInput &amp;&amp; !d.optional &amp;&amp; (d.isHollow || !this.extractInput(i, i+1)));
+  }
+
+  /** */
+  hiddenHollowsBefore (defIndex: number): number {
+    return this._charDefs
+      .slice(0, defIndex)
+      .filter(d =&gt; d.isHiddenHollow)
+      .length;
+  }
+
+  /** Map definition index to position on view */
+  mapDefIndexToPos (defIndex: number): number {
+    return defIndex - this.hiddenHollowsBefore(defIndex);
+  }
+
+  /** Map position on view to definition index */
+  mapPosToDefIndex (pos: number): number {
+    let defIndex = pos;
+    for (let di=0; di&lt;this._charDefs.length; ++di) {
+      const def = this._charDefs[di];
+      if (di &gt;= defIndex) break;
+      if (def.isHiddenHollow) ++defIndex;
+    }
+    return defIndex;
+  }
+
+  /**
+    @override
+  */
+  get unmaskedValue (): string {
+    const str = this.value;
+    let unmasked = &apos;&apos;;
+
+    for (let ci=0, di=0; ci&lt;str.length &amp;&amp; di&lt;this._charDefs.length; ++di) {
+      const ch = str[ci];
+      const def = this._charDefs[di];
+
+      if (def.isHiddenHollow) continue;
+      if (def.unmasking &amp;&amp; !def.isHollow) unmasked += ch;
+      ++ci;
+    }
+
+    return unmasked;
+  }
+
+  set unmaskedValue (unmaskedValue: string) {
+    super.unmaskedValue = unmaskedValue;
+  }
+
+  /**
+    @override
+  */
+  _appendTail (tail: Array&lt;InputChunk&gt;=[]): ChangeDetails {
+    return this._appendChunks(tail, {tail: true}).aggregate(this._appendPlaceholder());
+  }
+
+  /**
+    @override
+  */
+  _append (str: string, flags: AppendFlags={}): ChangeDetails {
+    const oldValueLength = this.value.length;
+    let rawInserted = &apos;&apos;;
+    let overflow = false;
+
+    str = this.doPrepare(str, flags);
+
+    for (let ci=0, di=this.mapPosToDefIndex(this.value.length); ci &lt; str.length;) {
+      const ch = str[ci];
+      const def = this._charDefs[di];
+
+      // check overflow
+      if (def == null) {
+        overflow = true;
+        break;
+      }
+
+      // reset
+      def.isHollow = false;
+
+      let resolved, skipped;
+      let chres = conform(def.resolve(ch), ch);
+
+      if (def.type === PatternDefinition.TYPES.INPUT) {
+        if (chres) {
+          this._value += chres;
+          if (!this.doValidate()) {
+            chres = &apos;&apos;;
+            this._value = this.value.slice(0, -1);
+          }
+        }
+
+        resolved = !!chres;
+        skipped = !chres &amp;&amp; !def.optional;
+
+        if (!chres) {
+          if (!def.optional &amp;&amp; !flags.input) {
+            this._value += this.placeholderChar;
+            skipped = false;
+          }
+          if (!skipped) def.isHollow = true;
+        } else {
+          rawInserted += chres;
+        }
+      } else {
+        this._value += def.char;
+        resolved = chres &amp;&amp; (def.unmasking || flags.input || flags.raw) &amp;&amp; !flags.tail;
+        def.isRawInput = resolved &amp;&amp; (flags.raw || flags.input);
+        if (def.isRawInput) rawInserted += def.char;
+      }
+
+      if (!skipped) ++di;
+      if (resolved || skipped) ++ci;
+    }
+
+    return new ChangeDetails({
+      inserted: this.value.slice(oldValueLength),
+      rawInserted,
+      overflow
+    });
+  }
+
+  /** Appends chunks splitted by stop chars */
+  _appendChunks (chunks: Array&lt;InputChunk&gt;, ...args: *) {
+    const details = new ChangeDetails();
+    for (let ci=0; ci &lt; chunks.length; ++ci) {
+      const [fromDefIndex, input] = chunks[ci];
+      if (fromDefIndex != null) details.aggregate(this._appendPlaceholder(fromDefIndex));
+      if (details.aggregate(this._append(input, ...args)).overflow) break;
+    }
+    return details;
+  }
+
+  /**
+    @override
+  */
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): Array&lt;InputChunk&gt; {
+    return this._extractInputChunks(fromPos, toPos);
+  }
+
+  /**
+    @override
+  */
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {
+    if (fromPos === toPos) return &apos;&apos;;
+
+    const str = this.value;
+    let input = &apos;&apos;;
+
+    const toDefIndex = this.mapPosToDefIndex(toPos);
+    for (
+      let ci=fromPos, di=this.mapPosToDefIndex(fromPos);
+      ci&lt;toPos &amp;&amp; ci&lt;str.length &amp;&amp; di &lt; toDefIndex;
+      ++di
+    ) {
+      const ch = str[ci];
+      const def = this._charDefs[di];
+
+      if (!def) break;
+      if (def.isHiddenHollow) continue;
+
+      if (def.isInput &amp;&amp; !def.isHollow ||
+        flags.raw &amp;&amp; !def.isInput &amp;&amp; def.isRawInput) input += ch;
+      ++ci;
+    }
+    return input;
+  }
+
+  /** Extracts chunks from input splitted by stop chars */
+  _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array&lt;InputChunk&gt; {
+    if (fromPos === toPos) return [];
+
+    const fromDefIndex = this.mapPosToDefIndex(fromPos);
+    const toDefIndex = this.mapPosToDefIndex(toPos);
+    const stopDefIndices = this._charDefs
+      .map((d, i) =&gt; [d, i])
+      .slice(fromDefIndex, toDefIndex)
+      .filter(([d]) =&gt; d.stopAlign)
+      .map(([, i]) =&gt; i);
+
+    const stops = [
+      fromDefIndex,
+      ...stopDefIndices,
+      toDefIndex
+    ];
+
+    return stops.map((s, i) =&gt; [
+      stopDefIndices.indexOf(s) &gt;= 0 ?
+        s :
+        null,
+
+      this.extractInput(
+        this.mapDefIndexToPos(s),
+        this.mapDefIndexToPos(stops[++i]))
+    ]).filter(([stop, input]) =&gt; stop != null || input);
+  }
+
+  /** Appends placeholder depending on laziness */
+  _appendPlaceholder (toDefIndex: ?number): ChangeDetails {
+    const oldValueLength = this.value.length;
+    const maxDefIndex = toDefIndex || this._charDefs.length;
+    for (let di=this.mapPosToDefIndex(this.value.length); di &lt; maxDefIndex; ++di) {
+      const def = this._charDefs[di];
+      if (def.isInput) def.isHollow = true;
+
+      if (!this.lazy || toDefIndex) {
+        this._value += !def.isInput &amp;&amp; def.char != null ?
+          def.char :
+          !def.optional ?
+            this.placeholderChar :
+            &apos;&apos;;
+      }
+    }
+    return new ChangeDetails({
+      inserted: this.value.slice(oldValueLength)
+    });
+  }
+
+  /**
+    @override
+  */
+  remove (from: number=0, count: number=this.value.length-from) {
+    const to = from + count;
+    this._value = this.value.slice(0, from) + this.value.slice(to);
+    const fromDefIndex = this.mapPosToDefIndex(from);
+    const toDefIndex = this.mapPosToDefIndex(to);
+    this._charDefs
+      .slice(fromDefIndex, toDefIndex)
+      .forEach(d =&gt; d.reset());
+  }
+
+  /**
+    @override
+  */
+  nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE) {
+    let step = direction || DIRECTION.LEFT;
+
+    const initialDefIndex = this.mapPosToDefIndex(cursorPos);
+    const initialDef = this._charDefs[initialDefIndex];
+    let di = initialDefIndex;
+
+    let firstInputIndex,
+        firstFilledInputIndex,
+        firstVisibleHollowIndex,
+        nextdi;
+
+    // check if chars at right is acceptable for LEFT and NONE directions
+    if (direction !== DIRECTION.RIGHT &amp;&amp;
+      (initialDef &amp;&amp; initialDef.isInput ||
+        // in none direction latest position is acceptable also
+        direction === DIRECTION.NONE &amp;&amp; cursorPos === this.value.length)) {
+      firstInputIndex = initialDefIndex;
+      if (initialDef &amp;&amp; !initialDef.isHollow) firstFilledInputIndex = initialDefIndex;
+    }
+
+    if ((firstFilledInputIndex == null &amp;&amp; direction == DIRECTION.LEFT) || firstInputIndex == null) {
+      // search forward
+      for (
+        nextdi = indexInDirection(di, step);
+        0 &lt;= nextdi &amp;&amp; nextdi &lt; this._charDefs.length;
+        di += step, nextdi += step
+      ) {
+        const nextDef = this._charDefs[nextdi];
+        if (firstInputIndex == null &amp;&amp; nextDef.isInput) firstInputIndex = di;
+        if (firstVisibleHollowIndex == null &amp;&amp; nextDef.isHollow &amp;&amp; !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
+        if (nextDef.isInput &amp;&amp; !nextDef.isHollow) {
+          firstFilledInputIndex = di;
+          break;
+        }
+      }
+    }
+
+    // if has aligned left inside fixed and has came to the start - use start position
+    if (direction === DIRECTION.LEFT &amp;&amp; di === 0 &amp;&amp;
+      (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
+
+    if (direction !== DIRECTION.RIGHT || firstInputIndex == null) {
+      // search backward
+      step = -step;
+      let overflow = false;
+
+      // find hollows only before initial pos
+      for (
+        nextdi = indexInDirection(di, step);
+        0 &lt;= nextdi &amp;&amp; nextdi &lt; this._charDefs.length;
+        di += step, nextdi += step
+      ) {
+        const nextDef = this._charDefs[nextdi];
+        if (nextDef.isInput) {
+          firstInputIndex = di;
+          if (nextDef.isHollow &amp;&amp; !nextDef.isHiddenHollow) break;
+        }
+
+        // if hollow not found before start position - set `overflow`
+        // and try to find just any input
+        if (di === initialDefIndex) overflow = true;
+
+        // first input found
+        if (overflow &amp;&amp; firstInputIndex != null) break;
+      }
+
+      // process overflow
+      overflow = overflow || nextdi &gt;= this._charDefs.length;
+      if (overflow &amp;&amp; firstInputIndex != null) di = firstInputIndex;
+    } else if (firstFilledInputIndex == null) {
+      // adjust index if delete at right and filled input not found at right
+      di = firstVisibleHollowIndex != null ?
+        firstVisibleHollowIndex :
+        firstInputIndex;
+    }
+
+    return this.mapDefIndexToPos(di);
+  }
+
+  /** Get group by name */
+  group (name: string): ?PatternGroup {
+    return this.groupsByName(name)[0];
+  }
+
+  /** Get all groups by name */
+  groupsByName (name: string): Array&lt;PatternGroup&gt; {
+    return this._groupDefs.filter(g =&gt; g.name === name);
+  }
+}
+MaskedPattern.DEFAULTS = {
+  lazy: true,
+  placeholderChar: &apos;_&apos;
+};
+MaskedPattern.STOP_CHAR = &apos;`&apos;;
+MaskedPattern.ESCAPE_CHAR = &apos;\\&apos;;
+MaskedPattern.Definition = PatternDefinition;
+MaskedPattern.Group = PatternGroup;
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

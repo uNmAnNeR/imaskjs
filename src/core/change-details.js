@@ -1,10 +1,23 @@
 // @flow
 
+
+/**
+  Provides details of changing model value
+  @param {Object} [details]
+  @param {string} [details.inserted] - Inserted symbols
+  @param {boolean} [details.overflow] - Is overflowed
+  @param {number} [details.removeCount] - Removed symbols count
+  @param {number} [details.shift] - Additional offset if any changes occurred before current position
+*/
 export default
 class ChangeDetails {
+  /** Inserted symbols */
   inserted: string;
+  /** Is overflowed */
   overflow: boolean;
+  /** Removed symbols count */
   removedCount: number;
+  /** Additional offset if any changes occurred before current position */
   shift: number;
   _rawInserted: string;
 
@@ -22,6 +35,10 @@ class ChangeDetails {
     }, details);
   }
 
+  /**
+    Aggregate changes
+    @returns {ChangeDetails} `this`
+  */
   aggregate (details: ChangeDetails): ChangeDetails {
     this.inserted += details.inserted;
     this.removedCount += details.removedCount;
@@ -31,10 +48,12 @@ class ChangeDetails {
     return this;
   }
 
+  /** Total offset considering all changes */
   get offset (): number {
     return this.shift + this.inserted.length - this.removedCount;
   }
 
+  /** Raw inserted is used by dynamic mask */
   get rawInserted (): string {
     return this._rawInserted != null ?
       this._rawInserted :

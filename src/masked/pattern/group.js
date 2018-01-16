@@ -3,26 +3,44 @@ import type MaskedPattern from '../pattern.js';
 import {type AppendFlags} from '../base.js';
 
 
+/** */
 export
 interface PatternGroupTemplate {
   validate: $PropertyType<PatternGroup, 'validate'>;
   mask: $PropertyType<PatternGroup, 'mask'>;
 }
 
+/** */
 type PatternGroupOptions = PatternGroupTemplate & {
   name: $PropertyType<PatternGroup, 'name'>,
   offset: $PropertyType<PatternGroup, 'offset'>,
 };
 
+/**
+  Pattern group symbols from parent
+  @param {MaskedPattern} masked - Internal {@link masked} model
+  @param {Object} opts
+  @param {string} opts.name - Group name
+  @param {number} opts.offset - Group offset in masked definitions array
+  @param {string} opts.mask - Group mask
+  @param {Function} [opts.validate] - Custom group validator
+*/
 export default
 class PatternGroup {
+  /** */
   static Range: Class<RangeGroup>;
+  /** */
   static Enum: Class<EnumGroup>;
 
+  /** Internal {@link masked} model */
   masked: MaskedPattern;
+  /** Group name */
   name: string;
+  /** Group offset in masked definitions array */
   offset: number;
+  /** Group mask */
   mask: string;
+  /** Custom group validator */
   validate: (string, PatternGroup, AppendFlags) => boolean;
 
   constructor(masked: MaskedPattern, {name, offset, mask, validate}: PatternGroupOptions) {
@@ -33,26 +51,36 @@ class PatternGroup {
     this.validate = validate || (() => true);
   }
 
+  /** Slice of internal {@link masked} value */
   get value (): string {
     return this.masked.value.slice(
       this.masked.mapDefIndexToPos(this.offset),
       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
   }
 
+  /** Unmasked slice of internal {@link masked} value */
   get unmaskedValue (): string {
     return this.masked.extractInput(
       this.masked.mapDefIndexToPos(this.offset),
       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
   }
 
+  /** Validates if current value is acceptable */
   doValidate (flags: AppendFlags) {
     return this.validate(this.value, this, flags);
   }
 }
 
+/**
+  Pattern group that validates number ranges
+  @param {number[]} range - [from, to]
+  @param {?number} maxlen - Maximum number length, will be padded with leading zeros
+*/
 export
 class RangeGroup implements PatternGroupTemplate {
+  /** @type {string} */
   mask: $PropertyType<PatternGroup, 'mask'>;
+  /** @type {Function} */
   validate: $PropertyType<PatternGroup, 'validate'>;
   _maxLength: number;
   _from: number;
@@ -123,6 +151,7 @@ class RangeGroup implements PatternGroupTemplate {
   }
 }
 
+/** Pattern group that validates enum values */
 export
 function EnumGroup (enums: Array<string>): PatternGroupTemplate {
   return {

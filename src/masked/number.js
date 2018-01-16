@@ -12,23 +12,43 @@ type MaskedNumberOptions = {
   signed: $PropertyType<MaskedNumber, 'signed'>,
   normalizeZeros: $PropertyType<MaskedNumber, 'normalizeZeros'>,
   padFractionalZeros: $PropertyType<MaskedNumber, 'padFractionalZeros'>,
-  postFormat: $PropertyType<MaskedNumber, 'postFormat'>, // TODO deprecarted, remove in 3.0
 };
 
+/**
+  Number mask
+  @param {Object} opts
+  @param {string} opts.radix - Single char
+  @param {string} opts.thousandsSeparator - Single char
+  @param {Array<string>} opts.mapToRadix - Array of single chars
+  @param {number} opts.min
+  @param {number} opts.max
+  @param {number} opts.scale - Digits after point
+  @param {boolean} opts.signed - Allow negative
+  @param {boolean} opts.normalizeZeros - Flag to remove leading and trailing zeros in the end of editing
+  @param {boolean} opts.padFractionalZeros - Flag to pad trailing zeros after point in the end of editing
+*/
 export default
 class MaskedNumber extends Masked<Number> {
   static DEFAULTS: $Shape<MaskedNumberOptions>;
 
+  /** Single char */
   radix: string;
+  /** Single char */
   thousandsSeparator: string;
+  /** Array of single chars */
   mapToRadix: Array<string>;
+  /** */
   min: number;
+  /** */
   max: number;
+  /** Digits after point */
   scale: number;
+  /** */
   signed: boolean;
+  /** Flag to remove leading and trailing zeros in the end of editing */
   normalizeZeros: boolean;
+  /** Flag to pad trailing zeros after point in the end of editing */
   padFractionalZeros: boolean;
-  postFormat: any; // TODO deprecarted, remove in 3.0
   _numberRegExp: RegExp;
   _numberRegExpInput: RegExp;
   _thousandsSeparatorRegExp: RegExp;
@@ -41,16 +61,15 @@ class MaskedNumber extends Masked<Number> {
     });
   }
 
+  /**
+    @override
+  */
   _update (opts: MaskedNumberOptions) {
-    if (opts.postFormat) {
-      console.warn("'postFormat' option is deprecated and will be removed in next release, use plain options instead.");
-      Object.assign(opts, opts.postFormat);
-      delete opts.postFormat;
-    }
     super._update(opts);
     this._updateRegExps();
   }
 
+  /** */
   _updateRegExps () {
     // use different regexp to process user input (more strict, input suffix) and tail shifting
     const start = '^'
@@ -77,14 +96,19 @@ class MaskedNumber extends Masked<Number> {
     this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   }
 
+  /**
+    @override
+  */
   _extractTail (fromPos: number=0, toPos: number=this.value.length): string {
     return this._removeThousandsSeparators(super._extractTail(fromPos, toPos));
   }
 
+  /** */
   _removeThousandsSeparators (value: string): string {
     return value.replace(this._thousandsSeparatorRegExp, '');
   }
 
+  /** */
   _insertThousandsSeparators (value: string): string {
     // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
     const parts = value.split(this.radix);
@@ -92,10 +116,16 @@ class MaskedNumber extends Masked<Number> {
     return parts.join(this.radix);
   }
 
+  /**
+    @override
+  */
   doPrepare (str: string, ...args: *) {
     return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
+  /**
+    @override
+  */
   appendWithTail (...args: *) {
     let previousValue = this.value;
     this._value = this._removeThousandsSeparators(this.value);
@@ -126,6 +156,9 @@ class MaskedNumber extends Masked<Number> {
     return appendDetails;
   }
 
+  /**
+    @override
+  */
   nearestInputPos (cursorPos: number, direction?: Direction): number {
     if (!direction) return cursorPos;
 
@@ -134,6 +167,9 @@ class MaskedNumber extends Masked<Number> {
     return cursorPos;
   }
 
+  /**
+    @override
+  */
   doValidate (flags: AppendFlags) {
     const regexp = flags.input ? this._numberRegExpInput : this._numberRegExp;
 
@@ -153,6 +189,9 @@ class MaskedNumber extends Masked<Number> {
     return valid && super.doValidate(flags);
   }
 
+  /**
+    @override
+  */
   doCommit () {
     const number = this.number;
     let validnum = number;
@@ -172,6 +211,7 @@ class MaskedNumber extends Masked<Number> {
     super.doCommit();
   }
 
+  /** */
   _normalizeZeros (value: string): string {
     const parts = this._removeThousandsSeparators(value).split(this.radix);
 
@@ -188,6 +228,7 @@ class MaskedNumber extends Masked<Number> {
     return this._insertThousandsSeparators(parts.join(this.radix));
   }
 
+  /** */
   _padFractionalZeros (value: string): string {
     if (!value) return value;
 
@@ -197,6 +238,9 @@ class MaskedNumber extends Masked<Number> {
     return parts.join(this.radix);
   }
 
+  /**
+    @override
+  */
   get unmaskedValue (): string {
     return this._removeThousandsSeparators(
       this._normalizeZeros(
@@ -208,6 +252,7 @@ class MaskedNumber extends Masked<Number> {
     super.unmaskedValue = unmaskedValue.replace('.', this.radix);
   }
 
+  /** Parsed Number */
   get number (): number {
     return Number(this.unmaskedValue);
   }
@@ -216,6 +261,10 @@ class MaskedNumber extends Masked<Number> {
     this.unmaskedValue = String(number);
   }
 
+  /**
+    Is negative allowed
+    @readonly
+  */
   get allowNegative (): boolean {
     return this.signed ||
       (this.min != null && this.min < 0) ||

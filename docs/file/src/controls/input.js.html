@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/controls/input.js | imask</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="vanilla javascript input mask"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="imask"><meta property="twitter:description" content="vanilla javascript input mask"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/uNmAnNeR/imaskjs"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-IMask">IMask</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#controls">controls</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/controls/input.js~InputMask.html">InputMask</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#core">core</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/core/action-details.js~ActionDetails.html">ActionDetails</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/core/change-details.js~ChangeDetails.html">ChangeDetails</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-conform">conform</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-escapeRegExp">escapeRegExp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-indexInDirection">indexInDirection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isString">isString</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-objectIncludes">objectIncludes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DIRECTION">DIRECTION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-g">g</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#masked">masked</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/base.js~Masked.html">Masked</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/date.js~MaskedDate.html">MaskedDate</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/dynamic.js~MaskedDynamic.html">MaskedDynamic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/function.js~MaskedFunction.html">MaskedFunction</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/number.js~MaskedNumber.html">MaskedNumber</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern.js~MaskedPattern.html">MaskedPattern</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/regexp.js~MaskedRegExp.html">MaskedRegExp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createMask">createMask</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-maskedClass">maskedClass</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#masked-pattern">masked/pattern</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/definition.js~PatternDefinition.html">PatternDefinition</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/group.js~PatternGroup.html">PatternGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/group.js~RangeGroup.html">RangeGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-EnumGroup">EnumGroup</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/controls/input.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// @flow
+import {objectIncludes, DIRECTION, type Selection} from &apos;../core/utils.js&apos;;
+import ActionDetails from &apos;../core/action-details.js&apos;;
+import MaskedDate from &apos;../masked/date.js&apos;;
+import createMask, {maskedClass} from &apos;../masked/factory.js&apos;;
+import type Masked from &apos;../masked/base.js&apos;;
+import {type Mask} from &apos;../masked/base.js&apos;;
+
+
+/**
+  Generic element API to use with mask
+  @interface
+*/
+interface UIElement {
+  value: string;
+  selectionStart: number;
+  selectionEnd: number;
+  setSelectionRange (number, number): void;
+  addEventListener(string, Function): void;
+  removeEventListener(string, Function): void;
+}
+
+
+/** Listens to element events and controls changes between element and {@link Masked} */
+export default
+class InputMask {
+  /**
+    View element
+    @readonly
+  */
+  el: UIElement;
+
+  /**
+    Internal {@link Masked} model
+    @readonly
+  */
+  masked: Masked&lt;*&gt;;
+  alignCursor: () =&gt; void;
+  alignCursorFriendly: () =&gt; void;
+
+  _listeners: {[string]: Array&lt;Function&gt;};
+  _value: string;
+  _changingCursorPos: number;
+  _unmaskedValue: string;
+  _saveSelection: (?Event) =&gt; void;
+  _selection: Selection;
+  _onInput: (Event) =&gt; void;
+  _onChange: () =&gt; void;
+  _onDrop: (Event) =&gt; void;
+  _cursorChanging: number;
+
+  /**
+    @param {UIElement} el
+    @param {Object} opts
+  */
+  constructor (el: UIElement, opts: {[string]: any}) {
+    this.el = el;
+    this.masked = createMask(opts);
+
+    this._listeners = {};
+    this._value = &apos;&apos;;
+    this._unmaskedValue = &apos;&apos;;
+
+    this._saveSelection = this._saveSelection.bind(this);
+    this._onInput = this._onInput.bind(this);
+    this._onChange = this._onChange.bind(this);
+    this._onDrop = this._onDrop.bind(this);
+    this.alignCursor = this.alignCursor.bind(this);
+    this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
+
+    this._bindEvents();
+
+    // refresh
+    this.updateValue();
+    this._onChange();
+  }
+
+  /** Read or update mask */
+  get mask (): Mask {
+    return this.masked.mask;
+  }
+  set mask (mask: Mask) {
+    if (mask == null || mask === this.masked.mask) return;
+
+    if (this.masked.constructor === maskedClass(mask)) {
+      this.masked.mask = mask;
+      return;
+    }
+
+    const masked = createMask({mask});
+    masked.unmaskedValue = this.masked.unmaskedValue;
+    this.masked = masked;
+  }
+
+  /** Raw value */
+  get value (): string {
+    return this._value;
+  }
+
+  set value (str: string) {
+    this.masked.value = str;
+    this.updateControl();
+    this.alignCursor();
+  }
+
+  /** Unmasked value */
+  get unmaskedValue (): string {
+    return this._unmaskedValue;
+  }
+
+  set unmaskedValue (str: string) {
+    this.masked.unmaskedValue = str;
+    this.updateControl();
+    this.alignCursor();
+  }
+
+  /**
+    Starts listening to element events
+    @protected
+  */
+  _bindEvents () {
+    this.el.addEventListener(&apos;keydown&apos;, this._saveSelection);
+    this.el.addEventListener(&apos;input&apos;, this._onInput);
+    this.el.addEventListener(&apos;drop&apos;, this._onDrop);
+    this.el.addEventListener(&apos;click&apos;, this.alignCursorFriendly);
+    this.el.addEventListener(&apos;change&apos;, this._onChange);
+  }
+
+  /**
+    Stops listening to element events
+    @protected
+   */
+  _unbindEvents () {
+    this.el.removeEventListener(&apos;keydown&apos;, this._saveSelection);
+    this.el.removeEventListener(&apos;input&apos;, this._onInput);
+    this.el.removeEventListener(&apos;drop&apos;, this._onDrop);
+    this.el.removeEventListener(&apos;click&apos;, this.alignCursorFriendly);
+    this.el.removeEventListener(&apos;change&apos;, this._onChange);
+  }
+
+  /**
+    Fires custom event
+    @protected
+   */
+  _fireEvent (ev: string) {
+    const listeners = this._listeners[ev] || [];
+    listeners.forEach(l =&gt; l());
+  }
+
+  /**
+    Current selection start
+    @readonly
+  */
+  get selectionStart (): number {
+    return this._cursorChanging ?
+      this._changingCursorPos :
+
+      this.el.selectionStart;
+  }
+
+  /** Current cursor position */
+  get cursorPos (): number {
+    return this._cursorChanging ?
+      this._changingCursorPos :
+
+      this.el.selectionEnd;
+  }
+  set cursorPos (pos: number) {
+    if (this.el !== document.activeElement) return;
+
+    this.el.setSelectionRange(pos, pos);
+    this._saveSelection();
+  }
+
+  /**
+    Stores current selection
+    @protected
+  */
+  _saveSelection (/* ev */) {
+    if (this.value !== this.el.value) {
+      console.warn(&apos;Uncontrolled input change, refresh mask manually!&apos;); // eslint-disable-line no-console
+    }
+    this._selection = {
+      start: this.selectionStart,
+      end: this.cursorPos
+    };
+  }
+
+  /** Syncronizes model value from view */
+  updateValue () {
+    this.masked.value = this.el.value;
+  }
+
+  /** Syncronizes view from model value, fires change events */
+  updateControl () {
+    const newUnmaskedValue = this.masked.unmaskedValue;
+    const newValue = this.masked.value;
+    const isChanged = (this.unmaskedValue !== newUnmaskedValue ||
+      this.value !== newValue);
+
+    this._unmaskedValue = newUnmaskedValue;
+    this._value = newValue;
+
+    if (this.el.value !== newValue) this.el.value = newValue;
+    if (isChanged) this._fireChangeEvents();
+  }
+
+  /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
+  updateOptions (opts: {[string]: any}) {
+    opts = Object.assign({}, opts);  // clone
+    if (opts.mask === Date &amp;&amp; this.masked instanceof MaskedDate) delete opts.mask;
+
+    // check if changed
+    if (objectIncludes(this.masked, opts)) return;
+
+    this.masked.updateOptions(opts);
+    this.updateControl();
+  }
+
+  /** Updates cursor */
+  updateCursor (cursorPos: number) {
+    if (cursorPos == null) return;
+    this.cursorPos = cursorPos;
+
+    // also queue change cursor for mobile browsers
+    this._delayUpdateCursor(cursorPos);
+  }
+
+  /**
+    Delays cursor update to support mobile browsers
+    @private
+  */
+  _delayUpdateCursor (cursorPos: number) {
+    this._abortUpdateCursor();
+    this._changingCursorPos = cursorPos;
+    this._cursorChanging = setTimeout(() =&gt; {
+      if (!this.el) return; // if was destroyed
+      this.cursorPos = this._changingCursorPos;
+      this._abortUpdateCursor();
+    }, 10);
+  }
+
+  /**
+    Fires custom events
+    @protected
+  */
+  _fireChangeEvents () {
+    this._fireEvent(&apos;accept&apos;);
+    if (this.masked.isComplete) this._fireEvent(&apos;complete&apos;);
+  }
+
+  /**
+    Aborts delayed cursor update
+    @private
+  */
+  _abortUpdateCursor () {
+    if (this._cursorChanging) {
+      clearTimeout(this._cursorChanging);
+      delete this._cursorChanging;
+    }
+  }
+
+  /** Aligns cursor to nearest available position */
+  alignCursor () {
+    this.cursorPos = this.masked.nearestInputPos(this.cursorPos, DIRECTION.LEFT);
+  }
+
+  /** Aligns cursor only if selection is empty */
+  alignCursorFriendly () {
+    if (this.selectionStart !== this.cursorPos) return;
+    this.alignCursor();
+  }
+
+  /** Adds listener on custom event */
+  on (ev: string, handler: Function) {
+    if (!this._listeners[ev]) this._listeners[ev] = [];
+    this._listeners[ev].push(handler);
+    return this;
+  }
+
+  /** Removes custom event listener */
+  off (ev: string, handler: Function) {
+    if (!this._listeners[ev]) return;
+    if (!handler) {
+      delete this._listeners[ev];
+      return;
+    }
+    const hIndex = this._listeners[ev].indexOf(handler);
+    if (hIndex &gt;= 0) this._listeners[ev].splice(hIndex, 1);
+    return this;
+  }
+
+  /** Handles view input event */
+  _onInput () {
+    this._abortUpdateCursor();
+
+    const details = new ActionDetails(
+      // new state
+      this.el.value, this.cursorPos,
+      // old state
+      this.value, this._selection);
+
+    const offset = this.masked.splice(
+      details.startChangePos,
+      details.removed.length,
+      details.inserted,
+      details.removeDirection).offset;
+
+
+    const cursorPos = this.masked.nearestInputPos(details.startChangePos + offset);
+
+    this.updateControl();
+    this.updateCursor(cursorPos);
+  }
+
+  /** Handles view change event and commits model value */
+  _onChange () {
+    if (this.value !== this.el.value) {
+      this.updateValue();
+    }
+    this.masked.doCommit();
+    this.updateControl();
+  }
+
+  /** Handles view drop event, prevents by default */
+  _onDrop (ev: Event) {
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+
+  /** Unbind view events and removes element reference */
+  destroy () {
+    this._unbindEvents();
+    // $FlowFixMe why not do so?
+    this._listeners.length = 0;
+    delete this.el;
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

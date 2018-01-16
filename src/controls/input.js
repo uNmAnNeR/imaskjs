@@ -7,6 +7,10 @@ import type Masked from '../masked/base.js';
 import {type Mask} from '../masked/base.js';
 
 
+/**
+  Generic element API to use with mask
+  @interface
+*/
 interface UIElement {
   value: string;
   selectionStart: number;
@@ -16,9 +20,20 @@ interface UIElement {
   removeEventListener(string, Function): void;
 }
 
+
+/** Listens to element events and controls changes between element and {@link Masked} */
 export default
 class InputMask {
+  /**
+    View element
+    @readonly
+  */
   el: UIElement;
+
+  /**
+    Internal {@link Masked} model
+    @readonly
+  */
   masked: Masked<*>;
   alignCursor: () => void;
   alignCursorFriendly: () => void;
@@ -34,7 +49,11 @@ class InputMask {
   _onDrop: (Event) => void;
   _cursorChanging: number;
 
-  constructor (el: UIElement, opts: any) {
+  /**
+    @param {UIElement} el
+    @param {Object} opts
+  */
+  constructor (el: UIElement, opts: {[string]: any}) {
     this.el = el;
     this.masked = createMask(opts);
 
@@ -49,13 +68,14 @@ class InputMask {
     this.alignCursor = this.alignCursor.bind(this);
     this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
 
-    this.bindEvents();
+    this._bindEvents();
 
     // refresh
     this.updateValue();
     this._onChange();
   }
 
+  /** Read or update mask */
   get mask (): Mask {
     return this.masked.mask;
   }
@@ -72,6 +92,7 @@ class InputMask {
     this.masked = masked;
   }
 
+  /** Raw value */
   get value (): string {
     return this._value;
   }
@@ -82,6 +103,7 @@ class InputMask {
     this.alignCursor();
   }
 
+  /** Unmasked value */
   get unmaskedValue (): string {
     return this._unmaskedValue;
   }
@@ -92,7 +114,11 @@ class InputMask {
     this.alignCursor();
   }
 
-  bindEvents () {
+  /**
+    Starts listening to element events
+    @protected
+  */
+  _bindEvents () {
     this.el.addEventListener('keydown', this._saveSelection);
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
@@ -100,7 +126,11 @@ class InputMask {
     this.el.addEventListener('change', this._onChange);
   }
 
-  unbindEvents () {
+  /**
+    Stops listening to element events
+    @protected
+   */
+  _unbindEvents () {
     this.el.removeEventListener('keydown', this._saveSelection);
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
@@ -108,11 +138,19 @@ class InputMask {
     this.el.removeEventListener('change', this._onChange);
   }
 
-  fireEvent (ev: string) {
+  /**
+    Fires custom event
+    @protected
+   */
+  _fireEvent (ev: string) {
     const listeners = this._listeners[ev] || [];
     listeners.forEach(l => l());
   }
 
+  /**
+    Current selection start
+    @readonly
+  */
   get selectionStart (): number {
     return this._cursorChanging ?
       this._changingCursorPos :
@@ -120,13 +158,13 @@ class InputMask {
       this.el.selectionStart;
   }
 
+  /** Current cursor position */
   get cursorPos (): number {
     return this._cursorChanging ?
       this._changingCursorPos :
 
       this.el.selectionEnd;
   }
-
   set cursorPos (pos: number) {
     if (this.el !== document.activeElement) return;
 
@@ -134,6 +172,10 @@ class InputMask {
     this._saveSelection();
   }
 
+  /**
+    Stores current selection
+    @protected
+  */
   _saveSelection (/* ev */) {
     if (this.value !== this.el.value) {
       console.warn('Uncontrolled input change, refresh mask manually!'); // eslint-disable-line no-console
@@ -144,10 +186,12 @@ class InputMask {
     };
   }
 
+  /** Syncronizes model value from view */
   updateValue () {
     this.masked.value = this.el.value;
   }
 
+  /** Syncronizes view from model value, fires change events */
   updateControl () {
     const newUnmaskedValue = this.masked.unmaskedValue;
     const newValue = this.masked.value;
@@ -161,7 +205,8 @@ class InputMask {
     if (isChanged) this._fireChangeEvents();
   }
 
-  updateOptions (opts: any) {
+  /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
+  updateOptions (opts: {[string]: any}) {
     opts = Object.assign({}, opts);  // clone
     if (opts.mask === Date && this.masked instanceof MaskedDate) delete opts.mask;
 
@@ -172,6 +217,7 @@ class InputMask {
     this.updateControl();
   }
 
+  /** Updates cursor */
   updateCursor (cursorPos: number) {
     if (cursorPos == null) return;
     this.cursorPos = cursorPos;
@@ -180,6 +226,10 @@ class InputMask {
     this._delayUpdateCursor(cursorPos);
   }
 
+  /**
+    Delays cursor update to support mobile browsers
+    @private
+  */
   _delayUpdateCursor (cursorPos: number) {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
@@ -190,11 +240,19 @@ class InputMask {
     }, 10);
   }
 
+  /**
+    Fires custom events
+    @protected
+  */
   _fireChangeEvents () {
-    this.fireEvent('accept');
-    if (this.masked.isComplete) this.fireEvent('complete');
+    this._fireEvent('accept');
+    if (this.masked.isComplete) this._fireEvent('complete');
   }
 
+  /**
+    Aborts delayed cursor update
+    @private
+  */
   _abortUpdateCursor () {
     if (this._cursorChanging) {
       clearTimeout(this._cursorChanging);
@@ -202,21 +260,25 @@ class InputMask {
     }
   }
 
+  /** Aligns cursor to nearest available position */
   alignCursor () {
     this.cursorPos = this.masked.nearestInputPos(this.cursorPos, DIRECTION.LEFT);
   }
 
+  /** Aligns cursor only if selection is empty */
   alignCursorFriendly () {
     if (this.selectionStart !== this.cursorPos) return;
     this.alignCursor();
   }
 
+  /** Adds listener on custom event */
   on (ev: string, handler: Function) {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
     return this;
   }
 
+  /** Removes custom event listener */
   off (ev: string, handler: Function) {
     if (!this._listeners[ev]) return;
     if (!handler) {
@@ -228,6 +290,7 @@ class InputMask {
     return this;
   }
 
+  /** Handles view input event */
   _onInput () {
     this._abortUpdateCursor();
 
@@ -250,6 +313,7 @@ class InputMask {
     this.updateCursor(cursorPos);
   }
 
+  /** Handles view change event and commits model value */
   _onChange () {
     if (this.value !== this.el.value) {
       this.updateValue();
@@ -258,13 +322,15 @@ class InputMask {
     this.updateControl();
   }
 
+  /** Handles view drop event, prevents by default */
   _onDrop (ev: Event) {
     ev.preventDefault();
     ev.stopPropagation();
   }
 
+  /** Unbind view events and removes element reference */
   destroy () {
-    this.unbindEvents();
+    this._unbindEvents();
     // $FlowFixMe why not do so?
     this._listeners.length = 0;
     delete this.el;

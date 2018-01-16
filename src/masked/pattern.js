@@ -12,12 +12,18 @@ type MaskedPatternOptions = {
   groups: $PropertyType<MaskedPattern, 'groups'>,
   placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>,
   lazy: $PropertyType<MaskedPattern, 'lazy'>,
-  // TODO deprecated, remove in 3.0
-  placeholder: $PropertyType<MaskedPattern, 'placeholder'>,
-  placeholderLazy: $PropertyType<MaskedPattern, 'placeholderLazy'>,
 };
 type InputChunk = [?number, string];
 
+
+/**
+  Pattern mask
+  @param {Object} opts
+  @param {Object} opts.groups
+  @param {Object} opts.definitions
+  @param {string} opts.placeholderChar
+  @param {boolean} opts.lazy
+*/
 export default
 class MaskedPattern extends Masked<string> {
   static DEFAULTS: any;
@@ -26,16 +32,14 @@ class MaskedPattern extends Masked<string> {
   static Definition: Class<PatternDefinition>;
   static Group: Class<PatternGroup>;
 
+  /** */
   groups: {[string]: PatternGroupTemplate};
+  /** */
   definitions: {[string]: any};  // TODO mask type
+  /** Single char for empty input */
   placeholderChar: string;
+  /** Show placeholder only when needed */
   lazy: boolean;
-  // TODO deprecated, remove in 3.0
-  placeholderLazy: boolean;
-  placeholder: {
-    char: string,
-    lazy: boolean,
-  };
   _charDefs: Array<PatternDefinition>;
   _groupDefs: Array<PatternGroup>;
 
@@ -47,24 +51,18 @@ class MaskedPattern extends Masked<string> {
     });
   }
 
+  /**
+    @override
+    @param {Object} opts
+  */
   _update (opts: $Shape<MaskedPatternOptions>={}) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
-    if (opts.placeholder != null) {
-      console.warn("'placeholder' option is deprecated and will be removed in next major release, use 'placeholderChar' and 'lazy' instead.");
-      if ('char' in opts.placeholder) opts.placeholderChar = opts.placeholder.char;
-      if ('lazy' in opts.placeholder) opts.lazy = opts.placeholder.lazy;
-      delete opts.placeholder;
-    }
-    if (opts.placeholderLazy != null) {
-      console.warn("'placeholderLazy' option is deprecated and will be removed in next major release, use 'lazy' instead.");
-      opts.lazy = opts.placeholderLazy;
-      delete opts.placeholderLazy;
-    }
     super._update(opts);
-    this._updateMask();
+    this._rebuildMask();
   }
 
-  _updateMask () {
+  /** */
+  _rebuildMask () {
     const defs = this.definitions;
     this._charDefs = [];
     this._groupDefs = [];
@@ -140,10 +138,16 @@ class MaskedPattern extends Masked<string> {
     }
   }
 
+  /**
+    @override
+  */
   doValidate (...args: *) {
     return this._groupDefs.every(g => g.doValidate(...args)) && super.doValidate(...args);
   }
 
+  /**
+    @override
+  */
   clone () {
     const m = new MaskedPattern(this);
     m._value = this.value;
@@ -154,16 +158,23 @@ class MaskedPattern extends Masked<string> {
     return m;
   }
 
+  /**
+    @override
+  */
   reset () {
     super.reset();
     this._charDefs.forEach(d => {delete d.isHollow;});
   }
 
+  /**
+    @override
+  */
   get isComplete (): boolean {
     return !this._charDefs.some((d, i) =>
       d.isInput && !d.optional && (d.isHollow || !this.extractInput(i, i+1)));
   }
 
+  /** */
   hiddenHollowsBefore (defIndex: number): number {
     return this._charDefs
       .slice(0, defIndex)
@@ -171,10 +182,12 @@ class MaskedPattern extends Masked<string> {
       .length;
   }
 
+  /** Map definition index to position on view */
   mapDefIndexToPos (defIndex: number): number {
     return defIndex - this.hiddenHollowsBefore(defIndex);
   }
 
+  /** Map position on view to definition index */
   mapPosToDefIndex (pos: number): number {
     let defIndex = pos;
     for (let di=0; di<this._charDefs.length; ++di) {
@@ -185,6 +198,9 @@ class MaskedPattern extends Masked<string> {
     return defIndex;
   }
 
+  /**
+    @override
+  */
   get unmaskedValue (): string {
     const str = this.value;
     let unmasked = '';
@@ -205,10 +221,16 @@ class MaskedPattern extends Masked<string> {
     super.unmaskedValue = unmaskedValue;
   }
 
+  /**
+    @override
+  */
   _appendTail (tail: Array<InputChunk>=[]): ChangeDetails {
     return this._appendChunks(tail, {tail: true}).aggregate(this._appendPlaceholder());
   }
 
+  /**
+    @override
+  */
   _append (str: string, flags: AppendFlags={}): ChangeDetails {
     const oldValueLength = this.value.length;
     let rawInserted = '';
@@ -271,6 +293,7 @@ class MaskedPattern extends Masked<string> {
     });
   }
 
+  /** Appends chunks splitted by stop chars */
   _appendChunks (chunks: Array<InputChunk>, ...args: *) {
     const details = new ChangeDetails();
     for (let ci=0; ci < chunks.length; ++ci) {
@@ -281,10 +304,16 @@ class MaskedPattern extends Masked<string> {
     return details;
   }
 
+  /**
+    @override
+  */
   _extractTail (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {
     return this._extractInputChunks(fromPos, toPos);
   }
 
+  /**
+    @override
+  */
   extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {
     if (fromPos === toPos) return '';
 
@@ -310,6 +339,7 @@ class MaskedPattern extends Masked<string> {
     return input;
   }
 
+  /** Extracts chunks from input splitted by stop chars */
   _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {
     if (fromPos === toPos) return [];
 
@@ -338,6 +368,7 @@ class MaskedPattern extends Masked<string> {
     ]).filter(([stop, input]) => stop != null || input);
   }
 
+  /** Appends placeholder depending on laziness */
   _appendPlaceholder (toDefIndex: ?number): ChangeDetails {
     const oldValueLength = this.value.length;
     const maxDefIndex = toDefIndex || this._charDefs.length;
@@ -358,6 +389,9 @@ class MaskedPattern extends Masked<string> {
     });
   }
 
+  /**
+    @override
+  */
   remove (from: number=0, count: number=this.value.length-from) {
     const to = from + count;
     this._value = this.value.slice(0, from) + this.value.slice(to);
@@ -368,6 +402,9 @@ class MaskedPattern extends Masked<string> {
       .forEach(d => d.reset());
   }
 
+  /**
+    @override
+  */
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE) {
     let step = direction || DIRECTION.LEFT;
 
@@ -381,7 +418,7 @@ class MaskedPattern extends Masked<string> {
         nextdi;
 
     // check if chars at right is acceptable for LEFT and NONE directions
-    if (direction !== DIRECTION.RIGHT && 
+    if (direction !== DIRECTION.RIGHT &&
       (initialDef && initialDef.isInput ||
         // in none direction latest position is acceptable also
         direction === DIRECTION.NONE && cursorPos === this.value.length)) {
@@ -448,10 +485,12 @@ class MaskedPattern extends Masked<string> {
     return this.mapDefIndexToPos(di);
   }
 
+  /** Get group by name */
   group (name: string): ?PatternGroup {
     return this.groupsByName(name)[0];
   }
 
+  /** Get all groups by name */
   groupsByName (name: string): Array<PatternGroup> {
     return this._groupDefs.filter(g => g.name === name);
   }

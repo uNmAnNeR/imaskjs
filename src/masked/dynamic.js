@@ -4,12 +4,19 @@ import createMask from './factory.js';
 import Masked, {type AppendFlags} from './base.js';
 
 
+/** Dynamic mask for choosing apropriate mask in run-time */
 export default
 class MaskedDynamic extends Masked<Array<{[string]: any}>> {
+  /** Currently chosen mask */
   currentMask: ?Masked<*>;
+  /** Compliled {@link Masked} options */
   compiledMasks: Array<Masked<*>>;
+  /** Chooses {@link Masked} depending on input value */
   dispatch: (string, Masked<*>, AppendFlags) => Masked<*>;
 
+  /**
+    @param {Object} opts
+  */
   constructor (opts: any) {
     super({
       ...MaskedDynamic.DEFAULTS,
@@ -19,6 +26,9 @@ class MaskedDynamic extends Masked<Array<{[string]: any}>> {
     this.currentMask = null;
   }
 
+  /**
+    @override
+  */
   _update (opts: any) {
     super._update(opts);
     this.compiledMasks = Array.isArray(opts.mask) ?
@@ -26,6 +36,9 @@ class MaskedDynamic extends Masked<Array<{[string]: any}>> {
       [];
   }
 
+  /**
+    @override
+  */
   _append (str: string, ...args: *) {
     const oldValueLength = this.value.length;
     const details = new ChangeDetails();
@@ -44,10 +57,16 @@ class MaskedDynamic extends Masked<Array<{[string]: any}>> {
     return details;
   }
 
+  /**
+    @override
+  */
   doDispatch(appended: string, flags: AppendFlags={}) {
     return this.dispatch(appended, this, flags);
   }
 
+  /**
+    @override
+  */
   clone () {
     const m = new MaskedDynamic(this);
     m._value = this.value;
@@ -55,11 +74,17 @@ class MaskedDynamic extends Masked<Array<{[string]: any}>> {
     return m;
   }
 
+  /**
+    @override
+  */
   reset () {
     if (this.currentMask) this.currentMask.reset();
     this.compiledMasks.forEach(cm => cm.reset());
   }
 
+  /**
+    @override
+  */
   get value (): string {
     return this.currentMask ? this.currentMask.value : '';
   }
@@ -68,6 +93,9 @@ class MaskedDynamic extends Masked<Array<{[string]: any}>> {
     super.value = value;
   }
 
+  /**
+    @override
+  */
   get unmaskedValue (): string {
     return this.currentMask ? this.currentMask.unmaskedValue : '';
   }
@@ -76,25 +104,40 @@ class MaskedDynamic extends Masked<Array<{[string]: any}>> {
     super.unmaskedValue = unmaskedValue;
   }
 
+  /**
+    @override
+  */
   get isComplete (): boolean {
     return !!this.currentMask && this.currentMask.isComplete;
   }
 
+  /**
+    @override
+  */
   remove (...args: *) {
     if (this.currentMask) this.currentMask.remove(...args);
   }
 
+  /**
+    @override
+  */
   extractInput (...args: *) {
     return this.currentMask ?
       this.currentMask.extractInput(...args) :
       '';
   }
 
+  /**
+    @override
+  */
   doCommit () {
     if (this.currentMask) this.currentMask.doCommit();
     super.doCommit();
   }
 
+  /**
+    @override
+  */
   nearestInputPos(...args: *) {
     return this.currentMask ?
       this.currentMask.nearestInputPos(...args) :

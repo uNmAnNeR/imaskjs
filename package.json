@@ -16,6 +16,7 @@
     "babel-preset-flow": "^6.23.0",
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
+    "documentation": "^5.3.5",
     "eslint-plugin-flowtype": "^2.39.1",
     "flow-bin": "^0.60.1",
     "karma": "^1.7.0",
@@ -53,7 +54,8 @@
     "build:prod:es": "rollup -c --environment format:es,env:production",
     "build:prod:umd": "rollup -c --environment format:umd,env:production",
     "flow": "flow",
-    "prepublishOnly": "flow check && npm run test && npm run build",
+    "doc": "documentation build src/imask.js -f html -o docs",
+    "prepublishOnly": "flow check && npm run test && npm run build && npm run doc",
     "coveralls": "npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {

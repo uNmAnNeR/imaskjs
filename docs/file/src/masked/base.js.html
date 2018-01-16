@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/masked/base.js | imask</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="vanilla javascript input mask"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="imask"><meta property="twitter:description" content="vanilla javascript input mask"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/uNmAnNeR/imaskjs"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-IMask">IMask</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#controls">controls</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/controls/input.js~InputMask.html">InputMask</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#core">core</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/core/action-details.js~ActionDetails.html">ActionDetails</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/core/change-details.js~ChangeDetails.html">ChangeDetails</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-conform">conform</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-escapeRegExp">escapeRegExp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-indexInDirection">indexInDirection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isString">isString</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-objectIncludes">objectIncludes</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DIRECTION">DIRECTION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-g">g</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#masked">masked</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/base.js~Masked.html">Masked</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/date.js~MaskedDate.html">MaskedDate</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/dynamic.js~MaskedDynamic.html">MaskedDynamic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/function.js~MaskedFunction.html">MaskedFunction</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/number.js~MaskedNumber.html">MaskedNumber</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern.js~MaskedPattern.html">MaskedPattern</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/regexp.js~MaskedRegExp.html">MaskedRegExp</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createMask">createMask</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-maskedClass">maskedClass</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#masked-pattern">masked/pattern</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/definition.js~PatternDefinition.html">PatternDefinition</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/group.js~PatternGroup.html">PatternGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/masked/pattern/group.js~RangeGroup.html">RangeGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-EnumGroup">EnumGroup</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/masked/base.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// @flow
+import ChangeDetails from &apos;../core/change-details.js&apos;;
+import {type Direction} from &apos;../core/utils.js&apos;;
+
+
+/** Supported mask type */
+export
+type Mask = string | String | RegExp | Class&lt;Number&gt; | Class&lt;Date&gt; | Array&lt;any&gt; | Function | Masked&lt;*&gt; | Class&lt;Masked&lt;*&gt;&gt;;
+
+/** Append flags */
+export
+type AppendFlags = {
+  input?: boolean,
+  tail?: boolean,
+  raw?: boolean
+};
+
+/** Extract flags */
+export
+type ExtractFlags = {
+  raw?: boolean
+};
+
+export
+type MaskedOptions&lt;MaskType&gt; = {
+  mask: $PropertyType&lt;Masked&lt;MaskType&gt;, &apos;mask&apos;&gt;,
+  prepare?: $PropertyType&lt;Masked&lt;MaskType&gt;, &apos;prepare&apos;&gt;,
+  validate?: $PropertyType&lt;Masked&lt;MaskType&gt;, &apos;validate&apos;&gt;,
+  commit?: $PropertyType&lt;Masked&lt;MaskType&gt;, &apos;commit&apos;&gt;,
+};
+
+
+/** Provides common masking stuff */
+export default
+class Masked&lt;MaskType&gt; {
+  static DEFAULTS: any; // $Shape&lt;MaskedOptions&gt;; TODO after fix https://github.com/facebook/flow/issues/4773
+
+  /** @type {Mask} */
+  mask: MaskType;
+  /** Transforms value before mask processing */
+  prepare: (string, Masked&lt;MaskType&gt;, AppendFlags) =&gt; string;
+  /** Validates if value is acceptable */
+  validate: (string, Masked&lt;MaskType&gt;, AppendFlags) =&gt; boolean;
+  /** Does additional processing in the end of editing */
+  commit: (string, AppendFlags) =&gt; void;
+  /** */
+  isInitialized: boolean;
+  _value: string;
+  _refreshing: boolean;
+
+  constructor (opts: {[string]: any}) {
+    this._value = &apos;&apos;;
+    this._update({
+      ...Masked.DEFAULTS,
+      ...opts
+    });
+    this.isInitialized = true;
+  }
+
+  /** Sets and applies new options */
+  updateOptions (opts: {[string]: any}) {
+    this.withValueRefresh(this._update.bind(this, opts));
+  }
+
+  /**
+    Sets new options
+    @protected
+  */
+  _update (opts: {[string]: any}) {
+    Object.assign(this, opts);
+  }
+
+  /** Clones masked with options and value */
+  clone (): Masked&lt;MaskType&gt; {
+    const m = new Masked(this);
+    m._value = this.value.slice();
+    return m;
+  }
+
+  /** Resets value */
+  reset () {
+    this._value = &apos;&apos;;
+  }
+
+  /** */
+  get value (): string {
+    return this._value;
+  }
+
+  set value (value: string) {
+    this.resolve(value);
+  }
+
+  /** Resolve new value */
+  resolve (value: string): string {
+    this.reset();
+    this._append(value, {input: true});
+    this._appendTail();
+    this.doCommit();
+    return this.value;
+  }
+
+  /** */
+  get unmaskedValue (): string {
+    return this.value;
+  }
+
+  set unmaskedValue (value: string) {
+    this.reset();
+    this._append(value);
+    this._appendTail();
+    this.doCommit();
+  }
+
+  /** Value that includes raw user input */
+  get rawInputValue (): string {
+    return this.extractInput(0, this.value.length, {raw: true});
+  }
+
+  set rawInputValue (value: string) {
+    this.reset();
+    this._append(value, {raw: true});
+    this._appendTail();
+    this.doCommit();
+  }
+
+  /** */
+  get isComplete (): boolean {
+    return true;
+  }
+
+  /** Finds nearest input position in direction */
+  nearestInputPos (cursorPos: number, direction?: Direction): number {
+    return cursorPos;
+  }
+
+  /** Extracts value in range considering flags */
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
+    return this.value.slice(fromPos, toPos);
+  }
+
+  /** Extracts tail in range */
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): any {
+    return this.extractInput(fromPos, toPos);
+  }
+
+  /** Appends tail */
+  _appendTail (tail: any=&quot;&quot;): ChangeDetails {
+    return this._append(tail, {tail: true});
+  }
+
+  /** Appends symbols considering flags */
+  _append (str: string, flags: AppendFlags={}): ChangeDetails {
+    const oldValueLength = this.value.length;
+    let consistentValue: Masked&lt;MaskType&gt; = this.clone();
+    let overflow = false;
+
+    str = this.doPrepare(str, flags);
+
+    for (let ci=0; ci&lt;str.length; ++ci) {
+      this._value += str[ci];
+      if (this.doValidate(flags) === false) {
+        // $FlowFixMe
+        Object.assign(this, consistentValue);
+        if (!flags.input) {
+          // in `input` mode dont skip invalid chars
+          overflow = true;
+          break;
+        }
+      }
+
+      consistentValue = this.clone();
+    }
+
+    return new ChangeDetails({
+      inserted: this.value.slice(oldValueLength),
+      overflow
+    });
+  }
+
+  /** Appends symbols considering tail */
+  appendWithTail (str: string, tail: string): ChangeDetails {
+    // TODO refactor
+    const aggregateDetails = new ChangeDetails();
+    let consistentValue = this.clone();
+    let consistentAppended: Masked&lt;MaskType&gt;;
+
+    for (let ci=0; ci&lt;str.length; ++ci) {
+      const ch = str[ci];
+
+      const appendDetails = this._append(ch, {input: true});
+      consistentAppended = this.clone();
+      const tailAppended = !appendDetails.overflow &amp;&amp; !this._appendTail(tail).overflow;
+      if (!tailAppended || this.doValidate({tail: true}) === false) {
+        // $FlowFixMe
+        Object.assign(this, consistentValue);
+        break;
+      }
+
+      // $FlowFixMe
+      Object.assign(this, consistentAppended);
+      consistentValue = this.clone();
+      aggregateDetails.aggregate(appendDetails);
+    }
+
+    // TODO needed for cases when
+    // 1) REMOVE ONLY AND NO LOOP AT ALL
+    // 2) last loop iteration removes tail
+    // 3) when breaks on tail insert
+
+    // aggregate only shift from tail
+    aggregateDetails.shift += this._appendTail(tail).shift;
+
+    return aggregateDetails;
+  }
+
+  /** */
+  remove (from: number=0, count: number=this.value.length-from) {
+    this._value = this.value.slice(0, from) + this.value.slice(from + count);
+  }
+
+  /** Calls function and reapplies current value */
+  withValueRefresh&lt;T&gt;(fn: () =&gt; T): T {
+    if (this._refreshing || !this.isInitialized) return fn();
+    this._refreshing = true;
+
+    const unmasked = this.unmaskedValue;
+
+    const ret = fn();
+
+    this.unmaskedValue = unmasked;
+
+    delete this._refreshing;
+    return ret;
+  }
+
+  /**
+    Prepares string before mask processing
+    @protected
+  */
+  doPrepare (str: string, flags: AppendFlags={}): string {
+    return this.prepare(str, this, flags);
+  }
+
+  /**
+    Validates if value is acceptable
+    @protected
+  */
+  doValidate (flags: AppendFlags): boolean {
+    return this.validate(this.value, this, flags);
+  }
+
+  /**
+    Does additional processing in the end of editing
+    @protected
+  */
+  doCommit () {
+    this.commit(this.value, this);
+  }
+
+  // TODO
+  // insert (str, fromPos, flags)
+
+  /** */
+  splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction): ChangeDetails {
+    const tailPos = start + deleteCount;
+    const tail = this._extractTail(tailPos);
+
+    const startChangePos = this.nearestInputPos(start, removeDirection);
+    this.remove(startChangePos);
+    const changeDetails = this.appendWithTail(inserted, tail);
+
+    // adjust shift if start was aligned
+    changeDetails.shift += startChangePos - start;
+    return changeDetails;
+  }
+}
+
+
+Masked.DEFAULTS = {
+  prepare: val =&gt; val,
+  validate: () =&gt; true,
+  commit: () =&gt; {},
+};
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
