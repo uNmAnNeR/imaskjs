@@ -47,7 +47,7 @@ class InputMask {
   _onInput: (Event) => void;
   _onChange: () => void;
   _onDrop: (Event) => void;
-  _cursorChanging: number;
+  _cursorChanging: TimeoutID;
 
   /**
     @param {UIElement} el

@@ -4,10 +4,8 @@ var babel = require('rollup-plugin-babel');
 
 
 module.exports = function (config) {
-  var preprocessors = ['rollup'];
   var reporters = ['progress'];
   if (config.singleRun) {
-    preprocessors.push('coverage');
     reporters.push('coverage');
   }
 
@@ -19,7 +17,6 @@ module.exports = function (config) {
     ],
     frameworks: ['mocha', 'chai', 'sinon'],
     plugins: [
-      require('karma-rollup-plugin'),
       require('karma-rollup-preprocessor'),
       require('karma-mocha'),
       require('karma-chai'),
@@ -29,7 +26,7 @@ module.exports = function (config) {
       require('karma-phantomjs-launcher')
     ],
     preprocessors: {
-      'src/**/*.js': preprocessors,
+      'src/**/*.js': ['rollup'],
       'test/**/*.js': ['rollup']
     },
     reporters: reporters,
@@ -56,14 +53,23 @@ module.exports = function (config) {
             'flow'
           ],
           exclude: 'node_modules/**',
-          plugins: ['transform-object-rest-spread', 'transform-object-assign', 'external-helpers']
+          plugins: [
+            'transform-object-rest-spread',
+            'transform-object-assign',
+            'external-helpers',
+            ['istanbul', {
+              "exclude": ["test/**/*.js"]
+            }]
+          ]
         }),
         commonjs()
       ],
-      format: 'iife',
-      name: 'IMask',
-      exports: 'named',
-      sourcemap: 'inline'
+      output: {
+        format: 'iife',
+        name: 'IMask',
+        exports: 'named',
+        sourcemap: 'inline'
+      }
     }
   });
 };

@@ -28,9 +28,9 @@ type PatternGroupOptions = PatternGroupTemplate & {
 export default
 class PatternGroup {
   /** */
-  static Range: Class<RangeGroup>;
+  static Range: typeof RangeGroup;
   /** */
-  static Enum: Class<EnumGroup>;
+  static Enum: typeof EnumGroup;
 
   /** Internal {@link masked} model */
   masked: MaskedPattern;

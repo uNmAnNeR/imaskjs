@@ -55,9 +55,12 @@ const babelConf = isES ? {
 
 export default {
   input,
-  output: { file, format },
-  name: 'IMask',
-  sourcemap: true,
+  output: {
+    file,
+    format,
+    name: 'IMask',
+    sourcemap: true,
+  },
   plugins: [
     eslint({configFile: '.eslintrc'}),
     resolve({
