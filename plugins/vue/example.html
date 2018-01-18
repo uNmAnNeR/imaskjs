@@ -11,7 +11,13 @@
     <br>
     <label>
       Component
-      <imask-input type="text" :mask="numberMask" @accept="onAcceptNumber" @complete="onCompleteNumber" :unmasked-value="value">
+      <imask-input
+        v-model="value"
+        type="text"
+        :mask="numberMask"
+        :unmask="numberUnmask"
+        @accept="onAcceptNumber"
+        @complete="onCompleteNumber">
     </label>
   </main>
 
@@ -32,8 +38,9 @@
         dateMask: {
           mask: Date
         },
-        numberMask: '{0}00',
-        value: '123'
+        numberMask: '1000',
+        numberUnmask: true,
+        value: '987'
       },
       methods: {
         onAcceptDate: function (e) {
@@ -51,6 +58,10 @@
         }
       }
     });
+    setTimeout(function () {
+      app.numberUnmask = false;
+      app.value = '123';
+    }, 1000);
   </script>
 </body>
 </html>

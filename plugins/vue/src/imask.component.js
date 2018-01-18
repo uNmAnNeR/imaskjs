@@ -6,14 +6,16 @@ const IMaskComponent = {
   name: 'imask-input',
   template: '<input>',
 
-  mounted () {
-    const {options, values} = this._options;
+  model: {
+    prop: 'value',
+    event: 'accept'
+  },
 
-    this.maskRef = new IMask(this.$el, options)
+  mounted () {
+    this.maskRef = new IMask(this.$el, this._maskOptions)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
-
-    this._updateValues(values);
+    this._updateValue();
   },
 
   destroyed () {
@@ -21,23 +23,29 @@ const IMaskComponent = {
   },
 
   computed: {
-    _options () {
-      return this._extractFromProps(this.$props);
+    maskValue () {
+      return this.$props.unmask ?
+        this.maskRef.unmaskedValue :
+        this.maskRef.value;
+    },
+    _maskOptions () {
+      return this._extractOptionsFromProps(this.$props);
     }
   },
 
   watch: {
-    _options({options, values}) {
-      this.maskRef.updateOptions(options);
-      this._updateValues(values);
+    '$props': {
+      handler () {
+        this.maskRef.updateOptions(this._maskOptions);
+        this._updateValue();
+      },
+      deep: true
     }
   },
 
   methods: {
-    _extractFromProps (props) {
+    _extractOptionsFromProps (props) {
       props = {...props};
-
-      const {value, unmaskedValue} = props;
 
       // keep only defined props
       Object.keys(props)
@@ -47,25 +55,23 @@ const IMaskComponent = {
         });
 
       delete props.value;
-      delete props.unmaskedValue;
+      delete props.unmask;
 
-      return {options: props, values: {value, unmaskedValue}};
+      return props;
     },
 
-    _updateValues (values) {
-      for (const prop in values) {
-        if (values[prop] != null) this.maskRef[prop] = values[prop];
-      }
+    _updateValue () {
+      const value = this.value || '';
+      if (this.$props.unmask) this.maskRef.unmaskedValue = value;
+      else this.maskRef.value = value;
     },
 
-    _onAccept (value, ...args) {
-      if ('unmaskedValue' in this.$props) value = this.maskRef.unmaskedValue;
-      this.$emit('accept', value, ...args);
+    _onAccept () {
+      this.$emit('accept', this.maskValue);
     },
 
-    _onComplete (value, ...args) {
-      if ('unmaskedValue' in this.$props) value = this.maskRef.unmaskedValue;
-      this.$emit('complete', value, ...args)
+    _onComplete () {
+      this.$emit('complete', this.maskValue)
     }
   },
 
@@ -75,7 +81,7 @@ const IMaskComponent = {
       required: true
     },
     value: String,
-    unmaskedValue: String,
+    unmask: Boolean,
     prepare: Function,
     validate: Function,
     commit: Function,
