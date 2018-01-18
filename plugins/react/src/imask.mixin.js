@@ -75,20 +75,24 @@ function IMaskMixin(ComposedComponent) {
       return {options: maskProps, values: {value, unmaskedValue}};
     }
 
+    get maskValue () {
+      return 'unmaskedValue' in this.props ?
+        this.maskRef.unmaskedValue :
+        this.maskRef.value
+    }
+
     _updateValues (values) {
       for (const prop in values) {
         if (values[prop] != null) this.maskRef[prop] = values[prop];
       }
     }
 
-    _onAccept (value, ...args) {
-      if ('unmaskedValue' in this.props) value = this.maskRef.unmaskedValue;
-      if (this.props.onAccept) this.props.onAccept(value, ...args);
+    _onAccept () {
+      if (this.props.onAccept) this.props.onAccept(this.maskValue);
     }
 
-    _onComplete (value, ...args) {
-      if ('unmaskedValue' in this.props) value = this.maskRef.unmaskedValue;
-      if (this.props.onComplete) this.props.onComplete(value, ...args);
+    _onComplete () {
+      if (this.props.onComplete) this.props.onComplete(this.maskValue);
     }
   };
 
