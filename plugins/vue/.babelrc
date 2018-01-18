@@ -2,8 +2,7 @@
   "presets": [
     ["env", {
       "modules": false,
-      "loose": true,
-      "useBuiltIns": true,
+      "useBuiltIns": true
     }],
   ],
   "plugins": ["transform-object-rest-spread", "transform-object-assign", "external-helpers"]

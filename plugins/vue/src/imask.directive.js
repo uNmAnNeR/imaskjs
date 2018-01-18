@@ -1,7 +1,8 @@
 import IMask from 'imask';
 
 
-export default {
+export
+const IMaskDirective = {
   name: 'imask',
   bind (el, {value}) {
     if (!value) return;
@@ -20,7 +21,6 @@ export default {
     destroyMask(el);
   }
 };
-
 
 
 function fireEvent (el, eventName, data) {

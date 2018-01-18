@@ -7,7 +7,7 @@ const globals = {
 };
 
 export default {
-  input: 'src/imask.directive.js',
+  input: 'src/index.js',
   output: {
     name: 'VueIMask',
     file: 'dist/vue-imask.js',

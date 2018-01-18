@@ -43,7 +43,7 @@ function IMaskMixin(ComposedComponent) {
     _extractMaskProps (props) {
       props = {...props};
 
-      // keep only non mask props
+      // keep only mask props
       Object.keys(props)
         .filter(prop => !MaskedComponent.propTypes.hasOwnProperty(prop))
         .forEach(nonMaskProp => {
@@ -125,7 +125,7 @@ function IMaskMixin(ComposedComponent) {
 
     // number
     radix: PropTypes.string,
-    thousandsSeparator: PropTypes.PropTypes.string,
+    thousandsSeparator: PropTypes.string,
     mapToRadix: PropTypes.arrayOf(PropTypes.string),
     scale: PropTypes.number,
     signed: PropTypes.bool,
