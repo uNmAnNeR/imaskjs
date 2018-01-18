@@ -23,11 +23,6 @@ const IMaskComponent = {
   },
 
   computed: {
-    maskValue () {
-      return this.$props.unmask ?
-        this.maskRef.unmaskedValue :
-        this.maskRef.value;
-    },
     _maskOptions () {
       return this._extractOptionsFromProps(this.$props);
     }
@@ -62,16 +57,22 @@ const IMaskComponent = {
 
     _updateValue () {
       const value = this.value || '';
-      if (this.$props.unmask) this.maskRef.unmaskedValue = value;
+      if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
     },
 
+    maskValue () {
+      return this.unmask ?
+        this.maskRef.unmaskedValue :
+        this.maskRef.value;
+    },
+
     _onAccept () {
-      this.$emit('accept', this.maskValue);
+      this.$emit('accept', this.maskValue());
     },
 
     _onComplete () {
-      this.$emit('complete', this.maskValue)
+      this.$emit('complete', this.maskValue())
     }
   },
 
