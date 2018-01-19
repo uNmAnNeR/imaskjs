@@ -4,19 +4,22 @@ import IMask from 'imask';
 export
 const IMaskDirective = {
   name: 'imask',
-  bind (el, {value}) {
-    if (!value) return;
 
-    initMask(el, value);
+  bind (el, {value: options}) {
+    if (!options) return;
+
+    initMask(el, options);
   },
-  update (el, {value}) {
-    if (value) {
-      if (el.maskRef) el.maskRef.updateOptions(value);
-      else initMask(el, value);
+
+  update (el, {value: options}) {
+    if (options) {
+      if (el.maskRef) el.maskRef.updateOptions(options);
+      else initMask(el, options);
     } else {
       destroyMask(el);
     }
   },
+
   unbind (el) {
     destroyMask(el);
   }

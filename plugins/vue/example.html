@@ -6,14 +6,17 @@
   <main id="app">
     <label>
       Directive
-      <input type="text" v-imask="dateMask" @accept="onAcceptDate" @complete="onCompleteDate" :value="value">
+      <input
+        :value="dateValue"
+        v-imask="dateMask"
+        @accept="onAcceptDate"
+        @complete="onCompleteDate">
     </label>
     <br>
     <label>
       Component
       <imask-input
-        v-model="value"
-        type="text"
+        v-model="numberValue"
         :mask="numberMask"
         :unmask="numberUnmask"
         @accept="onAcceptNumber"
@@ -38,9 +41,11 @@
         dateMask: {
           mask: Date
         },
+        dateValue: '12.12',
+
         numberMask: '1000',
         numberUnmask: true,
-        value: '987'
+        numberValue: '987'
       },
       methods: {
         onAcceptDate: function (e) {
@@ -60,7 +65,7 @@
     });
     setTimeout(function () {
       app.numberUnmask = false;
-      app.value = '123';
+      app.numberValue = '123';
     }, 1000);
   </script>
 </body>

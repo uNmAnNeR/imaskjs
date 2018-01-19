@@ -4,15 +4,17 @@ import IMask from 'imask';
 export
 const IMaskComponent = {
   name: 'imask-input',
-  template: '<input>',
-
   model: {
     prop: 'value',
     event: 'accept'
   },
 
+  render (createElement) {
+    return createElement('input');
+  },
+
   mounted () {
-    this.maskRef = new IMask(this.$el, this._maskOptions)
+    this.maskRef = new IMask(this.$el, this.maskOptions)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
     this._updateValue();
@@ -20,18 +22,19 @@ const IMaskComponent = {
 
   destroyed () {
     this.maskRef.destroy();
+    delete this.maskRef;
   },
 
   computed: {
-    _maskOptions () {
+    maskOptions () {
       return this._extractOptionsFromProps(this.$props);
-    }
+    },
   },
 
   watch: {
     '$props': {
       handler () {
-        this.maskRef.updateOptions(this._maskOptions);
+        this.maskRef.updateOptions(this.maskOptions);
         this._updateValue();
       },
       deep: true
@@ -55,24 +58,24 @@ const IMaskComponent = {
       return props;
     },
 
+    _maskValue () {
+      return this.unmask ?
+        this.maskRef.unmaskedValue :
+        this.maskRef.value;
+    },
+
     _updateValue () {
       const value = this.value || '';
       if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
     },
 
-    maskValue () {
-      return this.unmask ?
-        this.maskRef.unmaskedValue :
-        this.maskRef.value;
-    },
-
     _onAccept () {
-      this.$emit('accept', this.maskValue());
+      this.$emit('accept', this._maskValue());
     },
 
     _onComplete () {
-      this.$emit('complete', this.maskValue())
+      this.$emit('complete', this._maskValue());
     }
   },
 
