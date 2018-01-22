@@ -7,7 +7,7 @@ react-imask
 ## Install
 `npm install react-imask`
 
-## Mask input example
+## Mask Input Example
 ```javascript
 import {IMaskInput} from 'react-imask';
 
@@ -16,7 +16,7 @@ import {IMaskInput} from 'react-imask';
   radix=".",
   value="123",  // possible to use `unmaskedValue`, but not both
   onAccept={
-    // first argument is `value` or `unmaskedValue` depending on prop above
+    // first argument will be `value` or `unmaskedValue` depending on prop above
     (value, mask) => console.log(value)
   },
   // ...and more mask props in a guide
@@ -26,7 +26,7 @@ import {IMaskInput} from 'react-imask';
 />
 ```
 
-## Extend existing components
+## Extend Existing Components
 ```javascript
 import {IMaskMixin} from 'react-imask';
 
@@ -53,7 +53,7 @@ const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
 ```
 More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 
-## Many thanks to
+## Many Thanks to
 [@Yordis Prieto](https://github.com/yordis)
 
 [@Alexander Kiselev](https://github.com/MaaKut)
