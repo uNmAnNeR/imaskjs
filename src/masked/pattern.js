@@ -95,7 +95,7 @@ class MaskedPattern extends Masked<string> {
       }
 
       let char = pattern[i];
-      let type = !unmaskingBlock && char in defs ?
+      let type = char in defs ?
         PatternDefinition.TYPES.INPUT :
         PatternDefinition.TYPES.FIXED;
       const unmasking = type === PatternDefinition.TYPES.INPUT || unmaskingBlock;
