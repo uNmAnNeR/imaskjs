@@ -11,11 +11,8 @@ function IMaskMixin(ComposedComponent) {
     }
 
     componentWillReceiveProps (props) {
-      const {options, values} = this._extractFromProps({...props});
-
-      this.maskRef.updateOptions(options);
-
-      this._updateValues(values);
+      this.maskRef.updateOptions(this._extractOptionsFromProps({...props}));
+      this.maskValue = props.value;
     }
 
     componentWillUnmount () {
@@ -25,22 +22,20 @@ function IMaskMixin(ComposedComponent) {
     render () {
       return React.createElement(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
-        defaultValue: this.props.unmaskedValue || this.props.value,
+        defaultValue: this.props.value,
         inputRef: (el) => this.element = el,
       });
     }
 
     initMask () {
-      const {options, values} = this._extractFromProps({...this.props});
-
-      this.maskRef = new IMask(this.element, options)
+      this.maskRef = new IMask(this.element, this._extractOptionsFromProps({...this.props}))
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
 
-      this._updateValues(values);
+      this.maskValue = this.props.value;
     }
 
-    _extractMaskProps (props) {
+    _extractOptionsFromProps (props) {
       props = {...props};
 
       // keep only mask props
@@ -49,6 +44,9 @@ function IMaskMixin(ComposedComponent) {
         .forEach(nonMaskProp => {
           delete props[nonMaskProp];
         });
+
+      delete props.value;
+      delete props.unmask;
 
       return props;
     }
@@ -63,36 +61,24 @@ function IMaskMixin(ComposedComponent) {
       return props;
     }
 
-    _extractFromProps (props) {
-      const value = props.value;
-      const unmaskedValue = props.unmaskedValue;
-
-      const maskProps = this._extractMaskProps(props);
-
-      delete maskProps.value;
-      delete maskProps.unmaskedValue;
-
-      return {options: maskProps, values: {value, unmaskedValue}};
-    }
-
     get maskValue () {
-      return 'unmaskedValue' in this.props ?
+      return this.props.unmask ?
         this.maskRef.unmaskedValue :
         this.maskRef.value
     }
 
-    _updateValues (values) {
-      for (const prop in values) {
-        if (values[prop] != null) this.maskRef[prop] = values[prop];
-      }
+    set maskValue (value) {
+      value = value || '';
+      if (this.props.unmask) this.maskRef.unmaskedValue = value;
+      else this.maskRef.value = value;
     }
 
     _onAccept () {
-      if (this.props.onAccept) this.props.onAccept(this.maskValue);
+      if (this.props.onAccept) this.props.onAccept(this.maskValue, this.maskRef);
     }
 
     _onComplete () {
-      if (this.props.onComplete) this.props.onComplete(this.maskValue);
+      if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
     }
   };
 
@@ -107,7 +93,7 @@ function IMaskMixin(ComposedComponent) {
       PropTypes.instanceOf(IMask.Masked),
     ]).isRequired,
     value: PropTypes.string,
-    unmaskedValue: PropTypes.string,
+    unmask: PropTypes.bool,
     prepare: PropTypes.func,
     validate: PropTypes.func,
     commit: PropTypes.func,

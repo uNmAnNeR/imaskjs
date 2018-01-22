@@ -14,11 +14,14 @@
   <script type="text/babel">
     ReactDOM.render(
       React.createElement(ReactIMask.IMaskInput, {
-        mask: Date,
-        onAccept: (...args) => console.log('accept', ...args),
-        onComplete: (...args) => console.log('complete!', ...args),
+        mask: '2000',
+        value: '21',
+        unmask: true,
+        lazy: false,
+        onAccept: (value, mask) => console.log('accept', value, mask),
+        onComplete: (value, mask) => console.log('complete!', value, mask),
 
-        placeholder: 'Enter date here',
+        placeholder: 'Enter here',
       }),
       document.getElementById('app')
     );
