@@ -4,6 +4,8 @@ import ChangeDetails from '../core/change-details.js';
 import Masked, {type AppendFlags, type ExtractFlags, type MaskedOptions} from './base.js';
 import PatternDefinition from './pattern/definition.js';
 import PatternGroup, {type PatternGroupTemplate} from './pattern/group.js';
+import {ChunksTailDetails, type TailInputChunk} from './pattern/chunk-tail-details.js';
+import {type TailDetails} from '../core/tail-details.js';
 
 
 type MaskedPatternOptions = {
@@ -224,8 +226,14 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _appendTail (tail: Array<InputChunk>=[]): ChangeDetails {
-    return this._appendChunks(tail, {tail: true}).aggregate(this._appendPlaceholder());
+  _appendTail (tail?: ChunksTailDetails | TailDetails): ChangeDetails {
+    const details = new ChangeDetails();
+    if (tail) {
+      details.aggregate(tail instanceof ChunksTailDetails ?
+        this._appendChunks(tail.chunks, {tail: true}) :
+        super._appendTail(tail));
+    }
+    return details.aggregate(this._appendPlaceholder());
   }
 
   /**
@@ -294,12 +302,14 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Appends chunks splitted by stop chars */
-  _appendChunks (chunks: Array<InputChunk>, ...args: *) {
+  _appendChunks (chunks: Array<TailInputChunk>, ...args: *) {
     const details = new ChangeDetails();
     for (let ci=0; ci < chunks.length; ++ci) {
-      const [fromDefIndex, input] = chunks[ci];
-      if (fromDefIndex != null) details.aggregate(this._appendPlaceholder(fromDefIndex));
-      if (details.aggregate(this._append(input, ...args)).overflow) break;
+      const {stop, value} = chunks[ci];
+      const fromDef = stop != null && this._charDefs[stop];
+      // lets double check if stopAlign is here
+      if (fromDef && fromDef.stopAlign) details.aggregate(this._appendPlaceholder(stop));
+      if (details.aggregate(this._append(value, ...args)).overflow) break;
     }
     return details;
   }
@@ -307,8 +317,8 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _extractTail (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {
-    return this._extractInputChunks(fromPos, toPos);
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): ChunksTailDetails {
+    return new ChunksTailDetails(this._extractInputChunks(fromPos, toPos));
   }
 
   /**
@@ -340,7 +350,7 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Extracts chunks from input splitted by stop chars */
-  _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<InputChunk> {
+  _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<TailInputChunk> {
     if (fromPos === toPos) return [];
 
     const fromDefIndex = this.mapPosToDefIndex(fromPos);
@@ -357,15 +367,15 @@ class MaskedPattern extends Masked<string> {
       toDefIndex
     ];
 
-    return stops.map((s, i) => [
-      stopDefIndices.indexOf(s) >= 0 ?
+    return stops.map((s, i) => ({
+      stop: stopDefIndices.indexOf(s) >= 0 ?
         s :
         null,
 
-      this.extractInput(
+      value: this.extractInput(
         this.mapDefIndexToPos(s),
         this.mapDefIndexToPos(stops[++i]))
-    ]).filter(([stop, input]) => stop != null || input);
+    })).filter(({stop, value}) => stop != null || value);
   }
 
   /** Appends placeholder depending on laziness */
@@ -392,21 +402,21 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  remove (from: number=0, count: number=this.value.length-from) {
-    const to = from + count;
-    this._value = this.value.slice(0, from) + this.value.slice(to);
+  remove (from: number=0, count: number=this.value.length-from): ChangeDetails {
     const fromDefIndex = this.mapPosToDefIndex(from);
-    const toDefIndex = this.mapPosToDefIndex(to);
+    const toDefIndex = this.mapPosToDefIndex(from + count);
     this._charDefs
       .slice(fromDefIndex, toDefIndex)
       .forEach(d => d.reset());
+
+    return super.remove(from, count);
   }
 
   /**
     @override
   */
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE) {
-    let step = direction || DIRECTION.LEFT;
+    let step = direction || DIRECTION.RIGHT;
 
     const initialDefIndex = this.mapPosToDefIndex(cursorPos);
     const initialDef = this._charDefs[initialDefIndex];
@@ -434,7 +444,10 @@ class MaskedPattern extends Masked<string> {
         di += step, nextdi += step
       ) {
         const nextDef = this._charDefs[nextdi];
-        if (firstInputIndex == null && nextDef.isInput) firstInputIndex = di;
+        if (firstInputIndex == null && nextDef.isInput) {
+          firstInputIndex = di;
+          if (direction === DIRECTION.NONE) break;
+        }
         if (firstVisibleHollowIndex == null && nextDef.isHollow && !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
         if (nextDef.isInput && !nextDef.isHollow) {
           firstFilledInputIndex = di;
@@ -443,11 +456,11 @@ class MaskedPattern extends Masked<string> {
       }
     }
 
-    // if has aligned left inside fixed and has came to the start - use start position
-    if (direction === DIRECTION.LEFT && di === 0 &&
+    // for lazy if has aligned left inside fixed and has came to the start - use start position
+    if (direction === DIRECTION.LEFT && di === 0 && this.lazy &&
       (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
 
-    if (direction !== DIRECTION.RIGHT || firstInputIndex == null) {
+    if (direction === DIRECTION.LEFT || firstInputIndex == null) {
       // search backward
       step = -step;
       let overflow = false;

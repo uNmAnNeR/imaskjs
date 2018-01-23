@@ -15,8 +15,6 @@ class ChangeDetails {
   inserted: string;
   /** Is overflowed */
   overflow: boolean;
-  /** Removed symbols count */
-  removedCount: number;
   /** Additional offset if any changes occurred before current position */
   shift: number;
   _rawInserted: string;
@@ -24,13 +22,11 @@ class ChangeDetails {
   constructor (details?: {
     inserted?: $PropertyType<ChangeDetails, 'inserted'>,
     overflow?: $PropertyType<ChangeDetails, 'overflow'>,
-    removedCount?: $PropertyType<ChangeDetails, 'removedCount'>,
     shift?: $PropertyType<ChangeDetails, 'shift'>,
   }) {
     Object.assign(this, {
       inserted: '',
       overflow: false,
-      removedCount: 0,
       shift: 0,
     }, details);
   }
@@ -41,7 +37,6 @@ class ChangeDetails {
   */
   aggregate (details: ChangeDetails): ChangeDetails {
     this.inserted += details.inserted;
-    this.removedCount += details.removedCount;
     this.shift += details.shift;
     this.overflow = this.overflow || details.overflow;
     if (details.rawInserted) this.rawInserted += details.rawInserted;
@@ -50,7 +45,7 @@ class ChangeDetails {
 
   /** Total offset considering all changes */
   get offset (): number {
-    return this.shift + this.inserted.length - this.removedCount;
+    return this.shift + this.inserted.length;
   }
 
   /** Raw inserted is used by dynamic mask */

@@ -99,7 +99,7 @@ mask.on("complete", function () {console.log(mask.value)});</code></pre>
 // omit handler argument to unbind all handlers
 mask.off("complete");</code></pre>
 
-        <p>Get masked model:</p>
+        <p>Get <code>Masked</code> model:</p>
         <pre><code>var masked = mask.masked;
 masked.reset(); // UI will NOT be updated</code></pre>
 
@@ -202,7 +202,7 @@ console.log(masked.unmaskedValue);</code></pre>
 });</code></pre>
         <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from it to add some specific behavior.</p>
         <p>Additionaly to <code>mask</code> option custom validator can be set as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves. And also <code>Dynamic</code> mask can't use <code>validate</code> option, but children can.</p>
-        <p><strong>Note: don't change <code>masked</code> instance inside callbacks.</strong></p>
+        <p><strong>Note: don't change <code>Masked</code> instance inside callbacks.</strong></p>
         <fieldset>
           <p><strong>Also make sure that mask or validator works with any of intermediate states, not just final value. For example to restrict input to "123" you do:</strong></p>
           <pre><code>var masked = new IMask.Masked({
@@ -915,18 +915,21 @@ var momentMask = new IMask(element, {
           {
             mask: [
               {
-                mask: '+{3\\0} {21} 0 000 0000',
+                mask: '+00 {21} 0 000 0000',
                 startsWith: '30',
+                lazy: false,
                 country: 'Greece'
               },
               {
-                mask: '+{7} 000 000-00-00',
+                mask: '+0 000 000-00-00',
                 startsWith: '7',
+                lazy: false,
                 country: 'Russia'
               },
               {
-                mask: '+{91}-0000-000000',
+                mask: '+00-0000-000000',
                 startsWith: '91',
+                lazy: false,
                 country: 'India'
               },
               {
@@ -940,7 +943,7 @@ var momentMask = new IMask(element, {
 
               return dynamicMasked.compiledMasks.find(function (m) {
                 return number.indexOf(m.startsWith) === 0;
-              });
+              }) || this.dynamicMasked.compiledMasks[this.dynamicMasked.compiledMasks.length-1];
             }
           }
         ).on('accept', function() {

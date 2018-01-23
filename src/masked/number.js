@@ -1,6 +1,7 @@
 // @flow
 import {escapeRegExp, indexInDirection, type Direction} from '../core/utils.js';
 import Masked, {type MaskedOptions, type AppendFlags} from './base.js';
+import {type TailDetails} from '../core/tail-details.js';
 
 
 type MaskedNumberOptions = {
@@ -99,8 +100,13 @@ class MaskedNumber extends Masked<Number> {
   /**
     @override
   */
-  _extractTail (fromPos: number=0, toPos: number=this.value.length): string {
-    return this._removeThousandsSeparators(super._extractTail(fromPos, toPos));
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
+    const tail = super._extractTail(fromPos, toPos);
+
+    return {
+      ...tail,
+      value: this._removeThousandsSeparators(tail.value),
+    };
   }
 
   /** */

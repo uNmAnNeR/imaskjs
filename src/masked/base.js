@@ -1,6 +1,7 @@
 // @flow
 import ChangeDetails from '../core/change-details.js';
-import {type Direction} from '../core/utils.js';
+import {type Direction, DIRECTION} from '../core/utils.js';
+import {type TailDetails} from '../core/tail-details.js';
 
 
 /** Supported mask type */
@@ -77,6 +78,12 @@ class Masked<MaskType> {
     return m;
   }
 
+  /** */
+  assign (source: Masked<MaskType>): Masked<MaskType> {
+    // $FlowFixMe
+    return Object.assign(this, source);
+  }
+
   /** Resets value */
   reset () {
     this._value = '';
@@ -140,13 +147,17 @@ class Masked<MaskType> {
   }
 
   /** Extracts tail in range */
-  _extractTail (fromPos: number=0, toPos: number=this.value.length): any {
-    return this.extractInput(fromPos, toPos);
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
+    return {
+      value: this.extractInput(fromPos, toPos),
+      fromPos,
+      toPos,
+    };
   }
 
   /** Appends tail */
-  _appendTail (tail: any=""): ChangeDetails {
-    return this._append(tail, {tail: true});
+  _appendTail (tail?: TailDetails): ChangeDetails {
+    return this._append(tail ? tail.value: '', {tail: true});
   }
 
   /** Appends symbols considering flags */
@@ -160,8 +171,7 @@ class Masked<MaskType> {
     for (let ci=0; ci<str.length; ++ci) {
       this._value += str[ci];
       if (this.doValidate(flags) === false) {
-        // $FlowFixMe
-        Object.assign(this, consistentValue);
+        this.assign(consistentValue);
         if (!flags.input) {
           // in `input` mode dont skip invalid chars
           overflow = true;
@@ -179,7 +189,7 @@ class Masked<MaskType> {
   }
 
   /** Appends symbols considering tail */
-  appendWithTail (str: string, tail: string): ChangeDetails {
+  appendWithTail (str: string, tail: TailDetails): ChangeDetails {
     // TODO refactor
     const aggregateDetails = new ChangeDetails();
     let consistentValue = this.clone();
@@ -192,13 +202,11 @@ class Masked<MaskType> {
       consistentAppended = this.clone();
       const tailAppended = !appendDetails.overflow && !this._appendTail(tail).overflow;
       if (!tailAppended || this.doValidate({tail: true}) === false) {
-        // $FlowFixMe
-        Object.assign(this, consistentValue);
+        this.assign(consistentValue);
         break;
       }
 
-      // $FlowFixMe
-      Object.assign(this, consistentAppended);
+      this.assign(consistentAppended);
       consistentValue = this.clone();
       aggregateDetails.aggregate(appendDetails);
     }
@@ -215,8 +223,9 @@ class Masked<MaskType> {
   }
 
   /** */
-  remove (from: number=0, count: number=this.value.length-from) {
+  remove (from: number=0, count: number=this.value.length-from): ChangeDetails {
     this._value = this.value.slice(0, from) + this.value.slice(from + count);
+    return new ChangeDetails();
   }
 
   /** Calls function and reapplies current value */
@@ -263,20 +272,18 @@ class Masked<MaskType> {
 
   /** */
   splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction): ChangeDetails {
-    const tailPos = start + deleteCount;
-    const tail = this._extractTail(tailPos);
+    const tailPos: number = start + deleteCount;
+    const tail: TailDetails = this._extractTail(tailPos);
 
-    const startChangePos = this.nearestInputPos(start, removeDirection);
-    this.remove(startChangePos);
-    const changeDetails = this.appendWithTail(inserted, tail);
+    let startChangePos: number = this.nearestInputPos(start, removeDirection);
+    const changeDetails: ChangeDetails = new ChangeDetails({
+      shift: startChangePos - start  // adjust shift if start was aligned
+    }).aggregate(this.remove(startChangePos))
+      .aggregate(this.appendWithTail(inserted, tail));
 
-    // adjust shift if start was aligned
-    changeDetails.shift += startChangePos - start;
     return changeDetails;
   }
 }
-
-
 Masked.DEFAULTS = {
   prepare: val => val,
   validate: () => true,
