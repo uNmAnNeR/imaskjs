@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>imask 2.2.0 | Documentation</title>
+  <title>imask 3.0.0 | Documentation</title>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' type='text/css' rel='stylesheet' />
   <link href='assets/style.css' type='text/css' rel='stylesheet' />
@@ -14,7 +14,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>imask</h3>
-          <div class='mb1'><code>2.2.0</code></div>
+          <div class='mb1'><code>3.0.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -532,6 +532,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskedassign'
+                        class='regular pre-open'>
+                        #assign
+                      </a></li>
+                      
+                      <li><a
                         href='#maskedreset'
                         class='regular pre-open'>
                         #reset
@@ -846,12 +852,6 @@
                       </a></li>
                       
                       <li><a
-                        href='#changedetailsremovedcount'
-                        class='regular pre-open'>
-                        #removedCount
-                      </a></li>
-                      
-                      <li><a
                         href='#changedetailsshift'
                         class='regular pre-open'>
                         #shift
@@ -1138,6 +1138,46 @@
                   href='#enumgroup'
                   class="">
                   EnumGroup
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#taildetails'
+                  class="">
+                  TailDetails
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#value'
+                  class="">
+                  value
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#frompos'
+                  class="">
+                  fromPos
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#topos'
+                  class="">
+                  toPos
                   
                 </a>
                 
@@ -1531,6 +1571,18 @@
                         href='#maskeddynamicextractinput'
                         class='regular pre-open'>
                         #extractInput
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskeddynamic_extracttail'
+                        class='regular pre-open'>
+                        #_extractTail
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskeddynamic_appendtail'
+                        class='regular pre-open'>
+                        #_appendTail
                       </a></li>
                       
                       <li><a
@@ -5318,6 +5370,69 @@
       </div>
     </div>
   
+    <div class='border-bottom' id='maskedassign'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>assign(source)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+
+  <div class='pre p1 fill-light mt0'>assign(source: <a href="#masked">Masked</a>&#x3C;MaskType>): <a href="#masked">Masked</a>&#x3C;MaskType></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>source</span> <code class='quiet'>(<a href="#masked">Masked</a>&#x3C;MaskType>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#masked">Masked</a>&#x3C;MaskType></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='maskedreset'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -5798,7 +5913,7 @@
   <p>Extracts tail in range</p>
 
 
-  <div class='pre p1 fill-light mt0'>_extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): any</div>
+  <div class='pre p1 fill-light mt0'>_extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="#taildetails">TailDetails</a></div>
   
   
 
@@ -5839,7 +5954,7 @@
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>any</code>
+      <code><a href="#taildetails">TailDetails</a></code>
     
   
 
@@ -5872,7 +5987,7 @@
   <p>Appends tail</p>
 
 
-  <div class='pre p1 fill-light mt0'>_appendTail(tail: any): <a href="#changedetails">ChangeDetails</a></div>
+  <div class='pre p1 fill-light mt0'>_appendTail(tail: <a href="#taildetails">TailDetails</a>): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -5889,8 +6004,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>tail</span> <code class='quiet'>(any
-            = <code>&quot;&quot;</code>)</code>
+            <span class='code bold'>tail</span> <code class='quiet'>(<a href="#taildetails">TailDetails</a>)</code>
 	    
           </div>
           
@@ -6010,7 +6124,7 @@
   <p>Appends symbols considering tail</p>
 
 
-  <div class='pre p1 fill-light mt0'>appendWithTail(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, tail: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="#changedetails">ChangeDetails</a></div>
+  <div class='pre p1 fill-light mt0'>appendWithTail(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, tail: <a href="#taildetails">TailDetails</a>): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -6035,7 +6149,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>tail</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+            <span class='code bold'>tail</span> <code class='quiet'>(<a href="#taildetails">TailDetails</a>)</code>
 	    
           </div>
           
@@ -6081,7 +6195,7 @@
 
   
 
-  <div class='pre p1 fill-light mt0'>remove(from: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, count: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</div>
+  <div class='pre p1 fill-light mt0'>remove(from: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, count: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -6119,6 +6233,11 @@
 
   
 
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
   
 
   
@@ -7350,7 +7469,7 @@
 
   
 
-  <div class='pre p1 fill-light mt0'>_appendTail(tail: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk>): <a href="#changedetails">ChangeDetails</a></div>
+  <div class='pre p1 fill-light mt0'>_appendTail(tail: (ChunksTailDetails | <a href="#taildetails">TailDetails</a>)): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -7367,8 +7486,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>tail</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk>
-            = <code>[]</code>)</code>
+            <span class='code bold'>tail</span> <code class='quiet'>((ChunksTailDetails | <a href="#taildetails">TailDetails</a>))</code>
 	    
           </div>
           
@@ -7487,7 +7605,7 @@
   <p>Appends chunks splitted by stop chars</p>
 
 
-  <div class='pre p1 fill-light mt0'>_appendChunks(chunks: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk>, args: ...any)</div>
+  <div class='pre p1 fill-light mt0'>_appendChunks(chunks: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk>, args: ...any)</div>
   
   
 
@@ -7504,7 +7622,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>chunks</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk>)</code>
+            <span class='code bold'>chunks</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk>)</code>
 	    
           </div>
           
@@ -7553,7 +7671,7 @@
 
   
 
-  <div class='pre p1 fill-light mt0'>_extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk></div>
+  <div class='pre p1 fill-light mt0'>_extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): ChunksTailDetails</div>
   
   
 
@@ -7594,7 +7712,7 @@
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk></code>
+      <code>ChunksTailDetails</code>
     
   
 
@@ -7709,7 +7827,7 @@
   <p>Extracts chunks from input splitted by stop chars</p>
 
 
-  <div class='pre p1 fill-light mt0'>_extractInputChunks(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk></div>
+  <div class='pre p1 fill-light mt0'>_extractInputChunks(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk></div>
   
   
 
@@ -7750,7 +7868,7 @@
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;InputChunk></code>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk></code>
     
   
 
@@ -7846,7 +7964,7 @@
 
   
 
-  <div class='pre p1 fill-light mt0'>remove(from: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, count: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</div>
+  <div class='pre p1 fill-light mt0'>remove(from: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, count: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -7884,6 +8002,11 @@
 
   
 
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
   
 
   
@@ -8284,57 +8407,6 @@
     <p>
       Type:
       <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='changedetailsremovedcount'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>removedCount</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Removed symbols count</p>
-
-
-  <div class='pre p1 fill-light mt0'>removedCount</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
     </p>
   
   
@@ -9587,7 +9659,7 @@
   
     <p>
       Type:
-      Class&#x3C;<a href="#rangegroup">RangeGroup</a>>
+      any
     </p>
   
   
@@ -9637,7 +9709,7 @@
   
     <p>
       Type:
-      Class&#x3C;<a href="#enumgroup">EnumGroup</a>>
+      any
     </p>
   
   
@@ -10363,6 +10435,217 @@ from, to
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="#patterngrouptemplate">PatternGroupTemplate</a></code>
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='taildetails'>
+      TailDetails
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Provides details of extracted tail</p>
+
+
+  <div class='pre p1 fill-light mt0'>TailDetails</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>fromPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>toPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?)</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='value'>
+      value
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Tail value as string</p>
+
+
+  <div class='pre p1 fill-light mt0'>value</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='frompos'>
+      fromPos
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Position extracted from</p>
+
+
+  <div class='pre p1 fill-light mt0'>fromPos</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='topos'>
+      toPos
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Position extracted to</p>
+
+
+  <div class='pre p1 fill-light mt0'>toPos</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
   
 
   
@@ -11110,7 +11393,7 @@ from, to
 
   
 
-  <div class='pre p1 fill-light mt0'>_extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+  <div class='pre p1 fill-light mt0'>_extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="#taildetails">TailDetails</a></div>
   
   
 
@@ -11151,7 +11434,7 @@ from, to
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+      <code><a href="#taildetails">TailDetails</a></code>
     
   
 
@@ -12964,7 +13247,7 @@ from, to
 
   
 
-  <div class='pre p1 fill-light mt0'>_append(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, args: ...any)</div>
+  <div class='pre p1 fill-light mt0'>_append(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, args: ...any): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -13000,6 +13283,11 @@ from, to
 
   
 
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
   
 
   
@@ -13097,7 +13385,7 @@ from, to
 
   
 
-  <div class='pre p1 fill-light mt0'>clone()</div>
+  <div class='pre p1 fill-light mt0'>clone(): <a href="#maskeddynamic">MaskedDynamic</a></div>
   
   
 
@@ -13112,6 +13400,11 @@ from, to
 
   
 
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#maskeddynamic">MaskedDynamic</a></code>
+    
   
 
   
@@ -13337,7 +13630,7 @@ from, to
 
   
 
-  <div class='pre p1 fill-light mt0'>remove(args: ...any)</div>
+  <div class='pre p1 fill-light mt0'>remove(args: ...any): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -13365,6 +13658,11 @@ from, to
 
   
 
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
   
 
   
@@ -13395,7 +13693,7 @@ from, to
 
   
 
-  <div class='pre p1 fill-light mt0'>extractInput(args: ...any)</div>
+  <div class='pre p1 fill-light mt0'>extractInput(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
   
   
 
@@ -13423,6 +13721,137 @@ from, to
 
   
 
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskeddynamic_extracttail'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_extractTail(args)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+
+  <div class='pre p1 fill-light mt0'>_extractTail(args: ...any): <a href="#taildetails">TailDetails</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>args</span> <code class='quiet'>(...any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#taildetails">TailDetails</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskeddynamic_appendtail'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_appendTail(args)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+
+  <div class='pre p1 fill-light mt0'>_appendTail(args: ...any): <a href="#changedetails">ChangeDetails</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>args</span> <code class='quiet'>(...any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
   
 
   
@@ -13498,7 +13927,7 @@ from, to
 
   
 
-  <div class='pre p1 fill-light mt0'>nearestInputPos(args: ...any)</div>
+  <div class='pre p1 fill-light mt0'>nearestInputPos(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
   
   
 
@@ -13526,6 +13955,11 @@ from, to
 
   
 
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
+    
   
 
   
