@@ -12,13 +12,14 @@ react-imask
 import {IMaskInput} from 'react-imask';
 
 <IMaskInput
-  mask=Number,
-  radix=".",
-  value="123",  // possible to use `unmaskedValue`, but not both
+  mask=Number
+  radix="."
+  value="123"
+  unmask="true"
   onAccept={
     // first argument will be `value` or `unmaskedValue` depending on prop above
     (value, mask) => console.log(value)
-  },
+  }
   // ...and more mask props in a guide
 
   // input props also available
@@ -37,15 +38,15 @@ const StyledInput = styled.input`
 
 const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
   <StyledInput
-    ...props,
+    ...props
     innerRef={inputRef}  // bind internal input
   />
 ));
 
 <MaskedStyledInput
-  mask=Number,
-  radix=".",
-  onAccept={(value, mask) => console.log(value)},
+  mask=Number
+  radix="."
+  onAccept={(value, mask) => console.log(value)}
   // ...and more mask props in a guide
 
   // ...other styled props
