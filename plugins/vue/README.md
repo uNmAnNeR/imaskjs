@@ -13,8 +13,8 @@ vue-imask
   <masked-input
     v-model="numberModel"
     :mask="Number"
-    :unmask="true"
     radix="."
+    :unmask="true"
     @accept="onAccept"  // first argument will be `value` or `unmaskedValue` depending on prop above
     // ...and more mask props in a guide
 
