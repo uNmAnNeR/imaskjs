@@ -275,7 +275,7 @@ class MaskedPattern extends Masked<string> {
         skipped = !chres && !def.optional;
 
         if (!chres) {
-          if (!def.optional && !flags.input) {
+          if (!def.optional && !flags.input && !this.lazy) {
             this._value += this.placeholderChar;
             skipped = false;
           }

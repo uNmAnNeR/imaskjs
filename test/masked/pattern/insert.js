@@ -8,7 +8,7 @@ describe('Insert', function () {
   });
 
   beforeEach(function () {
-    masked.updateOptions({mask: ''});
+    masked.updateOptions({mask: '', lazy: false});
     masked.unmaskedValue = '';
   });
 
@@ -24,6 +24,16 @@ describe('Insert', function () {
     masked.unmaskedValue = '.2';
 
     assert.equal(masked.value, '_._');
+  });
+
+  it('should skip in lazy mode', function () {
+    ['0.0', '0{.}0'].forEach(mask => {
+      masked.updateOptions({mask, lazy: true});
+      masked.unmaskedValue = '.2';
+      assert.equal(masked.value, '2');
+      masked.value = '.2';
+      assert.equal(masked.value, '2');
+    });
   });
 
   it('should not skip empty', function () {
