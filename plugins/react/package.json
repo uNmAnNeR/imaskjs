@@ -1,9 +1,8 @@
 {
   "name": "react-imask",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "React input mask",
   "main": "dist/react-imask.js",
-  "module": "src/index.js",
   "scripts": {
     "test": "npm run test",
     "build": "rollup -c",

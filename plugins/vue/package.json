@@ -1,9 +1,8 @@
 {
   "name": "vue-imask",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Vue input mask",
   "main": "dist/vue-imask.js",
-  "module": "src/index.js",
   "scripts": {
     "test": "npm run test",
     "build": "rollup -c",

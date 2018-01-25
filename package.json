@@ -1,9 +1,8 @@
 {
   "name": "imask",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
-  "module": "dist/imask.es.js",
   "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
