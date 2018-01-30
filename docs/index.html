@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>imask 3.1.0 | Documentation</title>
+  <title>imask 3.1.1 | Documentation</title>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' type='text/css' rel='stylesheet' />
   <link href='assets/style.css' type='text/css' rel='stylesheet' />
@@ -14,7 +14,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>imask</h3>
-          <div class='mb1'><code>3.1.0</code></div>
+          <div class='mb1'><code>3.1.1</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -13809,7 +13809,7 @@ from, to
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_appendTail(args)</span>
+            <span class='code strong strong truncate'>_appendTail(tail)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -13819,7 +13819,7 @@ from, to
 
   
 
-  <div class='pre p1 fill-light mt0'>_appendTail(args: ...any): <a href="#changedetails">ChangeDetails</a></div>
+  <div class='pre p1 fill-light mt0'>_appendTail(tail: <a href="#taildetails">TailDetails</a>): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -13836,7 +13836,7 @@ from, to
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>args</span> <code class='quiet'>(...any)</code>
+            <span class='code bold'>tail</span> <code class='quiet'>(<a href="#taildetails">TailDetails</a>)</code>
 	    
           </div>
           
