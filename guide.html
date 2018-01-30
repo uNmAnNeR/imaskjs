@@ -619,18 +619,21 @@ var momentMask = new IMask(element, {
         <pre><code>var dispatchMask = new IMask(element, {
     mask: [
       {
-        mask: '+{3\\0} {21} 0 000 0000',
+        mask: '+00 {21} 0 000 0000',
         startsWith: '30',
+        lazy: false,
         country: 'Greece'
       },
       {
-        mask: '+{7} 000 000-00-00',
+        mask: '+0 000 000-00-00',
         startsWith: '7',
+        lazy: false,
         country: 'Russia'
       },
       {
-        mask: '+{91}-0000-000000',
+        mask: '+00-0000-000000',
         startsWith: '91',
+        lazy: false,
         country: 'India'
       },
       {

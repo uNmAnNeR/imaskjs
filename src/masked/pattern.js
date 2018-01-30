@@ -457,7 +457,7 @@ class MaskedPattern extends Masked<string> {
     }
 
     // for lazy if has aligned left inside fixed and has came to the start - use start position
-    if (direction === DIRECTION.LEFT && di === 0 && this.lazy &&
+    if (direction === DIRECTION.LEFT && di === 0 && this.lazy && !this.extractInput() &&
       (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
 
     if (direction === DIRECTION.LEFT || firstInputIndex == null) {

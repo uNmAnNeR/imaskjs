@@ -54,14 +54,18 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
-  _applyDispatch (appended: string, ...args: *) {
+  _applyDispatch (appended: string='', ...args: *) {
     const oldValueLength = this.value.length;
     const inputValue = this.rawInputValue;
     const oldMask = this.currentMask;
     const details = new ChangeDetails();
 
+    // dispatch SHOULD NOT modify mask
     this.currentMask = this.doDispatch(appended, ...args);
+
+    // restore state after dispatch
     if (this.currentMask && this.currentMask !== oldMask) {
+      // if mask changed reapply input
       this.currentMask.reset();
       // $FlowFixMe - it's ok, we don't change current mask
       this.currentMask._append(inputValue, {raw: true});
@@ -141,7 +145,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     if (this.currentMask) {
       details.aggregate(this.currentMask.remove(...args))
         // update with dispatch
-        .aggregate(this._applyDispatch(''));
+        .aggregate(this._applyDispatch());
     }
 
     return details;
@@ -168,10 +172,13 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  _appendTail (...args: *): ChangeDetails {
-    return this.currentMask ?
-      this.currentMask._appendTail(...args) :
-      super._appendTail(...args);
+  _appendTail (tail?: TailDetails): ChangeDetails {
+    const details = new ChangeDetails();
+    if (tail) details.aggregate(this._applyDispatch(tail.value));
+
+    return details.aggregate(this.currentMask ?
+      this.currentMask._appendTail(tail) :
+      super._appendTail(tail));
   }
 
   /**
@@ -198,14 +205,16 @@ MaskedDynamic.DEFAULTS = {
 
     const inputValue = masked.rawInputValue;
 
-    // update all
-    masked.compiledMasks.forEach(cm => {
-      cm.rawInputValue = inputValue;
-      cm._append(appended, flags);
+    // simulate input
+    const inputs = masked.compiledMasks.map((cm, index) => {
+      const m = cm.clone();
+      m.rawInputValue = inputValue;
+      m._append(appended, flags);
+
+      return {value: m.rawInputValue.length, index};
     });
 
     // pop masks with longer values first
-    const inputs = masked.compiledMasks.map((cm, index) => ({value: cm.rawInputValue.length, index}));
     inputs.sort((i1, i2) => i2.value - i1.value);
 
     return masked.compiledMasks[inputs[0].index];

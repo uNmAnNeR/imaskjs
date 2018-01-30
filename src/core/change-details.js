@@ -36,10 +36,10 @@ class ChangeDetails {
     @returns {ChangeDetails} `this`
   */
   aggregate (details: ChangeDetails): ChangeDetails {
+    if (details.rawInserted) this.rawInserted += details.rawInserted;
     this.inserted += details.inserted;
     this.shift += details.shift;
     this.overflow = this.overflow || details.overflow;
-    if (details.rawInserted) this.rawInserted += details.rawInserted;
     return this;
   }
 
