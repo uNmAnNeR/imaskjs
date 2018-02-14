@@ -12,17 +12,39 @@
   <script src="https://unpkg.com/imask"></script>
   <script src="dist/react-imask.js"></script>
   <script type="text/babel">
-    ReactDOM.render(
-      React.createElement(ReactIMask.IMaskInput, {
-        mask: '2000',
-        value: '21',
-        unmask: true,
-        lazy: false,
-        onAccept: (value, mask) => console.log('accept', value, mask),
-        onComplete: (value, mask) => console.log('complete!', value, mask),
+    const mask = '2000';
+    class App extends React.Component {
+      constructor (...args) {
+        super(...args);
+        this.state = {mask, value: '123'};
+      }
 
-        placeholder: 'Enter here',
-      }),
+      render () {
+        return [
+          React.createElement(ReactIMask.IMaskInput, {
+            key: 'maskedinput',
+            mask: this.state.mask,
+            value: this.state.value,
+            unmask: true,
+            lazy: false,
+            onAccept: (value, mask) => {
+              console.log('accept', value, mask);
+              this.setState({value});
+            },
+            onComplete: (value, mask) => console.log('complete!', value, mask),
+
+            placeholder: 'Enter here',
+          }),
+          React.createElement('button', {
+            key: 'toggler',
+            onClick: (event) => this.setState({mask: this.state.mask ? null : mask})
+          }, (this.state.mask ? 'Disable' : 'Enable') + ' mask')
+        ];
+      }
+    }
+
+    ReactDOM.render(
+      React.createElement(App),
       document.getElementById('app')
     );
   </script>

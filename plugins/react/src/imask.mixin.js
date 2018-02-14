@@ -7,16 +7,29 @@ export
 function IMaskMixin(ComposedComponent) {
   const MaskedComponent = class extends React.Component {
     componentDidMount () {
+      if (!this.props.mask) return;
+
       this.initMask();
     }
 
-    componentWillReceiveProps (props) {
-      this.maskRef.updateOptions(this._extractOptionsFromProps({...props}));
-      this.maskValue = props.value;
+    componentWillReceiveProps (nextProps) {
+      const props = {...this.props, ...nextProps};
+      const maskOptions = this._extractOptionsFromProps(props);
+      if (maskOptions.mask) {
+        if (this.maskRef) {
+          this.maskRef.updateOptions(maskOptions);
+          if ('value' in props) this.maskValue = props.value;
+        } else {
+          this.initMask(maskOptions);
+        }
+      } else {
+        this.destroyMask();
+        if ('value' in props) this.element.value = props.value;
+      }
     }
 
     componentWillUnmount () {
-      this.maskRef.destroy();
+      this.destroyMask();
     }
 
     render () {
@@ -27,12 +40,19 @@ function IMaskMixin(ComposedComponent) {
       });
     }
 
-    initMask () {
-      this.maskRef = new IMask(this.element, this._extractOptionsFromProps({...this.props}))
+    initMask (maskOptions=this._extractOptionsFromProps({...this.props})) {
+      this.maskRef = new IMask(this.element, maskOptions)
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
 
       this.maskValue = this.props.value;
+    }
+
+    destroyMask () {
+      if (this.maskRef) {
+        this.maskRef.destroy();
+        delete this.maskRef;
+      }
     }
 
     _extractOptionsFromProps (props) {
@@ -91,7 +111,7 @@ function IMaskMixin(ComposedComponent) {
       PropTypes.instanceOf(RegExp),
       PropTypes.oneOf([Date, Number, IMask.Masked]),
       PropTypes.instanceOf(IMask.Masked),
-    ]).isRequired,
+    ]),
     value: PropTypes.string,
     unmask: PropTypes.bool,
     prepare: PropTypes.func,
