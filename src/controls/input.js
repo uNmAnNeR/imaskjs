@@ -54,6 +54,7 @@ class InputMask {
     @param {Object} opts
   */
   constructor (el: UIElement, opts: {[string]: any}) {
+    if(!el) return;
     this.el = el;
     this.masked = createMask(opts);
 
