@@ -4,25 +4,30 @@ import IMask from 'imask';
 export
 const IMaskComponent = {
   name: 'imask-input',
-  model: {
-    prop: 'value',
-    event: 'accept'
-  },
 
   render (createElement) {
-    return createElement('input');
+    const props = {
+      domProps: {
+        value: this.maskRef ? this.maskRef.value : this.value
+      },
+    };
+
+    // if there is no mask use default input event
+    if (!this.$props.mask) props.on = {
+      input: event => this.$emit('input', event.target.value)
+    };
+
+    return createElement('input', props);
   },
 
   mounted () {
-    this.maskRef = new IMask(this.$el, this.maskOptions)
-      .on('accept', this._onAccept.bind(this))
-      .on('complete', this._onComplete.bind(this));
-    this._updateValue();
+    if (!this.$props.mask) return;
+
+    this._initMask();
   },
 
   destroyed () {
-    this.maskRef.destroy();
-    delete this.maskRef;
+    this._destroyMask();
   },
 
   computed: {
@@ -34,8 +39,17 @@ const IMaskComponent = {
   watch: {
     '$props': {
       handler () {
-        this.maskRef.updateOptions(this.maskOptions);
-        this._updateValue();
+        const maskOptions = this.maskOptions;
+        if (maskOptions.mask) {
+          if (this.maskRef) {
+            this.maskRef.updateOptions(maskOptions);
+            this._updateValue();
+          } else {
+            this._initMask(maskOptions);
+          }
+        } else {
+          this._destroyMask();
+        }
       },
       deep: true
     }
@@ -71,19 +85,33 @@ const IMaskComponent = {
     },
 
     _onAccept () {
-      this.$emit('accept', this._maskValue());
+      const val = this._maskValue();
+      this.$emit('input', val);
+      this.$emit('accept', val);
     },
 
     _onComplete () {
       this.$emit('complete', this._maskValue());
+    },
+
+    _initMask (maskOptions=this.maskOptions) {
+      this.maskRef = new IMask(this.$el, maskOptions)
+        .on('accept', this._onAccept.bind(this))
+        .on('complete', this._onComplete.bind(this));
+      this._updateValue();
+    },
+
+    _destroyMask () {
+      if (this.maskRef) {
+        this.maskRef.destroy();
+        delete this.maskRef;
+      }
     }
   },
 
   props: {
     // common
-    mask: {
-      required: true
-    },
+    mask: {},
     value: String,
     unmask: Boolean,
     prepare: Function,

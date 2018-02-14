@@ -12,6 +12,9 @@
         @accept="onAcceptDate"
         @complete="onCompleteDate">
     </label>
+    <button
+      @click="toggleDateMask"
+      >{{dateMask ? 'Disable' : 'Enable'}} mask</button>
     <br>
     <label>
       Component
@@ -22,6 +25,9 @@
         @accept="onAcceptNumber"
         @complete="onCompleteNumber">
     </label>
+    <button
+      @click="toggleNumberMask"
+      >{{numberMask ? 'Disable' : 'Enable'}} mask</button>
   </main>
 
   <script src="https://unpkg.com/vue"></script>
@@ -29,6 +35,10 @@
   <script src="https://unpkg.com/imask"></script>
   <script src="dist/vue-imask.js"></script>
   <script type="text/javascript">
+    var testNumberMask = '1000';
+    var testDateMask = {
+      mask: Date
+    };
     var app = new Vue({
       el: '#app',
       directives: {
@@ -38,12 +48,10 @@
         'imask-input': VueIMask.IMaskComponent
       },
       data: {
-        dateMask: {
-          mask: Date
-        },
+        dateMask: testDateMask,
         dateValue: '12.12',
 
-        numberMask: '1000',
+        numberMask: testNumberMask,
         numberUnmask: true,
         numberValue: '987'
       },
@@ -60,13 +68,21 @@
         },
         onCompleteNumber: function (value) {
           console.log('complete num!', value);
+        },
+        toggleNumberMask: function () {
+          if (app.numberMask) app.numberMask = null;
+          else app.numberMask = testNumberMask;
+        },
+        toggleDateMask: function () {
+          if (app.dateMask) app.dateMask = null;
+          else app.dateMask = testDateMask;
         }
       }
     });
-    setTimeout(function () {
-      app.numberUnmask = false;
-      app.numberValue = '123';
-    }, 1000);
+    // setTimeout(function () {
+    //   app.numberUnmask = false;
+    //   app.numberValue = '123';
+    // }, 1000);
   </script>
 </body>
 </html>
