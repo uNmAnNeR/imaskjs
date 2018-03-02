@@ -36,7 +36,7 @@ vue-imask
       }
     },
     components: {
-      IMaskComponent
+      'imask-input': IMaskComponent
     }
   }
 </script>
@@ -72,7 +72,7 @@ vue-imask
       }
     },
     directives: {
-      IMaskDirective
+      imask: IMaskDirective
     }
   }
 </script>
