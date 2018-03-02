@@ -213,7 +213,7 @@ class MaskedNumber extends Masked<Number> {
     if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
     if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
-    this._value = formatted;
+    this._value = this._insertThousandsSeparators(formatted);
     super.doCommit();
   }
 

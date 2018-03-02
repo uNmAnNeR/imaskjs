@@ -35,7 +35,8 @@ describe('MaskedNumber', function () {
 
   describe('#unmaskedValue', function () {
     masked.updateOptions({
-      thousandsSeparator: ' '
+      thousandsSeparator: ' ',
+      normalizeZeros: false
     });
 
     masked.value = '1000,02';
