@@ -144,6 +144,18 @@ masked.reset(); // UI will NOT be updated</code></pre>
           </tbody>
         </table>
 
+        <p>Mask also can be used without UI, e.g.</p>
+        <pre><code>var masked = IMask.createMask({
+  mask: '+7 (000) 000-00-00',
+  // ...and other options
+});
+var maskedValue = masked.resolve('71234567890');
+
+// mask keeps state after resolving
+console.log(masked.value);  // same as maskedValue
+// get unmasked value
+console.log(masked.unmaskedValue);</code></pre>
+
 
         <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
         <p><a href="#common">IMask.Masked</a> is a base class of all other Masked* classes. Almost all base class options are applicable to subclasses.</p>
