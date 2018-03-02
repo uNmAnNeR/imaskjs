@@ -10,7 +10,7 @@ vue-imask
 ## Mask Component Example
 ```html
 <template>
-  <masked-input
+  <imask-input
     v-model="numberModel"
     :mask="Number"
     radix="."
