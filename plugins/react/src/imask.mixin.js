@@ -141,6 +141,8 @@ function IMaskMixin(ComposedComponent) {
     signed: PropTypes.bool,
     normalizeZeros: PropTypes.bool,
     padFractionalZeros: PropTypes.bool,
+    min: PropTypes.number,
+    max: PropTypes.number,
 
     // dynamic
     dispatch: PropTypes.func
