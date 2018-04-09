@@ -23,7 +23,7 @@
     "build:prod:es": "rollup -c --environment format:es,env:production",
     "build:prod:umd": "rollup -c --environment format:umd,env:production",
     "flow": "flow",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "cat ./coverage/lcov.info | ../../node_modules/coveralls/bin/coveralls.js"
   },
   "keywords": [
     "javascript",
