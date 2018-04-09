@@ -16,7 +16,7 @@ export default {
     globals,
   },
   plugins: [
-    eslint({configFile: '.eslintrc'}),
+    eslint({configFile: '../../.eslintrc'}),
     babel(),
   ],
   external: Object.keys(globals),

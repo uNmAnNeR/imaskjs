@@ -1,8 +1,8 @@
 # imaskjs
 vanilla javascript input mask
 
-[![Build Status](https://travis-ci.org/uNmAnNeR/imaskjs.svg?branch=gh-pages)](https://travis-ci.org/uNmAnNeR/imaskjs)
-[![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=gh-pages)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=gh-pages)
+[![Build Status](https://travis-ci.org/uNmAnNeR/imaskjs.svg?branch=master)](https://travis-ci.org/uNmAnNeR/imaskjs)
+[![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=master)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=master)
 [![npm version](https://badge.fury.io/js/imask.svg)](https://badge.fury.io/jas/imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -18,10 +18,12 @@ vanilla javascript input mask
   - show placeholder always and only when necessary
   - unmasked value can contain fixed parts
   - optional input parts (greedy)
-* [React](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/react)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/angular)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/gh-pages/plugins/vue) plugins
+* [React](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue) plugins
 
-## Further plans
+## Further Plans
 * more unit tests
+* dynamic pattern groups
+* React Native plugin
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
@@ -30,10 +32,8 @@ or use CDN:
 
 `<script src="https://unpkg.com/imask"></script>`
 
-## Build & test
-`npm run build`
-
-`npm run test`
+## Build & Test
+`npm run make`
 
 ## Compatibility
 Supports all major browsers and IE11+ [need to support older?](https://unmanner.github.io/imaskjs/guide.html#support-older)
@@ -41,7 +41,7 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 ## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
 
-## Many thanks to
+## Many Thanks to
 [@Viktor Yakovlev](https://github.com/vcrazyV)
 
 [@Alexander Kiselev](https://github.com/MaaKut)

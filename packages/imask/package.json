@@ -1,0 +1,40 @@
+{
+  "name": "imask",
+  "version": "3.1.2",
+  "author": "Alexey Kryazhev",
+  "license": "MIT",
+  "bugs": "https://github.com/uNmAnNeR/imaskjs/issues",
+  "homepage": "https://unmanner.github.io/imaskjs/",
+  "description": "vanilla javascript input mask",
+  "main": "dist/imask.js",
+  "repository": "https://github.com/uNmAnNeR/imaskjs",
+  "engines": {
+    "npm": ">=4.0.0"
+  },
+  "scripts": {
+    "test": "karma start --single-run --browsers ChromeHeadless",
+    "pretest": "flow check",
+    "watch": "rollup -c -w",
+    "build": "npm run build:dev && npm run build:prod",
+    "build:dev": "npm run build:dev:es && npm run build:dev:umd",
+    "build:prod": "npm run build:prod:es && npm run build:prod:umd",
+    "build:dev:es": "rollup -c --environment format:es",
+    "build:dev:umd": "rollup -c --environment format:umd",
+    "build:prod:es": "rollup -c --environment format:es,env:production",
+    "build:prod:umd": "rollup -c --environment format:umd,env:production",
+    "flow": "flow",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+  },
+  "keywords": [
+    "javascript",
+    "jquery",
+    "input",
+    "mask"
+  ],
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "core-js": "^2.5.5"
+  }
+}

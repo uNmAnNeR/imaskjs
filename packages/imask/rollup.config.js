@@ -62,11 +62,8 @@ export default {
     sourcemap: true,
   },
   plugins: [
-    eslint({configFile: '.eslintrc'}),
-    resolve({
-      jsnext: true,
-      main: true
-    }),
+    eslint({configFile: '../../.eslintrc'}),
+    resolve(),
     babel(babelConf),
     !isES && commonjs(),
     isProd && uglify({}, minify)

@@ -1,9 +1,11 @@
 {
-  "name": "imask",
-  "version": "3.1.2",
+  "private": true,
+  "author": "Alexey Kryazhev",
+  "license": "MIT",
   "description": "vanilla javascript input mask",
-  "main": "dist/imask.js",
-  "dependencies": {},
+  "bugs": "https://github.com/uNmAnNeR/imaskjs/issues",
+  "homepage": "https://unmanner.github.io/imaskjs/",
+  "repository": "https://github.com/uNmAnNeR/imaskjs",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
@@ -24,16 +26,18 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.1",
     "karma-mocha": "^1.3.0",
-    "karma-phantomjs-launcher": "^1.0.4",
     "karma-rollup-preprocessor": "^5.1.1",
     "karma-sinon": "^1.0.5",
+    "lerna": "^2.9.1",
     "mocha": "^4.1.0",
-    "npm-run-all": "^4.1.2",
-    "rollup": "^0.54.1",
+    "puppeteer": "^1.2.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.57.1",
     "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-eslint": "^4.0.0",
-    "rollup-plugin-node-resolve": "^3.0.2",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-uglify": "^2.0.1",
     "sinon": "^4.1.6",
     "uglify-es": "^3.3.7"
@@ -42,37 +46,14 @@
     "npm": ">=4.0.0"
   },
   "scripts": {
-    "test": "karma start --single-run --browsers PhantomJS",
-    "watch": "rollup -c -w",
-    "build": "npm run build:dev && npm run build:prod",
-    "build:dev": "npm-run-all -l build:dev:*",
-    "build:prod": "npm-run-all -l build:prod:*",
-    "build:dev:es": "rollup -c --environment format:es",
-    "build:dev:umd": "rollup -c --environment format:umd",
-    "build:prod:es": "rollup -c --environment format:es,env:production",
-    "build:prod:umd": "rollup -c --environment format:umd,env:production",
-    "flow": "flow",
-    "doc": "documentation build src/imask.js -f html -o docs",
-    "prepublishOnly": "flow check && npm run test && npm run build && npm run doc",
-    "coveralls": "npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/uNmAnNeR/imaskjs.git"
-  },
-  "keywords": [
-    "javascript",
-    "jquery",
-    "input",
-    "mask"
-  ],
-  "files": [
-    "dist"
-  ],
-  "author": "Alexey Kryazhev",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/uNmAnNeR/imaskjs/issues"
-  },
-  "homepage": "https://unmanner.github.io/imaskjs/"
+    "postinstall": "lerna bootstrap --hoist --nohoist=core-js",
+    "doc": "documentation build packages/imask/src/imask.js -f html -o docs/api",
+    "lerna": "lerna",
+    "clean": "lerna run clean",
+    "build": "lerna run build --parallel",
+    "test": "lerna run test --parallel",
+    "make": "npm run doc && npm run test && npm run build",
+    "release": "npm run make && lerna publish",
+    "coverage": "npm run make && lerna run coveralls --scope imask"
+  }
 }

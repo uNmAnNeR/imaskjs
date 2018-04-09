@@ -1,0 +1,33 @@
+{
+  "name": "react-imask",
+  "author": "Alexey Kryazhev",
+  "license": "MIT",
+  "version": "2.2.1",
+  "homepage": "https://unmanner.github.io/imaskjs/",
+  "description": "React input mask",
+  "main": "dist/react-imask.js",
+  "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "react",
+    "javascript",
+    "input",
+    "mask"
+  ],
+  "files": [
+    "src",
+    "dist"
+  ],
+  "dependencies": {
+    "imask": "latest",
+    "prop-types": "^15.6.0"
+  },
+  "peerDependencies": {
+    "react": ">=0.14.0"
+  },
+  "engines": {
+    "npm": ">=4.0.0"
+  }
+}

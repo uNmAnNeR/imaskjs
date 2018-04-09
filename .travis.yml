@@ -3,8 +3,4 @@ node_js: node
 cache:
   directories:
     - "node_modules"
-script: npm run flow check && npm run build && npm run coveralls
-branches:
-  only:
-  - gh-pages
-  - /.*/
+script: npm run coverage

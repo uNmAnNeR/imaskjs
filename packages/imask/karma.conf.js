@@ -2,6 +2,7 @@ var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
 var babel = require('rollup-plugin-babel');
 
+process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 module.exports = function (config) {
   var reporters = ['progress'];
@@ -22,8 +23,7 @@ module.exports = function (config) {
       require('karma-chai'),
       require('karma-coverage'),
       require('karma-sinon'),
-      require('karma-chrome-launcher'),
-      require('karma-phantomjs-launcher')
+      require('karma-chrome-launcher')
     ],
     preprocessors: {
       'src/**/*.js': ['rollup'],
@@ -40,10 +40,6 @@ module.exports = function (config) {
     browsers: ['Chrome'],
     rollupPreprocessor: {
       plugins: [
-        resolve({
-          jsnext: true,
-          main: true
-        }),
         babel({
           presets: [
             ['env', {
@@ -62,6 +58,7 @@ module.exports = function (config) {
             }]
           ]
         }),
+        resolve(),
         commonjs()
       ],
       output: {

@@ -1,0 +1,34 @@
+{
+  "name": "vue-imask",
+  "author": "Alexey Kryazhev",
+  "license": "MIT",
+  "version": "1.2.0",
+  "description": "Vue input mask",
+  "main": "dist/vue-imask.js",
+  "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue",
+  "contributors": [
+    "naprimer",
+    "Yacine Hmito <yacine.hmito@gmail.com>",
+    "cangku"
+  ],
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "vue",
+    "imask",
+    "javascript",
+    "input",
+    "mask"
+  ],
+  "dependencies": {
+    "imask": "latest"
+  },
+  "peerDependencies": {
+    "vue": ">=2.2.0"
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
+}
