@@ -2,7 +2,7 @@
   "name": "angular-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "3.2.2",
   "description": "Angular IMask Plugin",
   "main": "dist/angular-imask.umd.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular",
