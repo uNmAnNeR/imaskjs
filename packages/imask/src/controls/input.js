@@ -123,6 +123,7 @@ class InputMask {
     this.el.addEventListener('input', this._onInput);
     this.el.addEventListener('drop', this._onDrop);
     this.el.addEventListener('click', this.alignCursorFriendly);
+    this.el.addEventListener('focus', this.alignCursorFriendly);
     this.el.addEventListener('change', this._onChange);
   }
 
@@ -135,6 +136,7 @@ class InputMask {
     this.el.removeEventListener('input', this._onInput);
     this.el.removeEventListener('drop', this._onDrop);
     this.el.removeEventListener('click', this.alignCursorFriendly);
+    this.el.removeEventListener('focus', this.alignCursorFriendly);
     this.el.removeEventListener('change', this._onChange);
   }
 
