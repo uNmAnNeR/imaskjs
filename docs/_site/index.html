@@ -1,8 +1,47 @@
----
-layout: default
-title: home
----
-{% include default_header.html %}
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/kube/6.5.2/css/kube.min.css">
+  <link rel="stylesheet" href="/imaskjs/css/main.css?v=">
+  <!-- Begin Jekyll SEO tag v2.4.0 -->
+<title>home | imaskjs</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="home" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="vanilla javascript input mask" />
+<meta property="og:description" content="vanilla javascript input mask" />
+<link rel="canonical" href="http://localhost:4000/imaskjs/" />
+<meta property="og:url" content="http://localhost:4000/imaskjs/" />
+<meta property="og:site_name" content="imaskjs" />
+<script type="application/ld+json">
+{"url":"http://localhost:4000/imaskjs/","headline":"home","name":"imaskjs","description":"vanilla javascript input mask","@type":"WebSite","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <!--[if lt IE 9]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+
+<body>
+  <header>
+  <div>
+  <h1 class="title"><a href="http://localhost:4000/imaskjs/">imask<sub>js</sub></a></h1>
+  <em>vanilla javascript input mask</em>
+</div>
+
+  <nav class="breadcrumbs push-center">
+    <ul>
+      <li><a href="/imaskjs/guide.html">guide</a></li>
+      <li><a href="/imaskjs/api/">api<sup>beta</sup></a></li>
+      <li><a href="">download</a></li>
+      <li><a href="https://github.com/uNmAnNeR/imaskjs">on Github</a></li>
+    </ul>
+  </nav>
+</header>
+
 
 <main>
   <div class="row gutters">
@@ -11,7 +50,7 @@ title: home
       <ul>
         <li>get and set <em>value</em> and <em>unmasked value</em> easily</li>
         <li>no external dependencies</li>
-        <li>Supports all major browsers and IE11+ <span class="req">*<a href="{{ "/guide.html#support-older" | relative_url }}">need older?</a></span></li>
+        <li>Supports all major browsers and IE11+ <span class="req">*<a href="/imaskjs/guide.html#support-older">need older?</a></span></li>
         <li><strong>RegExp</strong> mask</li>
         <li><strong>Function</strong> mask</li>
         <li><strong>Number</strong> mask (integer and decimal support)</li>
@@ -23,7 +62,7 @@ title: home
           <li>unmasked value can contain fixed parts</li>
           <li>optional input parts (greedy)</li>
         </ul>
-        <li><a href="{{ site.repository }}/tree/master/packages/react-imask">React</a>/<a href="{{ site.repository }}/tree/master/packages/angular-imask">Angular</a>/<a href="{{ site.repository }}/tree/master/packages/vue-imask">Vue</a> plugins</li>
+        <li><a href="https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask">React</a>/<a href="https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask">Angular</a>/<a href="https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask">Vue</a> plugins</li>
       </ul>
       <h5>Further plans</h5>
       <ul>
@@ -46,7 +85,7 @@ document.getElementById('regexp-mask'),
 {
   mask: /^[1-6]\d{0,5}$/
 });
-<a href="{{ "/guide.html#common" | relative_url }}" class="learn-more">learn more</a></code></pre>
+<a href="/imaskjs/guide.html#common" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -63,7 +102,7 @@ document.getElementById('regexp-mask'),
 document.getElementById('phone-mask'), {
   mask: '+{7}(000)000-00-00'
 });
-<a href="{{ "/guide.html#pattern" | relative_url }}" class="learn-more">learn more</a></code></pre>
+<a href="/imaskjs/guide.html#pattern" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -84,7 +123,7 @@ document.getElementById('number-mask'),
   max: 10000,
   thousandsSeparator: ' '
 });
-<a href="{{ "/guide.html#number" | relative_url }}" class="learn-more">learn more</a></code></pre>
+<a href="/imaskjs/guide.html#number" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -105,7 +144,7 @@ document.getElementById('date-mask'),
   max: new Date(2020, 0, 1),
   lazy: false
 });
-<a href="{{ "/guide.html#date" | relative_url }}" class="learn-more">learn more</a></code></pre>
+<a href="/imaskjs/guide.html#date" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -130,7 +169,7 @@ document.getElementById('dynamic-mask'),
     }
   ]
 });
-<a href="{{ "/guide.html#dynamic" | relative_url }}" class="learn-more">learn more</a></code></pre>
+<a href="/imaskjs/guide.html#dynamic" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -193,3 +232,21 @@ document.getElementById('dynamic-mask'),
     });
   });
 </script>
+
+
+  <footer class="text-center">
+  <nav class="breadcrumbs push-center">
+    <ul>
+      <li><span class="active">donate</span></li>
+      <li><a href="https://www.paypal.me/alexeykryazhev/1" target="_blank">$1</a></li>
+      <li><a href="https://www.paypal.me/alexeykryazhev/5" target="_blank">$5</a></li>
+      <li><a href="https://www.paypal.me/alexeykryazhev/10" target="_blank">$10</a></li>
+      <li><a href="https://www.paypal.me/alexeykryazhev/20" target="_blank">$20</a></li>
+      <li><span class="active">to support</span></li>
+    </ul>
+  </nav>
+  <span>by <a href="">@Alexey Kryazhev</a></span>
+</footer>
+
+</body>
+</html>

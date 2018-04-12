@@ -1,0 +1,6 @@
+title: imaskjs
+description: vanilla javascript input mask
+repository: https://github.com/uNmAnNeR/imaskjs
+baseurl: "/imaskjs"
+plugins:
+  - jekyll-seo-tag
