@@ -44,10 +44,10 @@ title: home
             <input id="regexp-mask-source" type="checkbox">
             <div class="toggle-panel-content">
               <pre><code>var regExpMask = new IMask(
-document.getElementById('regexp-mask'),
-{
-  mask: /^[1-6]\d{0,5}$/
-});
+  document.getElementById('regexp-mask'),
+  {
+    mask: /^[1-6]\d{0,5}$/
+  });
 <a href="{{ "/guide.html#common" | relative_url }}" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
@@ -62,9 +62,9 @@ document.getElementById('regexp-mask'),
             <input id="phone-mask-source" type="checkbox">
             <div class="toggle-panel-content">
               <pre><code>var phoneMask = new IMask(
-document.getElementById('phone-mask'), {
-  mask: '+{7}(000)000-00-00'
-});
+  document.getElementById('phone-mask'), {
+    mask: '+{7}(000)000-00-00'
+  });
 <a href="{{ "/guide.html#pattern" | relative_url }}" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
@@ -79,13 +79,13 @@ document.getElementById('phone-mask'), {
             <input id="number-mask-source" type="checkbox">
             <div class="toggle-panel-content">
               <pre><code>var numberMask = new IMask(
-document.getElementById('number-mask'),
-{
-  mask: Number,
-  min: -10000,
-  max: 10000,
-  thousandsSeparator: ' '
-});
+  document.getElementById('number-mask'),
+  {
+    mask: Number,
+    min: -10000,
+    max: 10000,
+    thousandsSeparator: ' '
+  });
 <a href="{{ "/guide.html#number" | relative_url }}" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
@@ -100,13 +100,13 @@ document.getElementById('number-mask'),
             <input id="date-mask-source" type="checkbox">
             <div class="toggle-panel-content">
               <pre><code>var dateMask = new IMask(
-document.getElementById('date-mask'),
-{
-  mask: Date,
-  min: new Date(2000, 0, 1),
-  max: new Date(2020, 0, 1),
-  lazy: false
-});
+  document.getElementById('date-mask'),
+  {
+    mask: Date,
+    min: new Date(2000, 0, 1),
+    max: new Date(2020, 0, 1),
+    lazy: false
+  });
 <a href="{{ "/guide.html#date" | relative_url }}" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
@@ -121,17 +121,17 @@ document.getElementById('date-mask'),
             <input id="dynamic-mask-source" type="checkbox">
             <div class="toggle-panel-content">
               <pre><code>var dynamicMask = new IMask(
-document.getElementById('dynamic-mask'),
-{
-  mask: [
-    {
-      mask: '+{7}(000)000-00-00'
-    },
-    {
-      mask: /^\S*@?\S*$/
-    }
-  ]
-});
+  document.getElementById('dynamic-mask'),
+  {
+    mask: [
+      {
+        mask: '+{7}(000)000-00-00'
+      },
+      {
+        mask: /^\S*@?\S*$/
+      }
+    ]
+  });
 <a href="{{ "/guide.html#dynamic" | relative_url }}" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
