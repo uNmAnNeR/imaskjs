@@ -22,9 +22,9 @@ vanilla javascript input mask
 * [React](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask) plugins
 
 ## Further Plans
-* more unit tests
-* dynamic pattern groups
 * React Native plugin
+* dynamic pattern groups
+* more unit tests
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
