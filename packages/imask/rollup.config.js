@@ -3,7 +3,6 @@ import uglify from 'rollup-plugin-uglify';
 import eslint from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-import {minify} from 'uglify-es';
 
 
 const isProd = process.env.env === 'production';
@@ -66,6 +65,6 @@ export default {
     resolve(),
     babel(babelConf),
     !isES && commonjs(),
-    isProd && uglify({}, minify)
+    isProd && uglify()
   ]
 }
