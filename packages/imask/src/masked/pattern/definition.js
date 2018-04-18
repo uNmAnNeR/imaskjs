@@ -20,6 +20,8 @@ class PatternDefinition {
   /** */
   stopAlign: ?boolean;
   /** */
+  unmasking: ?boolean;
+  /** */
   optional: boolean;
   /** */
   isHollow: boolean;
@@ -27,6 +29,8 @@ class PatternDefinition {
   isRawInput: boolean;
   /** */
   type: DefinitionType;
+  /** */
+  mask: Mask;
   /** */
   _masked: Masked<*>;
 
