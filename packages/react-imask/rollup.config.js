@@ -10,16 +10,16 @@ const globals = {
 
 export default {
   input: 'src/index.js',
-  name: 'ReactIMask',
+  external: Object.keys(globals),
   output: {
+    name: 'ReactIMask',
     file: 'dist/react-imask.js',
-    format: 'umd'
+    globals,
+    format: 'umd',
+    sourcemap: true,
   },
-  sourcemap: true,
   plugins: [
     eslint({configFile: '../../.eslintrc'}),
     babel(),
   ],
-  external: Object.keys(globals),
-  globals
 }
