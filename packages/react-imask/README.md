@@ -58,3 +58,6 @@ More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 [@Yordis Prieto](https://github.com/yordis)
 
 [@Alexander Kiselev](https://github.com/MaaKut)
+
+## Support development
+[https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)

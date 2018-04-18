@@ -19,12 +19,16 @@ vanilla javascript input mask
   - show placeholder always and only when necessary
   - unmasked value can contain fixed parts
   - optional input parts (greedy)
+  - custom definitions
+  - reusable groups
 * [React](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask) plugins
 
 ## Further Plans
 * React Native plugin
-* dynamic pattern groups
-* more unit tests
+* Dynamic pattern groups
+* DefinitelyTyped typings
+* Improved API docs
+* More unit tests
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
@@ -46,3 +50,6 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 [@Viktor Yakovlev](https://github.com/vcrazyV)
 
 [@Alexander Kiselev](https://github.com/MaaKut)
+
+## Support development
+[https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)

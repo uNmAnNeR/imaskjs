@@ -87,3 +87,6 @@ More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 [@Yacine Hmito](https://github.com/yacinehmito)
 
 [@unofficial](https://github.com/cangku)
+
+## Support development
+[https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)
