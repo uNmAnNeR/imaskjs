@@ -3,6 +3,7 @@ import uglify from 'rollup-plugin-uglify';
 import eslint from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import multientry from 'rollup-plugin-multi-entry';
 
 
 const isProd = process.env.env === 'production';
@@ -14,7 +15,8 @@ const file = 'dist/imask' +
   (isProd ? '.min' : '') +
   '.js';
 
-const input = isES ? 'src/imask.js' : 'src/imask.shim.js';
+const input = ['src/imask.js'];
+if (!isES) input.unshift('src/polyfills.js');
 
 const babelConf = isES ? {
   externalHelpersWhitelist: [
@@ -61,6 +63,7 @@ export default {
     sourcemap: true,
   },
   plugins: [
+    multientry(),
     eslint({configFile: '../../.eslintrc'}),
     resolve(),
     babel(babelConf),
