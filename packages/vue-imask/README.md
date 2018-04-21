@@ -63,10 +63,12 @@ vue-imask
           mask: '{8}000000',
           lazy: false
         },
-        onAccept (maskRef) {
+        onAccept (e) {
+          const maskRef = e.detail;
           console.log('accept', maskRef.value);
         },
-        onComplete (maskRef) {
+        onComplete (e) {
+          const maskRef = e.detail;
           console.log('complete', maskRef.unmaskedValue);
         }
       }
