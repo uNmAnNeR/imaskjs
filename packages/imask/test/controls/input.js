@@ -55,4 +55,19 @@ describe('InputMask', function () {
       });
     });
   });
+
+  describe('#update options', function () {
+    it('should update mask and set options', function () {
+      const oldMask = imask.mask;
+      const oldMasked = imask.masked;
+      const opts = {
+        mask: Number,
+        max: 100
+      };
+
+      imask.updateOptions(opts);
+      assert.instanceOf(imask.masked, IMask.MaskedNumber, 'masked is MaskedNumber');
+      assert.equal(imask.masked.max, opts.max);
+    });
+  })
 });

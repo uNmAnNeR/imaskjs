@@ -80,7 +80,9 @@ class InputMask {
     return this.masked.mask;
   }
   set mask (mask: Mask) {
-    if (mask == null || mask === this.masked.mask) return;
+    if (mask == null ||
+      mask === this.masked.mask ||
+      mask === Date && this.masked instanceof MaskedDate) return;
 
     if (this.masked.constructor === maskedClass(mask)) {
       this.masked.mask = mask;
@@ -209,8 +211,10 @@ class InputMask {
 
   /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
   updateOptions (opts: {[string]: any}) {
-    opts = Object.assign({}, opts);  // clone
-    if (opts.mask === Date && this.masked instanceof MaskedDate) delete opts.mask;
+    opts = {...opts};
+
+    this.mask = opts.mask;
+    delete opts.mask;
 
     // check if changed
     if (objectIncludes(this.masked, opts)) return;
