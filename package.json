@@ -53,8 +53,8 @@
     "clean": "lerna clean",
     "build": "lerna run build --parallel",
     "test": "lerna run test --parallel",
-    "make": "npm run doc && npm run test && npm run build",
-    "release": "npm run make && lerna publish",
+    "make": "npm run test && npm run build",
+    "release": "npm run doc && npm run make && lerna publish",
     "coverage": "npm run make && lerna run coveralls --scope imask"
   }
 }
