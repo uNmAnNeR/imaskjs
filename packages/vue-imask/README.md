@@ -15,7 +15,11 @@ vue-imask
     :mask="Number"
     radix="."
     :unmask="true"
-    @accept="onAccept"  // first argument will be `value` or `unmaskedValue` depending on prop above
+    // depending on prop above first argument is
+    // `value` if `unmask=false`,
+    // `unmaskedValue` if `unmask=true`,
+    // `typedValue` if `unmask='typed'`
+    @accept="onAccept"
     // ...and more mask props in a guide
 
     // other input props

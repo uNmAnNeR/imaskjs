@@ -15,9 +15,12 @@ import {IMaskInput} from 'react-imask';
   mask=Number
   radix="."
   value="123"
-  unmask="true"
+  unmask="true" // true|false|'typed'
   onAccept={
-    // first argument will be `value` or `unmaskedValue` depending on prop above
+    // depending on prop above first argument is
+    // `value` if `unmask=false`,
+    // `unmaskedValue` if `unmask=true`,
+    // `typedValue` if `unmask='typed'`
     (value, mask) => console.log(value)
   }
   // ...and more mask props in a guide

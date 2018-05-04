@@ -24,8 +24,11 @@ import {IMaskModule} from 'angular-imask';
 ```html
 <input
   [imask]="{mask: '+{7}(000)000-00-00'}"  <!--see more mask props in a guide-->
-  [unmask]="true"  <!--optionally use `unmaskedValue` or `value` otherwise-->
-  (accept)="onAccept"  <!--first argument is `value` or `unmaskedValue` depending on prop above-->
+  [unmask]="true"  <!--true|false|'typed'-->
+  (accept)="onAccept"  <!--depending on prop above first argument is
+    `value` if `unmask=false`,
+    `unmaskedValue` if `unmask=true`,
+    `typedValue` if `unmask='typed'`-->
   (complete)="onComplete"
 />
 ```
