@@ -2,7 +2,7 @@
   "name": "vue-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "description": "Vue input mask",
   "main": "dist/vue-imask.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue",
