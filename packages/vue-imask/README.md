@@ -90,34 +90,35 @@ no vue-imask with only `imask` core
 </template>
 
 <script>
-import { createMask } from "imask";
+  import { createMask } from "imask";
 
-// wraps imask for vue
-const imaskVue = (maskOptions, field) => {
-  const mask = createMask(maskOptions);
+  const maskField = (field, maskOptions) => {
+    const mask = createMask(maskOptions);
 
-  return {
-    get: function() {
-      return mask.resolve(this[field]);
+    return {
+      get: function() {
+        return mask.resolve(this[field]);
+      },
+      set: function(value) {
+        mask.resolve(value);
+        this[field] = mask.unmaskedValue;
+      }
+    };
+  };
+
+  // App
+  export default {
+    data() {
+      return {
+        phone: "123"
+      };
     },
-    set: function(value) {
-      mask.resolve(value);
-      this[field] = mask.unmaskedValue;
+    computed: {
+      phoneMasked: maskField("phone", {
+        mask: "+{7}(000)000-00-00"
+      })
     }
   };
-};
-
-// client code
-export default {
-  data() {
-    return {
-      phone: "123"
-    };
-  },
-  computed: {
-    phoneMasked: imaskVue({mask: "+{7}(000)000-00-00"}, "phone")
-  }
-};
 </script>
 ```
 
