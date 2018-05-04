@@ -45,4 +45,19 @@ describe('MaskedNumber', function () {
     masked.unmaskedValue = '9999.88';
     assert.equal(masked.value, '9 999,88');
   });
+
+  describe('#typedValue', function () {
+    masked.updateOptions({
+      thousandsSeparator: ' '
+    });
+
+    masked.typedValue = 1000;
+    assert.strictEqual(masked.unmaskedValue, '1000');
+    assert.strictEqual(masked.value, '1 000');
+    assert.strictEqual(masked.typedValue, 1000);
+
+    masked.unmaskedValue = '9999.88';
+    assert.isNumber(masked.typedValue);
+    assert.strictEqual(masked.typedValue, 9999.88);
+  });
 });

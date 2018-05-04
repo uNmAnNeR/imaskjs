@@ -69,5 +69,22 @@ describe('InputMask', function () {
       assert.instanceOf(imask.masked, IMask.MaskedNumber, 'masked is MaskedNumber');
       assert.equal(imask.masked.max, opts.max);
     });
-  })
+  });
+
+  describe('#typed value', function () {
+    it('should be typed', function () {
+      imask.updateOptions({
+        mask: Number
+      });
+      const value = 100;
+      imask.typedValue = value;
+      assert.strictEqual(imask.typedValue, value);
+      assert.strictEqual(imask.unmaskedValue, String(value));
+
+      const str = '200';
+      imask.unmaskedValue = str;
+      assert.strictEqual(imask.typedValue, Number(str));
+      assert.strictEqual(imask.unmaskedValue, str);
+    });
+  });
 });
