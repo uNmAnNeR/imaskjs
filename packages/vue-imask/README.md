@@ -81,6 +81,46 @@ vue-imask
 ```
 More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 
+## Mask Stateless Example
+no vue-imask with only `imask` core
+```html
+<template>
+  <input v-model="phoneMasked">
+  Unmasked: {{phone}}
+</template>
+
+<script>
+import { createMask } from "imask";
+
+// wraps imask for vue
+const imaskVue = (maskOptions, field) => {
+  const mask = createMask(maskOptions);
+
+  return {
+    get: function() {
+      return mask.resolve(this[field]);
+    },
+    set: function(value) {
+      mask.resolve(value);
+      this[field] = mask.unmaskedValue;
+    }
+  };
+};
+
+// client code
+export default {
+  data() {
+    return {
+      phone: "123"
+    };
+  },
+  computed: {
+    phoneMasked: imaskVue({mask: "+{7}(000)000-00-00"}, "phone")
+  }
+};
+</script>
+```
+
 ## Many Thanks to
 [@Yegor Loginov](https://github.com/naprimer)
 

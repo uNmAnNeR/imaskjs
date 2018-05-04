@@ -22,9 +22,9 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   private viewInitialized;
 
   @Input() imask;
-  @Input() unmask?: boolean;
-  @Output() accept: EventEmitter<string>;
-  @Output() complete: EventEmitter<string>;
+  @Input() unmask?: boolean|'typed';
+  @Output() accept: EventEmitter<any>;
+  @Output() complete: EventEmitter<any>;
 
   constructor(private elementRef: ElementRef,
               private renderer: Renderer2) {
@@ -40,12 +40,15 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   get maskValue () {
     if (!this.maskRef) return this.elementRef.nativeElement.value;
 
-    return this.unmask ? this.maskRef.unmaskedValue : this.maskRef.value;
+    if (this.unmask === 'typed') return this.maskRef.typedValue;
+    if (this.unmask) return this.maskRef.unmaskedValue;
+    return this.maskRef.value;
   }
 
   set maskValue (value) {
     if (this.maskRef) {
-      if (this.unmask) this.maskRef.unmaskedValue = value;
+      if (this.unmask === 'typed') this.maskRef.typedValue = value;
+      else if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
     } else {
       this.renderer.setProperty(this.elementRef.nativeElement, 'value', value);

@@ -35,7 +35,7 @@
   <script src="https://unpkg.com/imask"></script>
   <script src="dist/vue-imask.js"></script>
   <script type="text/javascript">
-    var testNumberMask = '1000';
+    var testNumberMask = Number;
     var testDateMask = {
       mask: Date
     };
@@ -52,8 +52,8 @@
         dateValue: '12.12',
 
         numberMask: testNumberMask,
-        numberUnmask: true,
-        numberValue: '987'
+        numberUnmask: 'typed',
+        numberValue: 987
       },
       methods: {
         onAcceptDate: function (e) {
@@ -64,10 +64,10 @@
         },
 
         onAcceptNumber: function (value) {
-          console.log('accept num', value);
+          console.log('accept num', value, typeof value);
         },
         onCompleteNumber: function (value) {
-          console.log('complete num!', value);
+          console.log('complete num!', value, typeof value);
         },
         toggleNumberMask: function () {
           if (app.numberMask) app.numberMask = null;

@@ -119,6 +119,15 @@ class Masked<MaskType> {
     this.doCommit();
   }
 
+  /** */
+  get typedValue (): any {
+    return this.unmaskedValue;
+  }
+
+  set typedValue (value: any) {
+    this.unmaskedValue = value;
+  }
+
   /** Value that includes raw user input */
   get rawInputValue (): string {
     return this.extractInput(0, this.value.length, {raw: true});

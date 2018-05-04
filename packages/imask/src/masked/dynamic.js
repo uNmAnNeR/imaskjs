@@ -133,6 +133,22 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
+  get typedValue (): any {
+    return this.currentMask ? this.currentMask.typedValue : '';
+  }
+
+  set typedValue (value: any) {
+    let unmaskedValue = String(value);
+    if (this.currentMask) {
+      this.currentMask.typedValue = value;
+      unmaskedValue = this.currentMask.unmaskedValue;
+    }
+    this.unmaskedValue = unmaskedValue;
+  }
+
+  /**
+    @override
+  */
   get isComplete (): boolean {
     return !!this.currentMask && this.currentMask.isComplete;
   }

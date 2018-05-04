@@ -268,6 +268,17 @@ class MaskedNumber extends Masked<Number> {
   }
 
   /**
+    @override
+  */
+  get typedValue (): number {
+    return this.number;
+  }
+
+  set typedValue (value: number) {
+    this.number = value;
+  }
+
+  /**
     Is negative allowed
     @readonly
   */

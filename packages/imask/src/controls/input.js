@@ -116,6 +116,17 @@ class InputMask {
     this.alignCursor();
   }
 
+  /** Typed unmasked value */
+  get typedValue (): any {
+    return this.masked.typedValue;
+  }
+
+  set typedValue (val: any) {
+    this.masked.typedValue = val;
+    this.updateControl();
+    this.alignCursor();
+  }
+
   /**
     Starts listening to element events
     @protected

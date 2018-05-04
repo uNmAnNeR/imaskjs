@@ -79,6 +79,17 @@ class MaskedDate extends MaskedPattern {
   set date (date: Date) {
     this.value = this.format(date);
   }
+
+  /**
+    @override
+  */
+  get typedValue (): ?Date {
+    return this.date;
+  }
+
+  set typedValue (value: Date) {
+    this.date = value;
+  }
 }
 MaskedDate.DEFAULTS = {
   pattern: 'd{.}`m{.}`Y',

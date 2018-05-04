@@ -12,7 +12,7 @@
   <script src="https://unpkg.com/imask"></script>
   <script src="dist/react-imask.js"></script>
   <script type="text/babel">
-    const mask = '2000';
+    const mask = Number;
     class App extends React.Component {
       constructor (...args) {
         super(...args);
@@ -28,7 +28,7 @@
             unmask: true,
             lazy: false,
             onAccept: (value, mask) => {
-              console.log('accept', value, mask);
+              console.log('accept', value, typeof value, mask);
               this.setState({value});
             },
             onComplete: (value, mask) => console.log('complete!', value, mask),

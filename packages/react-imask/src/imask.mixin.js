@@ -2,6 +2,57 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import IMask from 'imask';
 
+const MASK_PROPS = {
+  // common
+  mask: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.func,
+    PropTypes.string,
+    PropTypes.instanceOf(RegExp),
+    PropTypes.oneOf([Date, Number, IMask.Masked]),
+    PropTypes.instanceOf(IMask.Masked),
+  ]),
+  value: PropTypes.any,
+  unmask: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf(['typed']),
+  ]),
+  prepare: PropTypes.func,
+  validate: PropTypes.func,
+  commit: PropTypes.func,
+
+  // events
+  onAccept: PropTypes.func,
+  onComplete: PropTypes.func,
+
+  // pattern
+  placeholderChar: PropTypes.string,
+  lazy: PropTypes.bool,
+  definitions: PropTypes.object,
+  groups: PropTypes.object,
+
+  // date
+  pattern: PropTypes.string,
+  format: PropTypes.func,
+  parse: PropTypes.func,
+
+  // number
+  radix: PropTypes.string,
+  thousandsSeparator: PropTypes.string,
+  mapToRadix: PropTypes.arrayOf(PropTypes.string),
+  scale: PropTypes.number,
+  signed: PropTypes.bool,
+  normalizeZeros: PropTypes.bool,
+  padFractionalZeros: PropTypes.bool,
+  min: PropTypes.number,
+  max: PropTypes.number,
+
+  // dynamic
+  dispatch: PropTypes.func
+};
+
+const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
+
 
 export
 function IMaskMixin(ComposedComponent) {
@@ -60,7 +111,7 @@ function IMaskMixin(ComposedComponent) {
 
       // keep only mask props
       Object.keys(props)
-        .filter(prop => !MaskedComponent.propTypes.hasOwnProperty(prop))
+        .filter(prop => MASK_PROPS_NAMES.indexOf(prop) < 0)
         .forEach(nonMaskProp => {
           delete props[nonMaskProp];
         });
@@ -74,7 +125,7 @@ function IMaskMixin(ComposedComponent) {
     _extractNonMaskProps (props) {
       props = {...props};
 
-      Object.keys(MaskedComponent.propTypes).forEach(maskProp => {
+      MASK_PROPS_NAMES.forEach(maskProp => {
         delete props[maskProp];
       });
 
@@ -82,14 +133,15 @@ function IMaskMixin(ComposedComponent) {
     }
 
     get maskValue () {
-      return this.props.unmask ?
-        this.maskRef.unmaskedValue :
-        this.maskRef.value
+      if (this.props.unmask === 'typed') return this.maskRef.typedValue;
+      if (this.props.unmask) return this.maskRef.unmaskedValue;
+      return this.maskRef.value;
     }
 
     set maskValue (value) {
       value = value || '';
-      if (this.props.unmask) this.maskRef.unmaskedValue = value;
+      if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
+      else if (this.props.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
     }
 
@@ -101,52 +153,7 @@ function IMaskMixin(ComposedComponent) {
       if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
     }
   };
-
-  MaskedComponent.propTypes = {
-    // common
-    mask: PropTypes.oneOfType([
-      PropTypes.array,
-      PropTypes.func,
-      PropTypes.string,
-      PropTypes.instanceOf(RegExp),
-      PropTypes.oneOf([Date, Number, IMask.Masked]),
-      PropTypes.instanceOf(IMask.Masked),
-    ]),
-    value: PropTypes.string,
-    unmask: PropTypes.bool,
-    prepare: PropTypes.func,
-    validate: PropTypes.func,
-    commit: PropTypes.func,
-
-    // events
-    onAccept: PropTypes.func,
-    onComplete: PropTypes.func,
-
-    // pattern
-    placeholderChar: PropTypes.string,
-    lazy: PropTypes.bool,
-    definitions: PropTypes.object,
-    groups: PropTypes.object,
-
-    // date
-    pattern: PropTypes.string,
-    format: PropTypes.func,
-    parse: PropTypes.func,
-
-    // number
-    radix: PropTypes.string,
-    thousandsSeparator: PropTypes.string,
-    mapToRadix: PropTypes.arrayOf(PropTypes.string),
-    scale: PropTypes.number,
-    signed: PropTypes.bool,
-    normalizeZeros: PropTypes.bool,
-    padFractionalZeros: PropTypes.bool,
-    min: PropTypes.number,
-    max: PropTypes.number,
-
-    // dynamic
-    dispatch: PropTypes.func
-  };
+  MaskedComponent.propTypes = MASK_PROPS;
 
   const nestedComponentName = ComposedComponent.displayName || ComposedComponent.name || 'Component';
   MaskedComponent.displayName = `IMask(${nestedComponentName})`;

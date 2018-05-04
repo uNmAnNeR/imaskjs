@@ -73,14 +73,15 @@ const IMaskComponent = {
     },
 
     _maskValue () {
-      return this.unmask ?
-        this.maskRef.unmaskedValue :
-        this.maskRef.value;
+      if (this.unmask === 'typed') return this.maskRef.typedValue;
+      if (this.unmask) return this.maskRef.unmaskedValue;
+      return this.maskRef.value;
     },
 
     _updateValue () {
       const value = this.value || '';
-      if (this.unmask) this.maskRef.unmaskedValue = value;
+      if (this.unmask === 'typed') this.maskRef.typedValue = value;
+      else if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
     },
 
@@ -112,8 +113,12 @@ const IMaskComponent = {
   props: {
     // common
     mask: {},
-    value: String,
-    unmask: Boolean,
+    value: {},
+    unmask: {
+      validator: function (value) {
+        return value === 'typed' || typeof value === 'boolean';
+      }
+    },
     prepare: Function,
     validate: Function,
     commit: Function,
