@@ -1,6 +1,6 @@
 ---
 layout: default
-title: guide
+title: Input mask guide
 ---
 {% include guide_header.html %}
 <main>
@@ -140,7 +140,7 @@ console.log(masked.value);  // same as maskedValue
 console.log(masked.unmaskedValue);</code></pre>
 
 
-  <h2 id="common" class="section-h"><a href="#common">Common</a></h2>
+  <h2 id="common" class="section-h"><a href="#common">Input Mask Common Behavior</a></h2>
   <p><a href="#common">IMask.Masked</a> is a base class of all other Masked* classes. Almost all base class options are applicable to subclasses.</p>
   <p>Example usage:</p>
   <div class="toggle-panel">
@@ -232,7 +232,7 @@ console.log(masked.typedValue);</code></pre>
 });</code></pre>
 
 
-  <h2 id="pattern" class="section-h"><a href="#pattern">Pattern</a></h2>
+  <h2 id="pattern" class="section-h"><a href="#pattern">Pattern Mask</a></h2>
   Use pattern when:
   <ul>
     <li>mask is complex</li>
@@ -399,7 +399,7 @@ var masked = new IMask.PatternMasked({
   }
 });</code></pre>
 
-  <h2 id="number" class="section-h"><a href="#number">Number</a></h2>
+  <h2 id="number" class="section-h"><a href="#number">Number Mask</a></h2>
   <p>Number mask restricts input to integer or decimal numbers in many ways:</p>
   <div class="toggle-panel">
     <label for="numbers-mask-demo" class="muted">demo</label>
@@ -482,7 +482,7 @@ var masked = new IMask.PatternMasked({
   max: 10000
 });</code></pre>
 
-  <h2 id="date" class="section-h"><a href="#date">Date</a></h2>
+  <h2 id="date" class="section-h"><a href="#date">Date Mask</a></h2>
   <p>Date mask extends <a href="#pattern">Pattern</a> mask with more options.</p>
   <div class="toggle-panel">
     <label for="date-mask-demo" class="muted">demo</label>
@@ -570,7 +570,7 @@ var momentMask = new IMask(element, {
   }
 });</code></pre>
 
-  <h2 id="dynamic" class="section-h"><a href="#dynamic">Dynamic</a></h2>
+  <h2 id="dynamic" class="section-h"><a href="#dynamic">Dynamic Mask</a></h2>
   <p>Dynamic mask automatically selects appropriate mask from provided array of masks. Mask with the largest number of fitting characters is selected considering provided masks order.</p>
   <div class="toggle-panel">
     <label for="dynamic-mask-demo" class="muted">demo</label>

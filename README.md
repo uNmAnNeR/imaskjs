@@ -24,11 +24,11 @@ vanilla javascript input mask
 * [React](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask) plugins
 
 ## Further Plans
-* React Native plugin
-* Dynamic pattern groups
-* DefinitelyTyped typings
-* Improved API docs
-* More unit tests
+* [React Native plugin](https://github.com/uNmAnNeR/imaskjs/issues/12)
+* [Dynamic pattern groups](https://github.com/uNmAnNeR/imaskjs/issues/52)
+* [DefinitelyTyped typings](https://github.com/uNmAnNeR/imaskjs/issues/17)
+* [Improved API docs](https://github.com/uNmAnNeR/imaskjs/issues/9)
+* [More unit tests](https://github.com/uNmAnNeR/imaskjs/issues/51)
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
