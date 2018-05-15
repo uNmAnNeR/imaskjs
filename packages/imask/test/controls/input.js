@@ -1,10 +1,10 @@
 import IMask from '../../src/imask';
 import InputMask from '../../src/controls/input';
-import Element from '../masked/el-stub';
+import MaskElementStub from './mask-element-stub';
 
 
 describe('InputMask', function () {
-  const imask = new InputMask(new Element(), {
+  const imask = new InputMask(new MaskElementStub(), {
     mask: '',
   });
 

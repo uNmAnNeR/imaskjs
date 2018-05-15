@@ -5,20 +5,8 @@ import MaskedDate from '../masked/date.js';
 import createMask, {maskedClass} from '../masked/factory.js';
 import type Masked from '../masked/base.js';
 import {type Mask} from '../masked/base.js';
-
-
-/**
-  Generic element API to use with mask
-  @interface
-*/
-interface UIElement {
-  value: string;
-  selectionStart: number;
-  selectionEnd: number;
-  setSelectionRange (number, number): void;
-  addEventListener(string, Function): void;
-  removeEventListener(string, Function): void;
-}
+import MaskElement from './mask-element.js';
+import HTMLMaskElement from './html-mask-element.js';
 
 
 /** Listens to element events and controls changes between element and {@link Masked} */
@@ -28,7 +16,7 @@ class InputMask {
     View element
     @readonly
   */
-  el: UIElement;
+  el: MaskElement;
 
   /**
     Internal {@link Masked} model
@@ -50,11 +38,13 @@ class InputMask {
   _cursorChanging: TimeoutID;
 
   /**
-    @param {UIElement} el
+    @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
     @param {Object} opts
   */
-  constructor (el: UIElement, opts: {[string]: any}) {
-    this.el = el;
+  constructor (el: MaskElement | HTMLTextAreaElement | HTMLInputElement, opts: {[string]: any}) {
+    this.el = (el instanceof MaskElement) ?
+      el :
+      new HTMLMaskElement(el);
     this.masked = createMask(opts);
 
     this._listeners = {};
@@ -132,12 +122,12 @@ class InputMask {
     @protected
   */
   _bindEvents () {
-    this.el.addEventListener('keydown', this._saveSelection);
-    this.el.addEventListener('input', this._onInput);
-    this.el.addEventListener('drop', this._onDrop);
-    this.el.addEventListener('click', this.alignCursorFriendly);
-    this.el.addEventListener('focus', this.alignCursorFriendly);
-    this.el.addEventListener('change', this._onChange);
+    this.el.onSelectionChange(this._saveSelection);
+    this.el.onInput(this._onInput);
+    this.el.onDrop(this._onDrop);
+    this.el.onClick(this.alignCursorFriendly);
+    this.el.onFocus(this.alignCursorFriendly);
+    this.el.onChange(this._onChange);
   }
 
   /**
@@ -145,12 +135,7 @@ class InputMask {
     @protected
    */
   _unbindEvents () {
-    this.el.removeEventListener('keydown', this._saveSelection);
-    this.el.removeEventListener('input', this._onInput);
-    this.el.removeEventListener('drop', this._onDrop);
-    this.el.removeEventListener('click', this.alignCursorFriendly);
-    this.el.removeEventListener('focus', this.alignCursorFriendly);
-    this.el.removeEventListener('change', this._onChange);
+    this.el.unbind();
   }
 
   /**
@@ -181,9 +166,9 @@ class InputMask {
       this.el.selectionEnd;
   }
   set cursorPos (pos: number) {
-    if (this.el !== document.activeElement) return;
+    if (!this.el.isActive) return;
 
-    this.el.setSelectionRange(pos, pos);
+    this.el.select(pos, pos);
     this._saveSelection();
   }
 

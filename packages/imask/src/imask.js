@@ -10,12 +10,14 @@ import MaskedRegExp from './masked/regexp.js';
 import MaskedFunction from './masked/function.js';
 import MaskedDynamic from './masked/dynamic.js';
 import createMask from './masked/factory.js';
+import MaskElement from './controls/mask-element.js';
+import HTMLMaskElement from './controls/html-mask-element.js';
 
 
 /**
  * Applies mask on element.
  * @constructor
- * @param {HTMLInput|UIElement} el - Element to apply mask
+ * @param {HTMLInputElement|HTMLTextAreaElement|MaskElement} el - Element to apply mask
  * @param {Object} opts - Custom mask options
  * @return {InputMask}
  */
@@ -44,5 +46,9 @@ IMask.MaskedFunction = MaskedFunction;
 IMask.MaskedDynamic = MaskedDynamic;
 /** {@link createMask} */
 IMask.createMask = createMask;
+/** {@link MaskElement} */
+IMask.MaskElement = MaskElement;
+/** {@link HTMLMaskElement} */
+IMask.HTMLMaskElement = HTMLMaskElement;
 
 g.IMask = IMask;

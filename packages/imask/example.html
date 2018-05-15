@@ -1,0 +1,15 @@
+<html>
+<head></head>
+
+<body>
+  <h1>IMask Core Demo</h1>
+  <input type="number" id="input" min="0" max="200">
+
+  <script src="dist/imask.js"></script>
+  <script type="text/javascript">
+    new IMask(document.getElementById('input'), {
+      mask: Number
+    });
+  </script>
+</body>
+</html>

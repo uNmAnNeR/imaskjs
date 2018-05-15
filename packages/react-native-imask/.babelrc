@@ -1,0 +1,9 @@
+{
+  "presets": [
+    ["env", {
+      "modules": false,
+      "useBuiltIns": true,
+    }],
+  ],
+  "plugins": ["transform-object-rest-spread", "transform-object-assign", "external-helpers"]
+}
