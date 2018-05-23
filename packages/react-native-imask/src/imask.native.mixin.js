@@ -9,18 +9,40 @@ function IMaskNativeMixin(ComposedComponent) {
     render () {
       const {inputRef, ...props} = this.props;
 
+      if (this._value != null) props.value = this._value;
+      if (this._selection != null){
+        let selection = {...this._selection};
+        // check if selection range less than text length, otherwise it fails
+        if (this._value != null) {
+          selection.start = Math.min(selection.start, this._value.length);
+          selection.end = Math.min(selection.end, this._value.length);
+        }
+        props.selection = selection;
+      }
+
       return React.createElement(ComposedComponent, {
-        ...wrapProps(props),
-        inputRef: input => {
-          this.element = new NativeMaskElement(input, this);
-          return inputRef(this.element);
-        },
+        ...this.wrapHandlers(props),
+        inputRef: input => inputRef(new NativeMaskElement(input, this)),
       });
     }
 
-    wrapProps (props) {
-      // TODO
-      return Object.assign(props, this.element.maskProps);
+    wrapHandlers (props) {
+      const maskHandlers = this.state && this.state.maskHandlers;
+      if (!maskHandlers) return props;
+
+      // we dont wont to override user event handlers
+      // so, queue them after mask handlers
+      return Object.keys(maskHandlers)
+        .reduce((props, event) => {
+          const userHandler = props[event];
+
+          props[event] = (...args) => {
+            maskHandlers[event](...args);
+            if (userHandler) userHandler(...args);
+          };
+
+          return props;
+        }, {...props});
     }
   };
 

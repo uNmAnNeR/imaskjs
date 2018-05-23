@@ -7,8 +7,7 @@ import {IMaskNativeMixin} from './imask.native.mixin.js';
 const InputComponent = ({inputRef, ...props}) =>
   React.createElement(TextInput, {
     ...props,
-    // TODO
-    // ref: inputRef
+    ref: inputRef
   });
 
 export

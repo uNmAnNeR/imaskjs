@@ -243,10 +243,15 @@ class Masked<MaskType> {
     this._refreshing = true;
 
     const unmasked = this.unmaskedValue;
+    const value = this.value;
 
     const ret = fn();
 
-    this.unmaskedValue = unmasked;
+    // try to update with raw value first to keep fixed chars
+    if (this.resolve(value) !== value) {
+      // or fallback to unmasked
+      this.unmaskedValue = unmasked;
+    }
 
     delete this._refreshing;
     return ret;

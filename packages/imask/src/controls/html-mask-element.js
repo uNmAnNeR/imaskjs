@@ -1,9 +1,10 @@
 // @flow
-import MaskElement from './mask-element.js';
+import MaskElement, {type ElementEvent} from './mask-element.js';
 
 
 export default
 class HTMLMaskElement extends MaskElement {
+  static EVENTS_MAP: {[ElementEvent]: string};
   input: HTMLTextAreaElement | HTMLInputElement;
   _handlers: {[string]: Function};
 
@@ -17,35 +18,16 @@ class HTMLMaskElement extends MaskElement {
     return this.input === document.activeElement;
   }
 
-  get selectionStart (): number {
-    let start;
-    try {
-      start = this.input.selectionStart;
-    } catch (e) {}
-
-    return start != null ?
-      start :
-      this.input.value.length;
+  get _unsafeSelectionStart (): number {
+    return this.input.selectionStart;
   }
 
-  get selectionEnd (): number {
-    let end;
-    try {
-      end = this.input.selectionEnd;
-    } catch (e) {}
-
-    return end != null ?
-      end :
-      this.input.value.length;
+  get _unsafeSelectionEnd (): number {
+    return this.input.selectionEnd;
   }
 
-  select (start: number, end: number) {
-    if (start == null || end == null ||
-      start === this.selectionStart && end === this.selectionEnd) return;
-
-    try {
-      this.input.setSelectionRange(start, end);
-    } catch (e) {}
+  _unsafeSelect (start: number, end: number) {
+    this.input.setSelectionRange(start, end);
   }
 
   get value (): string {
@@ -56,35 +38,17 @@ class HTMLMaskElement extends MaskElement {
     this.input.value = value;
   }
 
-  onSelectionChange (fn?: Function) {
-    this._toggleEventListener('keydown', fn);
+  bindEvents (handlers: {[ElementEvent]: Function}) {
+    Object.keys(handlers)
+      .forEach(event => this._toggleEventHandler(HTMLMaskElement.EVENTS_MAP[event], handlers[event]));
   }
 
-  onInput (fn?: Function) {
-    this._toggleEventListener('input', fn);
+  unbindEvents () {
+    Object.keys(this._handlers)
+      .forEach(event => this._toggleEventHandler(event));
   }
 
-  onDrop (fn?: Function) {
-    this._toggleEventListener('drop', fn);
-  }
-
-  onClick (fn?: Function) {
-    this._toggleEventListener('click', fn);
-  }
-
-  onFocus (fn?: Function) {
-    this._toggleEventListener('focus', fn);
-  }
-
-  onChange (fn?: Function) {
-    this._toggleEventListener('change', fn);
-  }
-
-  unbind () {
-    Object.keys(this._handlers).forEach(k => this._toggleEventListener(k));
-  }
-
-  _toggleEventListener (event: string, handler?: Function): void {
+  _toggleEventHandler (event: string, handler?: Function): void {
     if (this._handlers[event]) {
       this.input.removeEventListener(event, this._handlers[event]);
       delete this._handlers[event];
@@ -96,3 +60,11 @@ class HTMLMaskElement extends MaskElement {
     }
   }
 }
+HTMLMaskElement.EVENTS_MAP = {
+  selectionChange: 'keydown',
+  input: 'input',
+  drop: 'drop',
+  click: 'click',
+  focus: 'focus',
+  commit: 'change',
+};

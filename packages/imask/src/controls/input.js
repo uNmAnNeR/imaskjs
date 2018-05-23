@@ -122,12 +122,14 @@ class InputMask {
     @protected
   */
   _bindEvents () {
-    this.el.onSelectionChange(this._saveSelection);
-    this.el.onInput(this._onInput);
-    this.el.onDrop(this._onDrop);
-    this.el.onClick(this.alignCursorFriendly);
-    this.el.onFocus(this.alignCursorFriendly);
-    this.el.onChange(this._onChange);
+    this.el.bindEvents({
+      selectionChange: this._saveSelection,
+      input: this._onInput,
+      drop: this._onDrop,
+      click: this.alignCursorFriendly,
+      focus: this.alignCursorFriendly,
+      commit: this._onChange,
+    });
   }
 
   /**
@@ -135,7 +137,7 @@ class InputMask {
     @protected
    */
   _unbindEvents () {
-    this.el.unbind();
+    this.el.unbindEvents();
   }
 
   /**
@@ -143,7 +145,9 @@ class InputMask {
     @protected
    */
   _fireEvent (ev: string) {
-    const listeners = this._listeners[ev] || [];
+    const listeners = this._listeners[ev];
+    if (!listeners) return;
+
     listeners.forEach(l => l());
   }
 

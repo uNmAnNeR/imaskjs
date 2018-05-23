@@ -1,24 +1,58 @@
 // @flow
 
+export
+type ElementEvent =
+  'selectionChange' |
+  'input' |
+  'drop' |
+  'click' |
+  'focus' |
+  'commit';
+
 /**
   Generic element API to use with mask
   @interface
 */
 export default
 class MaskElement {
-  +selectionStart: number;
-  +selectionEnd: number;
+  +_unsafeSelectionStart: number;
+  +_unsafeSelectionEnd: number;
   value: string;
 
-  select (start: number, end: number): void {}
+  get selectionStart (): number {
+    let start;
+    try {
+      start = this._unsafeSelectionStart;
+    } catch (e) {}
+
+    return start != null ?
+      start :
+      this.value.length;
+  }
+
+  get selectionEnd (): number {
+    let end;
+    try {
+      end = this._unsafeSelectionEnd;
+    } catch (e) {}
+
+    return end != null ?
+      end :
+      this.value.length;
+  }
+
+  select (start: number, end: number) {
+    if (start == null || end == null ||
+      start === this.selectionStart && end === this.selectionEnd) return;
+
+    try {
+      this._unsafeSelect(start, end);
+    } catch (e) {}
+  }
+
+  _unsafeSelect (start: number, end: number): void {}
   isActive (): boolean { return false; }
 
-  onSelectionChange (fn?: Function): void {}
-  onInput (fn?: Function): void {}
-  onDrop (fn?: Function): void {}
-  onClick (fn?: Function): void {}
-  onFocus (fn?: Function): void {}
-  onChange (fn?: Function): void {}
-
-  unbind (): void {}
+  bindEvents (handlers: {[ElementEvent]: Function}) {}
+  unbindEvents (): void {}
 }

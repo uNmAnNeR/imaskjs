@@ -6,8 +6,7 @@ class MaskElementStub extends MaskElement {
   constructor () {
     super();
     this.value = '';
-    this.selectionStart = 0;
-    this.selectionEnd = 0;
+    this.select(0, 0);
   }
 
   isActive () {
@@ -15,7 +14,7 @@ class MaskElementStub extends MaskElement {
   }
 
   select (start, end) {
-    this.selectionStart = start;
-    this.selectionEnd = end;
+    this._unsafeSelectionStart = start;
+    this._unsafeSelectionEnd = end;
   }
 }
