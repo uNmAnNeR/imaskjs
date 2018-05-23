@@ -17,7 +17,7 @@
   "dependencies": {
     "expo": "^25.0.1",
     "react": "^16.3.2",
-    "react-imask": "^3.3.0",
+    "react-native-imask": "latest",
     "react-native": "^0.52.0"
   }
 }
