@@ -6,22 +6,18 @@ import NativeMaskElement from './native-mask-element';
 export
 function IMaskNativeMixin(ComposedComponent) {
   const MaskedComponent = class extends React.Component {
+    constructor (...args) {
+      super(...args);
+      this.state = {};
+    }
+
     render () {
       const {inputRef, ...props} = this.props;
 
-      if (this._value != null) props.value = this._value;
-      if (this._selection != null){
-        let selection = {...this._selection};
-        // check if selection range less than text length, otherwise it fails
-        if (this._value != null) {
-          selection.start = Math.min(selection.start, this._value.length);
-          selection.end = Math.min(selection.end, this._value.length);
-        }
-        props.selection = selection;
-      }
-
+      // console.log('RENDER');
       return React.createElement(ComposedComponent, {
         ...this.wrapHandlers(props),
+        ...this.state,
         inputRef: input => inputRef(new NativeMaskElement(input, this)),
       });
     }

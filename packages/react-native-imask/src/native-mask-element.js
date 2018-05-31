@@ -10,15 +10,24 @@ class NativeMaskElement extends MaskElement {
 	}
 
   get value () {
-    return this.component._value || '';
+    return this._syncValue != null ?
+      this. _syncValue :
+      this.component.state.value || '';
   }
 
   set value (value) {
-    this.component._value = value;
+    this._syncValue = value;
+    // console.log('VALUE CHANGED', value);
+    this.component.setState(prevState => ({
+      ...prevState,
+      value,
+    }));
   }
 
   get _selection () {
-    return this.component._selection || {};
+    return this._syncSelection ||
+      this.component.state.selection ||
+      {};
   }
 
   get _unsafeSelectionStart () {
@@ -30,7 +39,12 @@ class NativeMaskElement extends MaskElement {
   }
 
   _unsafeSelect (start, end) {
-    this.component._selection = {start, end};
+    this._syncSelection = {start, end};
+    // console.log('SELECTION CHANGED', this._syncSelection);
+    this.component.setState(prevState => ({
+      ...prevState,
+      selection: {start, end},
+    }));
   }
 
   isActive () {
@@ -45,23 +59,18 @@ class NativeMaskElement extends MaskElement {
         const internalHandler = handlers[event];
         let handler = internalHandler;
 
-        // TODO rewrite
+        // TODO rewrite?
         if (event === 'selectionChange') {
           handler = (e) => {
             const {nativeEvent: {selection}} = e;
-            this.component._selection = selection;
+            // console.log('HANDLE SELECTION', selection);
+            this._unsafeSelect(selection.start, selection.end);
 
             // if waiting to handle input
-            if (this._cachedValue != null) {
-              this.value = this._cachedValue;
-              // call input handler
-              this.component.state.maskHandlers['onChangeText'](this._cachedValue);
-              delete this._cachedValue;
-            }
+            if (this._processInput) this.component.state.maskHandlers['onChangeText'](this.value);
             internalHandler(e);
 
-            // redraw
-            this.component.forceUpdate();
+            delete this._processInput;
           }
         } else if (event === 'input') {
           handler = (text) => {
@@ -69,8 +78,14 @@ class NativeMaskElement extends MaskElement {
             // so need to set flag _inputDelayed and wait for onChangeText event
             // on which handler will be called again
             // TODO test it on android
-            if (this._cachedValue) internalHandler(this._cachedValue);
-            else this._cachedValue = text;
+            if (this._processInput) {
+              // console.log('HANDLE VALUE', this.value);
+              return internalHandler(this.value);
+            }
+
+            // console.log('CACHE VALUE', text);
+            this._processInput = true;
+            this.value = text;
           }
         }
 
@@ -79,22 +94,23 @@ class NativeMaskElement extends MaskElement {
         return nativeHandlers;
       }, {});
 
-    this.component.setState({
-      ...this.component.state,
+    this.component.setState(prevState => ({
+      ...prevState,
       maskHandlers: nativeHandlers,
-    })
+    }));
   }
 
   unbindEvents () {
-    const state = {...this.component.state};
-    delete state.maskHandlers;
-
-    this.component.setState(state);
+    this.component.setState(prevState => {
+      const {maskHandlers, ...state} = prevState;
+      return state;
+    });
   }
 }
 NativeMaskElement.EVENTS_MAP = {
   selectionChange: 'onSelectionChange',
   input: 'onChangeText',
   focus: 'onFocus',
+  click: 'onTouchStart',
   commit: 'onBlur',
 };
