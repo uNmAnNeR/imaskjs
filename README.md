@@ -21,14 +21,14 @@ vanilla javascript input mask
   - optional input parts (greedy)
   - custom definitions
   - reusable groups
-* [React](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask) plugins
+* [React](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)/[React Native<sup>beta</sup>](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask) plugins
 
 ## Further Plans
-* [React Native plugin](https://github.com/uNmAnNeR/imaskjs/issues/12)
 * [Dynamic pattern groups](https://github.com/uNmAnNeR/imaskjs/issues/52)
 * [DefinitelyTyped typings](https://github.com/uNmAnNeR/imaskjs/issues/17)
 * [Improved API docs](https://github.com/uNmAnNeR/imaskjs/issues/9)
 * [More unit tests](https://github.com/uNmAnNeR/imaskjs/issues/51)
+* [React Native plugin (development frozen)](https://github.com/uNmAnNeR/imaskjs/issues/12)
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
@@ -51,5 +51,5 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 
 [@Alexander Kiselev](https://github.com/MaaKut)
 
-## Support development
+## Support Development
 [https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)

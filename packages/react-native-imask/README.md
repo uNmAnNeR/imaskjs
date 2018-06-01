@@ -63,5 +63,5 @@ More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 ## Many Thanks to
 [@Yordis Prieto](https://github.com/yordis)
 
-## Support development
+## Support Development
 [https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)

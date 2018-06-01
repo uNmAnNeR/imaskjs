@@ -62,5 +62,5 @@ More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 
 [@Alexander Kiselev](https://github.com/MaaKut)
 
-## Support development
+## Support Development
 [https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)

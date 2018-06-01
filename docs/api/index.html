@@ -90,6 +90,18 @@
                         .createMask
                       </a></li>
                     
+                      <li><a
+                        href='#imaskmaskelement'
+                        class='regular pre-open'>
+                        .MaskElement
+                      </a></li>
+                    
+                      <li><a
+                        href='#imaskhtmlmaskelement'
+                        class='regular pre-open'>
+                        .HTMLMaskElement
+                      </a></li>
+                    
                     </ul>
                   
                   
@@ -164,16 +176,6 @@
                   href='#selection'
                   class="">
                   Selection
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#uielement'
-                  class="">
-                  UIElement
                   
                 </a>
                 
@@ -1667,6 +1669,16 @@
                 
                 </li>
               
+                
+                <li><a
+                  href='#maskelement'
+                  class="">
+                  MaskElement
+                  
+                </a>
+                
+                </li>
+              
             </ul>
           </div>
           <div class='mt1 h6 quiet'>
@@ -1693,7 +1705,7 @@
   <p>Applies mask on element.</p>
 
 
-  <div class='pre p1 fill-light mt0'>new IMask(el: (HTMLInput | <a href="#uielement">UIElement</a>), opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#inputmask">InputMask</a></div>
+  <div class='pre p1 fill-light mt0'>new IMask(el: (<a href="https://developer.mozilla.org/docs/Web/API/HTMLInputElement">HTMLInputElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLTextAreaElement">HTMLTextAreaElement</a> | <a href="#maskelement">MaskElement</a>), opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#inputmask">InputMask</a></div>
   
   
 
@@ -1710,7 +1722,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>el</span> <code class='quiet'>((HTMLInput | <a href="#uielement">UIElement</a>))</code>
+            <span class='code bold'>el</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/API/HTMLInputElement">HTMLInputElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLTextAreaElement">HTMLTextAreaElement</a> | <a href="#maskelement">MaskElement</a>))</code>
 	    Element to apply mask
 
           </div>
@@ -2134,6 +2146,98 @@
 
 
   <div class='pre p1 fill-light mt0'>createMask</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='imaskmaskelement'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>MaskElement</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p><a href="#maskelement">MaskElement</a></p>
+
+
+  <div class='pre p1 fill-light mt0'>MaskElement</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='imaskhtmlmaskelement'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>HTMLMaskElement</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p><a href="HTMLMaskElement">HTMLMaskElement</a></p>
+
+
+  <div class='pre p1 fill-light mt0'>HTMLMaskElement</div>
   
   
 
@@ -2652,94 +2756,6 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='uielement'>
-      UIElement
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Generic element API to use with mask</p>
-
-
-  <div class='pre p1 fill-light mt0'>UIElement</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Properties</div>
-    <div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-          
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>selectionStart</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-          
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>selectionEnd</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
-          
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>setSelectionRange</span> <code class='quiet'>(function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): void)</code>
-          
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>addEventListener</span> <code class='quiet'>(function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>): void)</code>
-          
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>removeEventListener</span> <code class='quiet'>(function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>): void)</code>
-          
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-            <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='inputmask'>
       InputMask
     </h3>
@@ -2751,7 +2767,7 @@
   <p>Listens to element events and controls changes between element and <a href="#masked">Masked</a></p>
 
 
-  <div class='pre p1 fill-light mt0'>new InputMask(el: <a href="#uielement">UIElement</a>, opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+  <div class='pre p1 fill-light mt0'>new InputMask(el: (<a href="#maskelement">MaskElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLInputElement">HTMLInputElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLTextAreaElement">HTMLTextAreaElement</a>), opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
   
   
 
@@ -2768,7 +2784,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>el</span> <code class='quiet'>(<a href="#uielement">UIElement</a>)</code>
+            <span class='code bold'>el</span> <code class='quiet'>((<a href="#maskelement">MaskElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLInputElement">HTMLInputElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLTextAreaElement">HTMLTextAreaElement</a>))</code>
 	    
           </div>
           
@@ -2818,7 +2834,7 @@
   
     <p>
       Type:
-      <a href="#uielement">UIElement</a>
+      <a href="#maskelement">MaskElement</a>
     </p>
   
   
@@ -14493,6 +14509,53 @@ from, to
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="#masked">Masked</a>&#x3C;any></code>
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='maskelement'>
+      MaskElement
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Generic element API to use with mask</p>
+
+
+  <div class='pre p1 fill-light mt0'>new MaskElement()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
   
 
   

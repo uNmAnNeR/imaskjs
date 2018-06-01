@@ -19,5 +19,5 @@ or use CDN:
 ## Build & Test
 `npm run make`
 
-## Support development
+## Support Development
 [https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)

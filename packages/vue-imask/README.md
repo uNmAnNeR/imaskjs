@@ -135,5 +135,5 @@ no vue-imask with only `imask` core
 
 [@unofficial](https://github.com/cangku)
 
-## Support development
+## Support Development
 [https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)

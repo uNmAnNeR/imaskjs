@@ -34,5 +34,5 @@ import {IMaskModule} from 'angular-imask';
 ```
 More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 
-## Support development
+## Support Development
 [https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)
