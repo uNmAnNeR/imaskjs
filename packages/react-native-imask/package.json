@@ -1,8 +1,9 @@
 {
+  "private": true,
   "name": "react-native-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "homepage": "https://unmanner.github.io/imaskjs/",
   "description": "React Native Input Mask",
   "main": "dist/react-native-imask.js",

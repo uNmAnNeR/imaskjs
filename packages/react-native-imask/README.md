@@ -1,66 +1,67 @@
-# React IMask Plugin
-react-imask
+# React Native IMask Plugin
+react-native-imask
 
-[![npm version](https://badge.fury.io/js/react-imask.svg)](https://badge.fury.io/js/react-imask)
+[![npm version](https://badge.fury.io/js/react-imask.svg)](https://badge.fury.io/js/react-native-imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Install
-`npm install react-imask`
+`npm install react-native-imask`
 
-## Mask Input Example
+## Masked TextInput Example
 ```javascript
-import {IMaskInput} from 'react-imask';
+import {IMaskTextInput} from 'react-native-imask';
 
-<IMaskInput
-  mask=Number
+<IMaskTextInput
+  mask={Number}
   radix="."
   value="123"
-  unmask="true" // true|false|'typed'
+  unmask={true} // true|false|'typed'
   onAccept={
     // depending on prop above first argument is
     // `value` if `unmask=false`,
     // `unmaskedValue` if `unmask=true`,
     // `typedValue` if `unmask='typed'`
-    (value, mask) => console.log(value)
+    (value, mask) => console.log(value)  // probably should update state
   }
   // ...and more mask props in a guide
 
-  // input props also available
-  placeholder='Enter number here'
+  // other TextInput props
+  editable={true}
+  style={{
+    height: 40,
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1
+  }}
 />
 ```
 
 ## Extend Existing Components
 ```javascript
-import {IMaskMixin} from 'react-imask';
+import {IMaskNativeMixin} from 'react-native-imask';
 
-// extend style component
-const StyledInput = styled.input`
-  color: paleviolet;
-`;
-
-const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
-  <StyledInput
+// use `inputRef` to get reference for our custom text input component
+const InputComponent = ({inputRef, ...props}) => (
+  <TextInput
     ...props
-    innerRef={inputRef}  // bind internal input
+    ref: inputRef
   />
-));
+);
 
-<MaskedStyledInput
-  mask=Number
-  radix="."
-  onAccept={(value, mask) => console.log(value)}
-  // ...and more mask props in a guide
+// wrap component with IMaskNativeMixin
+const IMaskTextInput = IMaskNativeMixin(InputComponent);
 
-  // ...other styled props
+// use MaskedComponent
+<IMaskTextInput
+  mask="0000"
+  // ...other props
 />
 ```
+
 More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 
 ## Many Thanks to
 [@Yordis Prieto](https://github.com/yordis)
-
-[@Alexander Kiselev](https://github.com/MaaKut)
 
 ## Support development
 [https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)
