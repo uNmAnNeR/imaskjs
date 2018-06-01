@@ -2,7 +2,7 @@
   "name": "react-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "homepage": "https://unmanner.github.io/imaskjs/",
   "description": "React input mask",
   "main": "dist/react-imask.js",

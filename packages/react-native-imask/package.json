@@ -3,7 +3,7 @@
   "name": "react-native-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "0.0.3",
+  "version": "3.4.0",
   "homepage": "https://unmanner.github.io/imaskjs/",
   "description": "React Native Input Mask",
   "main": "dist/react-native-imask.js",
@@ -22,8 +22,8 @@
     "dist"
   ],
   "dependencies": {
-    "react-imask": "latest",
-    "prop-types": "^15.6.0"
+    "prop-types": "^15.6.0",
+    "react-imask": "latest"
   },
   "peerDependencies": {
     "react": ">=0.14.0",
