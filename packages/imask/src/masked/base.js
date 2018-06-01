@@ -51,10 +51,7 @@ class Masked<MaskType> {
 
   constructor (opts: {[string]: any}) {
     this._value = '';
-    this._update({
-      ...Masked.DEFAULTS,
-      ...opts
-    });
+    this._update(opts);
     this.isInitialized = true;
   }
 
@@ -262,7 +259,9 @@ class Masked<MaskType> {
     @protected
   */
   doPrepare (str: string, flags: AppendFlags={}): string {
-    return this.prepare(str, this, flags);
+    return this.prepare ?
+      this.prepare(str, this, flags) :
+      str;
   }
 
   /**
@@ -270,7 +269,7 @@ class Masked<MaskType> {
     @protected
   */
   doValidate (flags: AppendFlags): boolean {
-    return this.validate(this.value, this, flags);
+    return !this.validate || this.validate(this.value, this, flags);
   }
 
   /**
@@ -278,7 +277,7 @@ class Masked<MaskType> {
     @protected
   */
   doCommit () {
-    this.commit(this.value, this);
+    if (this.commit) this.commit(this.value, this);
   }
 
   // TODO
@@ -298,8 +297,3 @@ class Masked<MaskType> {
     return changeDetails;
   }
 }
-Masked.DEFAULTS = {
-  prepare: val => val,
-  validate: () => true,
-  commit: () => {},
-};
