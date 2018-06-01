@@ -14,7 +14,7 @@
   "scripts": {
     "test": "karma start --single-run --browsers ChromeHeadless",
     "pretest": "flow check",
-    "watch": "rollup -c -w",
+    "watch": "rollup -c -w --environment format:umd,env:production",
     "build": "npm run build:dev && npm run build:prod",
     "build:dev": "npm run build:dev:es && npm run build:dev:umd",
     "build:prod": "npm run build:prod:es && npm run build:prod:umd",

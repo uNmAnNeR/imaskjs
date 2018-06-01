@@ -7,16 +7,6 @@ function isString (str: mixed): boolean %checks {
   return typeof str === 'string' || str instanceof String;
 }
 
-/** Conforms string with fallback */
-export
-function conform (res: ?string | boolean, str: string, fallback: string=''): string {
-  return isString(res) ?
-    res :
-    res ?
-      str :
-      fallback;
-}
-
 /**
   Direction
   @prop {number} NONE

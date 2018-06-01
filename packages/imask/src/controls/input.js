@@ -69,6 +69,7 @@ class InputMask {
   get mask (): Mask {
     return this.masked.mask;
   }
+
   set mask (mask: Mask) {
     if (mask == null ||
       mask === this.masked.mask ||

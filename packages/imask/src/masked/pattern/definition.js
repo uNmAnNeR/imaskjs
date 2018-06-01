@@ -30,23 +30,16 @@ class PatternDefinition {
   /** */
   type: DefinitionType;
   /** */
-  mask: Mask;
-  /** */
-  _masked: Masked<*>;
+  masked: Masked<*>;
 
   constructor(opts: any) {  // TODO flow
     Object.assign(this, opts);
-
-    if (this.mask) {
-      this._masked = createMask(opts);
-    }
   }
 
   /** */
   reset () {
     this.isHollow = false;
     this.isRawInput = false;
-    if (this._masked) this._masked.reset();
   }
 
   /** */
@@ -57,12 +50,6 @@ class PatternDefinition {
   /** */
   get isHiddenHollow (): boolean {
     return this.isHollow && this.optional;
-  }
-
-  /** */
-  resolve (ch: string): boolean | string {
-    if (!this._masked) return false;
-    return this._masked.resolve(ch);
   }
 }
 PatternDefinition.DEFAULTS = {
