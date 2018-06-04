@@ -166,32 +166,42 @@ class Masked<MaskType> {
     return this._append(tail ? tail.value: '', {tail: true});
   }
 
+  /** Appends char */
+  _appendChar (ch: string, flags: AppendFlags={}): ChangeDetails {
+    return new ChangeDetails({
+      inserted: ch,
+      rawInserted: ch,
+    });
+  }
+
   /** Appends symbols considering flags */
   _append (str: string, flags: AppendFlags={}): ChangeDetails {
     const oldValueLength = this.value.length;
+    const details = new ChangeDetails();
     let consistentValue: Masked<MaskType> = this.clone();
-    let overflow = false;
 
     str = this.doPrepare(str, flags);
 
-    for (let ci=0; ci<str.length; ++ci) {
-      this._value += str[ci];
-      if (this.doValidate(flags) === false) {
+    for (let ci=0; ci<str.length;) {
+      const chDetails = this._appendChar(str[ci], flags);
+      this._value += chDetails.inserted;
+
+      if (chDetails.overflow || this.doValidate(flags) === false) {
         this.assign(consistentValue);
         if (!flags.input) {
           // in `input` mode dont skip invalid chars
-          overflow = true;
+          details.overflow = true;
           break;
         }
+      } else {
+        details.aggregate(chDetails);
+        if (Boolean(details.rawInserted)) ++ci;
       }
 
       consistentValue = this.clone();
     }
 
-    return new ChangeDetails({
-      inserted: this.value.slice(oldValueLength),
-      overflow
-    });
+    return details;
   }
 
   /** Appends symbols considering tail */
@@ -229,8 +239,8 @@ class Masked<MaskType> {
   }
 
   /** */
-  remove (from: number=0, count: number=this.value.length-from): ChangeDetails {
-    this._value = this.value.slice(0, from) + this.value.slice(from + count);
+  remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
+    this._value = this.value.slice(0, fromPos) + this.value.slice(toPos);
     return new ChangeDetails();
   }
 

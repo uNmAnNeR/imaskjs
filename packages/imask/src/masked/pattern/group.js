@@ -1,6 +1,8 @@
 // @flow
-import type MaskedPattern from '../pattern.js';
+import type Masked from '../pattern.js';
+import type Masked from '../base.js';
 import {type AppendFlags} from '../base.js';
+import {type PatternBlock} from './block.js';
 
 
 /** */
@@ -18,7 +20,7 @@ type PatternGroupOptions = PatternGroupTemplate & {
 
 /**
   Pattern group symbols from parent
-  @param {MaskedPattern} masked - Internal {@link masked} model
+  @param {Masked} masked - Internal {@link masked} model
   @param {Object} opts
   @param {string} opts.name - Group name
   @param {number} opts.offset - Group offset in masked definitions array
@@ -26,14 +28,14 @@ type PatternGroupOptions = PatternGroupTemplate & {
   @param {Function} [opts.validate] - Custom group validator
 */
 export default
-class PatternGroup {
+class PatternGroup implements PatternBlock {
   /** */
   static Range: typeof RangeGroup;
   /** */
   static Enum: typeof EnumGroup;
 
   /** Internal {@link masked} model */
-  masked: MaskedPattern;
+  masked: Masked;
   /** Group name */
   name: string;
   /** Group offset in masked definitions array */
@@ -43,7 +45,7 @@ class PatternGroup {
   /** Custom group validator */
   validate: (string, PatternGroup, AppendFlags) => boolean;
 
-  constructor(masked: MaskedPattern, {name, offset, mask, validate}: PatternGroupOptions) {
+  constructor(masked: Masked, {name, offset, mask, validate}: PatternGroupOptions) {
     this.masked = masked;
     this.name = name;
     this.offset = offset;

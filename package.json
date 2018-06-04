@@ -49,6 +49,7 @@
     "postinstall": "lerna bootstrap --hoist --nohoist=core-js",
     "doc": "documentation build packages/imask/src/imask.js -f html -o docs/api",
     "lerna": "lerna",
+    "flow": "lerna run flow -- check",
     "clean": "lerna clean",
     "build": "lerna run build --parallel",
     "test": "lerna run test --parallel",
