@@ -70,6 +70,7 @@ class Masked<MaskType> {
 
   /** Clones masked with options and value */
   clone (): Masked<MaskType> {
+    // TODO why Masked? use this.constructor?
     const m = new Masked(this);
     m._value = this.value.slice();
     return m;
@@ -186,16 +187,24 @@ class Masked<MaskType> {
       const chDetails = this._appendChar(str[ci], flags);
       this._value += chDetails.inserted;
 
-      if (chDetails.overflow || this.doValidate(flags) === false) {
+      // TODO refactor
+      if (chDetails.overflow) {
+        this.assign(consistentValue);
+        details.overflow = true;
+        break;
+      }
+
+      if (!chDetails.inserted || this.doValidate(flags) === false) {
         this.assign(consistentValue);
         if (!flags.input) {
           // in `input` mode dont skip invalid chars
           details.overflow = true;
           break;
         }
+        ++ci;
       } else {
         details.aggregate(chDetails);
-        if (Boolean(details.rawInserted)) ++ci;
+        if (details.rawInserted) ++ci;
       }
 
       consistentValue = this.clone();
@@ -223,6 +232,7 @@ class Masked<MaskType> {
       }
 
       this.assign(consistentAppended);
+      // TODO may be just use `consistentAppended`?
       consistentValue = this.clone();
       aggregateDetails.aggregate(appendDetails);
     }

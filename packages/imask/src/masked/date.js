@@ -6,7 +6,8 @@ import PatternGroup from './pattern/group.js';
 /** Date mask */
 export default
 class MaskedDate extends MaskedPattern {
-  static GET_DEFAULT_GROUPS: () => {[string]: PatternGroup};
+  // TODO
+  static GET_DEFAULT_GROUPS: () => {[string]: any};
   static DEFAULTS: any;
 
   /** Parse string to Date */
@@ -53,13 +54,12 @@ class MaskedDate extends MaskedPattern {
   /**
     @override
   */
-  doValidate (...args: *) {
-    const valid = super.doValidate(...args);
+  doValidate (...args: *): boolean {
     const date = this.date;
 
-    return valid &&
+    return super.doValidate(...args) &&
       (!this.isComplete ||
-        this.isDateExist(this.value) && date &&
+        this.isDateExist(this.value) && date != null &&
         (this.min == null || this.min <= date) &&
         (this.max == null || date <= this.max));
   }

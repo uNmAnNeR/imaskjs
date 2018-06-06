@@ -54,6 +54,12 @@ class PatternInputDefinition extends PatternBlock {
   }
 
   _append (str: string, flags: AppendFlags) {
+    if (this.masked.value) {
+      return new ChangeDetails({
+        overflow: true
+      });
+    }
+
     const details = super._append(str, flags);
 
     if (details.overflow) return details;
@@ -78,6 +84,15 @@ class PatternInputDefinition extends PatternBlock {
   get isHiddenHollow (): boolean {
     return Boolean(this.masked.value) && this.isOptional;
   }
+
+  // clone (): PatternInputDefinition {
+  //   const def = new PatternInputDefinition(this.patternMasked, {
+  //     ...this,
+  //     mask: this.masked.mask
+  //   });
+  //   def.masked.assign(this.masked);
+  //   return def;
+  // }
 }
 
 
@@ -93,6 +108,8 @@ class PatternFixedDefinition extends PatternBlock {
   char: string;
   /** */
   isUnmasking: ?boolean;
+  /** */
+  isRawInput: ?boolean;
 
   constructor(patternMasked: MaskedPattern, opts: PatternFixedDefinitionOptions) {
     super(patternMasked, createMask({mask: (value => value === opts.char)}));
@@ -107,25 +124,54 @@ class PatternFixedDefinition extends PatternBlock {
     return this.isUnmasking ? this.value : '';
   }
 
+  reset () {
+    this.isRawInput = false;
+    super.reset();
+  }
+
+  remove (...args: *) {
+    this.isRawInput = false;
+    super.remove(...args);
+  }
+
+  extractInput (fromPos: number, toPos: number, flags: ExtractFlags) {
+    if (flags.raw && !this.isRawInput) return '';
+    return super.extractInput(fromPos, toPos, flags);
+  }
+
   get isComplete (): boolean {
     return true;
   }
 
   _append (str: string, flags: AppendFlags) {
-    if (this.isComplete) {
+    if (this.masked.value) {
       return new ChangeDetails({
         overflow: true
       });
     }
 
-    const details = super._append(str, flags);
+    /*const details = */super._append(str, flags);
+    // TODO refactor USE MASKED???
+    const details = new ChangeDetails();
+    // if (details.overflow) return details;
 
-    if (details.overflow) return details;
-
-    const resolved = Boolean(details.inserted) && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
-    details.inserted = this.char;
-    if (resolved && (flags.raw || flags.input)) details.rawInserted = this.char;
+    // this.masked.value = str;
+    const appended = Boolean(this.value);
+    const resolved = appended && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
+    if (appended) details.rawInserted = this.char;
+    this.masked._value = details.inserted = this.char;
+    if (resolved && (flags.raw || flags.input)) this.isRawInput = true;
 
     return details;
   }
+
+  // clone (): PatternFixedDefinition {
+  //   const def = new PatternFixedDefinition(this.patternMasked, {
+  //     ...this,
+  //     mask: this.masked.mask
+  //   });
+  //   def.masked.assign(this.masked);
+
+  //   return def;
+  // }
 }

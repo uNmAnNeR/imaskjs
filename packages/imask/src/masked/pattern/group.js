@@ -1,22 +1,20 @@
 // @flow
-import type Masked from '../pattern.js';
 import type Masked from '../base.js';
 import {type AppendFlags} from '../base.js';
-import {type PatternBlock} from './block.js';
 
 
 /** */
 export
 interface PatternGroupTemplate {
-  validate: $PropertyType<PatternGroup, 'validate'>;
-  mask: $PropertyType<PatternGroup, 'mask'>;
+  validate: (string, any, AppendFlags) => boolean;
+  mask: string;
 }
 
 /** */
-type PatternGroupOptions = PatternGroupTemplate & {
-  name: $PropertyType<PatternGroup, 'name'>,
-  offset: $PropertyType<PatternGroup, 'offset'>,
-};
+// type PatternGroupOptions = PatternGroupTemplate & {
+//   name: $PropertyType<PatternGroup, 'name'>,
+//   offset: $PropertyType<PatternGroup, 'offset'>,
+// };
 
 /**
   Pattern group symbols from parent
@@ -27,51 +25,53 @@ type PatternGroupOptions = PatternGroupTemplate & {
   @param {string} opts.mask - Group mask
   @param {Function} [opts.validate] - Custom group validator
 */
-export default
-class PatternGroup implements PatternBlock {
-  /** */
-  static Range: typeof RangeGroup;
-  /** */
-  static Enum: typeof EnumGroup;
 
-  /** Internal {@link masked} model */
-  masked: Masked;
-  /** Group name */
-  name: string;
-  /** Group offset in masked definitions array */
-  offset: number;
-  /** Group mask */
-  mask: string;
-  /** Custom group validator */
-  validate: (string, PatternGroup, AppendFlags) => boolean;
+const PatternGroup = {};
+export default PatternGroup;
+// class PatternGroup implements PatternBlock {
+//   /** */
+//   static Range: typeof RangeGroup;
+//   /** */
+//   static Enum: typeof EnumGroup;
 
-  constructor(masked: Masked, {name, offset, mask, validate}: PatternGroupOptions) {
-    this.masked = masked;
-    this.name = name;
-    this.offset = offset;
-    this.mask = mask;
-    this.validate = validate || (() => true);
-  }
+//   /** Internal {@link masked} model */
+//   masked: Masked;
+//   /** Group name */
+//   name: string;
+//   /** Group offset in masked definitions array */
+//   offset: number;
+//   /** Group mask */
+//   mask: string;
+//   /** Custom group validator */
+//   validate: (string, PatternGroup, AppendFlags) => boolean;
 
-  /** Slice of internal {@link masked} value */
-  get value (): string {
-    return this.masked.value.slice(
-      this.masked.mapDefIndexToPos(this.offset),
-      this.masked.mapDefIndexToPos(this.offset + this.mask.length));
-  }
+//   constructor(masked: Masked, {name, offset, mask, validate}: PatternGroupOptions) {
+//     this.masked = masked;
+//     this.name = name;
+//     this.offset = offset;
+//     this.mask = mask;
+//     this.validate = validate || (() => true);
+//   }
 
-  /** Unmasked slice of internal {@link masked} value */
-  get unmaskedValue (): string {
-    return this.masked.extractInput(
-      this.masked.mapDefIndexToPos(this.offset),
-      this.masked.mapDefIndexToPos(this.offset + this.mask.length));
-  }
+//   /** Slice of internal {@link masked} value */
+//   get value (): string {
+//     return this.masked.value.slice(
+//       this.masked.mapDefIndexToPos(this.offset),
+//       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
+//   }
 
-  /** Validates if current value is acceptable */
-  doValidate (flags: AppendFlags) {
-    return this.validate(this.value, this, flags);
-  }
-}
+//   /** Unmasked slice of internal {@link masked} value */
+//   get unmaskedValue (): string {
+//     return this.masked.extractInput(
+//       this.masked.mapDefIndexToPos(this.offset),
+//       this.masked.mapDefIndexToPos(this.offset + this.mask.length));
+//   }
+
+//   /** Validates if current value is acceptable */
+//   doValidate (flags: AppendFlags) {
+//     return this.validate(this.value, this, flags);
+//   }
+// }
 
 /**
   Pattern group that validates number ranges
@@ -81,9 +81,9 @@ class PatternGroup implements PatternBlock {
 export
 class RangeGroup implements PatternGroupTemplate {
   /** @type {string} */
-  mask: $PropertyType<PatternGroup, 'mask'>;
+  mask: $PropertyType<PatternGroupTemplate, 'mask'>;
   /** @type {Function} */
-  validate: $PropertyType<PatternGroup, 'validate'>;
+  validate: $PropertyType<PatternGroupTemplate, 'validate'>;
   _maxLength: number;
   _from: number;
   _to: number;
@@ -158,7 +158,7 @@ export
 function EnumGroup (enums: Array<string>): PatternGroupTemplate {
   return {
     mask: '*'.repeat(enums[0].length),
-    validate: (value: string, group: PatternGroup, flags: AppendFlags) => enums.some(e => e.indexOf(group.unmaskedValue) >= 0)
+    validate: (value: string, group: any, flags: AppendFlags) => enums.some(e => e.indexOf(group.unmaskedValue) >= 0)
   };
 }
 

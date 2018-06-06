@@ -8,8 +8,12 @@
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     new IMask(document.getElementById('input'), {
-      mask: '000aaa',
-      lazy: false
+      mask: '$numaaa',
+      groups: {
+        num: {
+          mask: Number
+        }
+      }
     });
   </script>
 </body>

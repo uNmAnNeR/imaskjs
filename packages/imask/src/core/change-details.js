@@ -17,15 +17,18 @@ class ChangeDetails {
   overflow: boolean;
   /** Additional offset if any changes occurred before current position */
   shift: number;
-  _rawInserted: string;
+  /** Raw inserted is used by dynamic mask */
+  rawInserted: string;
 
   constructor (details?: {
     inserted?: $PropertyType<ChangeDetails, 'inserted'>,
+    rawInserted?: $PropertyType<ChangeDetails, 'rawInserted'>,
     overflow?: $PropertyType<ChangeDetails, 'overflow'>,
     shift?: $PropertyType<ChangeDetails, 'shift'>,
   }) {
     Object.assign(this, {
       inserted: '',
+      rawInserted: '',
       overflow: false,
       shift: 0,
     }, details);
@@ -36,7 +39,7 @@ class ChangeDetails {
     @returns {ChangeDetails} `this`
   */
   aggregate (details: ChangeDetails): ChangeDetails {
-    if (details.rawInserted) this.rawInserted += details.rawInserted;
+    this.rawInserted += details.rawInserted;
     this.inserted += details.inserted;
     this.shift += details.shift;
     this.overflow = this.overflow || details.overflow;
@@ -49,13 +52,13 @@ class ChangeDetails {
   }
 
   /** Raw inserted is used by dynamic mask */
-  get rawInserted (): string {
-    return this._rawInserted != null ?
-      this._rawInserted :
-      this.inserted;
-  }
+  // get rawInserted (): string {
+  //   return this._rawInserted != null ?
+  //     this._rawInserted :
+  //     this.inserted;
+  // }
 
-  set rawInserted (rawInserted: string): void {
-    this._rawInserted = rawInserted;
-  }
+  // set rawInserted (rawInserted: string): void {
+  //   this._rawInserted = rawInserted;
+  // }
 }

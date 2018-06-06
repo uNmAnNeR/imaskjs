@@ -35,4 +35,19 @@ class PatternBlock {
   get isComplete (): boolean {
     return this.masked.isComplete;
   }
+
+  doCommit () {
+    this.masked.doCommit();
+  }
+
+  assign (source: PatternBlock) {
+    const {masked, patternMasked, ...opts} = source;
+    Object.assign(this, opts);
+    this.masked.assign(masked);
+    // dont assign patternMasked!
+  }
+
+  // clone (): PatternBlock {
+  //   throw new Exception('implement clone method');
+  // }
 }
