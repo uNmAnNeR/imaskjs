@@ -6,7 +6,16 @@ import {type TailDetails} from '../core/tail-details.js';
 
 /** Supported mask type */
 export
-type Mask = string | String | RegExp | Class<Number> | Class<Date> | Array<any> | Function | Masked<*> | Class<Masked<*>>;
+type Mask =
+  string |
+  String |
+  RegExp |
+  Class<Number> |
+  Class<Date> |
+  Array<any> |
+  $PropertyType<Masked<MaskType>, 'validate'> |
+  Masked<*> |
+  Class<Masked<*>>;
 
 /** Append flags */
 export

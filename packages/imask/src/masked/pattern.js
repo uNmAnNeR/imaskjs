@@ -48,6 +48,7 @@ class MaskedPattern extends Masked<string> {
   /** Show placeholder only when needed */
   lazy: boolean;
   _blocks: Array<Block>;
+  _stops: Array<number>;
 
   constructor (opts: any={}) {  // TODO type $Shape<MaskedPatternOptions>={} does not work
     opts.definitions = Object.assign({}, DEFAULT_DEFINITIONS, opts.definitions);
@@ -71,13 +72,13 @@ class MaskedPattern extends Masked<string> {
   _rebuildMask () {
     const defs = this.definitions;
     this._blocks = [];
+    this._stops = [];
 
     let pattern = this.mask;
     if (!pattern || !defs) return;
 
     let unmaskingBlock = false;
     let optionalBlock = false;
-    let isStopAlign = false;
 
     for (let i=0; i<pattern.length; ++i) {
       if (this.groups) {
@@ -89,11 +90,9 @@ class MaskedPattern extends Masked<string> {
         const gName = gNames[0];
         if (gName) {
           const group = this.groups[gName];
-          // const groupMasked = createMask(group);
           this._blocks.push(createMask(group));
           i += gName.length - 1;
           continue;
-          // pattern = pattern.replace(gName, '');
         }
       }
 
@@ -101,7 +100,7 @@ class MaskedPattern extends Masked<string> {
       let isInput = char in defs;
 
       if (char === MaskedPattern.STOP_CHAR) {
-        isStopAlign = true;
+        this._stops.push(this._blocks.length);
         continue;
       }
 
@@ -126,12 +125,10 @@ class MaskedPattern extends Masked<string> {
       if (isInput) {
         def = new PatternInputDefinition(this, {
           mask: defs[char],
-          isStopAlign,
           isOptional: optionalBlock,
         });
-        isStopAlign = false;
       } else {
-        def = new PatternFixedDefinition(this, {
+        def = new PatternFixedDefinition({
           char,
           isUnmasking: unmaskingBlock,
         });
@@ -144,18 +141,10 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  // doValidate (...args: *) {
-  //   return this._groupDefs.every(g => g.doValidate(...args)) && super.doValidate(...args);
-  // }
-
-  /**
-    @override
-  */
   clone () {
     const m = new MaskedPattern(this);
     m._value = this.value;
     // TODO block should implement clone/assing?
-    // $FlowFixMe
     m._blocks.forEach((b, i) => {
       b.assign(this._blocks[i]);
     });
@@ -177,36 +166,15 @@ class MaskedPattern extends Masked<string> {
     return this._blocks.every(b => b.isComplete);
   }
 
+  /**
+    @override
+  */
   doCommit () {
     this._blocks.forEach(b => b.doCommit());
     // TODO??? is it ok to update it manually?
     this._value = this._blocks.reduce((str, b) => str += b.value, '');
     super.doCommit();
   }
-
-  // /** */
-  // hiddenHollowsBefore (defIndex: number): number {
-  //   return this._charDefs
-  //     .slice(0, defIndex)
-  //     .filter(d => d[DEF_KEY].isHiddenHollow)
-  //     .length;
-  // }
-
-  // /** Map definition index to cursor position */
-  // mapDefIndexToPos (defIndex: number): number {
-  //   return defIndex - this.hiddenHollowsBefore(defIndex);
-  // }
-
-  /** Map cursor position to definition index */
-  // mapPosToDefIndex (pos: number): number {
-  //   let defIndex = pos;
-  //   for (let di=0; di<this._charDefs.length; ++di) {
-  //     if (di >= defIndex) break;
-  //     const def = this._charDefs[di][DEF_KEY];
-  //     if (def.isHiddenHollow) ++defIndex;
-  //   }
-  //   return defIndex;
-  // }
 
   /**
     @override
@@ -222,22 +190,21 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  // TODO
-  // _appendTail (tail?: ChunksTailDetails | TailDetails): ChangeDetails {
-  //   const details = new ChangeDetails();
-  //   if (tail) {
-  //     details.aggregate(tail instanceof ChunksTailDetails ?
-  //       this._appendChunks(tail.chunks, {tail: true}) :
-  //       super._appendTail(tail));
-  //   }
-  //   return details.aggregate(this._appendPlaceholder());
-  // }
+  _appendTail (tail?: ChunksTailDetails | TailDetails): ChangeDetails {
+    const details = new ChangeDetails();
+    if (tail) {
+      details.aggregate(tail instanceof ChunksTailDetails ?
+        this._appendChunks(tail.chunks, {tail: true}) :
+        super._appendTail(tail));
+    }
+    return details.aggregate(this._appendPlaceholder());
+  }
 
   /**
     @override
   */
   _appendChar (ch: string, flags: AppendFlags={}): ChangeDetails {
-    const blockData = this.mapPosToBlock(this.value.length);
+    const blockData = this._mapPosToBlock(this.value.length);
     const details = new ChangeDetails();
 
     // TODO refactor
@@ -267,118 +234,29 @@ class MaskedPattern extends Masked<string> {
     return details;
   }
 
-  /**
-    @override
-  */
-  // _append (str: string, flags: AppendFlags={}): ChangeDetails {
-  //   const blockData = this.mapPosToBlock(this.value.length);
-  //   const details = new ChangeDetails();
-  //   if (!blockData) return details;
-
-  //   str = this.doPrepare(str, flags);
-
-  //   for (
-  //     let ci=0, bi=blockData.index;
-  //     ci < str.length;
-  //   ) {
-  //     const ch = str[ci];
-  //     const block = this._blocks[bi];
-
-  //     if (!block) {
-  //       details.overflow = true;
-  //       break;
-  //     }
-
-  //     const blockDetails = block._append(ch);
-
-  //     // TODO update value
-  //     // TODO doValidate
-
-  //     if (!blockDetails.overflow) {
-  //       details.aggregate(blockDetails);
-  //       if (block.value) ++ci;
-  //     }
-
-  //     if (blockDetails.overflow || !Boolean(blockDetails.inserted)) ++bi;
-  //   }
-
-  //   return details;
-
-    // for (let ci=0, di=this.mapPosToDefIndex(this.value.length); ci < str.length;) {
-    //   const ch = str[ci];
-    //   const chMasked = this._charDefs[di];
-
-    //   // check overflow
-    //   if (chMasked == null) {
-    //     overflow = true;
-    //     break;
-    //   }
-    //   const def = chMasked[DEF_KEY];
-
-    //   // reset
-    //   def.isHollow = false;
-
-    //   let resolved, skipped;
-    //   let chres = chMasked.resolve(ch);
-
-    //   if (def.type === PatternDefinition.TYPES.INPUT) {
-    //     if (chres) {
-    //       this._value += chres;
-    //       if (!this.doValidate()) {
-    //         chres = '';
-    //         this._value = this.value.slice(0, -1);
-    //       }
-    //     }
-
-    //     resolved = Boolean(chres);
-    //     skipped = !resolved && !def.isOptional;
-
-    //     if (!resolved) {
-    //       if (skipped && !flags.input && !this.lazy) {
-    //         this._value += this.placeholderChar;
-    //         skipped = false;
-    //       }
-    //       if (!skipped) def.isHollow = true;
-    //     } else {
-    //       rawInserted += chres;
-    //     }
-    //   } else {
-    //     this._value += def.char;
-    //     resolved = chres && (def.isUnmasking || flags.input || flags.raw) && !flags.tail;
-    //     def.isRawInput = resolved && (flags.raw || flags.input);
-    //     if (def.isRawInput) rawInserted += def.char;
-    //   }
-
-    //   if (!skipped) ++di;
-    //   if (resolved || skipped) ++ci;
-    // }
-
-    // return new ChangeDetails({
-    //   inserted: this.value.slice(oldValueLength),
-    //   rawInserted,
-    //   overflow
-    // });
-  // }
-
   /** Appends chunks splitted by stop chars */
-  // _appendChunks (chunks: Array<TailInputChunk>, ...args: *) {
-  //   const details = new ChangeDetails();
-  //   for (let ci=0; ci < chunks.length; ++ci) {
-  //     const {stop, value} = chunks[ci];
-  //     const fromMasked = stop != null && this._charDefs[stop];
-  //     // lets double check if isStopAlign is here
-  //     if (fromMasked && fromMasked[DEF_KEY].isStopAlign) details.aggregate(this._appendPlaceholder(stop));
-  //     if (details.aggregate(this._append(value, ...args)).overflow) break;
-  //   }
-  //   return details;
-  // }
+  _appendChunks (chunks: Array<TailInputChunk>, ...args: *) {
+    const details = new ChangeDetails();
+
+    for (let ci=0; ci < chunks.length; ++ci) {
+      const {stop, value} = chunks[ci];
+      if (Array.isArray(stop)) {
+        // TODO
+      } else {
+        if (stop != null && this._stops.indexOf(stop) >= 0) details.aggregate(this._appendPlaceholder(stop));
+        if (details.aggregate(this._append(value, ...args)).overflow) break;
+      }
+    };
+
+    return details;
+  }
 
   /**
     @override
   */
-  // _extractTail (fromPos: number=0, toPos: number=this.value.length): ChunksTailDetails {
-  //   return new ChunksTailDetails(this._extractInputChunks(fromPos, toPos));
-  // }
+  _extractTail (fromPos: number=0, toPos: number=this.value.length): ChunksTailDetails {
+    return new ChunksTailDetails(this._extractInputChunks(fromPos, toPos));
+  }
 
   /**
     @override
@@ -388,7 +266,7 @@ class MaskedPattern extends Masked<string> {
 
     let input = '';
 
-    this.forEachBlocksInRange(fromPos, toPos, (b, _, fromPos, toPos) => {
+    this._forEachBlocksInRange(fromPos, toPos, (b, _, fromPos, toPos) => {
       input += b.extractInput(fromPos, toPos, flags);
     });
 
@@ -396,57 +274,54 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Extracts chunks from input splitted by stop chars */
-  // _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<TailInputChunk> {
-  //   if (fromPos === toPos) return [];
+  _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<TailInputChunk> {
+    if (fromPos === toPos) return [];
 
-  //   const fromDefIndex = this.mapPosToDefIndex(fromPos);
-  //   const toDefIndex = this.mapPosToDefIndex(toPos);
-  //   const stopDefIndices = this._charDefs
-  //     .map((d, i) => [d, i])
-  //     .slice(fromDefIndex, toDefIndex)
-  //     .filter(([d]) => d[DEF_KEY].isStopAlign)
-  //     .map(([, i]) => i);
+    const chunks = [];
+    this._forEachBlocksInRange(fromPos, toPos, (b, bi, fromPos, toPos) => {
+      const lastChunk = chunks[chunks.length-1];
+      const blockChunk = b._extractTail(fromPos, toPos);
 
-  //   const stops = [
-  //     fromDefIndex,
-  //     ...stopDefIndices,
-  //     toDefIndex
-  //   ];
-
-  //   return stops.map((s, i) => ({
-  //     stop: stopDefIndices.indexOf(s) >= 0 ?
-  //       s :
-  //       null,
-
-  //     value: this.extractInput(
-  //       this.mapDefIndexToPos(s),
-  //       this.mapDefIndexToPos(stops[++i]))
-  //   })).filter(({stop, value}) => stop != null || value);
-  // }
-
-  /** Appends placeholder depending on laziness */
-  _appendPlaceholder (toDefIndex: ?number): ChangeDetails {
-    const oldValueLength = this.value.length;
-    // TODO
-    // const maxDefIndex = toDefIndex || this._charDefs.length;
-    // for (let di=this.mapPosToDefIndex(this.value.length); di < maxDefIndex; ++di) {
-    //   const def = this._charDefs[di][DEF_KEY];
-    //   if (def.isInput) def.isHollow = true;
-
-    //   if (!this.lazy || toDefIndex) {
-    //     this._value += !def.isInput && def.char != null ?
-    //       def.char :
-    //       !def.isOptional ?
-    //         this.placeholderChar :
-    //         '';
-    //   }
-    // }
-    return new ChangeDetails({
-      inserted: this.value.slice(oldValueLength)
+      if (blockChunk instanceof ChunksTailDetails) {
+        // TODO
+      } else {
+        if (this._stops.indexOf(bi) >= 0) blockChunk.stop = bi;
+        // skip chunk if emplty
+        if (blockChunk.stop == null && !blockChunk.value) return;
+        // add new chunk
+        if (!lastChunk || blockChunk.stop != null) return chunks.push(blockChunk);
+        // or update previous one
+        else lastChunk.value += blockChunk.value;
+      }
     });
+
+    return chunks;
   }
 
-  mapPosToBlock (pos: number): ?{index: number, offset: number} {
+  /** Appends placeholder depending on laziness */
+  _appendPlaceholder (toBlockIndex: ?number): ChangeDetails {
+    // TODO nested block index
+    const details = new ChangeDetails();
+    if (this.lazy && toBlockIndex == null) return details;
+
+    const startBlockData = this._mapPosToBlock(this.value.length);
+    if (!startBlockData) return details;
+
+    const startBlockIndex = startBlockData && startBlockData.index;
+    const endBlockIndex = toBlockIndex || this._blocks.length;
+
+    this._blocks.slice(startBlockIndex, endBlockIndex)
+      .filter(b => typeof b._appendPlaceholder === 'function')
+      .forEach(b => {
+        const bDetails = b._appendPlaceholder();
+        this._value += bDetails.inserted;
+        details.aggregate(bDetails);
+      });
+
+    return details;
+  }
+
+  _mapPosToBlock (pos: number): ?{index: number, offset: number} {
     let accVal = '';
     for (let bi=0; bi<this._blocks.length; ++bi) {
       const block = this._blocks[bi];
@@ -463,11 +338,11 @@ class MaskedPattern extends Masked<string> {
     }
   }
 
-  forEachBlocksInRange (fromPos: number, toPos: ?number, fn: (block: Block, blockIndex: number, fromPos?: number, toPos?: number) => void) {
-    const fromBlock = this.mapPosToBlock(fromPos);
+  _forEachBlocksInRange (fromPos: number, toPos: ?number, fn: (block: Block, blockIndex: number, fromPos?: number, toPos?: number) => void) {
+    const fromBlock = this._mapPosToBlock(fromPos);
 
     if (fromBlock) {
-      const toBlock = toPos ? this.mapPosToBlock(toPos) : {index: this._blocks.length-1};
+      const toBlock = toPos ? this._mapPosToBlock(toPos) : {index: this._blocks.length-1};
       // process first block
       const isSameBlock = toBlock && fromBlock.index === toBlock.index;
       const fromBlockRemoveBegin = fromBlock.offset;
@@ -490,7 +365,7 @@ class MaskedPattern extends Masked<string> {
     @override
   */
   remove (fromPos: number=0, toPos: ?number): ChangeDetails {
-    this.forEachBlocksInRange(fromPos, toPos, (b, _, fromPos, toPos) => {
+    this._forEachBlocksInRange(fromPos, toPos, (b, _, fromPos, toPos) => {
       b.remove(fromPos, toPos);
     });
 
@@ -600,6 +475,6 @@ MaskedPattern.DEFAULTS = {
 };
 MaskedPattern.STOP_CHAR = '`';
 MaskedPattern.ESCAPE_CHAR = '\\';
-MaskedPattern.InputDefinition = PatternInputDefinition
+MaskedPattern.InputDefinition = PatternInputDefinition;
 MaskedPattern.FixedDefinition = PatternFixedDefinition;
 // MaskedPattern.Group = PatternGroup;

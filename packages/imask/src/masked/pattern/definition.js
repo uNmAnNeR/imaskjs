@@ -2,6 +2,7 @@
 import createMask from '../factory.js';
 import type Masked from '../base.js';
 import type MaskedPattern from '../pattern.js';
+import {type TailInputChunk} from '../pattern/chunk-tail-details.js';
 import {type Mask, type ExtractFlags, type AppendFlags} from '../base.js';
 import ChangeDetails from '../../core/change-details.js';
 import PatternBlock from './block.js';
@@ -11,7 +12,6 @@ type Definitions = {[string]: Mask};
 
 /** */
 type PatternInputDefinitionOptions = {
-  isStopAlign: $PropertyType<PatternInputDefinition, 'isStopAlign'>,
   isOptional: $PropertyType<PatternInputDefinition, 'isOptional'>,
   mask: Mask,
 };
@@ -23,13 +23,18 @@ const DEFAULT_DEFINITIONS = {
   '*': /./
 };
 
+function validateCharRange(fromPos: number, toPos: number) {
+  return (fromPos == null || fromPos === 0) &&
+    (toPos == null || 1 <= toPos);
+}
+
 /** */
 export
 class PatternInputDefinition extends PatternBlock {
   /** */
-  isStopAlign: boolean;
-  /** */
   isOptional: boolean;
+  /** */
+  _isFilled: boolean;
 
 
   constructor(patternMasked: MaskedPattern, opts: PatternInputDefinitionOptions) {
@@ -38,9 +43,21 @@ class PatternInputDefinition extends PatternBlock {
     Object.assign(this, blockOpts);
   }
 
+  reset () {
+    this._isFilled = false;
+    super.reset();
+  }
+
+  remove (fromPos: number, toPos: number) {
+    if (!validateCharRange(fromPos, toPos)) return;
+
+    this._isFilled = false;
+    super.remove(fromPos, toPos);
+  }
+
   get value (): string {
     return this.masked.value ||
-      (!this.isOptional ?
+      (this._isFilled && !this.isOptional ?
         this.patternMasked.placeholderChar :
         '');
   }
@@ -54,11 +71,12 @@ class PatternInputDefinition extends PatternBlock {
   }
 
   _append (str: string, flags: AppendFlags) {
-    if (this.masked.value) {
+    if (this._isFilled) {
       return new ChangeDetails({
         overflow: true
       });
     }
+    this._isFilled = true;
 
     const details = super._append(str, flags);
 
@@ -80,10 +98,24 @@ class PatternInputDefinition extends PatternBlock {
     return details;
   }
 
-  /** */
-  get isHiddenHollow (): boolean {
-    return Boolean(this.masked.value) && this.isOptional;
+  _appendPlaceholder (): ChangeDetails {
+    const details = new ChangeDetails();
+
+    if (this._isFilled) return details;
+
+    this._isFilled = true;
+    details.inserted = this.patternMasked.placeholderChar;
+    return details;
   }
+
+  _extractTail (...args: *): TailInputChunk {
+    return this.masked._extractTail(...args);
+  }
+
+  // /** */
+  // get isHiddenHollow (): boolean {
+  //   return !Boolean(this.masked.value) && this.isOptional;
+  // }
 
   // clone (): PatternInputDefinition {
   //   const def = new PatternInputDefinition(this.patternMasked, {
@@ -103,21 +135,24 @@ type PatternFixedDefinitionOptions = {
 };
 
 export
-class PatternFixedDefinition extends PatternBlock {
+class PatternFixedDefinition implements PatternBlock {
   /** */
   char: string;
   /** */
   isUnmasking: ?boolean;
   /** */
   isRawInput: ?boolean;
+  /** */
+  _isFilled: ?boolean;
 
-  constructor(patternMasked: MaskedPattern, opts: PatternFixedDefinitionOptions) {
-    super(patternMasked, createMask({mask: (value => value === opts.char)}));
+  constructor(opts: PatternFixedDefinitionOptions) {
     Object.assign(this, opts);
   }
 
   get value (): string {
-    return this.masked.value;
+    return this._isFilled ?
+      this.char :
+      '';
   }
 
   get unmaskedValue (): string {
@@ -126,17 +161,23 @@ class PatternFixedDefinition extends PatternBlock {
 
   reset () {
     this.isRawInput = false;
-    super.reset();
+    this._isFilled = false;
   }
 
-  remove (...args: *) {
+  remove (fromPos: number, toPos: number) {
+    if (!validateCharRange(fromPos, toPos)) return;
+
     this.isRawInput = false;
-    super.remove(...args);
+    this._isFilled = false;
   }
 
   extractInput (fromPos: number, toPos: number, flags: ExtractFlags) {
-    if (flags.raw && !this.isRawInput) return '';
-    return super.extractInput(fromPos, toPos, flags);
+    return this._isFilled &&
+      validateCharRange(fromPos, toPos) &&
+      // special case for raw
+      (!flags.raw || !this.isRawInput) ?
+      this.char :
+      '';
   }
 
   get isComplete (): boolean {
@@ -144,26 +185,46 @@ class PatternFixedDefinition extends PatternBlock {
   }
 
   _append (str: string, flags: AppendFlags) {
-    if (this.masked.value) {
+    if (this._isFilled) {
       return new ChangeDetails({
         overflow: true
       });
     }
 
-    /*const details = */super._append(str, flags);
+    // /*const details = */super._append(str, flags);
     // TODO refactor USE MASKED???
     const details = new ChangeDetails();
     // if (details.overflow) return details;
 
     // this.masked.value = str;
-    const appended = Boolean(this.value);
+    const appended = this.char === str[0];
     const resolved = appended && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
     if (appended) details.rawInserted = this.char;
-    this.masked._value = details.inserted = this.char;
+    details.inserted = this.char;
     if (resolved && (flags.raw || flags.input)) this.isRawInput = true;
+    this._isFilled = true;
 
     return details;
   }
+
+  _appendPlaceholder (): ChangeDetails {
+    const details = new ChangeDetails();
+    if (this._isFilled) return details;
+
+    this._isFilled = true;
+    details.inserted = this.char;
+    return details;
+  }
+
+  _extractTail (): TailInputChunk {
+    return {value: ''};
+  }
+
+  assign (source: PatternFixedDefinition) {
+    Object.assign(this, source);
+  }
+
+  doCommit () {}
 
   // clone (): PatternFixedDefinition {
   //   const def = new PatternFixedDefinition(this.patternMasked, {
