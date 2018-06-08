@@ -5,7 +5,9 @@ import type MaskedPattern from '../pattern.js';
 import {type TailInputChunk} from '../pattern/chunk-tail-details.js';
 import {type Mask, type ExtractFlags, type AppendFlags} from '../base.js';
 import ChangeDetails from '../../core/change-details.js';
+import {DIRECTION, indexInDirection, type Direction} from '../../core/utils.js';
 import PatternBlock from './block.js';
+
 
 export
 type Definitions = {[string]: Mask};
@@ -112,6 +114,21 @@ class PatternInputDefinition extends PatternBlock {
     return this.masked._extractTail(...args);
   }
 
+  nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
+    // TODO
+    // _isFilled
+    // isOptional
+    const minPos = 0;
+    const maxPos = this.value.length;
+    const boundPos = Math.min(Math.max(cursorPos, minPos), maxPos);
+
+    switch (direction) {
+      case DIRECTION.NONE: return boundPos;
+      case DIRECTION.LEFT: return this.isComplete ? boundPos : minPos;
+      case DIRECTION.RIGHT: return this.isComplete ? boundPos : maxPos;
+    }
+  }
+
   // /** */
   // get isHiddenHollow (): boolean {
   //   return !Boolean(this.masked.value) && this.isOptional;
@@ -169,6 +186,18 @@ class PatternFixedDefinition implements PatternBlock {
 
     this.isRawInput = false;
     this._isFilled = false;
+  }
+
+  nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
+    const minPos = 0;
+    const maxPos = this.value.length;
+    const boundPos = Math.min(Math.max(cursorPos, minPos), maxPos);
+
+    switch (direction) {
+      case DIRECTION.NONE: return boundPos;
+      case DIRECTION.LEFT: return minPos;
+      case DIRECTION.RIGHT: return maxPos;
+    }
   }
 
   extractInput (fromPos: number, toPos: number, flags: ExtractFlags) {

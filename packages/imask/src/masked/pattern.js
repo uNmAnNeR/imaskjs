@@ -375,89 +375,111 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  // TODOOOOO
-  // nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
-    // let step = direction || DIRECTION.RIGHT;
+  nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
+    let step = direction || DIRECTION.RIGHT;
+    let blockData = this._mapPosToBlock(cursorPos);
+    let blockPos = blockData ? (cursorPos - blockData.offset) : 0;
+    let blockOffset = blockData ? blockData.offset : 0;
+    let inputPos = cursorPos;
 
-    // const initialDefIndex = this.mapPosToDefIndex(cursorPos);
-    // const initialDef = this._charDefs[initialDefIndex] && this._charDefs[initialDefIndex][DEF_KEY];
-    // let di = initialDefIndex;
+    if (direction !== DIRECTION.LEFT || !blockData) return inputPos;
 
-    // let firstInputIndex,
-    //     firstFilledInputIndex,
-    //     firstVisibleHollowIndex,
-    //     nextdi;
+    for (let bi=blockData.index; bi >= 0; --bi) {
+      const block = this._blocks[bi];
+      blockOffset = blockOffset != null ? blockOffset : block.value.length;
 
-    // // check if chars at right is acceptable for LEFT and NONE directions
-    // if (direction !== DIRECTION.RIGHT &&
-    //   (initialDef && initialDef.isInput ||
-    //     // in none direction latest position is acceptable also
-    //     direction === DIRECTION.NONE && cursorPos === this.value.length)) {
-    //   firstInputIndex = initialDefIndex;
-    //   if (initialDef && !initialDef.isHollow) firstFilledInputIndex = initialDefIndex;
-    // }
+      const blockInputPos = block.nearestInputPos(blockOffset, direction);
+      if (bi === 0 || blockInputPos > 0) {
+        inputPos = blockPos + blockInputPos;
+        break;
+      }
 
-    // if ((firstFilledInputIndex == null && direction == DIRECTION.LEFT) || firstInputIndex == null) {
-    //   // search forward
-    //   for (
-    //     nextdi = indexInDirection(di, step);
-    //     0 <= nextdi && nextdi < this._charDefs.length;
-    //     di += step, nextdi += step
-    //   ) {
-    //     const nextDef = this._charDefs[nextdi][DEF_KEY];
-    //     if (firstInputIndex == null && nextDef.isInput) {
-    //       firstInputIndex = di;
-    //       if (direction === DIRECTION.NONE) break;
-    //     }
-    //     if (firstVisibleHollowIndex == null && nextDef.isHollow && !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
-    //     if (nextDef.isInput && !nextDef.isHollow) {
-    //       firstFilledInputIndex = di;
-    //       break;
-    //     }
-    //   }
-    // }
+      blockPos -= block.value.length;
+      blockOffset = null;
+    }
 
-    // // for lazy if has aligned left inside fixed and has came to the start - use start position
-    // if (direction === DIRECTION.LEFT && di === 0 && this.lazy && !this.extractInput() &&
-    //   (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
+    return inputPos;
 
-    // if (direction === DIRECTION.LEFT || firstInputIndex == null) {
-    //   // search backward
-    //   step = -step;
-    //   let overflow = false;
 
-    //   // find hollows only before initial pos
-    //   for (
-    //     nextdi = indexInDirection(di, step);
-    //     0 <= nextdi && nextdi < this._charDefs.length;
-    //     di += step, nextdi += step
-    //   ) {
-    //     const nextDef = this._charDefs[nextdi][DEF_KEY];
-    //     if (nextDef.isInput) {
-    //       firstInputIndex = di;
-    //       if (nextDef.isHollow && !nextDef.isHiddenHollow) break;
-    //     }
+    const initialDefIndex = this.mapPosToDefIndex(cursorPos);
+    const initialDef = this._charDefs[initialDefIndex] && this._charDefs[initialDefIndex][DEF_KEY];
+    let di = initialDefIndex;
 
-    //     // if hollow not found before start position - set `overflow`
-    //     // and try to find just any input
-    //     if (di === initialDefIndex) overflow = true;
+    let firstInputIndex,
+        firstFilledInputIndex,
+        firstVisibleHollowIndex,
+        nextdi;
 
-    //     // first input found
-    //     if (overflow && firstInputIndex != null) break;
-    //   }
+    // check if chars at right is acceptable for LEFT and NONE directions
+    if (direction !== DIRECTION.RIGHT &&
+      (initialDef && initialDef.isInput ||
+        // in none direction latest position is acceptable also
+        direction === DIRECTION.NONE && cursorPos === this.value.length)) {
+      firstInputIndex = initialDefIndex;
+      if (initialDef && !initialDef.isHollow) firstFilledInputIndex = initialDefIndex;
+    }
 
-    //   // process overflow
-    //   overflow = overflow || nextdi >= this._charDefs.length;
-    //   if (overflow && firstInputIndex != null) di = firstInputIndex;
-    // } else if (firstFilledInputIndex == null) {
-    //   // adjust index if delete at right and filled input not found at right
-    //   di = firstVisibleHollowIndex != null ?
-    //     firstVisibleHollowIndex :
-    //     firstInputIndex;
-    // }
+    if ((firstFilledInputIndex == null && direction == DIRECTION.LEFT) || firstInputIndex == null) {
+      // search forward
+      for (
+        nextdi = indexInDirection(di, step);
+        0 <= nextdi && nextdi < this._charDefs.length;
+        di += step, nextdi += step
+      ) {
+        const nextDef = this._charDefs[nextdi][DEF_KEY];
+        if (firstInputIndex == null && nextDef.isInput) {
+          firstInputIndex = di;
+          if (direction === DIRECTION.NONE) break;
+        }
+        if (firstVisibleHollowIndex == null && nextDef.isHollow && !nextDef.isHiddenHollow) firstVisibleHollowIndex = di;
+        if (nextDef.isInput && !nextDef.isHollow) {
+          firstFilledInputIndex = di;
+          break;
+        }
+      }
+    }
 
-    // return this.mapDefIndexToPos(di);
-  // }
+    // for lazy if has aligned left inside fixed and has came to the start - use start position
+    if (direction === DIRECTION.LEFT && di === 0 && this.lazy && !this.extractInput() &&
+      (!initialDef || !initialDef.isInput)) firstInputIndex = 0;
+
+    if (direction === DIRECTION.LEFT || firstInputIndex == null) {
+      // search backward
+      step = -step;
+      let overflow = false;
+
+      // find hollows only before initial pos
+      for (
+        nextdi = indexInDirection(di, step);
+        0 <= nextdi && nextdi < this._charDefs.length;
+        di += step, nextdi += step
+      ) {
+        const nextDef = this._charDefs[nextdi][DEF_KEY];
+        if (nextDef.isInput) {
+          firstInputIndex = di;
+          if (nextDef.isHollow && !nextDef.isHiddenHollow) break;
+        }
+
+        // if hollow not found before start position - set `overflow`
+        // and try to find just any input
+        if (di === initialDefIndex) overflow = true;
+
+        // first input found
+        if (overflow && firstInputIndex != null) break;
+      }
+
+      // process overflow
+      overflow = overflow || nextdi >= this._charDefs.length;
+      if (overflow && firstInputIndex != null) di = firstInputIndex;
+    } else if (firstFilledInputIndex == null) {
+      // adjust index if delete at right and filled input not found at right
+      di = firstVisibleHollowIndex != null ?
+        firstVisibleHollowIndex :
+        firstInputIndex;
+    }
+
+    return this.mapDefIndexToPos(di);
+  }
 
   /** Get group by name */
   // group (name: string): ?PatternGroup {

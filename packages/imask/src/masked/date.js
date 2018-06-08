@@ -111,4 +111,4 @@ MaskedDate.GET_DEFAULT_GROUPS = () => {
     m: new PatternGroup.Range([1, 12]),
     Y: new PatternGroup.Range([1900, 9999]),
   };
-}
+};
