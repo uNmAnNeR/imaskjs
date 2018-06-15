@@ -200,13 +200,13 @@ class PatternFixedDefinition implements PatternBlock {
     }
   }
 
-  extractInput (fromPos: number, toPos: number, flags: ExtractFlags) {
-    return this._isFilled &&
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags) {
+    return (this._isFilled &&
       validateCharRange(fromPos, toPos) &&
-      // special case for raw
-      (!flags.raw || !this.isRawInput) ?
-      this.char :
-      '';
+      flags.raw &&
+      this.isRawInput) ?
+        this.char :
+        '';
   }
 
   get isComplete (): boolean {
