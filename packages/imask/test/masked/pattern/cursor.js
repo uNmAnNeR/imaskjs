@@ -16,7 +16,7 @@ describe('Align left', function () {
   it('should align after XX', function () {
     ['XX*', 'XX[*]'].forEach(mask => {
       masked.updateOptions({mask});
-      for (var pos=0; pos<masked._charDefs.length; ++pos) {
+      for (var pos=0; pos<masked._blocks.length; ++pos) {
         assert.equal(masked.nearestInputPos(pos), 2);
         assert.equal(masked.nearestInputPos(pos, DIRECTION.LEFT), 2);
       }
@@ -26,7 +26,7 @@ describe('Align left', function () {
   it('should align before XX with DIRECTION.LEFT', function () {
     ['XX*', 'XX[*]'].forEach(mask => {
       masked.updateOptions({mask, lazy: true});
-      for (var pos=0; pos<masked._charDefs.length-1; ++pos) {
+      for (var pos=0; pos<masked._blocks.length-1; ++pos) {
         assert.equal(masked.nearestInputPos(pos, DIRECTION.LEFT), 0);
       }
     });
@@ -35,7 +35,7 @@ describe('Align left', function () {
   it('should align before XX', function () {
     ['*XX', '[*]XX'].forEach(mask => {
       masked.updateOptions({mask});
-      for (var pos=0; pos<masked._charDefs.length-1; ++pos) {
+      for (var pos=0; pos<masked._blocks.length-1; ++pos) {
         assert.isAtMost(masked.nearestInputPos(pos), 1);
       }
     });

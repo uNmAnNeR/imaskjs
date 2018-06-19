@@ -203,17 +203,17 @@ class Masked<MaskType> {
         break;
       }
 
-      if (!chDetails.inserted || this.doValidate(flags) === false) {
+      if (/*!chDetails.inserted || */ this.doValidate(flags) === false) {
         this.assign(consistentValue);
         if (!flags.input) {
-          // in `input` mode dont skip invalid chars
+          // in not `input` mode dont skip invalid chars
           details.overflow = true;
           break;
         }
         ++ci;
       } else {
         details.aggregate(chDetails);
-        if (details.rawInserted) ++ci;
+        /*if (details.rawInserted)*/ ++ci;
       }
 
       consistentValue = this.clone();

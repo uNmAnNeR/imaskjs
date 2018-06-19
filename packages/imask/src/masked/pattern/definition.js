@@ -6,7 +6,7 @@ import {type TailInputChunk} from '../pattern/chunk-tail-details.js';
 import {type Mask, type ExtractFlags, type AppendFlags} from '../base.js';
 import ChangeDetails from '../../core/change-details.js';
 import {DIRECTION, indexInDirection, type Direction} from '../../core/utils.js';
-import PatternBlock from './block.js';
+import {type PatternBlock} from './block.js';
 
 
 export
@@ -32,7 +32,9 @@ function validateCharRange(fromPos: number, toPos: number) {
 
 /** */
 export
-class PatternInputDefinition extends PatternBlock {
+class PatternInputDefinition implements PatternBlock {
+  +masked: Masked<*>;
+  +patternMasked: MaskedPattern;
   /** */
   isOptional: boolean;
   /** */
@@ -41,20 +43,22 @@ class PatternInputDefinition extends PatternBlock {
 
   constructor(patternMasked: MaskedPattern, opts: PatternInputDefinitionOptions) {
     const {mask, ...blockOpts} = opts;
-    super(patternMasked, createMask({mask}));
+
+    this.patternMasked = patternMasked;
+    this.masked = createMask({mask});
     Object.assign(this, blockOpts);
   }
 
   reset () {
     this._isFilled = false;
-    super.reset();
+    this.masked.reset();
   }
 
-  remove (fromPos: number, toPos: number) {
+  remove (fromPos: number=0, toPos: number=this.value.length) {
     if (!validateCharRange(fromPos, toPos)) return;
 
     this._isFilled = false;
-    super.remove(fromPos, toPos);
+    this.masked.remove(fromPos);
   }
 
   get value (): string {
@@ -72,30 +76,41 @@ class PatternInputDefinition extends PatternBlock {
     return Boolean(this.masked.value) || this.isOptional;
   }
 
-  _append (str: string, flags: AppendFlags) {
+  _append (str: string, flags: AppendFlags={}): ChangeDetails {
     if (this._isFilled) {
       return new ChangeDetails({
         overflow: true
       });
     }
-    this._isFilled = true;
 
-    const details = super._append(str, flags);
+    const details = this.masked._append(str, flags);
 
-    if (details.overflow) return details;
+    // if (details.overflow) return details;
 
-    const resolved = Boolean(details.inserted);
-    let skipped = !resolved && !this.isOptional;
+    // const resolved = Boolean(details.inserted);
+    // let skipped = !resolved && (this.isOptional || flags.input || this.patternMasked.lazy);
 
-    if (!resolved) {
-      // TODO refactor
-      if (skipped && !flags.input && !this.patternMasked.lazy) {
-        skipped = false;
-      }
-    } else {
-      details.rawInserted = details.inserted;
+    // if (!resolved) {
+    //   // TODO refactor
+    //   if (skipped && !flags.input && !this.patternMasked.lazy) {
+    //     skipped = false;
+    //   }
+    //   // skipped = !(skipped && !flags.input && !this.patternMasked.lazy)
+    //   // skipped = !skipped || !(!flags.input && !this.patternMasked.lazy)
+    //   // skipped = !skipped || flags.input || this.patternMasked.lazy;
+    //   // skipped = !(!resolved && !this.isOptional) || flags.input || this.patternMasked.lazy;
+    //   // skipped = !resolved && (this.isOptional || flags.input || this.patternMasked.lazy);
+    // } else {
+      // details.rawInserted = details.inserted;
+    // }
+    if (details.overflow && !details.inserted) {
+      // const canBeSkipped = this.isOptional || flags.input || this.patternMasked.lazy;
+      // details.overflow = details.overflow || !this.isOptional && !flags.input && !this.patternMasked.lazy;
+      if (!this.isOptional && !flags.input && !this.patternMasked.lazy) details.inserted = this.patternMasked.placeholderChar;
     }
-    if (!resolved && !skipped) details.inserted = this.patternMasked.placeholderChar;
+    details.overflow = !details.inserted && !this.isOptional;
+    this._isFilled = Boolean(details.inserted);
+    // if (!resolved && !skipped) details.inserted = this.patternMasked.placeholderChar;
 
     return details;
   }
@@ -114,19 +129,34 @@ class PatternInputDefinition extends PatternBlock {
     return this.masked._extractTail(...args);
   }
 
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
+    return this.masked.extractInput(fromPos, toPos, flags);
+  }
+
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
-    // TODO
-    // _isFilled
-    // isOptional
     const minPos = 0;
     const maxPos = this.value.length;
     const boundPos = Math.min(Math.max(cursorPos, minPos), maxPos);
 
     switch (direction) {
-      case DIRECTION.NONE: return boundPos;
       case DIRECTION.LEFT: return this.isComplete ? boundPos : minPos;
       case DIRECTION.RIGHT: return this.isComplete ? boundPos : maxPos;
+      case DIRECTION.NONE:
+      default: return boundPos;
     }
+  }
+
+  doCommit () {
+    this.masked.doCommit();
+  }
+
+  assign (source: PatternInputDefinition): PatternInputDefinition {
+    const {masked, patternMasked, value, unmaskedValue, isComplete, ...opts} = source;
+    // TODO value and other options???
+    Object.assign(this, opts);
+    this.masked.assign(masked);
+    // dont assign patternMasked!
+    return this;
   }
 
   // /** */
@@ -191,16 +221,16 @@ class PatternFixedDefinition implements PatternBlock {
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
     const minPos = 0;
     const maxPos = this.value.length;
-    const boundPos = Math.min(Math.max(cursorPos, minPos), maxPos);
 
     switch (direction) {
-      case DIRECTION.NONE: return boundPos;
       case DIRECTION.LEFT: return minPos;
-      case DIRECTION.RIGHT: return maxPos;
+      case DIRECTION.NONE:
+      case DIRECTION.RIGHT:
+      default: return maxPos;
     }
   }
 
-  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags) {
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags={}) {
     return (this._isFilled &&
       validateCharRange(fromPos, toPos) &&
       flags.raw &&
@@ -230,7 +260,11 @@ class PatternFixedDefinition implements PatternBlock {
     const resolved = appended && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
     if (appended) details.rawInserted = this.char;
     details.inserted = this.char;
-    if (resolved && (flags.raw || flags.input)) this.isRawInput = true;
+    details.overflow = !resolved;
+    if (resolved && (flags.raw || flags.input)) {
+      this.isRawInput = true;
+      // details.rawInserted = this.char;
+    }
     this._isFilled = true;
 
     return details;
@@ -246,11 +280,12 @@ class PatternFixedDefinition implements PatternBlock {
   }
 
   _extractTail (): TailInputChunk {
-    return {value: ''};
+    return {value: '', stop: null};
   }
 
-  assign (source: PatternFixedDefinition) {
-    Object.assign(this, source);
+  assign (source: PatternFixedDefinition): PatternFixedDefinition {
+    // $FlowFixMe
+    return Object.assign(this, source);
   }
 
   doCommit () {}
