@@ -142,6 +142,8 @@ const IMaskComponent = {
     signed: Boolean,
     normalizeZeros: Boolean,
     padFractionalZeros: Boolean,
+    min: Number,
+    max: Number,
 
     // dynamic
     dispatch: Function
