@@ -1,9 +1,15 @@
 // @flow
 import ChangeDetails from '../core/change-details.js';
 import createMask from './factory.js';
-import Masked, {type AppendFlags} from './base.js';
+import Masked, {type AppendFlags, type MaskedState} from './base.js';
 import {type TailDetails} from '../core/tail-details.js';
 
+type MaskedDynamicState = {
+  ...MaskedState,
+  compiledMasks: Array<*>,
+  currentMaskRef: ?Masked<*>,
+  currentMask: *,
+};
 
 type DynamicMaskType = Array<{[string]: any}>;
 /** Dynamic mask for choosing apropriate mask in run-time */
@@ -85,27 +91,9 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  clone (): MaskedDynamic {
-    const m = new MaskedDynamic(this);
-    m._value = this.value;
-
-    // try to keep reference to compiled masks
-    const currentMaskIndex = this.compiledMasks.indexOf(this.currentMask);
-    if (this.currentMask) {
-      m.currentMask = currentMaskIndex >= 0 ?
-        m.compiledMasks[currentMaskIndex].assign(this.currentMask) :
-        this.currentMask.clone();
-    }
-
-    return m;
-  }
-
-  /**
-    @override
-  */
   reset () {
     if (this.currentMask) this.currentMask.reset();
-    this.compiledMasks.forEach(cm => cm.reset());
+    this.compiledMasks.forEach(m => m.reset());
   }
 
   /**
@@ -170,6 +158,28 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
+  get state (): MaskedDynamicState {
+    return {
+      ...super.state,
+      compiledMasks: this.compiledMasks.map(m => m.state),
+      currentMaskRef: this.currentMask,
+      currentMask: this.currentMask && this.currentMask.state,
+    };
+  }
+
+  set state (state: MaskedPatternState) {
+    const {compiledMasks, currentMaskRef, currentMask, ...maskedState} = state;
+    this.compiledMasks.forEach((m, mi) => m.state = compiledMasks[mi]);
+    if (currentMaskRef) {
+      this.currentMask = currentMaskRef;
+      this.currentMask.state = currentMask;
+    }
+    super.state = maskedState;
+  }
+
+  /**
+    @override
+  */
   extractInput (...args: *): string {
     return this.currentMask ?
       this.currentMask.extractInput(...args) :
@@ -222,16 +232,20 @@ MaskedDynamic.DEFAULTS = {
     const inputValue = masked.rawInputValue;
 
     // simulate input
-    const inputs = masked.compiledMasks.map((cm, index) => {
-      const m = cm.clone();
+    const inputs = masked.compiledMasks.map((m, index) => {
+      const mState = m.state;
+
       m.rawInputValue = inputValue;
       m._append(appended, flags);
+      const weight = m.rawInputValue.length;
 
-      return {value: m.rawInputValue.length, index};
+      m.state = mState;
+
+      return {weight, index};
     });
 
     // pop masks with longer values first
-    inputs.sort((i1, i2) => i2.value - i1.value);
+    inputs.sort((i1, i2) => i2.weight - i1.weight);
 
     return masked.compiledMasks[inputs[0].index];
   }

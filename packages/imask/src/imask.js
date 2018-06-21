@@ -4,6 +4,8 @@ import InputMask from './controls/input.js';
 
 import Masked from './masked/base.js';
 import MaskedPattern from './masked/pattern.js';
+import MaskedEnum from './masked/enum.js';
+import MaskedRange from './masked/range.js';
 import MaskedNumber from './masked/number.js';
 import MaskedDate from './masked/date.js';
 import MaskedRegExp from './masked/regexp.js';
@@ -34,6 +36,10 @@ IMask.InputMask = InputMask;
 IMask.Masked = Masked;
 /** {@link MaskedPattern} */
 IMask.MaskedPattern = MaskedPattern;
+/** {@link MaskedEnum} */
+IMask.MaskedEnum = MaskedEnum;
+/** {@link MaskedRange} */
+IMask.MaskedRange = MaskedRange;
 /** {@link MaskedNumber} */
 IMask.MaskedNumber = MaskedNumber;
 /** {@link MaskedDate} */

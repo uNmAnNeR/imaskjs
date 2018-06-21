@@ -13,9 +13,14 @@ type Mask =
   Class<Number> |
   Class<Date> |
   Array<any> |
-  $PropertyType<Masked<MaskType>, 'validate'> |
+  $PropertyType<Masked<*>, 'validate'> |
   Masked<*> |
   Class<Masked<*>>;
+
+export
+type MaskedState = {
+  _value: string,
+};
 
 /** Append flags */
 export
@@ -77,18 +82,14 @@ class Masked<MaskType> {
     Object.assign(this, opts);
   }
 
-  /** Clones masked with options and value */
-  clone (): Masked<MaskType> {
-    // TODO why Masked? use this.constructor?
-    const m = new Masked(this);
-    m._value = this.value.slice();
-    return m;
+  get state (): MaskedState {
+    return {
+      _value: this._value,
+    };
   }
 
-  /** */
-  assign (source: Masked<MaskType>): Masked<MaskType> {
-    // $FlowFixMe
-    return Object.assign(this, source);
+  set state (state: MaskedState) {
+    Object.assign(this, state);
   }
 
   /** Resets value */
@@ -188,35 +189,33 @@ class Masked<MaskType> {
   _append (str: string, flags: AppendFlags={}): ChangeDetails {
     const oldValueLength = this.value.length;
     const details = new ChangeDetails();
-    let consistentValue: Masked<MaskType> = this.clone();
+    let consistentState: MaskedState = this.state;
 
     str = this.doPrepare(str, flags);
 
-    for (let ci=0; ci<str.length;) {
+    for (let ci=0; ci<str.length; ++ci) {
       const chDetails = this._appendChar(str[ci], flags);
       this._value += chDetails.inserted;
 
       // TODO refactor
       if (chDetails.overflow) {
-        this.assign(consistentValue);
+        this.state = consistentState;
         details.overflow = true;
         break;
       }
 
-      if (/*!chDetails.inserted || */ this.doValidate(flags) === false) {
-        this.assign(consistentValue);
+      if (this.doValidate(flags) === false) {
+        this.state = consistentState;
         if (!flags.input) {
           // in not `input` mode dont skip invalid chars
           details.overflow = true;
           break;
         }
-        ++ci;
       } else {
         details.aggregate(chDetails);
-        /*if (details.rawInserted)*/ ++ci;
       }
 
-      consistentValue = this.clone();
+      consistentState = this.state;
     }
 
     return details;
@@ -226,23 +225,23 @@ class Masked<MaskType> {
   appendWithTail (str: string, tail: TailDetails): ChangeDetails {
     // TODO refactor
     const aggregateDetails = new ChangeDetails();
-    let consistentValue = this.clone();
+    let consistentState = this.state;
     let consistentAppended: Masked<MaskType>;
 
     for (let ci=0; ci<str.length; ++ci) {
       const ch = str[ci];
 
       const appendDetails = this._append(ch, {input: true});
-      consistentAppended = this.clone();
+      consistentAppended = this.state;
       const tailAppended = !appendDetails.overflow && !this._appendTail(tail).overflow;
       if (!tailAppended || this.doValidate({tail: true}) === false) {
-        this.assign(consistentValue);
+        this.state = consistentState;
         break;
       }
 
-      this.assign(consistentAppended);
+      this.state = consistentAppended;
       // TODO may be just use `consistentAppended`?
-      consistentValue = this.clone();
+      consistentState = this.state;
       aggregateDetails.aggregate(appendDetails);
     }
 

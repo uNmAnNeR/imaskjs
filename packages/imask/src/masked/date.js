@@ -1,6 +1,6 @@
 // @flow
 import MaskedPattern from './pattern.js';
-import PatternGroup from './pattern/group.js';
+import MaskedRange from './range.js';
 
 
 /** Date mask */
@@ -107,8 +107,20 @@ MaskedDate.DEFAULTS = {
 };
 MaskedDate.GET_DEFAULT_GROUPS = () => {
   return {
-    d: new PatternGroup.Range([1, 31]),
-    m: new PatternGroup.Range([1, 12]),
-    Y: new PatternGroup.Range([1900, 9999]),
+    d: {
+      mask: MaskedRange,
+      from: 1,
+      to: 31,
+    },
+    m: {
+      mask: MaskedRange,
+      from: 1,
+      to: 12,
+    },
+    Y: {
+      mask: MaskedRange,
+      from: 1900,
+      to: 9999,
+    }
   };
 };

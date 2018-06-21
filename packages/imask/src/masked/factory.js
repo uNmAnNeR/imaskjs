@@ -28,7 +28,7 @@ function maskedClass (mask: Mask): Class<Masked<*>> {
 /** Creates new {@link Masked} depending on mask type */
 export default
 function createMask (opts: {mask: Mask}): Masked<*> {
-  opts = Object.assign({}, opts);  // clone
+  opts = {...opts};
   const mask = opts.mask;
 
   if (mask instanceof g.IMask.Masked) return mask;
