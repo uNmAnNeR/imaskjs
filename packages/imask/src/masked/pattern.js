@@ -19,10 +19,10 @@ type MaskedPatternOptions = {
   lazy: $PropertyType<MaskedPattern, 'lazy'>,
 };
 
-type MaskedPatternState = {
+type MaskedPatternState = {|
   ...MaskedState,
   _blocks: Array<*>,
-};
+|};
 
 type BlockPosData = {
   index: number,
@@ -170,7 +170,7 @@ class MaskedPattern extends Masked<string> {
   }
 
   set state (state: MaskedPatternState) {
-    const {_blocks, ...maskedState} = state;
+    const {_blocks, ...maskedState: MaskedState} = state;
     this._blocks.forEach((b, bi) => b.state = _blocks[bi]);
     super.state = maskedState;
   }
@@ -195,8 +195,7 @@ class MaskedPattern extends Masked<string> {
   */
   doCommit () {
     this._blocks.forEach(b => b.doCommit());
-    // TODO??? is it ok to update it manually?
-    this._value = this._blocks.reduce((str, b) => str += b.value, '');
+    this._value = this._blocks.reduce((str, b) => str + b.value, '');
     super.doCommit();
   }
 
@@ -251,7 +250,7 @@ class MaskedPattern extends Masked<string> {
       blockDetails.overflow = false;
       details.aggregate(blockDetails);
 
-      if (overflow && !block.value ||
+      if (overflow && !block.isComplete ||
         !overflow && blockDetails.rawInserted) break; // try next char
     }
 
@@ -278,14 +277,14 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _extractTail (fromPos: number=0, toPos: number=this.value.length): ChunksTailDetails {
+  _extractTail (fromPos?: number=0, toPos?: number=this.value.length): ChunksTailDetails {
     return new ChunksTailDetails(this._extractInputChunks(fromPos, toPos));
   }
 
   /**
     @override
   */
-  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {
+  extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags: ExtractFlags={}): string {
     if (fromPos === toPos) return '';
 
     let input = '';
@@ -334,15 +333,16 @@ class MaskedPattern extends Masked<string> {
     const startBlockData = this._mapPosToBlock(this.value.length);
     if (!startBlockData) return details;
 
-    const startBlockIndex = startBlockData && startBlockData.index;
+    const startBlockIndex = startBlockData.index;
     const endBlockIndex = toBlockIndex || this._blocks.length;
 
     this._blocks.slice(startBlockIndex, endBlockIndex)
-      .filter(b => typeof b._appendPlaceholder === 'function')
       .forEach(b => {
-        const bDetails = b._appendPlaceholder();
-        this._value += bDetails.inserted;
-        details.aggregate(bDetails);
+        if (typeof b._appendPlaceholder === 'function') {
+          const bDetails = b._appendPlaceholder.call(b);
+          this._value += bDetails.inserted;
+          details.aggregate(bDetails);
+        }
       });
 
     return details;
@@ -366,7 +366,7 @@ class MaskedPattern extends Masked<string> {
     }
   }
 
-  _blockStartPos (blockIndex) {
+  _blockStartPos (blockIndex: number): number {
     return this._blocks
       .slice(0, blockIndex)
       .reduce((pos, b) => pos += b.value.length, 0);
@@ -462,6 +462,7 @@ class MaskedPattern extends Masked<string> {
       // ->
       //  any|not-len-aligned or end
 
+      // check if first block at right is filled input
       let firstFilledBlockIndexAtRight;
       for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
         if (this._blocks[bi].value) {
@@ -469,55 +470,71 @@ class MaskedPattern extends Masked<string> {
           break;
         }
       }
-
       if (firstFilledBlockIndexAtRight != null) {
         const filledBlock = this._blocks[firstFilledBlockIndexAtRight];
         const blockInputPos = filledBlock.nearestInputPos(0, DIRECTION.RIGHT);
-        if (filledBlock.unmaskedValue.length && blockInputPos !== filledBlock.value.length) {
+        if (blockInputPos !== filledBlock.value.length && filledBlock.unmaskedValue.length) {
+          // filled block is input
           return this._blockStartPos(firstFilledBlockIndexAtRight) + blockInputPos;
         }
       }
 
-      let firstFilledBlockIndex;
-      let firstInputBlockIndex;
+      // <-
+      // find this vars
+      let firstFilledInputBlockIndex = -1;
+      let firstEmptyInputBlockIndex;
       for (let bi=searchBlockIndex-1; bi >= 0; --bi) {
         const block = this._blocks[bi];
         const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.LEFT);
-        if (firstInputBlockIndex == null && (!block.value || blockInputPos !== 0)) firstInputBlockIndex = bi;
+        if (firstEmptyInputBlockIndex == null && (!block.value || blockInputPos !== 0)) {
+          firstEmptyInputBlockIndex = bi;
+        }
         if (blockInputPos !== 0) {
           if (blockInputPos !== block.value.length) {
+            // aligned inside block - return immediately
             return this._blockStartPos(bi) + blockInputPos;
           } else {
-            firstFilledBlockIndex = bi;
+            // found filled
+            firstFilledInputBlockIndex = bi;
             break;
           }
         }
       }
 
-      // let firstInputBlockIndex;
-      for (let bi=firstFilledBlockIndex != null ? firstFilledBlockIndex + 1 : 0; bi < searchBlockIndex; ++bi) {
+      // find first empty input before start searching position
+      for (let bi=firstFilledInputBlockIndex + 1; bi <= Math.min(searchBlockIndex, this._blocks.length-1); ++bi) {
         const block = this._blocks[bi];
         const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-        if (!block.value.length && firstInputBlockIndex == null) {
-          firstInputBlockIndex = bi;
-        }
         if (blockInputPos !== block.value.length) {
           return this._blockStartPos(bi) + blockInputPos;
         }
       }
 
-      if (firstFilledBlockIndex != null) {
-        return this._blockStartPos(firstFilledBlockIndex) + this._blocks[firstFilledBlockIndex].value.length;
+      // process overflow
+      if (firstFilledInputBlockIndex >= 0) {
+        return this._blockStartPos(firstFilledInputBlockIndex) + this._blocks[firstFilledInputBlockIndex].value.length;
       }
 
       // for lazy if has aligned left inside fixed and has came to the start - use start position
-      const alignToStart = this.lazy && !this.extractInput() && !isInput(this._blocks[beginBlockIndex+1]);
-
-      if (firstInputBlockIndex != null && !alignToStart) {
-        return this._blockStartPos(firstInputBlockIndex) + this._blocks[firstInputBlockIndex].value.length;
+      if (this.lazy && !this.extractInput() && !isInput(this._blocks[searchBlockIndex])) {
+        return 0;
       }
 
-      return 0;
+      if (firstEmptyInputBlockIndex != null) {
+        return this._blockStartPos(firstEmptyInputBlockIndex);
+      }
+
+      // find first input
+      for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
+        const block = this._blocks[bi];
+        const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
+        // is input
+        if (!block.value.length || blockInputPos !== block.value.length) {
+          return this._blockStartPos(bi) + blockInputPos;
+        }
+      }
+
+      return this.value.length;
     }
 
     if (direction === DIRECTION.RIGHT) {
@@ -526,19 +543,20 @@ class MaskedPattern extends Masked<string> {
       //  any|not-len-aligned
       // <-
       //  not-0-aligned or start|any
-      let firstInputBlockAlignedPos;
-
+      let firstInputBlockAlignedIndex: ?number;
+      let firstInputBlockAlignedPos: ?number;
       for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
         const block = this._blocks[bi];
         const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
         if (blockInputPos !== block.value.length) {
           firstInputBlockAlignedPos = this._blockStartPos(bi) + blockInputPos;
+          firstInputBlockAlignedIndex = bi;
           break;
         }
       }
 
-      if (firstInputBlockAlignedPos != null) {
-        for (let bi=firstInputBlockAlignedPos; bi < this._blocks.length; ++bi) {
+      if (firstInputBlockAlignedIndex != null && firstInputBlockAlignedPos != null) {
+        for (let bi=firstInputBlockAlignedIndex; bi < this._blocks.length; ++bi) {
           const block = this._blocks[bi];
           const blockInputPos = block.nearestInputPos(0, DIRECTION.RIGHT);
           if (blockInputPos !== block.value.length) {
@@ -558,6 +576,7 @@ class MaskedPattern extends Masked<string> {
         }
       }
     }
+
     return cursorPos;
   }
 

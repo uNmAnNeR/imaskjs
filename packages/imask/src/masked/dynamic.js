@@ -4,12 +4,12 @@ import createMask from './factory.js';
 import Masked, {type AppendFlags, type MaskedState} from './base.js';
 import {type TailDetails} from '../core/tail-details.js';
 
-type MaskedDynamicState = {
+type MaskedDynamicState = {|
   ...MaskedState,
   compiledMasks: Array<*>,
   currentMaskRef: ?Masked<*>,
   currentMask: *,
-};
+|};
 
 type DynamicMaskType = Array<{[string]: any}>;
 /** Dynamic mask for choosing apropriate mask in run-time */
@@ -167,10 +167,10 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     };
   }
 
-  set state (state: MaskedPatternState) {
+  set state (state: MaskedDynamicState) {
     const {compiledMasks, currentMaskRef, currentMask, ...maskedState} = state;
     this.compiledMasks.forEach((m, mi) => m.state = compiledMasks[mi]);
-    if (currentMaskRef) {
+    if (currentMaskRef != null) {
       this.currentMask = currentMaskRef;
       this.currentMask.state = currentMask;
     }

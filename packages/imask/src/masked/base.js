@@ -18,9 +18,9 @@ type Mask =
   Class<Masked<*>>;
 
 export
-type MaskedState = {
+type MaskedState = {|
   _value: string,
-};
+|};
 
 /** Append flags */
 export
@@ -82,13 +82,13 @@ class Masked<MaskType> {
     Object.assign(this, opts);
   }
 
-  get state (): MaskedState {
+  get state (): any {
     return {
       _value: this._value,
     };
   }
 
-  set state (state: MaskedState) {
+  set state (state: any) {
     Object.assign(this, state);
   }
 
@@ -159,12 +159,12 @@ class Masked<MaskType> {
   }
 
   /** Extracts value in range considering flags */
-  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
+  extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
     return this.value.slice(fromPos, toPos);
   }
 
   /** Extracts tail in range */
-  _extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
+  _extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
     return {
       value: this.extractInput(fromPos, toPos),
       fromPos,
@@ -197,20 +197,11 @@ class Masked<MaskType> {
       const chDetails = this._appendChar(str[ci], flags);
       this._value += chDetails.inserted;
 
-      // TODO refactor
-      if (chDetails.overflow) {
+      if (chDetails.overflow || this.doValidate(flags) === false) {
         this.state = consistentState;
         details.overflow = true;
-        break;
-      }
-
-      if (this.doValidate(flags) === false) {
-        this.state = consistentState;
-        if (!flags.input) {
-          // in not `input` mode dont skip invalid chars
-          details.overflow = true;
-          break;
-        }
+        // in not `input` mode dont skip invalid chars
+        if (!flags.input) break;
       } else {
         details.aggregate(chDetails);
       }
@@ -226,7 +217,7 @@ class Masked<MaskType> {
     // TODO refactor
     const aggregateDetails = new ChangeDetails();
     let consistentState = this.state;
-    let consistentAppended: Masked<MaskType>;
+    let consistentAppended: MaskedState;
 
     for (let ci=0; ci<str.length; ++ci) {
       const ch = str[ci];
@@ -240,8 +231,8 @@ class Masked<MaskType> {
       }
 
       this.state = consistentAppended;
-      // TODO may be just use `consistentAppended`?
-      consistentState = this.state;
+      consistentState = consistentAppended;
+
       aggregateDetails.aggregate(appendDetails);
     }
 
@@ -257,7 +248,7 @@ class Masked<MaskType> {
   }
 
   /** */
-  remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
+  remove (fromPos?: number=0, toPos?: number=this.value.length): ChangeDetails {
     this._value = this.value.slice(0, fromPos) + this.value.slice(toPos);
     return new ChangeDetails();
   }

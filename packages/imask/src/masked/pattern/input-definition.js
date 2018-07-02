@@ -55,11 +55,13 @@ class PatternInputDefinition implements PatternBlock {
     this.masked.reset();
   }
 
-  remove (fromPos: number=0, toPos: number=this.value.length) {
+  remove (fromPos?: number=0, toPos?: number=this.value.length): ChangeDetails {
     if (fromPos === 0 && toPos >= 1) {
       this._isFilled = false;
-      this.masked.remove(fromPos, toPos);
+      return this.masked.remove(fromPos, toPos);
     }
+
+    return new ChangeDetails();
   }
 
   get value (): string {
@@ -110,7 +112,7 @@ class PatternInputDefinition implements PatternBlock {
     return this.masked._extractTail(...args);
   }
 
-  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
+  extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
     return this.masked.extractInput(fromPos, toPos, flags);
   }
 
@@ -129,15 +131,6 @@ class PatternInputDefinition implements PatternBlock {
 
   doCommit () {
     this.masked.doCommit();
-  }
-
-  assign (source: PatternInputDefinition): PatternInputDefinition {
-    const {masked, patternMasked, value, unmaskedValue, isComplete, ...opts} = source;
-    // TODO value and other options???
-    Object.assign(this, opts);
-    this.masked.assign(masked);
-    // dont assign patternMasked!
-    return this;
   }
 
   get state (): PatternInputDefinitionState {

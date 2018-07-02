@@ -11,10 +11,10 @@ type PatternFixedDefinitionOptions = {
   isUnmasking?: $PropertyType<PatternFixedDefinition, 'isUnmasking'>,
 };
 
-type PatternFixedDefinitionState = {
+type PatternFixedDefinitionState = {|
   ...MaskedState,
-  _isRawInput: boolean,
-};
+  _isRawInput: ?boolean,
+|};
 
 export default
 class PatternFixedDefinition implements PatternBlock {
@@ -45,9 +45,11 @@ class PatternFixedDefinition implements PatternBlock {
     this._value = '';
   }
 
-  remove (fromPos: number=0, toPos: number=this._value.length) {
+  remove (fromPos?: number=0, toPos?: number=this._value.length): ChangeDetails {
     this._value = this._value.slice(0, fromPos) + this._value.slice(toPos);
     if (!this._value) this._isRawInput = false;
+
+    return new ChangeDetails();
   }
 
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
@@ -62,7 +64,7 @@ class PatternFixedDefinition implements PatternBlock {
     }
   }
 
-  extractInput (fromPos: number=0, toPos: number=this._value.length, flags?: ExtractFlags={}) {
+  extractInput (fromPos?: number=0, toPos?: number=this._value.length, flags?: ExtractFlags={}) {
     return flags.raw && this._isRawInput && this._value.slice(fromPos, toPos) || '';
   }
 
@@ -99,11 +101,6 @@ class PatternFixedDefinition implements PatternBlock {
 
   _extractTail (): TailInputChunk {
     return {value: '', stop: null};
-  }
-
-  assign (source: PatternFixedDefinition): PatternFixedDefinition {
-    // $FlowFixMe
-    return Object.assign(this, source);
   }
 
   doCommit () {}
