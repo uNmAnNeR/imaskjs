@@ -170,7 +170,7 @@ class MaskedPattern extends Masked<string> {
   }
 
   set state (state: MaskedPatternState) {
-    const {_blocks, ...maskedState: MaskedState} = state;
+    const {_blocks, ...maskedState} = state;
     this._blocks.forEach((b, bi) => b.state = _blocks[bi]);
     super.state = maskedState;
   }
@@ -217,7 +217,7 @@ class MaskedPattern extends Masked<string> {
     const details = new ChangeDetails();
     if (tail) {
       details.aggregate(tail instanceof ChunksTailDetails ?
-        this._appendChunks(tail.chunks, {tail: true}) :
+        this._appendTailChunks(tail.chunks, {tail: true}) :
         super._appendTail(tail));
     }
     return details.aggregate(this._appendPlaceholder());
@@ -258,16 +258,28 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Appends chunks splitted by stop chars */
-  _appendChunks (chunks: Array<TailInputChunk>, ...args: *) {
+  _appendTailChunks (chunks: Array<TailInputChunk>, ...args: *) {
     const details = new ChangeDetails();
 
-    for (let ci=0; ci < chunks.length; ++ci) {
-      const {stop, value} = chunks[ci];
-      if (Array.isArray(stop)) {
-        // TODO
+    for (let ci=0; ci < chunks.length && !details.overflow; ++ci) {
+      const chunk = chunks[ci];
+
+      const chunkBlock = chunk instanceof ChunksTailDetails && chunk.index != null && this._blocks[chunk.index];
+      if (chunkBlock) {
+        details.aggregate(this._appendPlaceholder(chunk.index));
+
+        const tailDetails = chunkBlock._appendTail(chunk);
+        tailDetails.overflow = false; // always ignore overflow, it will be set later
+        details.aggregate(tailDetails);
+        this._value += tailDetails.inserted;
+
+        // get not inserted chars
+        const remainChars = chunk.value.slice(tailDetails.rawInserted.length);
+        if (remainChars) details.aggregate(this._append(remainChars, {tail: true}));
       } else {
+        const {stop, value} = chunk;
         if (stop != null && this._stops.indexOf(stop) >= 0) details.aggregate(this._appendPlaceholder(stop));
-        if (details.aggregate(this._append(value, ...args)).overflow) break;
+        details.aggregate(this._append(value, {tail: true}));
       }
     };
 
@@ -278,7 +290,7 @@ class MaskedPattern extends Masked<string> {
     @override
   */
   _extractTail (fromPos?: number=0, toPos?: number=this.value.length): ChunksTailDetails {
-    return new ChunksTailDetails(this._extractInputChunks(fromPos, toPos));
+    return new ChunksTailDetails(this._extractTailChunks(fromPos, toPos));
   }
 
   /**
@@ -297,29 +309,61 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Extracts chunks from input splitted by stop chars */
-  _extractInputChunks (fromPos: number=0, toPos: number=this.value.length): Array<TailInputChunk> {
+  _extractTailChunks (fromPos: number=0, toPos: number=this.value.length): Array<TailInputChunk> {
     if (fromPos === toPos) return [];
 
     const chunks = [];
+    let lastChunk;
     this._forEachBlocksInRange(fromPos, toPos, (b, bi, fromPos, toPos) => {
-      const lastChunk = chunks[chunks.length-1];
       const blockChunk = b._extractTail(fromPos, toPos);
 
+      const isStop = this._stops.indexOf(bi) >= 0;
       if (blockChunk instanceof ChunksTailDetails) {
-        // TODO
-      } else {
-        if (this._stops.indexOf(bi) >= 0) blockChunk.stop = bi;
-        // skip chunk if emplty
-        if (blockChunk.stop == null && !blockChunk.value) return;
-        // add new chunk
-        if (!lastChunk || blockChunk.stop != null) {
-          chunks.push(blockChunk);
-          return;
+        if (!isStop) {
+          // try append floating chunks to existed lastChunk
+          let headFloatChunksCount = blockChunk.chunks.length;
+          for (let ci=0; ci< blockChunk.chunks.length; ++ci) {
+            if (blockChunk.chunks[ci].stop != null) {
+              headFloatChunksCount = ci;
+              break;
+            }
+          }
+
+          const headFloatChunks = blockChunk.chunks.splice(0, headFloatChunksCount);
+          headFloatChunks
+            .filter(chunk => chunk.value)
+            .forEach(chunk => {
+              if (lastChunk) lastChunk.value += chunk.value;
+              else lastChunk = chunk;
+            });
         }
-        // or update previous one
-        else lastChunk.value += blockChunk.value;
+
+        // if block chunk has stops
+        if (blockChunk.chunks.length) {
+          if (lastChunk) chunks.push(lastChunk);
+          blockChunk.index = bi;
+          chunks.push(blockChunk);
+          // we cant append to ChunksTailDetails, so just reset lastChunk to force adding new
+          lastChunk = null;
+        }
+      } else {
+        if (isStop) {
+          // do not consider value on middle chunks
+          // add block even if it is empty
+          if (lastChunk) chunks.push(lastChunk);
+          blockChunk.stop = bi;
+        } else {
+          if (!blockChunk.value) return;
+          if (lastChunk) {
+            lastChunk.value += blockChunk.value;
+            return;
+          }
+        }
+        lastChunk = blockChunk;
       }
     });
+
+    if (lastChunk && lastChunk.value) chunks.push(lastChunk);
 
     return chunks;
   }
@@ -419,11 +463,17 @@ class MaskedPattern extends Masked<string> {
 
     if (!beginBlock) return cursorPos;
 
-    const cursorAtRight = beginBlockOffset === beginBlock.value.length;
-    const cursorAtLeft = beginBlockOffset === 0;
+    let beginBlockCursorPos = beginBlockOffset;
+    // if position inside block - try to adjust it
+    if (beginBlockCursorPos !== 0 && beginBlockCursorPos < beginBlock.value.length) {
+      beginBlockCursorPos = beginBlock.nearestInputPos(beginBlockOffset, direction);
+    }
+
+    const cursorAtRight = beginBlockCursorPos === beginBlock.value.length;
+    const cursorAtLeft = beginBlockCursorPos === 0;
 
     //  cursor is INSIDE first block (not at bounds)
-    if (!cursorAtLeft && !cursorAtRight) return this._blockStartPos(beginBlockIndex) + beginBlockOffset;
+    if (!cursorAtLeft && !cursorAtRight) return this._blockStartPos(beginBlockIndex) + beginBlockCursorPos;
 
     const searchBlockIndex = cursorAtRight ? beginBlockIndex + 1 : beginBlockIndex;
 
@@ -537,7 +587,7 @@ class MaskedPattern extends Masked<string> {
       return this.value.length;
     }
 
-    if (direction === DIRECTION.RIGHT) {
+    if (direction === DIRECTION.RIGHT || direction === DIRECTION.FORCE_RIGHT) {
       // ->
       //  any|not-len-aligned and filled
       //  any|not-len-aligned
@@ -558,12 +608,14 @@ class MaskedPattern extends Masked<string> {
       if (firstInputBlockAlignedIndex != null && firstInputBlockAlignedPos != null) {
         for (let bi=firstInputBlockAlignedIndex; bi < this._blocks.length; ++bi) {
           const block = this._blocks[bi];
-          const blockInputPos = block.nearestInputPos(0, DIRECTION.RIGHT);
+          const blockInputPos = block.nearestInputPos(0, DIRECTION.FORCE_RIGHT);
           if (blockInputPos !== block.value.length) {
             return this._blockStartPos(bi) + blockInputPos;
           }
         }
-        return firstInputBlockAlignedPos;
+        return direction === DIRECTION.FORCE_RIGHT ?
+          this.value.length :
+          firstInputBlockAlignedPos;
       }
 
       for (let bi=Math.min(searchBlockIndex, this._blocks.length-1); bi >= 0; --bi) {

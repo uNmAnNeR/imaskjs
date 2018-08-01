@@ -2,7 +2,7 @@
 import createMask from '../factory.js';
 import type Masked from '../base.js';
 import type MaskedPattern from '../pattern.js';
-import {type TailInputChunk} from '../pattern/chunk-tail-details.js';
+import {type TailDetails} from '../../core/tail-details.js';
 import {type Mask, type ExtractFlags, type AppendFlags} from '../base.js';
 import ChangeDetails from '../../core/change-details.js';
 import {DIRECTION, type Direction} from '../../core/utils.js';
@@ -108,8 +108,12 @@ class PatternInputDefinition implements PatternBlock {
     return details;
   }
 
-  _extractTail (...args: *): TailInputChunk {
+  _extractTail (...args: *): TailDetails {
     return this.masked._extractTail(...args);
+  }
+
+  _appendTail (...args: *): ChangeDetails {
+    return this.masked._appendTail(...args);
   }
 
   extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
@@ -123,7 +127,9 @@ class PatternInputDefinition implements PatternBlock {
 
     switch (direction) {
       case DIRECTION.LEFT: return this.isComplete ? boundPos : minPos;
-      case DIRECTION.RIGHT: return this.isComplete ? boundPos : maxPos;
+      case DIRECTION.RIGHT:
+      case DIRECTION.FORCE_RIGHT:
+        return this.isComplete ? boundPos : maxPos;
       case DIRECTION.NONE:
       default: return boundPos;
     }

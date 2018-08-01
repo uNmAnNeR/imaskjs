@@ -6,8 +6,4 @@ export
 interface TailDetails {
   /** Tail value as string */
   +value: string;
-  /** Position extracted from */
-  +fromPos: ?number;
-  /** Position extracted to */
-  +toPos: ?number;
 }

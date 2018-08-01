@@ -15,9 +15,10 @@ function isString (str: mixed): boolean %checks {
 */
 export
 const DIRECTION = {
-  NONE: 0,
-  LEFT: -1,
-  RIGHT: 1
+  NONE: 'NONE',
+  LEFT: 'LEFT',
+  RIGHT: 'RIGHT',
+  FORCE_RIGHT: 'FORCE_RIGHT',
 }
 /**
   Direction

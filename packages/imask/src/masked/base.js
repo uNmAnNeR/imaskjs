@@ -167,8 +167,6 @@ class Masked<MaskType> {
   _extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
     return {
       value: this.extractInput(fromPos, toPos),
-      fromPos,
-      toPos,
     };
   }
 
@@ -225,7 +223,7 @@ class Masked<MaskType> {
       const appendDetails = this._append(ch, {input: true});
       consistentAppended = this.state;
       const tailAppended = !appendDetails.overflow && !this._appendTail(tail).overflow;
-      if (!tailAppended || this.doValidate({tail: true}) === false) {
+      if (!tailAppended) {
         this.state = consistentState;
         break;
       }

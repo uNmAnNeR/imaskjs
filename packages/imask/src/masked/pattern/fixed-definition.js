@@ -1,6 +1,7 @@
 // @flow
 import ChangeDetails from '../../core/change-details.js';
 import {DIRECTION, type Direction} from '../../core/utils.js';
+import {type TailDetails} from '../../core/tail-details.js';
 import {type ExtractFlags, type AppendFlags, type MaskedState} from '../base.js';
 import {type PatternBlock} from './block.js';
 
@@ -60,6 +61,7 @@ class PatternFixedDefinition implements PatternBlock {
       case DIRECTION.LEFT: return minPos;
       case DIRECTION.NONE:
       case DIRECTION.RIGHT:
+      case DIRECTION.FORCE_RIGHT:
       default: return maxPos;
     }
   }
@@ -99,8 +101,14 @@ class PatternFixedDefinition implements PatternBlock {
     return details;
   }
 
-  _extractTail (): TailInputChunk {
-    return {value: '', stop: null};
+  _extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
+    return {
+      value: '',
+    };
+  }
+
+  _appendTail (tail?: TailDetails): ChangeDetails {
+    return this._append(tail ? tail.value: '', {tail: true});
   }
 
   doCommit () {}
