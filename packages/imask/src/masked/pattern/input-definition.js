@@ -86,7 +86,22 @@ class PatternInputDefinition implements PatternBlock {
       });
     }
 
+    const state = this.masked.state;
     const details = this.masked._append(str, flags);
+
+    // simulate input to validate
+    // TODO remove hack??? use smth like `computedValue`???
+    // const patternValue = this.patternMasked._value;
+    // this.patternMasked._value += details.inserted;
+
+    if (details.inserted && this.doValidate(flags) === false) {
+      details.inserted = details.rawInserted = '';
+      details.overflow = true;
+      this.masked.state = state;
+    }
+    // drop simulation
+    // this.patternMasked._value = patternValue;
+
     if (details.overflow && !details.inserted) {
       if (!this.isOptional && !flags.input && !this.patternMasked.lazy) {
         details.inserted = this.patternMasked.placeholderChar;
@@ -133,6 +148,10 @@ class PatternInputDefinition implements PatternBlock {
       case DIRECTION.NONE:
       default: return boundPos;
     }
+  }
+
+  doValidate (...args: *) {
+    return this.patternMasked.doValidate(...args);
   }
 
   doCommit () {

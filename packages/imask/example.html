@@ -7,14 +7,17 @@
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
-    new IMask(document.getElementById('input'), {
-      mask: Date,
-      lazy: false,
-      // groups: {
-      //   num: {
-      //     mask: Number
-      //   }
-      // }
+    var imask = new IMask(document.getElementById('input'), {
+      mask: 'dw',
+      lazy: true,
+      groups: {
+        d: {
+          mask: '00',
+        },
+        w: {
+          mask: 'aa',
+        },
+      }
     });
   </script>
 </body>

@@ -195,7 +195,6 @@ class MaskedPattern extends Masked<string> {
   */
   doCommit () {
     this._blocks.forEach(b => b.doCommit());
-    this._value = this._blocks.reduce((str, b) => str + b.value, '');
     super.doCommit();
   }
 
@@ -208,6 +207,18 @@ class MaskedPattern extends Masked<string> {
 
   set unmaskedValue (unmaskedValue: string) {
     super.unmaskedValue = unmaskedValue;
+  }
+
+  /**
+    @override
+  */
+  get value (): string {
+    // TODO return _value when not in change?
+    return this._blocks.reduce((str, b) => str += b.value, '');
+  }
+
+  set value (value: string) {
+    super.value = value;
   }
 
   /**
@@ -523,7 +534,7 @@ class MaskedPattern extends Masked<string> {
       if (firstFilledBlockIndexAtRight != null) {
         const filledBlock = this._blocks[firstFilledBlockIndexAtRight];
         const blockInputPos = filledBlock.nearestInputPos(0, DIRECTION.RIGHT);
-        if (blockInputPos !== filledBlock.value.length && filledBlock.unmaskedValue.length) {
+        if (blockInputPos === 0 && filledBlock.unmaskedValue.length) {
           // filled block is input
           return this._blockStartPos(firstFilledBlockIndexAtRight) + blockInputPos;
         }

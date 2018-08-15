@@ -1,4 +1,5 @@
 import MaskedPattern from '../../../src/masked/pattern';
+import { DIRECTION } from '../../../src/core/utils.js';
 
 
 describe('Insert', function () {
@@ -58,6 +59,32 @@ describe('Insert', function () {
     });
     masked.value = '+79998887766';
     assert(prepareStub.called);
+  });
+
+  it('should insert value in the middle', function () {
+    masked.updateOptions({
+      mask: '000',
+    });
+    masked.splice(1, 0, '1', DIRECTION.NONE);
+    assert.equal(masked.value, '_1_');
+  });
+
+  it('should not skip groups', function () {
+    masked.updateOptions({
+      mask: 'dw',
+      lazy: true,
+      groups: {
+        d: {
+          mask: '00',
+        },
+        w: {
+          mask: 'aa',
+        },
+      }
+    });
+    // should not jump over numbers
+    masked.value = 'a';
+    assert.equal(masked.value, '');
   });
 
   describe('RAW', function () {

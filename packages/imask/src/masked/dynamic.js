@@ -82,7 +82,6 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   }
 
   /**
-    @override
   */
   doDispatch(appended: string, flags: AppendFlags={}) {
     return this.dispatch(appended, this, flags);
@@ -125,8 +124,11 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return this.currentMask ? this.currentMask.typedValue : '';
   }
 
+  // probably typedValue should not be used with dynamic
   set typedValue (value: any) {
     let unmaskedValue = String(value);
+
+    // double check it
     if (this.currentMask) {
       this.currentMask.typedValue = value;
       unmaskedValue = this.currentMask.unmaskedValue;
