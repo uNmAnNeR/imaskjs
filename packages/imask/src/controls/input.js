@@ -76,7 +76,7 @@ class InputMask {
       mask === Date && this.masked instanceof MaskedDate) return;
 
     if (this.masked.constructor === maskedClass(mask)) {
-      this.masked.mask = mask;
+      this.masked.updateOptions({mask});
       return;
     }
 
@@ -218,9 +218,10 @@ class InputMask {
     delete opts.mask;
 
     // check if changed
-    if (objectIncludes(this.masked, opts)) return;
+    if (!objectIncludes(this.masked, opts)) {
+      this.masked.updateOptions(opts);
+    }
 
-    this.masked.updateOptions(opts);
     this.updateControl();
   }
 
