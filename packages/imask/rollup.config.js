@@ -1,6 +1,6 @@
 import babel from 'rollup-plugin-babel';
-import uglify from 'rollup-plugin-uglify';
-import eslint from 'rollup-plugin-eslint';
+import { terser } from 'rollup-plugin-terser';
+import { eslint } from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 
@@ -19,7 +19,8 @@ const input = isES ? 'src/imask.js' : 'src/imask.shim.js';
 const babelConf = isES ? {
   externalHelpersWhitelist: [
     'extends',
-    'slicedToArray'
+    'slicedToArray',
+    'objectWithoutProperties',
   ],
   presets: [
     ['env', {
@@ -65,6 +66,6 @@ export default {
     resolve(),
     babel(babelConf),
     !isES && commonjs(),
-    isProd && uglify()
+    isProd && terser()
   ]
 }
