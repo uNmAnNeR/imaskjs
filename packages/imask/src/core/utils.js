@@ -34,6 +34,19 @@ function indexInDirection (pos: number, direction: Direction): number {
   return pos;
 }
 
+export
+function posInDirection (pos: number, direction: Direction): number {
+  switch (direction) {
+    case DIRECTION.LEFT:
+      return --pos;
+    case DIRECTION.RIGHT:
+    case DIRECTION.FORCE_RIGHT:
+      return ++pos;
+    default:
+      return pos;
+  }
+}
+
 /** Escapes regular expression control chars */
 export
 function escapeRegExp (str: string): string {
@@ -60,9 +73,6 @@ function objectIncludes (b: any, a: any): boolean {
   if (arrA != arrB) return false;
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    var keys = Object.keys(a);
-    // if (keys.length !== Object.keys(b).length) return false;
-
     var dateA = a instanceof Date
       , dateB = b instanceof Date;
     if (dateA && dateB) return a.getTime() == b.getTime();
@@ -73,11 +83,14 @@ function objectIncludes (b: any, a: any): boolean {
     if (regexpA && regexpB) return a.toString() == b.toString();
     if (regexpA != regexpB) return false;
 
+    var keys = Object.keys(a);
+    // if (keys.length !== Object.keys(b).length) return false;
+
     for (i = 0; i < keys.length; i++)
       if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
 
     for (i = 0; i < keys.length; i++)
-      if(!objectIncludes(a[keys[i]], b[keys[i]])) return false;
+      if(!objectIncludes(b[keys[i]], a[keys[i]])) return false;
 
     return true;
   }

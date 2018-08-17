@@ -74,20 +74,15 @@ class PatternFixedDefinition implements PatternBlock {
     return true;
   }
 
-  _append (str: string, flags: AppendFlags) {
-    if (this._value) {
-      return new ChangeDetails({
-        overflow: true
-      });
-    }
-
+  _appendChar (str: string, flags: AppendFlags) {
     const details = new ChangeDetails();
+
+    if (this._value) return details;
 
     const appended = this.char === str[0];
     const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
-    if (appended) details.rawInserted = this.char;
+    if (isResolved) details.rawInserted = this.char;
     this._value = details.inserted = this.char;
-    details.overflow = !isResolved;
     this._isRawInput = isResolved && (flags.raw || flags.input);
 
     return details;
@@ -108,7 +103,7 @@ class PatternFixedDefinition implements PatternBlock {
   }
 
   _appendTail (tail?: TailDetails): ChangeDetails {
-    return this._append(tail ? tail.value: '', {tail: true});
+    return this._appendChar(tail ? tail.value: '', {tail: true});
   }
 
   doCommit () {}

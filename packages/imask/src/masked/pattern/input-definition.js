@@ -14,8 +14,11 @@ type Definitions = {[string]: Mask};
 
 /** */
 type PatternInputDefinitionOptions = {
-  isOptional: $PropertyType<PatternInputDefinition, 'isOptional'>,
+  parent: $PropertyType<PatternInputDefinition, 'parent'>,
   mask: Mask,
+  isOptional: $PropertyType<PatternInputDefinition, 'isOptional'>,
+  lazy: $PropertyType<PatternInputDefinition, 'lazy'>,
+  placeholderChar: $PropertyType<PatternInputDefinition, 'placeholderChar'>,
 };
 
 type PatternInputDefinitionState = {
@@ -34,18 +37,23 @@ const DEFAULT_INPUT_DEFINITIONS = {
 /** */
 export default
 class PatternInputDefinition implements PatternBlock {
+  /** */
   +masked: Masked<*>;
-  +patternMasked: MaskedPattern;
+  /** */
+  parent: Masked<*>;
   /** */
   isOptional: boolean;
   /** */
   _isFilled: boolean;
+  /** */
+  lazy: $PropertyType<MaskedPattern, 'lazy'>;
+  /** */
+  placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>;
 
 
-  constructor(patternMasked: MaskedPattern, opts: PatternInputDefinitionOptions) {
+  constructor(opts: PatternInputDefinitionOptions) {
     const {mask, ...blockOpts} = opts;
 
-    this.patternMasked = patternMasked;
     this.masked = createMask({mask});
     Object.assign(this, blockOpts);
   }
@@ -67,7 +75,7 @@ class PatternInputDefinition implements PatternBlock {
   get value (): string {
     return this.masked.value ||
       (this._isFilled && !this.isOptional ?
-        this.patternMasked.placeholderChar :
+        this.placeholderChar :
         '');
   }
 
@@ -79,32 +87,22 @@ class PatternInputDefinition implements PatternBlock {
     return Boolean(this.masked.value) || this.isOptional;
   }
 
-  _append (str: string, flags: AppendFlags={}): ChangeDetails {
-    if (this._isFilled) {
-      return new ChangeDetails({
-        overflow: true
-      });
-    }
+  _appendChar (str: string, flags: AppendFlags={}): ChangeDetails {
+    if (this._isFilled) return new ChangeDetails();
 
     const state = this.masked.state;
-    const details = this.masked._append(str, flags);
-
-    // simulate input to validate
-    // TODO remove hack??? use smth like `computedValue`???
-    // const patternValue = this.patternMasked._value;
-    // this.patternMasked._value += details.inserted;
+    // simulate input
+    const details = this.masked._appendChar(str, flags);
 
     if (details.inserted && this.doValidate(flags) === false) {
       details.inserted = details.rawInserted = '';
-      details.overflow = true;
       this.masked.state = state;
     }
-    // drop simulation
-    // this.patternMasked._value = patternValue;
 
-    if (details.overflow && !details.inserted) {
-      if (!this.isOptional && !flags.input && !this.patternMasked.lazy) {
-        details.inserted = this.patternMasked.placeholderChar;
+    if (!details.inserted) {
+      if (!this.isOptional && !flags.input &&
+        (!this.lazy || flags.tail)) {
+        details.inserted = this.placeholderChar;
       }
     }
     details.overflow = !details.inserted && !this.isOptional;
@@ -119,7 +117,7 @@ class PatternInputDefinition implements PatternBlock {
     if (this._isFilled) return details;
 
     this._isFilled = true;
-    details.inserted = this.patternMasked.placeholderChar;
+    details.inserted = this.placeholderChar;
     return details;
   }
 
@@ -151,7 +149,8 @@ class PatternInputDefinition implements PatternBlock {
   }
 
   doValidate (...args: *) {
-    return this.patternMasked.doValidate(...args);
+    return this.masked.doValidate(...args) && (
+      !this.parent || this.parent.doValidate(...args));
   }
 
   doCommit () {

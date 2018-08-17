@@ -44,7 +44,6 @@ class MaskedPattern extends Masked<string> {
   static ESCAPE_CHAR: string;
   static InputDefinition: Class<PatternInputDefinition>;
   static FixedDefinition: Class<PatternFixedDefinition>;
-  // static Group: Class<PatternGroup>;
 
   /** */
   groups: {[string]: Masked<*>};
@@ -99,6 +98,7 @@ class MaskedPattern extends Masked<string> {
         const gName = gNames[0];
         if (gName) {
           const groupMasked = createMask({
+            parent: this,
             lazy: this.lazy,
             placeholderChar: this.placeholderChar,
             ...this.groups[gName]
@@ -144,7 +144,10 @@ class MaskedPattern extends Masked<string> {
 
       let def;
       if (isInput) {
-        def = new PatternInputDefinition(this, {
+        def = new PatternInputDefinition({
+          parent: this,
+          lazy: this.lazy,
+          placeholderChar: this.placeholderChar,
           mask: defs[char],
           isOptional: optionalBlock,
         });
@@ -237,12 +240,12 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _appendChar (ch: string, flags: AppendFlags={}): ChangeDetails {
+  _appendCharInternal (ch: string, flags: AppendFlags={}): ChangeDetails {
     const blockData = this._mapPosToBlock(this.value.length);
     const details = new ChangeDetails();
 
     if (!blockData) {
-      details.overflow = true;
+      // details.overflow = true;
       return details;
     }
 
@@ -250,19 +253,18 @@ class MaskedPattern extends Masked<string> {
       const block = this._blocks[bi];
 
       if (!block) {
-        details.overflow = true;
+        // details.overflow = true;
         break;
       }
 
-      const blockDetails = block._append(ch, flags);
+      const blockDetails = block._appendChar(ch, flags);
 
       const overflow = blockDetails.overflow;
       // block overflow does not mean whole mask overflow
-      blockDetails.overflow = false;
+      // blockDetails.overflow = false;
       details.aggregate(blockDetails);
 
-      if (overflow && !block.isComplete ||
-        !overflow && blockDetails.rawInserted) break; // try next char
+      if (overflow || blockDetails.rawInserted) break; // go next char
     }
 
     return details;
@@ -277,6 +279,7 @@ class MaskedPattern extends Masked<string> {
 
       const chunkBlock = chunk instanceof ChunksTailDetails && chunk.index != null && this._blocks[chunk.index];
       if (chunkBlock) {
+        // $FlowFixMe we already check index above
         details.aggregate(this._appendPlaceholder(chunk.index));
 
         const tailDetails = chunkBlock._appendTail(chunk);
@@ -288,7 +291,7 @@ class MaskedPattern extends Masked<string> {
         const remainChars = chunk.value.slice(tailDetails.rawInserted.length);
         if (remainChars) details.aggregate(this._append(remainChars, {tail: true}));
       } else {
-        const {stop, value} = chunk;
+        const {stop, value} = (chunk: any);
         if (stop != null && this._stops.indexOf(stop) >= 0) details.aggregate(this._appendPlaceholder(stop));
         details.aggregate(this._append(value, {tail: true}));
       }
@@ -381,7 +384,6 @@ class MaskedPattern extends Masked<string> {
 
   /** Appends placeholder depending on laziness */
   _appendPlaceholder (toBlockIndex: ?number): ChangeDetails {
-    // TODO nested block index
     const details = new ChangeDetails();
     if (this.lazy && toBlockIndex == null) return details;
 
@@ -389,12 +391,14 @@ class MaskedPattern extends Masked<string> {
     if (!startBlockData) return details;
 
     const startBlockIndex = startBlockData.index;
-    const endBlockIndex = toBlockIndex || this._blocks.length;
+    const endBlockIndex = toBlockIndex != null ? toBlockIndex : this._blocks.length;
 
     this._blocks.slice(startBlockIndex, endBlockIndex)
       .forEach(b => {
         if (typeof b._appendPlaceholder === 'function') {
-          const bDetails = b._appendPlaceholder.call(b);
+          // $FlowFixMe `_blocks` may not be present
+          const args = b._blocks != null ? [b._blocks.length] : [];
+          const bDetails = b._appendPlaceholder.apply(b, args);
           this._value += bDetails.inserted;
           details.aggregate(bDetails);
         }
@@ -465,6 +469,8 @@ class MaskedPattern extends Masked<string> {
     @override
   */
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
+    // TODO refactor - extract alignblock
+
     const beginBlockData = this._mapPosToBlock(cursorPos) || {index: 0, offset: 0};
     const {
       offset: beginBlockOffset,
@@ -489,13 +495,29 @@ class MaskedPattern extends Masked<string> {
     const searchBlockIndex = cursorAtRight ? beginBlockIndex + 1 : beginBlockIndex;
 
     if (direction === DIRECTION.NONE) {
+      // NONE direction used to calculate start input position if no chars were removed
       // FOR NONE:
+      // -
+      // input|any
       // ->
       //  any|input
       // <-
       //  filled-input|any
 
-      for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
+      // check if first block at left is input
+      if (searchBlockIndex > 0) {
+        const blockIndexAtLeft = searchBlockIndex-1;
+        const blockAtLeft = this._blocks[blockIndexAtLeft];
+        const blockInputPos = blockAtLeft.nearestInputPos(0, DIRECTION.NONE);
+        // is input
+        if (!blockAtLeft.value.length || blockInputPos !== blockAtLeft.value.length) {
+          return this._blockStartPos(searchBlockIndex);
+        }
+      }
+
+      // ->
+      let firstInputAtRight = searchBlockIndex;
+      for (let bi=firstInputAtRight; bi < this._blocks.length; ++bi) {
         const block = this._blocks[bi];
         const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
         if (blockInputPos !== block.value.length) {
@@ -503,15 +525,18 @@ class MaskedPattern extends Masked<string> {
         }
       }
 
-      for (let bi=Math.min(searchBlockIndex, this._blocks.length-1); bi >= 0; --bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.LEFT);
-        if (blockInputPos !== 0) {
-          return this._blockStartPos(bi) + blockInputPos;
-        }
-      }
+      return this.value.length;
 
-      return 0;
+      // // <-
+      // for (let bi=Math.min(searchBlockIndex, this._blocks.length-1); bi >= 0; --bi) {
+      //   const block = this._blocks[bi];
+      //   const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.LEFT);
+      //   if (blockInputPos !== 0) {
+      //     return this._blockStartPos(bi) + blockInputPos;
+      //   }
+      // }
+
+      // return 0;
     }
 
     if (direction === DIRECTION.LEFT) {
@@ -566,8 +591,10 @@ class MaskedPattern extends Masked<string> {
       for (let bi=firstFilledInputBlockIndex + 1; bi <= Math.min(searchBlockIndex, this._blocks.length-1); ++bi) {
         const block = this._blocks[bi];
         const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-        if (blockInputPos !== block.value.length) {
-          return this._blockStartPos(bi) + blockInputPos;
+        const blockAlignedPos = this._blockStartPos(bi) + blockInputPos;
+        // if block is empty and last or not lazy input
+        if (!block.value.length && blockAlignedPos === this.value.length || blockInputPos !== block.value.length) {
+          return blockAlignedPos;
         }
       }
 

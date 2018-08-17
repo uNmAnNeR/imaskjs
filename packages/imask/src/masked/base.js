@@ -39,6 +39,7 @@ type ExtractFlags = {
 export
 type MaskedOptions<MaskType> = {
   mask: $PropertyType<Masked<MaskType>, 'mask'>,
+  parent?: $PropertyType<Masked<*>, 'parent'>,
   prepare?: $PropertyType<Masked<MaskType>, 'prepare'>,
   validate?: $PropertyType<Masked<MaskType>, 'validate'>,
   commit?: $PropertyType<Masked<MaskType>, 'commit'>,
@@ -52,6 +53,8 @@ class Masked<MaskType> {
 
   /** @type {Mask} */
   mask: MaskType;
+  /** */ // $FlowFixMe TODO no ideas
+  parent: ?Masked<*>;
   /** Transforms value before mask processing */
   prepare: (string, Masked<MaskType>, AppendFlags) => string;
   /** Validates if value is acceptable */
@@ -109,8 +112,7 @@ class Masked<MaskType> {
   /** Resolve new value */
   resolve (value: string): string {
     this.reset();
-    this._append(value, {input: true});
-    this._appendTail();
+    this._append(value, {input: true}, {value: ''});
     this.doCommit();
     return this.value;
   }
@@ -122,8 +124,7 @@ class Masked<MaskType> {
 
   set unmaskedValue (value: string) {
     this.reset();
-    this._append(value);
-    this._appendTail();
+    this._append(value, {}, {value: ''});
     this.doCommit();
   }
 
@@ -143,8 +144,7 @@ class Masked<MaskType> {
 
   set rawInputValue (value: string) {
     this.reset();
-    this._append(value, {raw: true});
-    this._appendTail();
+    this._append(value, {raw: true}, {value: ''});
     this.doCommit();
   }
 
@@ -175,74 +175,64 @@ class Masked<MaskType> {
     return this._append(tail ? tail.value: '', {tail: true});
   }
 
-  /** Appends char */
-  _appendChar (ch: string, flags: AppendFlags={}): ChangeDetails {
+  _appendCharInternal (ch: string, flags: AppendFlags={}): ChangeDetails {
     return new ChangeDetails({
       inserted: ch,
       rawInserted: ch,
     });
   }
 
+  /** Appends char */
+  _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
+    const consistentState: MaskedState = this.state;
+
+    const details: ChangeDetails = this._appendCharInternal(ch, flags);
+    if (details.inserted) {
+      this._value += details.inserted;
+
+      let appended = this.doValidate(flags) !== false;
+
+      if (appended && checkTail != null) {
+        // validation ok, check tail
+        const insertedState = this.state;
+        const tailDetails = this._appendTail(checkTail);
+
+        appended = tailDetails.rawInserted === checkTail.value;
+
+        // if ok, rollback state after tail
+        if (appended && tailDetails.inserted) this.state = insertedState;
+      }
+
+      // revert all if something go wrong
+      if (!appended) {
+        details.rawInserted = details.inserted = '';
+        this.state = consistentState;
+      }
+    }
+    return details;
+  }
+
   /** Appends symbols considering flags */
-  _append (str: string, flags: AppendFlags={}): ChangeDetails {
+  _append (str: string, flags: AppendFlags={}, tail?: TailDetails): ChangeDetails {
     const oldValueLength = this.value.length;
     const details = new ChangeDetails();
-    let consistentState: MaskedState = this.state;
 
     str = this.doPrepare(str, flags);
 
     for (let ci=0; ci<str.length; ++ci) {
-      const chDetails = this._appendChar(str[ci], flags);
-      this._value += chDetails.inserted;
+      const chDetails = this._appendChar(str[ci], flags, tail);
+      details.aggregate(chDetails);
 
-      if (chDetails.overflow || this.doValidate(flags) === false) {
-        this.state = consistentState;
-        details.overflow = true;
-        // in not `input` mode dont skip invalid chars
-        if (!flags.input) break;
-      } else {
-        details.aggregate(chDetails);
-      }
-
-      consistentState = this.state;
-    }
-
-    return details;
-  }
-
-  /** Appends symbols considering tail */
-  appendWithTail (str: string, tail: TailDetails): ChangeDetails {
-    // TODO refactor
-    const aggregateDetails = new ChangeDetails();
-    let consistentState = this.state;
-    let consistentAppended: MaskedState;
-
-    for (let ci=0; ci<str.length; ++ci) {
-      const ch = str[ci];
-
-      const appendDetails = this._append(ch, {input: true});
-      consistentAppended = this.state;
-      const tailAppended = !appendDetails.overflow && !this._appendTail(tail).overflow;
-      if (!tailAppended) {
-        this.state = consistentState;
+      // in not `input` mode dont skip invalid chars
+      if (!chDetails.rawInserted && !flags.input) {
         break;
       }
-
-      this.state = consistentAppended;
-      consistentState = consistentAppended;
-
-      aggregateDetails.aggregate(appendDetails);
     }
 
-    // TODO needed for cases when
-    // 1) REMOVE ONLY AND NO LOOP AT ALL
-    // 2) last loop iteration removes tail
-    // 3) when breaks on tail insert
+    // append tail but aggregate only shift
+    if (tail != null) details.shift += this._appendTail(tail).shift;
 
-    // aggregate only shift from tail
-    aggregateDetails.shift += this._appendTail(tail).shift;
-
-    return aggregateDetails;
+    return details;
   }
 
   /** */
@@ -286,7 +276,8 @@ class Masked<MaskType> {
     @protected
   */
   doValidate (flags: AppendFlags): boolean {
-    return !this.validate || this.validate(this.value, this, flags);
+    return (!this.validate || this.validate(this.value, this, flags)) &&
+      (!this.parent || this.parent.doValidate(flags));
   }
 
   /**
@@ -309,7 +300,7 @@ class Masked<MaskType> {
     const changeDetails: ChangeDetails = new ChangeDetails({
       shift: startChangePos - start  // adjust shift if start was aligned
     }).aggregate(this.remove(startChangePos))
-      .aggregate(this.appendWithTail(inserted, tail));
+      .aggregate(this._append(inserted, {input: true}, tail));
 
     return changeDetails;
   }

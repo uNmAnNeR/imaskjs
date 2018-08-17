@@ -48,13 +48,11 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  _append (str: string, ...args: *): ChangeDetails {
-    str = this.doPrepare(str, ...args);
-
-    const details = this._applyDispatch(str, ...args);
+  _appendCharInternal (ch: string, ...args: *): ChangeDetails {
+    const details = this._applyDispatch(ch, ...args);
 
     if (this.currentMask) {
-      details.aggregate(this.currentMask._append(str, ...args));
+      details.aggregate(this.currentMask._append(ch, ...args));
     }
 
     return details;
@@ -85,6 +83,14 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   */
   doDispatch(appended: string, flags: AppendFlags={}) {
     return this.dispatch(appended, this, flags);
+  }
+
+  /**
+    @override
+  */
+  doValidate (...args: *): boolean {
+    return super.doValidate(...args) && (
+      !this.currentMask || this.currentMask.doValidate(...args));
   }
 
   /**
@@ -200,14 +206,15 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  _appendTail (tail?: TailDetails): ChangeDetails {
-    const details = new ChangeDetails();
-    if (tail) details.aggregate(this._applyDispatch(tail.value));
+  // SHOULD WORK BECAUSE OF `_appendCharInternal`
+  // _appendTail (tail?: TailDetails): ChangeDetails {
+  //   const details = new ChangeDetails();
+  //   if (tail) details.aggregate(this._applyDispatch(tail.value));
 
-    return details.aggregate(this.currentMask ?
-      this.currentMask._appendTail(tail) :
-      super._appendTail(tail));
-  }
+  //   return details.aggregate(this.currentMask ?
+  //     this.currentMask._appendTail(tail) :
+  //     super._appendTail(tail));
+  // }
 
   /**
     @override

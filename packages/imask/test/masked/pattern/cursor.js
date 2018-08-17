@@ -2,7 +2,7 @@ import MaskedPattern from '../../../src/masked/pattern';
 import {DIRECTION} from '../../../src/core/utils';
 
 
-describe('Align left', function () {
+describe('Align LEFT', function () {
   const masked = new MaskedPattern({
     mask: '',
     lazy: false,
@@ -58,5 +58,60 @@ describe('Align left', function () {
     masked.unmaskedValue = 'aa';
     assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 3);
     assert.equal(masked.nearestInputPos(masked.value.length-1, DIRECTION.LEFT), 3);
+  });
+
+  it('should align after filled and fixed with lazy', function () {
+    masked.updateOptions({
+      mask: '0X0',
+      lazy: true,
+    });
+
+    masked.value = '1X';
+    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), masked.value.length);
+  });
+});
+
+describe('Align RIGHT', function () {
+  const masked = new MaskedPattern({
+    mask: '',
+    lazy: false,
+  });
+
+  beforeEach(function () {
+    masked.updateOptions({mask: '', lazy: false});
+    masked.unmaskedValue = '';
+  });
+
+  // TODO
+});
+
+
+describe('Align NONE', function () {
+  const masked = new MaskedPattern({
+    mask: '',
+    lazy: false,
+  });
+
+  beforeEach(function () {
+    masked.updateOptions({mask: '', lazy: false});
+    masked.unmaskedValue = '';
+  });
+
+  it('should align after filled', function () {
+    masked.updateOptions({
+      mask: '0.0',
+    });
+
+    masked.value = '1.1';
+    assert.equal(masked.nearestInputPos(1, DIRECTION.NONE), 1);
+  });
+
+  it('should align at end', function () {
+    masked.updateOptions({
+      mask: '0.',
+    });
+
+    masked.value = '1.';
+    assert.equal(masked.nearestInputPos(2, DIRECTION.NONE), 2);
   });
 });

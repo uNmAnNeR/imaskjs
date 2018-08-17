@@ -1,7 +1,9 @@
 // @flow
-import {escapeRegExp, indexInDirection, type Direction} from '../core/utils.js';
-import Masked, {type MaskedOptions, type AppendFlags} from './base.js';
+import {escapeRegExp, indexInDirection, posInDirection, type Direction} from '../core/utils.js';
+import ChangeDetails from '../core/change-details.js';
 import {type TailDetails} from '../core/tail-details.js';
+
+import Masked, {type MaskedOptions, type AppendFlags} from './base.js';
 
 
 type MaskedNumberOptions = {
@@ -54,6 +56,7 @@ class MaskedNumber extends Masked<Number> {
   _numberRegExpInput: RegExp;
   _thousandsSeparatorRegExp: RegExp;
   _mapToRadixRegExp: RegExp;
+  _separatorsProcessed: boolean;
 
   constructor (opts: $Shape<MaskedNumberOptions>) {
     super({
@@ -103,6 +106,7 @@ class MaskedNumber extends Masked<Number> {
   _extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
     const tail = super._extractTail(fromPos, toPos);
 
+    // $FlowFixMe no ideas
     return {
       ...tail,
       value: this._removeThousandsSeparators(tail.value),
@@ -132,22 +136,28 @@ class MaskedNumber extends Masked<Number> {
   /**
     @override
   */
-  appendWithTail (...args: *) {
+  _append (...args: *): ChangeDetails {
+    if (this._separatorsProcessed) return super._append(...args);
+    this._separatorsProcessed = true;
+
+
     let previousValue = this.value;
     this._value = this._removeThousandsSeparators(this.value);
     let startChangePos = this.value.length;
 
-    const appendDetails = super.appendWithTail(...args);
+    const appendDetails = super._append(...args);
     this._value = this._insertThousandsSeparators(this.value);
 
     // calculate offsets after insert separators
     let beforeTailPos = startChangePos + appendDetails.inserted.length;
     for (let pos = 0; pos <= beforeTailPos; ++pos) {
       if (this.value[pos] === this.thousandsSeparator) {
-        if (pos < startChangePos ||
+        if (
+          pos < startChangePos ||
           // check high bound
           // if separator is still there - consider it also
-          (pos === startChangePos && previousValue[pos] === this.thousandsSeparator)) {
+          (pos === startChangePos && previousValue[pos] === this.thousandsSeparator)
+        ) {
           ++startChangePos;
         }
         if (pos < beforeTailPos) ++beforeTailPos;
@@ -155,10 +165,11 @@ class MaskedNumber extends Masked<Number> {
     }
 
     // adjust details with separators
-    appendDetails.rawInserted = appendDetails.inserted;
     appendDetails.inserted = this.value.slice(startChangePos, beforeTailPos);
     appendDetails.shift += startChangePos - previousValue.length;
 
+
+    this._separatorsProcessed = false;
     return appendDetails;
   }
 
@@ -169,7 +180,7 @@ class MaskedNumber extends Masked<Number> {
     if (!direction) return cursorPos;
 
     const nextPos = indexInDirection(cursorPos, direction);
-    if (this.value[nextPos] === this.thousandsSeparator) cursorPos += direction;
+    if (this.value[nextPos] === this.thousandsSeparator) cursorPos = posInDirection(cursorPos, direction);
     return cursorPos;
   }
 

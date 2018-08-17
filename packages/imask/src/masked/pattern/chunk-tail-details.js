@@ -3,10 +3,7 @@ import {type TailDetails} from '../../core/tail-details.js';
 
 
 export
-type TailInputChunk = TailDetails | ChunksTailDetails | {
-  stop?: number,
-  value: string
-};
+type TailInputChunk = TailDetails | ChunksTailDetails;
 
 export
 class ChunksTailDetails implements TailDetails {
