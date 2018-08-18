@@ -114,7 +114,7 @@ class PatternInputDefinition implements PatternBlock {
   _appendPlaceholder (): ChangeDetails {
     const details = new ChangeDetails();
 
-    if (this._isFilled) return details;
+    if (this._isFilled || this.isOptional) return details;
 
     this._isFilled = true;
     details.inserted = this.placeholderChar;
