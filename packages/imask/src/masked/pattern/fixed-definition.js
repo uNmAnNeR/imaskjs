@@ -58,7 +58,9 @@ class PatternFixedDefinition implements PatternBlock {
     const maxPos = this._value.length;
 
     switch (direction) {
-      case DIRECTION.LEFT: return minPos;
+      case DIRECTION.LEFT:
+      case DIRECTION.FORCE_LEFT:
+        return minPos;
       case DIRECTION.NONE:
       case DIRECTION.RIGHT:
       case DIRECTION.FORCE_RIGHT:

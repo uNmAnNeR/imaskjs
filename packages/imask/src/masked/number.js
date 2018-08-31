@@ -136,16 +136,22 @@ class MaskedNumber extends Masked<Number> {
   /**
     @override
   */
-  _append (...args: *): ChangeDetails {
-    if (this._separatorsProcessed) return super._append(...args);
-    this._separatorsProcessed = true;
+  _appendChar (...args: *): ChangeDetails {
+    // if (this._separatorsProcessed) return super._appendChar(...args);
+    // this._separatorsProcessed = true;
 
-
+    console.log('append with', ...args);
     let previousValue = this.value;
     this._value = this._removeThousandsSeparators(this.value);
     let startChangePos = this.value.length;
 
-    const appendDetails = super._append(...args);
+    const appendDetails = super._appendChar(...args);
+
+    if (!appendDetails.inserted) {
+      this._value = previousValue;
+      return appendDetails;
+    }
+
     this._value = this._insertThousandsSeparators(this.value);
 
     // calculate offsets after insert separators
@@ -169,7 +175,7 @@ class MaskedNumber extends Masked<Number> {
     appendDetails.shift += startChangePos - previousValue.length;
 
 
-    this._separatorsProcessed = false;
+    // this._separatorsProcessed = false;
     return appendDetails;
   }
 

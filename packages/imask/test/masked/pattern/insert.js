@@ -31,7 +31,7 @@ describe('Insert', function () {
     ['0.0', '0{.}0'].forEach(mask => {
       masked.updateOptions({mask, lazy: true});
       masked.unmaskedValue = '.2';
-      assert.equal(masked.value, '');
+      assert.equal(masked.value, '2');
       masked.value = '.2';
       assert.equal(masked.value, '2');
     });

@@ -176,6 +176,7 @@ class Masked<MaskType> {
   }
 
   _appendCharInternal (ch: string, flags: AppendFlags={}): ChangeDetails {
+    this._value += ch;
     return new ChangeDetails({
       inserted: ch,
       rawInserted: ch,
@@ -184,12 +185,12 @@ class Masked<MaskType> {
 
   /** Appends char */
   _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
-    const consistentState: MaskedState = this.state;
+    ch = this.doPrepare(ch, flags);
+    if (!ch) return new ChangeDetails();
 
+    const consistentState: MaskedState = this.state;
     const details: ChangeDetails = this._appendCharInternal(ch, flags);
     if (details.inserted) {
-      this._value += details.inserted;
-
       let appended = this.doValidate(flags) !== false;
 
       if (appended && checkTail != null) {
@@ -203,7 +204,7 @@ class Masked<MaskType> {
         if (appended && tailDetails.inserted) this.state = insertedState;
       }
 
-      // revert all if something go wrong
+      // revert all if something went wrong
       if (!appended) {
         details.rawInserted = details.inserted = '';
         this.state = consistentState;
@@ -223,10 +224,11 @@ class Masked<MaskType> {
       const chDetails = this._appendChar(str[ci], flags, tail);
       details.aggregate(chDetails);
 
-      // in not `input` mode dont skip invalid chars
-      if (!chDetails.rawInserted && !flags.input) {
-        break;
-      }
+      // if not in `input` mode dont skip invalid chars
+      // if (!chDetails.rawInserted && !flags.input) {
+      //   break;
+      // }
+      // TODO if !resolved and !skip
     }
 
     // append tail but aggregate only shift

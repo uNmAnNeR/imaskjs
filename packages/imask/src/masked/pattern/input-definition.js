@@ -100,12 +100,11 @@ class PatternInputDefinition implements PatternBlock {
     }
 
     if (!details.inserted) {
-      if (!this.isOptional && !flags.input &&
-        (!this.lazy || flags.tail)) {
+      if (!this.isOptional && !flags.input && !this.lazy && !flags.tail) {
         details.inserted = this.placeholderChar;
       }
     }
-    details.overflow = !details.inserted && !this.isOptional;
+    details.skip = !details.inserted && !this.isOptional;
     this._isFilled = Boolean(details.inserted);
 
     return details;
@@ -139,7 +138,9 @@ class PatternInputDefinition implements PatternBlock {
     const boundPos = Math.min(Math.max(cursorPos, minPos), maxPos);
 
     switch (direction) {
-      case DIRECTION.LEFT: return this.isComplete ? boundPos : minPos;
+      case DIRECTION.LEFT:
+      case DIRECTION.FORCE_LEFT:
+        return this.isComplete ? boundPos : minPos;
       case DIRECTION.RIGHT:
       case DIRECTION.FORCE_RIGHT:
         return this.isComplete ? boundPos : maxPos;

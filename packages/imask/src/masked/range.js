@@ -19,9 +19,18 @@ class MaskedRange extends MaskedPattern {
     let maxLength = String(opts.to).length;
     if (opts.maxLength != null) maxLength = Math.max(maxLength, opts.maxLength);
     opts.maxLength = maxLength;
-    opts.mask = '0'.repeat(maxLength);
+
+    const toStr = String(opts.to).padStart(maxLength, '0');
+    const fromStr = String(opts.from).padStart(maxLength, '0');
+    let sameCharsCount = 0;
+    while (sameCharsCount < toStr.length && toStr[sameCharsCount] === fromStr[sameCharsCount]) ++sameCharsCount;
+    opts.mask = toStr.slice(0, sameCharsCount).replace(/0/g, '\\0') + '0'.repeat(maxLength - sameCharsCount);
 
     super._update(opts);
+  }
+
+  get isComplete (): boolean {
+    return super.isComplete && Boolean(this.value);
   }
 
   doValidate (...args: *): boolean {

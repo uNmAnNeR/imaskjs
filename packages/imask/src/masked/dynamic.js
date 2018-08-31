@@ -52,7 +52,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     const details = this._applyDispatch(ch, ...args);
 
     if (this.currentMask) {
-      details.aggregate(this.currentMask._append(ch, ...args));
+      details.aggregate(this.currentMask._appendChar(ch, ...args));
     }
 
     return details;
@@ -71,9 +71,9 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     if (this.currentMask && this.currentMask !== oldMask) {
       // if mask changed reapply input
       this.currentMask.reset();
+      details.shift = -oldValueLength;
       // $FlowFixMe - it's ok, we don't change current mask
-      this.currentMask._append(inputValue, {raw: true});
-      details.shift = this.value.length - oldValueLength;
+      details.aggregate(this.currentMask._append(inputValue, {raw: true}));
     }
 
     return details;

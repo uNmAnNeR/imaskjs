@@ -46,6 +46,16 @@ class MaskedDate extends MaskedPattern {
     // adjust year group
     if (opts.min) opts.groups.Y.from = opts.min.getFullYear();
     if (opts.max) opts.groups.Y.to = opts.max.getFullYear();
+    if (opts.min && opts.max && opts.groups.Y.from === opts.groups.Y.to
+    ) {
+      opts.groups.m.from = opts.min.getMonth() + 1;
+      opts.groups.m.to = opts.max.getMonth() + 1;
+
+      if (opts.groups.m.from === opts.groups.m.to) {
+        opts.groups.d.from = opts.min.getDate();
+        opts.groups.d.to = opts.max.getDate();
+      }
+    }
     Object.assign(opts.groups, groups);
 
     super._update(opts);
@@ -111,11 +121,13 @@ MaskedDate.GET_DEFAULT_GROUPS = () => {
       mask: MaskedRange,
       from: 1,
       to: 31,
+      maxLength: 2,
     },
     m: {
       mask: MaskedRange,
       from: 1,
       to: 12,
+      maxLength: 2,
     },
     Y: {
       mask: MaskedRange,

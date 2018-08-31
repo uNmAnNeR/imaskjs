@@ -17,6 +17,7 @@ export
 const DIRECTION = {
   NONE: 'NONE',
   LEFT: 'LEFT',
+  FORCE_LEFT: 'FORCE_LEFT',
   RIGHT: 'RIGHT',
   FORCE_RIGHT: 'FORCE_RIGHT',
 }
