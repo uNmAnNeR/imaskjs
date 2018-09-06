@@ -23,9 +23,15 @@ title: Javascript Input Mask
           <li>unmasked value can contain fixed parts</li>
           <li>optional input parts (greedy)</li>
           <li>custom definitions</li>
-          <li>reusable groups</li>
+          <li>reusable blocks</li>
         </ul>
-        <li><a href="{{ site.repository }}/tree/master/packages/react-imask">React</a>/<a href="{{ site.repository }}/tree/master/packages/react-native-imask">React Native<sup>beta</sup></a>/<a href="{{ site.repository }}/tree/master/packages/angular-imask">Angular</a>/<a href="{{ site.repository }}/tree/master/packages/vue-imask">Vue</a> plugins</li>
+      </ul>
+      <h4>Plugins</h4>
+      <ul>
+        <li><a href="{{ site.repository }}/tree/master/packages/vue-imask">Vue plugin</a></li>
+        <li><a href="{{ site.repository }}/tree/master/packages/angular-imask">Angular plugin</a></li>
+        <li><a href="{{ site.repository }}/tree/master/packages/react-imask">React plugin</a></li>
+        <li><a href="{{ site.repository }}/tree/master/packages/react-native-imask">React Native plugin<sup>beta</sup></a></li>
       </ul>
     </div>
 
@@ -88,7 +94,7 @@ title: Javascript Input Mask
         </div>
 
         <div class="form-item">
-          <label>Date <span class="desc">'dd.mm.yyyy' in range [01.01.2000, 01.01.2020]</span></label>
+          <label>Date <span class="desc">'dd.mm.yyyy' in range [01.01.1990, 01.01.2020]</span></label>
           <input id="date-mask" type="text" value="">
           <div class="unmasked-value desc">date: <span id="date-value"></span></div>
           <div class="toggle-panel">
@@ -99,7 +105,7 @@ title: Javascript Input Mask
   document.getElementById('date-mask'),
   {
     mask: Date,
-    min: new Date(2000, 0, 1),
+    min: new Date(1990, 0, 1),
     max: new Date(2020, 0, 1),
     lazy: false
   });
@@ -132,39 +138,33 @@ title: Javascript Input Mask
             </div>
           </div>
         </div>
-      </form>
-    </div>
-  </div>
 
-  <div class="appeal">
-    <p>I'm happy to present you one of the best JS libraries for the user input formatting. My goal is to create the most simple, convenient and yet extensible API, which I think I achieved as possible. Also with a great support of the community plugins for the major JS frameworks were created.</p>
-    <p>I've been working on my own enthusiasm for more than a year, not receiving any payment for my work. Nevertheless one good man made a donation. This support is very important for me. Thank you.</p>
-    <p>Right now I would like to proceed with several new features, but I would like to get some feedback from the community. Please vote on issue which is important to you and you can always support and speed up the development process by making a donation - this way I will be sure that my work matters to someone.</p>
-    <h5>Further Plans</h5>
-    <ul>
-      <li>
-        <a href="{{ site.github.issues_url }}/52">Dynamic pattern groups</a>
-        <div class="toggle-panel">
-          <label for="dynamic-group-source" class="muted">currency input example</label>
-          <input id="dynamic-group-source" type="checkbox">
-          <div class="toggle-panel-content">
-            <pre><code>var currencyInputMask = new IMask(element, {
-  mask: '$num',
-  groups: {
-    num: {
-      mask: Number  // ←- Currently only fixed-size string is available
+        <div class="form-item">
+          <label>Mask in mask <span class="desc">currency input</span></label>
+          <input id="currency-mask" type="text">
+          <div class="unmasked-value desc">unmasked: <span id="currency-value"></span><span id="currency-complete" class="example__complete"></span></div>
+          <div class="toggle-panel">
+            <label for="currency-mask-source" class="muted">source</label>
+            <input id="currency-mask-source" type="checkbox">
+            <div class="toggle-panel-content">
+              <pre><code>var currencyMask = new IMask(
+  document.getElementById('currency-mask'),
+  {
+    mask: '$num',
+    blocks: {
+      num: {
+        // nested masks are available!
+        mask: Number,
+        thousandsSeparator: ' '
+      }
     }
-  }
-});</code></pre>
+  });
+<a href="{{ "/guide.html#pattern" | relative_url }}" class="learn-more">learn more</a></code></pre>
+            </div>
           </div>
         </div>
-      </li>
-      <li><a href="{{ site.github.issues_url }}/17">DefinitelyTyped typings</a></li>
-      <li><a href="{{ site.github.issues_url }}/9">Improved API docs</a></li>
-      <li><a href="{{ site.github.issues_url }}/51">More unit tests</a></li>
-      <li><a href="{{ site.github.issues_url }}/12">React Native plugin (development frozen)</a></li>
-    </ul>
-    <p>In any case, I'm going to continue fixing bugs, updating the dependencies and maintaining the repo in general.</p>
+      </form>
+    </div>
   </div>
 </main>
 
@@ -197,7 +197,7 @@ title: Javascript Input Mask
       document.getElementById('date-mask'),
       {
         mask: Date,
-        min: new Date(2000, 0, 1),
+        min: new Date(1990, 0, 1),
         max: new Date(2020, 0, 1),
         lazy: false
       }
@@ -219,6 +219,21 @@ title: Javascript Input Mask
       }
     ).on('accept', function() {
       document.getElementById('dynamic-value').innerHTML = dynamicMask.masked.unmaskedValue || '-';
+    });
+
+    var currencyMask = new IMask(
+      document.getElementById('currency-mask'),
+      {
+        mask: '$num',
+        blocks: {
+          num: {
+            mask: Number,
+            thousandsSeparator: ' '
+          }
+        }
+      }
+    ).on('accept', function() {
+      document.getElementById('currency-value').innerHTML = currencyMask.masked.unmaskedValue || '-';
     });
   });
 </script>

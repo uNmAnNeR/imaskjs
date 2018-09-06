@@ -13,8 +13,6 @@ class MaskedDate extends MaskedPattern {
   parse: (string) => Date;
   /** Format Date to string */
   format: (Date) => string;
-  /** Check if Date is exist */
-  isDateExist: (str: string, masked: MaskedDate) => boolean;
   /** Pattern mask for date according to {@link MaskedDate#format} */
   pattern: string;
   /** Start date */
@@ -70,9 +68,14 @@ class MaskedDate extends MaskedPattern {
 
     return super.doValidate(...args) &&
       (!this.isComplete ||
-        this.isDateExist(this.value, this) && date != null &&
+        this.isDateExist(this.value) && date != null &&
         (this.min == null || this.min <= date) &&
         (this.max == null || date <= this.max));
+  }
+
+  /** Checks if date is exists */
+  isDateExist (str: string): boolean {
+    return this.format(this.parse(str)) === str;
   }
 
   /** Parsed Date */
@@ -97,7 +100,6 @@ class MaskedDate extends MaskedPattern {
 }
 MaskedDate.DEFAULTS = {
   pattern: 'd{.}`m{.}`Y',
-  isDateExist: (str, masked) => masked.format(masked.parse(str)) === str,
   format: date => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');

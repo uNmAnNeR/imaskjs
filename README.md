@@ -21,17 +21,12 @@ vanilla javascript input mask
   - optional input parts (greedy)
   - custom definitions
   - reusable groups
-* Plugins available
-  - [Vue plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask)
-  - [Angular plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)
-  - [React plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)
-  - [React Native plugin<sup>beta</sup>](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)
 
-## Further Plans
-* [DefinitelyTyped typings](https://github.com/uNmAnNeR/imaskjs/issues/17)
-* [Improved API docs](https://github.com/uNmAnNeR/imaskjs/issues/9)
-* [More unit tests](https://github.com/uNmAnNeR/imaskjs/issues/51)
-* [React Native plugin (development frozen)](https://github.com/uNmAnNeR/imaskjs/issues/12)
+## Plugins
+* [Vue plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask)
+* [Angular plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)
+* [React plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)
+* [React Native plugin<sup>beta</sup>](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
@@ -49,6 +44,12 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 ## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
 
+## Further Plans
+* [DefinitelyTyped typings](https://github.com/uNmAnNeR/imaskjs/issues/17)
+* [Improved API docs](https://github.com/uNmAnNeR/imaskjs/issues/9)
+* [More unit tests](https://github.com/uNmAnNeR/imaskjs/issues/51)
+* [React Native plugin (development frozen)](https://github.com/uNmAnNeR/imaskjs/issues/12)
+
 ## Many Thanks to
 [@Viktor Yakovlev](https://github.com/vcrazyV)
 
@@ -57,4 +58,4 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 ## Support Development
 If you enjoyed working with it, you can buy me a cup of coffee :)
 
-<a href='https://ko-fi.com/C0C8J8EP' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi4.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+<a href='https://ko-fi.com/unmanner' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi4.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>

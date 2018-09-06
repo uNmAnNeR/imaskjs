@@ -10,32 +10,12 @@ nav {
   border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
 }
 
-.features {
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
-  padding-bottom: 20px;
-}
-
-.appeal {
-  margin: 20px 0;
-  background: #f8f8f8;
-  padding: 20px;
-}
-
-.appeal li a {
-  vertical-align: top;
-}
-
-.appeal .toggle-panel {
-  display: inline-block;
-  vertical-align: top;
-}
-
-.appeal .toggle-panel > label {
-  float: none;
-}
-
 header nav {
   margin-top: 30px;
+}
+
+.breadcrumbs ul {
+  flex-wrap: wrap;
 }
 
 h1 sub {
@@ -147,6 +127,8 @@ body {
 footer {
   text-align: center;
   margin-bottom: 30px;
+  padding-top: 20px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
 }
 
 .color-input {
