@@ -15,10 +15,14 @@ type ElementEvent =
 */
 export default
 class MaskElement {
+  /** */
   +_unsafeSelectionStart: number;
+  /** */
   +_unsafeSelectionEnd: number;
+  /** */
   value: string;
 
+  /** Safely returns selection start */
   get selectionStart (): number {
     let start;
     try {
@@ -30,6 +34,7 @@ class MaskElement {
       this.value.length;
   }
 
+  /** Safely returns selection end */
   get selectionEnd (): number {
     let end;
     try {
@@ -41,6 +46,7 @@ class MaskElement {
       this.value.length;
   }
 
+  /** Safely sets element selection */
   select (start: number, end: number) {
     if (start == null || end == null ||
       start === this.selectionStart && end === this.selectionEnd) return;
@@ -50,9 +56,12 @@ class MaskElement {
     } catch (e) {}
   }
 
+  /** Should be overriden in subclasses */
   _unsafeSelect (start: number, end: number): void {}
-  isActive (): boolean { return false; }
-
+  /** Should be overriden in subclasses */
+  get isActive (): boolean { return false; }
+  /** Should be overriden in subclasses */
   bindEvents (handlers: {[ElementEvent]: Function}) {}
+  /** Should be overriden in subclasses */
   unbindEvents (): void {}
 }

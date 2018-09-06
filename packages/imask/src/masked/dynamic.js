@@ -6,6 +6,7 @@ import {type TailDetails} from '../core/tail-details.js';
 
 type MaskedDynamicState = {|
   ...MaskedState,
+  _rawInputValue: string,
   compiledMasks: Array<*>,
   currentMaskRef: ?Masked<*>,
   currentMask: *,
@@ -48,32 +49,70 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  _appendCharInternal (ch: string, ...args: *): ChangeDetails {
-    const details = this._applyDispatch(ch, ...args);
+  _appendCharRaw (...args: *): ChangeDetails {
+    const details = this._applyDispatch(...args);
 
     if (this.currentMask) {
-      details.aggregate(this.currentMask._appendChar(ch, ...args));
+      details.aggregate(this.currentMask._appendChar(...args));
     }
 
     return details;
   }
 
-  _applyDispatch (appended: string='', ...args: *) {
-    const oldValueLength = this.value.length;
+  /**
+    @override
+  */
+  _storeBeforeTailState () {
+    super._storeBeforeTailState();
+    if (this.currentMask) this.currentMask._storeBeforeTailState();
+  }
+
+  /**
+    @override
+  */
+  _restoreBeforeTailState () {
+    super._restoreBeforeTailState();
+    if (this.currentMask) this.currentMask._restoreBeforeTailState();
+  }
+
+  /**
+    @override
+  */
+  _resetBeforeTailState () {
+    super._resetBeforeTailState();
+    if (this.currentMask) this.currentMask._resetBeforeTailState();
+  }
+
+  _applyDispatch (appended: string='', flags: AppendFlags={}) {
+    const prevValueBeforeTail = flags.tail && this._beforeTailState ?
+      this._beforeTailState._value :
+      this.value;
     const inputValue = this.rawInputValue;
-    const oldMask = this.currentMask;
+    const insertValue = flags.tail && this._beforeTailState ?
+      // $FlowFixMe - tired to fight with type system
+      this._beforeTailState._rawInputValue :
+      inputValue;
+    const tailValue = inputValue.slice(insertValue.length);
+    const prevMask = this.currentMask;
     const details = new ChangeDetails();
 
     // dispatch SHOULD NOT modify mask
-    this.currentMask = this.doDispatch(appended, ...args);
+    this.currentMask = this.doDispatch(appended, flags);
 
     // restore state after dispatch
-    if (this.currentMask && this.currentMask !== oldMask) {
+    if (this.currentMask && this.currentMask !== prevMask) {
       // if mask changed reapply input
       this.currentMask.reset();
-      details.shift = -oldValueLength;
-      // $FlowFixMe - it's ok, we don't change current mask
-      details.aggregate(this.currentMask._append(inputValue, {raw: true}));
+
+      // $FlowFixMe - it's ok, we don't change current mask above
+      const d = this.currentMask.append(insertValue, {raw: true});
+      details.tailShift = d.inserted.length - prevValueBeforeTail.length;
+
+      this._storeBeforeTailState();
+      if (tailValue) {
+        // $FlowFixMe - it's ok, we don't change current mask above
+        details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
+      }
     }
 
     return details;
@@ -169,6 +208,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   get state (): MaskedDynamicState {
     return {
       ...super.state,
+      _rawInputValue: this.rawInputValue,
       compiledMasks: this.compiledMasks.map(m => m.state),
       currentMaskRef: this.currentMask,
       currentMask: this.currentMask && this.currentMask.state,
@@ -197,24 +237,11 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  _extractTail (...args: *): TailDetails {
+  extractTail (...args: *): TailDetails {
     return this.currentMask ?
-      this.currentMask._extractTail(...args) :
-      super._extractTail(...args);
+      this.currentMask.extractTail(...args) :
+      super.extractTail(...args);
   }
-
-  /**
-    @override
-  */
-  // SHOULD WORK BECAUSE OF `_appendCharInternal`
-  // _appendTail (tail?: TailDetails): ChangeDetails {
-  //   const details = new ChangeDetails();
-  //   if (tail) details.aggregate(this._applyDispatch(tail.value));
-
-  //   return details.aggregate(this.currentMask ?
-  //     this.currentMask._appendTail(tail) :
-  //     super._appendTail(tail));
-  // }
 
   /**
     @override
@@ -245,7 +272,7 @@ MaskedDynamic.DEFAULTS = {
       const mState = m.state;
 
       m.rawInputValue = inputValue;
-      m._append(appended, flags);
+      m.append(appended, flags);
       const weight = m.rawInputValue.length;
 
       m.state = mState;

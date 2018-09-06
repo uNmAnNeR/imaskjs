@@ -120,12 +120,12 @@ class PatternInputDefinition implements PatternBlock {
     return details;
   }
 
-  _extractTail (...args: *): TailDetails {
-    return this.masked._extractTail(...args);
+  extractTail (...args: *): TailDetails {
+    return this.masked.extractTail(...args);
   }
 
-  _appendTail (...args: *): ChangeDetails {
-    return this.masked._appendTail(...args);
+  appendTail (...args: *): ChangeDetails {
+    return this.masked.appendTail(...args);
   }
 
   extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {

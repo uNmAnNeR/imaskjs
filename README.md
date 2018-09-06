@@ -21,10 +21,13 @@ vanilla javascript input mask
   - optional input parts (greedy)
   - custom definitions
   - reusable groups
-* [React](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)/[React Native<sup>beta</sup>](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)/[Angular](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)/[Vue](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask) plugins
+* Plugins available
+  - [Vue plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask)
+  - [Angular plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)
+  - [React plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)
+  - [React Native plugin<sup>beta</sup>](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)
 
 ## Further Plans
-* [Dynamic pattern groups](https://github.com/uNmAnNeR/imaskjs/issues/52)
 * [DefinitelyTyped typings](https://github.com/uNmAnNeR/imaskjs/issues/17)
 * [Improved API docs](https://github.com/uNmAnNeR/imaskjs/issues/9)
 * [More unit tests](https://github.com/uNmAnNeR/imaskjs/issues/51)
@@ -52,4 +55,6 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 [@Alexander Kiselev](https://github.com/MaaKut)
 
 ## Support Development
-[https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)
+If you enjoyed working with it, you can buy me a cup of coffee :)
+
+<a href='https://ko-fi.com/C0C8J8EP' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi4.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>

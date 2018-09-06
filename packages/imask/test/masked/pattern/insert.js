@@ -69,11 +69,11 @@ describe('Insert', function () {
     assert.equal(masked.value, '_1_');
   });
 
-  it('should not skip groups', function () {
+  it('should not skip blocks', function () {
     masked.updateOptions({
       mask: 'dw',
       lazy: true,
-      groups: {
+      blocks: {
         d: {
           mask: '00',
         },

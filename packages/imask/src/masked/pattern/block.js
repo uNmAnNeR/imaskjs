@@ -7,6 +7,10 @@ import {type ExtractFlags, type AppendFlags} from '../base.js';
 import {type Direction} from '../../core/utils.js';
 
 
+/**
+  Subset of {@link Masked} attributes used with pattern
+  @interface
+*/
 export
 interface PatternBlock {
   +value: string;
@@ -18,8 +22,8 @@ interface PatternBlock {
   reset (): void;
   remove (fromPos?: number, toPos?: number): ChangeDetails;
   extractInput (fromPos?: number, toPos?: number, flags?: ExtractFlags): string;
-  _extractTail (fromPos?: number, toPos?: number): TailDetails;
-  _appendTail (tail?: TailDetails): ChangeDetails;
+  extractTail (fromPos?: number, toPos?: number): TailDetails;
+  appendTail (tail?: TailDetails): ChangeDetails;
   _appendChar (str: string, flags: AppendFlags): ChangeDetails;
   doCommit (): void;
   nearestInputPos (cursorPos: number, direction: Direction): number;

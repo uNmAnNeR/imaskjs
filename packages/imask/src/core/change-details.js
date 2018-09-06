@@ -7,7 +7,7 @@
   @param {string} [details.inserted] - Inserted symbols
   @param {boolean} [details.skip] - Can skip chars
   @param {number} [details.removeCount] - Removed symbols count
-  @param {number} [details.shift] - Additional offset if any changes occurred before current position
+  @param {number} [details.tailShift] - Additional offset if any changes occurred before tail
 */
 export default
 class ChangeDetails {
@@ -15,8 +15,8 @@ class ChangeDetails {
   inserted: string;
   /** Can skip chars */
   skip: boolean;
-  /** Additional offset if any changes occurred before current position */
-  shift: number;
+  /** Additional offset if any changes occurred before tail */
+  tailShift: number;
   /** Raw inserted is used by dynamic mask */
   rawInserted: string;
 
@@ -24,13 +24,13 @@ class ChangeDetails {
     inserted?: $PropertyType<ChangeDetails, 'inserted'>,
     rawInserted?: $PropertyType<ChangeDetails, 'rawInserted'>,
     skip?: $PropertyType<ChangeDetails, 'skip'>,
-    shift?: $PropertyType<ChangeDetails, 'shift'>,
+    tailShift?: $PropertyType<ChangeDetails, 'tailShift'>,
   }) {
     Object.assign(this, {
       inserted: '',
       rawInserted: '',
       skip: false,
-      shift: 0,
+      tailShift: 0,
     }, details);
   }
 
@@ -41,29 +41,13 @@ class ChangeDetails {
   aggregate (details: ChangeDetails): ChangeDetails {
     this.rawInserted += details.rawInserted;
     this.skip = this.skip || details.skip;
-    this.shift += details.shift < 0 ?
-      // trim inserted if available
-      Math.min(this.inserted.length + details.shift, 0) :
-      // or just add shift
-      details.shift;
-    if (details.shift < 0) this.inserted = this.inserted.slice(0, details.shift);
     this.inserted += details.inserted;
+    this.tailShift += details.tailShift;
     return this;
   }
 
   /** Total offset considering all changes */
   get offset (): number {
-    return this.shift + this.inserted.length;
+    return this.tailShift + this.inserted.length;
   }
-
-  /** Raw inserted is used by dynamic mask */
-  // get rawInserted (): string {
-  //   return this._rawInserted != null ?
-  //     this._rawInserted :
-  //     this.inserted;
-  // }
-
-  // set rawInserted (rawInserted: string): void {
-  //   this._rawInserted = rawInserted;
-  // }
 }

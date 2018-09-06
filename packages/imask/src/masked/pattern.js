@@ -4,7 +4,6 @@ import ChangeDetails from '../core/change-details.js';
 import Masked, {type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState} from './base.js';
 import PatternInputDefinition, {DEFAULT_INPUT_DEFINITIONS, type Definitions} from './pattern/input-definition.js';
 import PatternFixedDefinition from './pattern/fixed-definition.js';
-// import PatternGroup, {type PatternGroupTemplate} from './pattern/group.js';
 import {ChunksTailDetails, type TailInputChunk} from './pattern/chunk-tail-details.js';
 import {type TailDetails} from '../core/tail-details.js';
 import {type PatternBlock} from './pattern/block.js';
@@ -14,7 +13,7 @@ import createMask from './factory.js';
 type MaskedPatternOptions = {
   ...MaskedOptions<string>,
   definitions: $PropertyType<MaskedPattern, 'definitions'>,
-  groups: $PropertyType<MaskedPattern, 'groups'>,
+  blocks: $PropertyType<MaskedPattern, 'blocks'>,
   placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>,
   lazy: $PropertyType<MaskedPattern, 'lazy'>,
 };
@@ -32,7 +31,7 @@ type BlockPosData = {
 /**
   Pattern mask
   @param {Object} opts
-  @param {Object} opts.groups
+  @param {Object} opts.blocks
   @param {Object} opts.definitions
   @param {string} opts.placeholderChar
   @param {boolean} opts.lazy
@@ -46,7 +45,7 @@ class MaskedPattern extends Masked<string> {
   static FixedDefinition: Class<PatternFixedDefinition>;
 
   /** */
-  groups: {[string]: Masked<*>};
+  blocks: {[string]: Masked<*>};
   /** */
   definitions: Definitions;
   /** Single char for empty input */
@@ -54,8 +53,8 @@ class MaskedPattern extends Masked<string> {
   /** Show placeholder only when needed */
   lazy: boolean;
   _blocks: Array<PatternBlock>;
+  _maskedBlocks: {[string]: Array<number>};
   _stops: Array<number>;
-  _groupMasked: {[string]: Array<number>};
 
   constructor (opts: any={}) {  // TODO type $Shape<MaskedPatternOptions>={} does not work
     opts.definitions = Object.assign({}, DEFAULT_INPUT_DEFINITIONS, opts.definitions);
@@ -80,7 +79,7 @@ class MaskedPattern extends Masked<string> {
     const defs = this.definitions;
     this._blocks = [];
     this._stops = [];
-    this._groupMasked = {};
+    this._maskedBlocks = {};
 
     let pattern = this.mask;
     if (!pattern || !defs) return;
@@ -89,30 +88,30 @@ class MaskedPattern extends Masked<string> {
     let optionalBlock = false;
 
     for (let i=0; i<pattern.length; ++i) {
-      if (this.groups) {
+      if (this.blocks) {
         const p = pattern.slice(i);
-        const gNames = Object.keys(this.groups).filter(gName => p.indexOf(gName) === 0);
+        const bNames = Object.keys(this.blocks).filter(bName => p.indexOf(bName) === 0);
         // order by key length
-        gNames.sort((a, b) => b.length - a.length);
-        // use group name with max length
-        const gName = gNames[0];
-        if (gName) {
-          const groupMasked = createMask({
+        bNames.sort((a, b) => b.length - a.length);
+        // use block name with max length
+        const bName = bNames[0];
+        if (bName) {
+          const maskedBlock = createMask({
             parent: this,
             lazy: this.lazy,
             placeholderChar: this.placeholderChar,
-            ...this.groups[gName]
+            ...this.blocks[bName]
           });
 
-          if (groupMasked) {
-            this._blocks.push(groupMasked);
+          if (maskedBlock) {
+            this._blocks.push(maskedBlock);
 
             // store block index
-            if (!this._groupMasked[gName]) this._groupMasked[gName] = [];
-            this._groupMasked[gName].push(this._blocks.length - 1);
+            if (!this._maskedBlocks[bName]) this._maskedBlocks[bName] = [];
+            this._maskedBlocks[bName].push(this._blocks.length - 1);
           }
 
-          i += gName.length - 1;
+          i += bName.length - 1;
           continue;
         }
       }
@@ -181,6 +180,45 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
+  _storeBeforeTailState () {
+    this._blocks.forEach(b => {
+      // $FlowFixMe _storeBeforeTailState is not exist in PatternBlock
+      if (typeof b._storeBeforeTailState === 'function') {
+        b._storeBeforeTailState();
+      }
+    });
+    super._storeBeforeTailState();
+  }
+
+  /**
+    @override
+  */
+  _restoreBeforeTailState () {
+    this._blocks.forEach(b => {
+      // $FlowFixMe _restoreBeforeTailState is not exist in PatternBlock
+      if (typeof b._restoreBeforeTailState === 'function') {
+        b._restoreBeforeTailState();
+      }
+    });
+    super._restoreBeforeTailState();
+  }
+
+  /**
+    @override
+  */
+  _resetBeforeTailState () {
+    this._blocks.forEach(b => {
+      // $FlowFixMe _resetBeforeTailState is not exist in PatternBlock
+      if (typeof b._resetBeforeTailState === 'function') {
+        b._resetBeforeTailState();
+      }
+    });
+    super._resetBeforeTailState();
+  }
+
+  /**
+    @override
+  */
   reset () {
     super.reset();
     this._blocks.forEach(b => b.reset());
@@ -227,12 +265,12 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _appendTail (tail?: ChunksTailDetails | TailDetails): ChangeDetails {
+  appendTail (tail?: ChunksTailDetails | TailDetails): ChangeDetails {
     const details = new ChangeDetails();
     if (tail) {
       details.aggregate(tail instanceof ChunksTailDetails ?
         this._appendTailChunks(tail.chunks, {tail: true}) :
-        super._appendTail(tail));
+        super.appendTail(tail));
     }
     return details.aggregate(this._appendPlaceholder());
   }
@@ -240,7 +278,7 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _appendCharInternal (ch: string, flags: AppendFlags={}): ChangeDetails {
+  _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
     const blockData = this._mapPosToBlock(this.value.length);
     const details = new ChangeDetails();
     if (!blockData) return details;
@@ -272,18 +310,18 @@ class MaskedPattern extends Masked<string> {
         // $FlowFixMe we already check index above
         details.aggregate(this._appendPlaceholder(chunk.index));
 
-        const tailDetails = chunkBlock._appendTail(chunk);
+        const tailDetails = chunkBlock.appendTail(chunk);
         tailDetails.skip = false; // always ignore skip, it will be set on last
         details.aggregate(tailDetails);
         this._value += tailDetails.inserted;
 
         // get not inserted chars
         const remainChars = chunk.value.slice(tailDetails.rawInserted.length);
-        if (remainChars) details.aggregate(this._append(remainChars, {tail: true}));
+        if (remainChars) details.aggregate(this.append(remainChars, {tail: true}));
       } else {
         const {stop, value} = (chunk: any);
         if (stop != null && this._stops.indexOf(stop) >= 0) details.aggregate(this._appendPlaceholder(stop));
-        details.aggregate(this._append(value, {tail: true}));
+        details.aggregate(this.append(value, {tail: true}));
       }
     };
 
@@ -293,7 +331,7 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _extractTail (fromPos?: number=0, toPos?: number=this.value.length): ChunksTailDetails {
+  extractTail (fromPos?: number=0, toPos?: number=this.value.length): ChunksTailDetails {
     return new ChunksTailDetails(this._extractTailChunks(fromPos, toPos));
   }
 
@@ -319,7 +357,7 @@ class MaskedPattern extends Masked<string> {
     const chunks = [];
     let lastChunk;
     this._forEachBlocksInRange(fromPos, toPos, (b, bi, fromPos, toPos) => {
-      const blockChunk = b._extractTail(fromPos, toPos);
+      const blockChunk = b.extractTail(fromPos, toPos);
 
       const isStop = this._stops.indexOf(bi) >= 0;
       if (blockChunk instanceof ChunksTailDetails) {
@@ -663,14 +701,14 @@ class MaskedPattern extends Masked<string> {
     return cursorPos;
   }
 
-  /** Get group by name */
-  groupMasked (name: string): ?PatternBlock {
-    return this.groupMaskedAll(name)[0];
+  /** Get block by name */
+  maskedBlock (name: string): ?PatternBlock {
+    return this.maskedBlocks(name)[0];
   }
 
-  /** Get all groups by name */
-  groupMaskedAll (name: string): Array<PatternBlock> {
-    const indices = this._groupMasked[name];
+  /** Get all blocks by name */
+  maskedBlocks (name: string): Array<PatternBlock> {
+    const indices = this._maskedBlocks[name];
     if (!indices) return [];
     return indices.map(gi => this._blocks[gi]);
   }

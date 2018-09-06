@@ -2,47 +2,80 @@
 import MaskElement, {type ElementEvent} from './mask-element.js';
 
 
+/** Bridge between HTMLElement and {@link Masked} */
 export default
 class HTMLMaskElement extends MaskElement {
+  /** Mapping between HTMLElement events and mask internal events */
   static EVENTS_MAP: {[ElementEvent]: string};
+  /** HTMLElement to use mask on */
   input: HTMLTextAreaElement | HTMLInputElement;
   _handlers: {[string]: Function};
 
+  /**
+    @param {HTMLInputElement|HTMLTextAreaElement} input
+  */
   constructor (input: HTMLTextAreaElement | HTMLInputElement) {
     super();
     this.input = input;
     this._handlers = {};
   }
 
-  isActive (): boolean {
+  /**
+    Is element in focus
+    @readonly
+  */
+  get isActive (): boolean {
     return this.input === document.activeElement;
   }
 
+  /**
+    Returns HTMLElement selection start
+    @override
+  */
   get _unsafeSelectionStart (): number {
     return this.input.selectionStart;
   }
 
+  /**
+    Returns HTMLElement selection end
+    @override
+  */
   get _unsafeSelectionEnd (): number {
     return this.input.selectionEnd;
   }
 
+  /**
+    Sets HTMLElement selection
+    @override
+  */
   _unsafeSelect (start: number, end: number) {
     this.input.setSelectionRange(start, end);
   }
 
+  /**
+    HTMLElement value
+    @override
+  */
   get value (): string {
     return this.input.value;
   }
-
   set value (value: string) {
     this.input.value = value;
   }
 
+  /**
+    Binds HTMLElement events to mask internal events
+    @override
+  */
   bindEvents (handlers: {[ElementEvent]: Function}) {
     Object.keys(handlers)
       .forEach(event => this._toggleEventHandler(HTMLMaskElement.EVENTS_MAP[event], handlers[event]));
   }
 
+  /**
+    Unbinds HTMLElement events to mask internal events
+    @override
+  */
   unbindEvents () {
     Object.keys(this._handlers)
       .forEach(event => this._toggleEventHandler(event));

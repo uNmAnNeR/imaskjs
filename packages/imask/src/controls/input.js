@@ -183,7 +183,7 @@ class InputMask {
   */
   _saveSelection (/* ev */) {
     if (this.value !== this.el.value) {
-      console.warn('Uncontrolled input change, refresh mask manually!'); // eslint-disable-line no-console
+      console.warn('Element value was changed outside of mask. Syncronize mask using `mask.updateValue()` to work properly.'); // eslint-disable-line no-console
     }
     this._selection = {
       start: this.selectionStart,

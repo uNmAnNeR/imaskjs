@@ -65,6 +65,7 @@ class Masked<MaskType> {
   isInitialized: boolean;
   _value: string;
   _refreshing: boolean;
+  _beforeTailState: ?MaskedState;
 
   constructor (opts: {[string]: any}) {
     this._value = '';
@@ -87,12 +88,12 @@ class Masked<MaskType> {
 
   get state (): any {
     return {
-      _value: this._value,
+      _value: this.value,
     };
   }
 
   set state (state: any) {
-    Object.assign(this, state);
+    this._value = state._value;
   }
 
   /** Resets value */
@@ -112,7 +113,7 @@ class Masked<MaskType> {
   /** Resolve new value */
   resolve (value: string): string {
     this.reset();
-    this._append(value, {input: true}, {value: ''});
+    this.append(value, {input: true}, {value: ''});
     this.doCommit();
     return this.value;
   }
@@ -124,7 +125,7 @@ class Masked<MaskType> {
 
   set unmaskedValue (value: string) {
     this.reset();
-    this._append(value, {}, {value: ''});
+    this.append(value, {}, {value: ''});
     this.doCommit();
   }
 
@@ -144,7 +145,7 @@ class Masked<MaskType> {
 
   set rawInputValue (value: string) {
     this.reset();
-    this._append(value, {raw: true}, {value: ''});
+    this.append(value, {raw: true}, {value: ''});
     this.doCommit();
   }
 
@@ -164,18 +165,34 @@ class Masked<MaskType> {
   }
 
   /** Extracts tail in range */
-  _extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
+  extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
     return {
       value: this.extractInput(fromPos, toPos),
     };
   }
 
-  /** Appends tail */
-  _appendTail (tail?: TailDetails): ChangeDetails {
-    return this._append(tail ? tail.value: '', {tail: true});
+  /** Stores state before tail */
+  _storeBeforeTailState () {
+    this._beforeTailState = this.state;
   }
 
-  _appendCharInternal (ch: string, flags: AppendFlags={}): ChangeDetails {
+  /** Restores state before tail */
+  _restoreBeforeTailState () {
+    this.state = this._beforeTailState;
+  }
+
+  /** Resets state before tail */
+  _resetBeforeTailState () {
+    this._beforeTailState = null;
+  }
+
+  /** Appends tail */
+  appendTail (tail?: TailDetails): ChangeDetails {
+    return this.append(tail ? tail.value: '', {tail: true});
+  }
+
+  /** Appends char */
+  _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
     this._value += ch;
     return new ChangeDetails({
       inserted: ch,
@@ -189,19 +206,21 @@ class Masked<MaskType> {
     if (!ch) return new ChangeDetails();
 
     const consistentState: MaskedState = this.state;
-    const details: ChangeDetails = this._appendCharInternal(ch, flags);
+    const details: ChangeDetails = this._appendCharRaw(ch, flags);
+
     if (details.inserted) {
       let appended = this.doValidate(flags) !== false;
 
       if (appended && checkTail != null) {
         // validation ok, check tail
-        const insertedState = this.state;
-        const tailDetails = this._appendTail(checkTail);
+        this._storeBeforeTailState();
+
+        const tailDetails = this.appendTail(checkTail);
 
         appended = tailDetails.rawInserted === checkTail.value;
 
         // if ok, rollback state after tail
-        if (appended && tailDetails.inserted) this.state = insertedState;
+        if (appended && tailDetails.inserted) this._restoreBeforeTailState();
       }
 
       // revert all if something went wrong
@@ -214,25 +233,22 @@ class Masked<MaskType> {
   }
 
   /** Appends symbols considering flags */
-  _append (str: string, flags: AppendFlags={}, tail?: TailDetails): ChangeDetails {
+  append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails {
     const oldValueLength = this.value.length;
     const details = new ChangeDetails();
 
-    str = this.doPrepare(str, flags);
-
     for (let ci=0; ci<str.length; ++ci) {
-      const chDetails = this._appendChar(str[ci], flags, tail);
-      details.aggregate(chDetails);
-
-      // if not in `input` mode dont skip invalid chars
-      // if (!chDetails.rawInserted && !flags.input) {
-      //   break;
-      // }
-      // TODO if !resolved and !skip
+      details.aggregate(this._appendChar(str[ci], flags, tail));
     }
 
-    // append tail but aggregate only shift
-    if (tail != null) details.shift += this._appendTail(tail).shift;
+    // append tail but aggregate only tailShift
+    if (tail != null) {
+      this._storeBeforeTailState();
+      details.tailShift += this.appendTail(tail).tailShift;
+      // TODO it's a good idea to clear state after appending ends
+      // but it causes bugs when one append calls another (when dynamic dispatch set rawInputValue)
+      // this._resetBeforeTailState();
+    }
 
     return details;
   }
@@ -290,19 +306,16 @@ class Masked<MaskType> {
     if (this.commit) this.commit(this.value, this);
   }
 
-  // TODO
-  // insert (str, fromPos, flags)
-
   /** */
   splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction): ChangeDetails {
     const tailPos: number = start + deleteCount;
-    const tail: TailDetails = this._extractTail(tailPos);
+    const tail: TailDetails = this.extractTail(tailPos);
 
     let startChangePos: number = this.nearestInputPos(start, removeDirection);
     const changeDetails: ChangeDetails = new ChangeDetails({
-      shift: startChangePos - start  // adjust shift if start was aligned
+      tailShift: startChangePos - start  // adjust tailShift if start was aligned
     }).aggregate(this.remove(startChangePos))
-      .aggregate(this._append(inserted, {input: true}, tail));
+      .aggregate(this.append(inserted, {input: true}, tail));
 
     return changeDetails;
   }

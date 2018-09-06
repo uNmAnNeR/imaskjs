@@ -103,8 +103,8 @@ class MaskedNumber extends Masked<Number> {
   /**
     @override
   */
-  _extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
-    const tail = super._extractTail(fromPos, toPos);
+  extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
+    const tail = super.extractTail(fromPos, toPos);
 
     // $FlowFixMe no ideas
     return {
@@ -133,50 +133,52 @@ class MaskedNumber extends Masked<Number> {
     return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
+  _separatorsCount (value: string=this._value) {
+    let rawValueLength = this._removeThousandsSeparators(value).length;
+
+    let valueWithSeparatorsLength = rawValueLength;
+    for (let pos = 0; pos <= valueWithSeparatorsLength; ++pos) {
+      if (this._value[pos] === this.thousandsSeparator) ++valueWithSeparatorsLength;
+    }
+
+    return valueWithSeparatorsLength - rawValueLength;
+  }
+
   /**
     @override
   */
-  _appendChar (...args: *): ChangeDetails {
-    // if (this._separatorsProcessed) return super._appendChar(...args);
-    // this._separatorsProcessed = true;
+  _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
+    if (!this.thousandsSeparator) return super._appendCharRaw(ch, flags);
 
-    console.log('append with', ...args);
-    let previousValue = this.value;
+    const previousBeforeTailSeparatorsCount = this._separatorsCount(flags.tail && this._beforeTailState ?
+      this._beforeTailState._value :
+      this._value);
     this._value = this._removeThousandsSeparators(this.value);
-    let startChangePos = this.value.length;
+    const appendDetails = super._appendCharRaw(ch, flags);
 
-    const appendDetails = super._appendChar(...args);
+    this._value = this._insertThousandsSeparators(this._value);
+    const beforeTailSeparatorsCount = this._separatorsCount(flags.tail && this._beforeTailState ?
+      this._beforeTailState._value :
+      this._value);
 
-    if (!appendDetails.inserted) {
-      this._value = previousValue;
-      return appendDetails;
-    }
-
-    this._value = this._insertThousandsSeparators(this.value);
-
-    // calculate offsets after insert separators
-    let beforeTailPos = startChangePos + appendDetails.inserted.length;
-    for (let pos = 0; pos <= beforeTailPos; ++pos) {
-      if (this.value[pos] === this.thousandsSeparator) {
-        if (
-          pos < startChangePos ||
-          // check high bound
-          // if separator is still there - consider it also
-          (pos === startChangePos && previousValue[pos] === this.thousandsSeparator)
-        ) {
-          ++startChangePos;
-        }
-        if (pos < beforeTailPos) ++beforeTailPos;
-      }
-    }
-
-    // adjust details with separators
-    appendDetails.inserted = this.value.slice(startChangePos, beforeTailPos);
-    appendDetails.shift += startChangePos - previousValue.length;
-
-
-    // this._separatorsProcessed = false;
+    appendDetails.tailShift += beforeTailSeparatorsCount - previousBeforeTailSeparatorsCount;
     return appendDetails;
+  }
+
+  /**
+    @override
+  */
+  remove (fromPos?: number=0, toPos?: number=this.value.length): ChangeDetails {
+    const valueBeforePos = this.value.slice(0, fromPos);
+    const valueAfterPos = this.value.slice(toPos);
+
+    const previousBeforeTailSeparatorsCount = this._separatorsCount(valueBeforePos);
+    this._value = this._insertThousandsSeparators(this._removeThousandsSeparators(valueBeforePos + valueAfterPos));
+    const beforeTailSeparatorsCount = this._separatorsCount(valueBeforePos);
+
+    return new ChangeDetails({
+      tailShift: beforeTailSeparatorsCount - previousBeforeTailSeparatorsCount,
+    });
   }
 
   /**

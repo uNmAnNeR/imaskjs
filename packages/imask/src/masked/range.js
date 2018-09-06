@@ -2,10 +2,17 @@
 import MaskedPattern from './pattern.js';
 
 
+/** Pattern which accepts ranges */
 export default
 class MaskedRange extends MaskedPattern {
+  /**
+    Optionally sets max length of pattern.
+    Used when pattern length is longer then `to` param length. Pads zeros at start in this case.
+  */
   maxLength: number;
+  /** Min bound */
   from: number;
+  /** Max bound */
   to: number;
 
   get _matchFrom (): number {
@@ -29,10 +36,16 @@ class MaskedRange extends MaskedPattern {
     super._update(opts);
   }
 
+  /**
+    @override
+  */
   get isComplete (): boolean {
     return super.isComplete && Boolean(this.value);
   }
 
+  /**
+    @override
+  */
   doValidate (...args: *): boolean {
     const str = this.value;
     let minstr = '';

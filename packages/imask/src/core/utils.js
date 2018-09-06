@@ -9,9 +9,11 @@ function isString (str: mixed): boolean %checks {
 
 /**
   Direction
-  @prop {number} NONE
-  @prop {number} LEFT
-  @prop {number} RIGHT
+  @prop {string} NONE
+  @prop {string} LEFT
+  @prop {string} FORCE_LEFT
+  @prop {string} RIGHT
+  @prop {string} FORCE_RIGHT
 */
 export
 const DIRECTION = {
@@ -23,18 +25,19 @@ const DIRECTION = {
 }
 /**
   Direction
-  @enum {number}
+  @enum {string}
 */
 export
 type Direction = $Values<typeof DIRECTION>;
 
-/** Returns next char position in direction */
+/** Returns next char index in direction */
 export
 function indexInDirection (pos: number, direction: Direction): number {
   if (direction === DIRECTION.LEFT) --pos;
   return pos;
 }
 
+/** Returns next char position in direction */
 export
 function posInDirection (pos: number, direction: Direction): number {
   switch (direction) {

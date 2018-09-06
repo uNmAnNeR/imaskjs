@@ -98,13 +98,13 @@ class PatternFixedDefinition implements PatternBlock {
     return details;
   }
 
-  _extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
+  extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
     return {
       value: '',
     };
   }
 
-  _appendTail (tail?: TailDetails): ChangeDetails {
+  appendTail (tail?: TailDetails): ChangeDetails {
     return this._appendChar(tail ? tail.value: '', {tail: true});
   }
 
