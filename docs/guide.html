@@ -198,8 +198,8 @@ console.log(masked.typedValue);</code></pre>
     masked._value = value.toLowerCase();  // Don't do it
   }
 });</code></pre>
-  <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from it to add some specific behavior.</p>
-  <p>Additionaly to <code>mask</code> option custom validator can be set as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves. And also <code>Dynamic</code> mask can't use <code>validate</code> option, but children can.</p>
+  <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from <code>Masked</code> to add some specific behavior.</p>
+  <p>Additionaly to <code>mask</code> option custom validator can be set as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves.</p>
   <p><strong>Note: don't change <code>Masked</code> instance inside callbacks.</strong></p>
   <fieldset>
     <p><strong>Also make sure that mask or validator works with any of intermediate states, not just final value. For example to restrict input to "123" you do:</strong></p>
@@ -231,173 +231,6 @@ console.log(masked.typedValue);</code></pre>
   }
 });</code></pre>
 
-
-  <h2 id="pattern" class="section-h"><a href="#pattern">Pattern Mask</a></h2>
-  Use pattern when:
-  <ul>
-    <li>mask is complex</li>
-    <li>mask is fixed in size (optional symbols can provide some flexibility)</li>
-    <li>placeholder is needed</li>
-    <li>more reliability or flexibility on processing input is needed</li>
-  </ul>
-  <p>Pattern mask is just a string:</p>
-
-  <div class="toggle-panel">
-    <label for="pattern-nic-demo" class="muted">demo</label>
-    <input id="pattern-nic-demo" type="checkbox">
-    <div class="toggle-panel-content">
-      <form class="form pattern-nic-form">
-        <div class="form-item">
-          <label>Type here</label>
-          <input id="pattern-nic-mask" type="text" value="">
-          <div class="desc">unmasked: <span id="pattern-nic-unmasked"></span><span id="pattern-nic-complete" class="example__complete"></span></div>
-        </div>
-        <fieldset>
-          <legend>Options</legend>
-          <div class="row gutters">
-            <div class="col col-4">
-              <div class="form-item">
-                <label>Mask</label>
-                <input type="text" name="mask" value="{#}000[aaa]/NIC-`*[**]">
-              </div>
-            </div>
-            <div class="col col-4">
-              <div class="form-item">
-                <label>Placeholder mode</label>
-                <label class="checkbox"><input type="checkbox" name="ph-show">lazy</label>
-              </div>
-            </div>
-            <div class="col col-4">
-              <div class="form-item">
-                <label>Placeholder char</label>
-                <input type="text" maxlength="1" name="ph-char" value="_">
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Values</legend>
-           <div class="row gutters align-middle">
-            <div class="col col-4">
-              <div class="form-item">
-                <label>Set raw value</label>
-                <input type="text" name="raw" value="">
-              </div>
-            </div>
-            <span class="desc">&nbsp;or&nbsp;</span>
-            <div class="col col-4">
-              <div class="form-item">
-                <label>Set unmasked value</label>
-                <input type="text" name="unmasked" value="">
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <div class="form-item">
-          <button name="apply" type="button">Apply</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <pre><code>var patternMask = new IMask(element, {
-  mask: '{#}000[aaa]/NIC-`*[**]'
-});
-
-// or without UI element
-var masked = new IMask.PatternMasked({
-  mask: '{#}000[aaa]/NIC-`*[**]'
-});</code></pre>
-  where:
-  <ul class="unstyled">
-  <li><code>0</code> - any digit</li>
-  <li><code>a</code> - any letter</li>
-  <li><code>*</code> - any char</li>
-  <li>other chars which is not in custom definitions supposed to be <em>fixed</em></li>
-  <li><code>[]</code> - make input optional</li>
-  <li><code>{}</code> - include fixed part in unmasked value</li>
-  <li><code>`</code> - prevent symbols shift back</li>
-  </ul>
-  <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
-
-  <p>Additionally you can provide custom <code>definitions</code>:</p>
-  <div class="toggle-panel">
-    <label for="pattern-zip-mask-demo" class="muted">demo</label>
-    <input id="pattern-zip-mask-demo" type="checkbox">
-    <div class="toggle-panel-content">
-      <form class="form">
-        <div class="form-item">
-          <label>Type here against mask <span class="desc">#00000</span></label>
-          <input id="pattern-zip-mask" type="text" value="">
-          <div class="desc">unmasked: <span id="pattern-zip-unmasked"></span><span id="pattern-zip-complete" class="example__complete"></span></div>
-        </div>
-      </form>
-    </div>
-  </div>
-  <pre><code>var zipMask = new IMask(element, {
-  mask: '#00000',
-  definitions: {
-    // &lt;any single char&gt;: &lt;same type as mask (RegExp, Function, etc.)&gt;
-    // defaults are '0', 'a', '*'
-    '#': /[1-6]/
-  }
-});</code></pre>
-  <p>To configure placeholder use:</p>
-  <div class="toggle-panel">
-    <label for="pattern-phone-mask-demo" class="muted">demo</label>
-    <input id="pattern-phone-mask-demo" type="checkbox">
-    <div class="toggle-panel-content">
-      <form class="form">
-        <div class="form-item">
-          <label>Type here against mask <span class="desc">+{7}(000)000-00-00</span> with custom placeholder</label>
-          <input id="pattern-phone-mask" type="text" value="">
-          <div class="desc">unmasked: <span id="pattern-phone-unmasked"></span><span id="pattern-phone-complete" class="example__complete"></span></div>
-        </div>
-      </form>
-    </div>
-  </div>
-  <pre><code>var phoneMask = new IMask(element, {
-  mask: '+{7}(000)000-00-00',
-  lazy: false,  // make placeholder always visible
-  placeholderChar: '#'     // defaults to '_'
-});</code></pre>
-  <p>One more custom option for pattern is <code>groups</code> which is usefull for reusing parts of a mask or providing additional validator:</p>
-  <div class="toggle-panel">
-    <label for="pattern-groups-mask-demo" class="muted">demo</label>
-    <input id="pattern-groups-mask-demo" type="checkbox">
-    <div class="toggle-panel-content">
-      <form class="form">
-        <div class="form-item">
-          <label>Type here against mask</label>
-          <input id="pattern-groups-mask" type="text" value="">
-          <div class="desc">unmasked: <span id="pattern-groups-unmasked"></span><span id="pattern-groups-complete" class="example__complete"></span></div>
-        </div>
-      </form>
-    </div>
-  </div>
-  <pre><code>var groupsMask = new IMask(element, {
-  mask: 'Ple\\ase fill ye\\ar 19<ins>YY</ins>, month <ins>MM</ins> \\and v\\alue <ins>VL</ins>',
-  lazy: false,  // make placeholder always visible
-
-  // let define groups
-  groups: {
-    // custom group definition
-    <ins>YY</ins>: {
-      mask: '00',
-      // optional validator
-      // validate: function (value, group) {}
-    },
-
-    // use range to restrict input to numbers in range
-    // mask size is the length in chars of max bound or can be provided as second parameter
-    // to input smaller values pad zeros at beginning
-    <ins>MM</ins>: new IMask.MaskedPattern.Group.Range([1, 12], /* optional size */),
-
-    // restrict input to enum
-    // all values should be same length
-    <ins>VL</ins>: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR'])
-  }
-});</code></pre>
 
   <h2 id="number" class="section-h"><a href="#number">Number Mask</a></h2>
   <p>Number mask restricts input to integer or decimal numbers in many ways:</p>
@@ -482,6 +315,226 @@ var masked = new IMask.PatternMasked({
   max: 10000
 });</code></pre>
 
+
+  <h2 id="pattern" class="section-h"><a href="#pattern">Pattern Mask</a></h2>
+  Use pattern when:
+  <ul>
+    <li>mask is complex or contains nested masks</li>
+    <li>mask is fixed in size (optional symbols can provide some flexibility)</li>
+    <li>placeholder is needed</li>
+    <li>more reliability or flexibility on processing input is needed</li>
+  </ul>
+  <p>Pattern mask is just a string:</p>
+
+  <div class="toggle-panel">
+    <label for="pattern-nic-demo" class="muted">demo</label>
+    <input id="pattern-nic-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form pattern-nic-form">
+        <div class="form-item">
+          <label>Type here</label>
+          <input id="pattern-nic-mask" type="text" value="">
+          <div class="desc">unmasked: <span id="pattern-nic-unmasked"></span><span id="pattern-nic-complete" class="example__complete"></span></div>
+        </div>
+        <fieldset>
+          <legend>Options</legend>
+          <div class="row gutters">
+            <div class="col col-4">
+              <div class="form-item">
+                <label>Mask</label>
+                <input type="text" name="mask" value="{#}000[aaa]/NIC-`*[**]">
+              </div>
+            </div>
+            <div class="col col-4">
+              <div class="form-item">
+                <label>Placeholder mode</label>
+                <label class="checkbox"><input type="checkbox" name="ph-show">lazy</label>
+              </div>
+            </div>
+            <div class="col col-4">
+              <div class="form-item">
+                <label>Placeholder char</label>
+                <input type="text" maxlength="1" name="ph-char" value="_">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Values</legend>
+           <div class="row gutters align-middle">
+            <div class="col col-4">
+              <div class="form-item">
+                <label>Set raw value</label>
+                <input type="text" name="raw" value="">
+              </div>
+            </div>
+            <span class="desc">&nbsp;or&nbsp;</span>
+            <div class="col col-4">
+              <div class="form-item">
+                <label>Set unmasked value</label>
+                <input type="text" name="unmasked" value="">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <div class="form-item">
+          <button name="apply" type="button">Apply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <pre><code>var patternMask = new IMask(element, {
+  mask: '{#}000[aaa]/NIC-`*[**]'
+});
+
+// or without UI element
+var masked = new IMask.PatternMasked({
+  mask: '{#}000[aaa]/NIC-`*[**]'
+});</code></pre>
+  where definitions are:
+  <ul class="unstyled">
+  <li><code>0</code> - any digit</li>
+  <li><code>a</code> - any letter</li>
+  <li><code>*</code> - any char</li>
+  <li>other chars which is not in custom definitions supposed to be <em>fixed</em></li>
+  <li><code>[]</code> - make input optional</li>
+  <li><code>{}</code> - include fixed part in unmasked value</li>
+  <li><code>`</code> - prevent symbols shift back</li>
+  </ul>
+  <p>If definition character should be treated as fixed it should be escaped by <code>\\</code> (E.g. <code>\\0</code>).</p>
+
+  <p>Additionally you can provide custom <code>definitions</code>:</p>
+  <div class="toggle-panel">
+    <label for="pattern-zip-mask-demo" class="muted">demo</label>
+    <input id="pattern-zip-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type here against mask <span class="desc">#00000</span></label>
+          <input id="pattern-zip-mask" type="text" value="">
+          <div class="desc">unmasked: <span id="pattern-zip-unmasked"></span><span id="pattern-zip-complete" class="example__complete"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var zipMask = new IMask(element, {
+  mask: '#00000',
+  definitions: {
+    // &lt;any single char&gt;: &lt;same type as mask (RegExp, Function, etc.)&gt;
+    // defaults are '0', 'a', '*'
+    '#': /[1-6]/
+  }
+});</code></pre>
+  <p>To configure placeholder use:</p>
+  <div class="toggle-panel">
+    <label for="pattern-phone-mask-demo" class="muted">demo</label>
+    <input id="pattern-phone-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type here against mask <span class="desc">+{7}(000)000-00-00</span> with custom placeholder</label>
+          <input id="pattern-phone-mask" type="text" value="">
+          <div class="desc">unmasked: <span id="pattern-phone-unmasked"></span><span id="pattern-phone-complete" class="example__complete"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var phoneMask = new IMask(element, {
+  mask: '+{7}(000)000-00-00',
+  lazy: false,  // make placeholder always visible
+  placeholderChar: '#'     // defaults to '_'
+});</code></pre>
+  <p>For complex nested masks there is <code>blocks</code> option available:</p>
+  <div class="toggle-panel">
+    <label for="pattern-blocks-mask-demo" class="muted">demo</label>
+    <input id="pattern-blocks-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type here against mask</label>
+          <input id="pattern-blocks-mask" type="text" value="">
+          <div class="desc">unmasked: <span id="pattern-blocks-unmasked"></span><span id="pattern-blocks-complete" class="example__complete"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var blocksMask = new IMask(element, {
+  mask: 'Ple\\ase fill ye\\ar 19<ins>YY</ins>, month <ins>MM</ins> \\and v\\alue <ins>VL</ins>',
+  lazy: false,  // make placeholder always visible
+
+  blocks: {
+    <ins>YY</ins>: {
+      mask: '00',
+    },
+
+    <ins>MM</ins>: {
+      mask: IMask.MaskedRange,
+      from: 1,
+      to: 12
+    },
+
+    <ins>VL</ins>: {
+      mask: IMask.MaskedEnum,
+      enum: ['TV', 'HD', 'VR']
+    }
+  }
+});</code></pre>
+
+
+  <h2 id="range" class="section-h"><a href="#range">Range Mask</a></h2>
+  <p>Range mask extends <a href="#pattern">Pattern</a> mask and can be used to restrict input in a number range.</p>
+  <div class="toggle-panel">
+    <label for="range-mask-demo" class="muted">demo</label>
+    <input id="range-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type here</label>
+          <input id="range-mask" type="text" value="">
+          <div class="desc">value: <span id="range-value"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var rangeMask = new IMask(element, {
+  mask: IMask.MaskedRange,
+  from: 1,
+  to: 99,
+  // maxLength is optional parameter to set the length of mask. To input smaller values pad zeros at start
+  maxLength: 3,
+
+  // also Pattern options can be set
+  lazy: false
+});</code></pre>
+  <p>Unlike <a href="#number">Number</a> mask Range mask is fixed in size, accepts only integer values but can use placeholder.</p>
+
+
+  <h2 id="enum" class="section-h"><a href="#enum">Enum Mask</a></h2>
+  <p>Enum mask extends <a href="#pattern">Pattern</a> mask and can be used to restrict input within characters enum.</p>
+  <div class="toggle-panel">
+    <label for="enum-mask-demo" class="muted">demo</label>
+    <input id="enum-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type here</label>
+          <input id="enum-mask" type="text" value="">
+          <div class="desc">value: <span id="enum-value"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var enumMask = new IMask(element, {
+  mask: IMask.MaskedEnum,
+  // all values should be same length!
+  enum: ['F1', 'G2', 'H3'],
+
+  // also Pattern options can be set
+  lazy: false
+});</code></pre>
+
+
   <h2 id="date" class="section-h"><a href="#date">Date Mask</a></h2>
   <p>Date mask extends <a href="#pattern">Pattern</a> mask with more options.</p>
   <div class="toggle-panel">
@@ -501,12 +554,26 @@ var masked = new IMask.PatternMasked({
   mask: Date,  // enable date mask
 
   // other options are optional
-  pattern: 'Y-`m-`d',  // Pattern mask with defined groups, default is 'd{.}`m{.}`Y'
-  // you can provide your own groups definitions, default groups for date mask are:
-  groups: {
-    d: new IMask.MaskedPattern.Group.Range([1, 31]),
-    m: new IMask.MaskedPattern.Group.Range([1, 12]),
-    Y: new IMask.MaskedPattern.Group.Range([1900, 9999])
+  pattern: 'Y-`m-`d',  // Pattern mask with defined blocks, default is 'd{.}`m{.}`Y'
+  // you can provide your own blocks definitions, default blocks for date mask are:
+  blocks: {
+    d: {
+      mask: IMask.MaskedRange,
+      from: 1,
+      to: 31,
+      maxLength: 2,
+    },
+    m: {
+      mask: IMask.MaskedRange,
+      from: 1,
+      to: 12,
+      maxLength: 2,
+    },
+    Y: {
+      mask: IMask.MaskedRange,
+      from: 1900,
+      to: 9999,
+    }
   },
   // define <em>date -> str</em> convertion
   format: function (date) {
@@ -561,14 +628,35 @@ var momentMask = new IMask(element, {
     return moment(str, momentFormat);
   },
 
-  groups: {
-    YYYY: new IMask.MaskedPattern.Group.Range([1970, 2030]),
-    MM: new IMask.MaskedPattern.Group.Range([1, 12]),
-    DD: new IMask.MaskedPattern.Group.Range([1, 31]),
-    HH: new IMask.MaskedPattern.Group.Range([0, 23]),
-    mm: new IMask.MaskedPattern.Group.Range([0, 59])
+  blocks: {
+    YYYY: {
+      mask: IMask.MaskedRange,
+      from: 1970,
+      to: 2030
+    },
+    MM: {
+      mask: IMask.MaskedRange,
+      from: 1,
+      to: 12
+    },
+    DD: {
+      mask: IMask.MaskedRange,
+      from: 1,
+      to: 31
+    },
+    HH: {
+      mask: IMask.MaskedRange,
+      from: 0,
+      to: 23
+    },
+    mm: {
+      mask: IMask.MaskedRange,
+      from: 0,
+      to: 59
+    }
   }
 });</code></pre>
+
 
   <h2 id="dynamic" class="section-h"><a href="#dynamic">Dynamic Mask</a></h2>
   <p>Dynamic mask automatically selects appropriate mask from provided array of masks. Mask with the largest number of fitting characters is selected considering provided masks order.</p>
@@ -591,8 +679,12 @@ var momentMask = new IMask(element, {
   mask: [
     {
       mask: 'RGB,RGB,RGB',
-      groups: {
-        RGB: new IMask.MaskedPattern.Group.Range([0, 255])
+      blocks: {
+        RGB: {
+          mask: IMask.MaskedRange,
+          from: 0,
+          to: 255
+        }
       }
     },
     {
@@ -755,35 +847,57 @@ var momentMask = new IMask(element, {
     });
 
 
-    var patternGroupsMask = new IMask(document.getElementById('pattern-groups-mask'), {
+    var patternGroupsMask = new IMask(document.getElementById('pattern-blocks-mask'), {
       mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',
       lazy: false,  // make placeholder always visible
 
-      // let define groups
-      groups: {
-        // custom group definition
+      // let define blocks
+      blocks: {
         YY: {
           mask: '00'
-          // optional validator
-          // validate: function (value, group) {}
         },
 
-        // use range to restrict input to numbers in range
-        // mask size is the length in chars of max bound or could be provided as second parameter
-        // to input smaller values pad zeros at beginning
-        MM: new IMask.MaskedPattern.Group.Range([1, 12] /*, optional size */),
+        MM: {
+          mask: IMask.MaskedRange,
+          from: 1,
+          to: 12
+        },
 
-        // restrict input to enum
-        // all values should be same length
-        VL: new IMask.MaskedPattern.Group.Enum(['TV', 'HD', 'VR'])
+        VL: {
+          mask: IMask.MaskedEnum,
+          enum: ['TV', 'HD', 'VR']
+        }
       }
     }).on('accept', function() {
-      document.getElementById('pattern-groups-complete').style.display = '';
-      document.getElementById('pattern-groups-unmasked').innerHTML = patternGroupsMask.unmaskedValue;
+      document.getElementById('pattern-blocks-complete').style.display = '';
+      document.getElementById('pattern-blocks-unmasked').innerHTML = patternGroupsMask.unmaskedValue;
     }).on('complete', function() {
-      document.getElementById('pattern-groups-complete').style.display = 'inline-block';
+      document.getElementById('pattern-blocks-complete').style.display = 'inline-block';
     });
 
+
+    var rangeMask = new IMask(document.getElementById('range-mask'), {
+      mask: IMask.MaskedRange,
+      from: 1,
+      to: 99,
+      maxLength: 3,
+
+      // also Pattern options can be set
+      lazy: false
+    }).on('accept', function() {
+      document.getElementById('range-value').innerHTML = rangeMask.value || '-';
+    });
+
+    var enumMask = new IMask(document.getElementById('enum-mask'), {
+      mask: IMask.MaskedEnum,
+      // all values should be same length!
+      enum: ['F1', 'G2', 'H3'],
+
+      // also Pattern options can be set
+      lazy: false
+    }).on('accept', function() {
+      document.getElementById('enum-value').innerHTML = enumMask.value || '-';
+    });
 
     var numberMask = new IMask(document.getElementById('numbers-mask'), {
       mask: Number,
@@ -859,12 +973,32 @@ var momentMask = new IMask(element, {
         return moment(str, momentFormat);
       },
 
-      groups: {
-        YYYY: new IMask.MaskedPattern.Group.Range([1970, 2030]),
-        MM: new IMask.MaskedPattern.Group.Range([1, 12]),
-        DD: new IMask.MaskedPattern.Group.Range([1, 31]),
-        HH: new IMask.MaskedPattern.Group.Range([0, 23]),
-        mm: new IMask.MaskedPattern.Group.Range([0, 59])
+      blocks: {
+        YYYY: {
+          mask: IMask.MaskedRange,
+          from: 1970,
+          to: 2030
+        },
+        MM: {
+          mask: IMask.MaskedRange,
+          from: 1,
+          to: 12
+        },
+        DD: {
+          mask: IMask.MaskedRange,
+          from: 1,
+          to: 31
+        },
+        HH: {
+          mask: IMask.MaskedRange,
+          from: 0,
+          to: 23
+        },
+        mm: {
+          mask: IMask.MaskedRange,
+          from: 0,
+          to: 59
+        }
       }
     }).on('accept', function() {
       document.getElementById('moment-value').innerHTML = momentMask.masked.date || '-';
@@ -877,8 +1011,12 @@ var momentMask = new IMask(element, {
         mask: [
           {
             mask: 'RGB,RGB,RGB',
-            groups: {
-              RGB: new IMask.MaskedPattern.Group.Range([0, 255])
+            blocks: {
+              RGB: {
+                mask: IMask.MaskedRange,
+                from: 0,
+                to: 255
+              }
             }
           },
           {

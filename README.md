@@ -20,7 +20,8 @@ vanilla javascript input mask
   - unmasked value can contain fixed parts
   - optional input parts (greedy)
   - custom definitions
-  - reusable groups
+  - reusable blocks
+  - **Enum** and **Range** masks
 
 ## Plugins
 * [Vue plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask)
@@ -58,4 +59,4 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 ## Support Development
 If you enjoyed working with it, you can buy me a cup of coffee :)
 
-<a href='https://ko-fi.com/unmanner' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi4.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+<a href='https://ko-fi.com/unmanner' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
