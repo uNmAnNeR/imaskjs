@@ -17,15 +17,10 @@ const file = 'dist/imask' +
 const input = isES ? 'src/imask.js' : 'src/imask.shim.js';
 
 const babelConf = isES ? {
-  externalHelpersWhitelist: [
-    'extends',
-    'slicedToArray',
-    'objectWithoutProperties',
-  ],
   presets: [
-    ['env', {
+    ['@babel/preset-env', {
       modules: false,
-      useBuiltIns: true,
+      useBuiltIns: 'entry',
       targets: {
         browsers: [
           'Chrome >= 60',
@@ -36,20 +31,18 @@ const babelConf = isES ? {
         ],
       },
     }],
-    'flow',
+    '@babel/preset-flow',
   ],
-  // waiting for https://github.com/rollup/rollup/issues/1613
-  plugins: ['transform-object-rest-spread', 'external-helpers']
 } : {
   presets: [
-    ['env', {
+    ['@babel/preset-env', {
       'modules': false,
-      'useBuiltIns': true
+      'useBuiltIns': 'entry'
     }],
-    'flow',
+    '@babel/preset-flow',
   ],
   exclude: 'node_modules/**',
-  plugins: ['transform-object-rest-spread', 'transform-object-assign', 'external-helpers']
+  plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/plugin-transform-object-assign']
 };
 
 

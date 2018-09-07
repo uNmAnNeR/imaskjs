@@ -1,9 +1,12 @@
 {
   "presets": [
-    ["env", {
+    ["@babel/preset-env", {
       "modules": false,
-      "useBuiltIns": true,
+      "useBuiltIns": "entry",
     }],
   ],
-  "plugins": ["transform-object-rest-spread", "transform-object-assign", "external-helpers"]
+  "plugins": [
+  	"@babel/plugin-proposal-object-rest-spread",
+  	"@babel/plugin-transform-object-assign"
+  ]
 }

@@ -42,17 +42,16 @@ module.exports = function (config) {
       plugins: [
         babel({
           presets: [
-            ['env', {
+            ['@babel/preset-env', {
               'modules': false,
-              'useBuiltIns': true
+              'useBuiltIns': 'entry'
             }],
-            'flow'
+            '@babel/preset-flow'
           ],
           exclude: 'node_modules/**',
           plugins: [
-            'transform-object-rest-spread',
-            'transform-object-assign',
-            'external-helpers',
+            '@babel/plugin-proposal-object-rest-spread',
+            '@babel/plugin-transform-object-assign',
             ['istanbul', {
               "exclude": ["test/**/*.js"]
             }]

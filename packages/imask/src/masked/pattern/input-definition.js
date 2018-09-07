@@ -99,10 +99,8 @@ class PatternInputDefinition implements PatternBlock {
       this.masked.state = state;
     }
 
-    if (!details.inserted) {
-      if (!this.isOptional && !flags.input && !this.lazy && !flags.tail) {
-        details.inserted = this.placeholderChar;
-      }
+    if (!details.inserted && !this.isOptional && !this.lazy && !flags.input) {
+      details.inserted = this.placeholderChar;
     }
     details.skip = !details.inserted && !this.isOptional;
     this._isFilled = Boolean(details.inserted);
