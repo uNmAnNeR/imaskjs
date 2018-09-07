@@ -29,7 +29,7 @@ const MASK_PROPS = {
   placeholderChar: PropTypes.string,
   lazy: PropTypes.bool,
   definitions: PropTypes.object,
-  groups: PropTypes.object,
+  blocks: PropTypes.object,
 
   // date
   pattern: PropTypes.string,

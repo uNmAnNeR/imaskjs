@@ -127,7 +127,7 @@ const IMaskComponent = {
     placeholderChar: String,
     lazy: Boolean,
     definitions: Object,
-    groups: Object,
+    blocks: Object,
 
     // date
     pattern: String,
