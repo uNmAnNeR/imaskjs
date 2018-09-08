@@ -359,9 +359,16 @@ class MaskedPattern extends Masked<string> {
     this._forEachBlocksInRange(fromPos, toPos, (b, bi, fromPos, toPos) => {
       const blockChunk = b.extractTail(fromPos, toPos);
 
-      const isStop = this._stops.indexOf(bi) >= 0;
+      let nearestStop;
+      for (let si=0; si<this._stops.length; ++si) {
+        const stop = this._stops[si];
+        if (stop <= bi) nearestStop = stop;
+        else break;
+      }
+
       if (blockChunk instanceof ChunksTailDetails) {
-        if (!isStop) {
+        // TODO append to lastChunk with same index
+        if (nearestStop == null) {
           // try append floating chunks to existed lastChunk
           let headFloatChunksCount = blockChunk.chunks.length;
           for (let ci=0; ci< blockChunk.chunks.length; ++ci) {
@@ -384,17 +391,17 @@ class MaskedPattern extends Masked<string> {
         // if block chunk has stops
         if (blockChunk.chunks.length) {
           if (lastChunk) chunks.push(lastChunk);
-          blockChunk.index = bi;
+          blockChunk.index = nearestStop;
           chunks.push(blockChunk);
           // we cant append to ChunksTailDetails, so just reset lastChunk to force adding new
           lastChunk = null;
         }
       } else {
-        if (isStop) {
+        if (nearestStop != null) {
           // on middle chunks consider stop flag and do not consider value
           // add block even if it is empty
           if (lastChunk) chunks.push(lastChunk);
-          blockChunk.stop = bi;
+          blockChunk.stop = nearestStop;
         } else if (lastChunk) {
           lastChunk.value += blockChunk.value;
           return;
