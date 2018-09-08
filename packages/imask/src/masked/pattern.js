@@ -1,5 +1,5 @@
 // @flow
-import {DIRECTION, type Direction} from '../core/utils.js';
+import {DIRECTION, type Direction, forceDirection} from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 import Masked, {type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState} from './base.js';
 import PatternInputDefinition, {DEFAULT_INPUT_DEFINITIONS, type Definitions} from './pattern/input-definition.js';
@@ -516,7 +516,7 @@ class MaskedPattern extends Masked<string> {
     let beginBlockCursorPos = beginBlockOffset;
     // if position inside block - try to adjust it
     if (beginBlockCursorPos !== 0 && beginBlockCursorPos < beginBlock.value.length) {
-      beginBlockCursorPos = beginBlock.nearestInputPos(beginBlockOffset, direction);
+      beginBlockCursorPos = beginBlock.nearestInputPos(beginBlockOffset, forceDirection(direction));
     }
 
     const cursorAtRight = beginBlockCursorPos === beginBlock.value.length;

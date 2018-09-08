@@ -51,6 +51,19 @@ function posInDirection (pos: number, direction: Direction): number {
   }
 }
 
+/** */
+export
+function forceDirection (direction: Direction): Direction {
+  switch (direction) {
+    case DIRECTION.LEFT:
+      return DIRECTION.FORCE_LEFT;
+    case DIRECTION.RIGHT:
+      return DIRECTION.FORCE_RIGHT;
+    default:
+      return direction;
+  }
+}
+
 /** Escapes regular expression control chars */
 export
 function escapeRegExp (str: string): string {

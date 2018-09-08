@@ -83,6 +83,20 @@ describe('Align RIGHT', function () {
   });
 
   // TODO
+
+  it('should align right inside block', function () {
+    masked.updateOptions({
+      mask: 'dw',
+      lazy: false,
+      blocks: {
+        d: {mask: '00'},
+        w: {mask: 'aa'},
+      }
+    });
+    // set only chars
+    masked.unmaskedValue = 'aa';
+    assert.equal(masked.nearestInputPos(1, DIRECTION.RIGHT), 2);
+  });
 });
 
 
