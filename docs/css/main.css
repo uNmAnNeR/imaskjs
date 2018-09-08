@@ -32,6 +32,10 @@ h1 em {
   font-weight: normal;
 }
 
+h4 {
+  margin-bottom: 4px;
+}
+
 main {
   margin-bottom: 20px;
 }
