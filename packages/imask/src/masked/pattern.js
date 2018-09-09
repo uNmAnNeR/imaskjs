@@ -269,7 +269,7 @@ class MaskedPattern extends Masked<string> {
     const details = new ChangeDetails();
     if (tail) {
       details.aggregate(tail instanceof ChunksTailDetails ?
-        this._appendTailChunks(tail.chunks, {tail: true}) :
+        this._appendTailChunks(tail.chunks) :
         super.appendTail(tail));
     }
     return details.aggregate(this._appendPlaceholder());
@@ -299,13 +299,17 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Appends chunks splitted by stop chars */
-  _appendTailChunks (chunks: Array<TailInputChunk>, ...args: *) {
+  _appendTailChunks (chunks: Array<TailInputChunk>) {
     const details = new ChangeDetails();
 
     for (let ci=0; ci < chunks.length && !details.skip; ++ci) {
       const chunk = chunks[ci];
 
-      const chunkBlock = chunk instanceof ChunksTailDetails && chunk.index != null && this._blocks[chunk.index];
+      const lastBlock = this._mapPosToBlock(this.value.length);
+      const chunkBlock = chunk instanceof ChunksTailDetails &&
+        chunk.index != null &&
+        (!lastBlock || lastBlock.index <= chunk.index) &&
+        this._blocks[chunk.index];
       if (chunkBlock) {
         // $FlowFixMe we already check index above
         details.aggregate(this._appendPlaceholder(chunk.index));
