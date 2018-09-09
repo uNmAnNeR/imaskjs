@@ -45,7 +45,7 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap --hoist --nohoist=core-js",
-    "doc": "documentation build packages/imask/src/imask.js -f html -o docs/api",
+    "doc": "node ./node_modules/documentation/bin/documentation.js build packages/imask/src/imask.js -f html -o docs/api",
     "lerna": "lerna",
     "flow": "lerna run flow -- check",
     "clean": "lerna clean",
