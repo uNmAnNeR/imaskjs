@@ -1,0 +1,43 @@
+{
+  "name": "ionic-imask",
+  "author": "Alexey Kryazhev",
+  "license": "MIT",
+  "version": "4.0.0",
+  "description": "Ionic IMask Plugin",
+  "main": "dist/ionic-imask.umd.js",
+  "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/ionic-imask",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && ngc && rollup -c"
+  },
+  "keywords": [
+    "angular",
+    "ionic",
+    "imask",
+    "javascript",
+    "input",
+    "mask"
+  ],
+  "peerDependencies": {
+    "@angular/common": ">=4.0.0",
+    "@angular/core": ">=4.0.0",
+    "@angular/forms": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@angular/common": "^4.0.0",
+    "@angular/compiler": "^4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
+    "@angular/core": "^4.0.0",
+    "@angular/forms": "^4.0.0",
+    "rimraf": "^2.6.2",
+    "rxjs": "^5.5.3",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "imask": "latest"
+  }
+}
