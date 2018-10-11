@@ -20,6 +20,7 @@ export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
   multi: true
 };
 
+const DEFAULT_IMASK_ELEMENT = elementRef => elementRef.nativeElement;
 @Directive({
   selector: '[imask]',
   host: {
@@ -39,6 +40,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
 
   @Input() imask;
   @Input() unmask?: boolean|'typed';
+  @Input() imaskElement: (elementRef: any, directiveRef: any) => any;
   @Output() accept: EventEmitter<any>;
   @Output() complete: EventEmitter<any>;
 
@@ -48,6 +50,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     // init here to support AOT
     this.onTouched = () => {};
     this.onChange = () => {};
+    this.imaskElement = DEFAULT_IMASK_ELEMENT;
     this.accept = new EventEmitter();
     this.complete = new EventEmitter();
     this.viewInitialized = false;
@@ -58,9 +61,12 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     }
   }
 
+  get element () {
+    return this.imaskElement(this._elementRef, this);
+  }
 
   get maskValue () {
-    if (!this.maskRef) return this._elementRef.nativeElement.value;
+    if (!this.maskRef) return this.element.value;
 
     if (this.unmask === 'typed') return this.maskRef.typedValue;
     if (this.unmask) return this.maskRef.unmaskedValue;
@@ -73,7 +79,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
       else if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
     } else {
-      this._renderer.setProperty(this._elementRef.nativeElement, 'value', value);
+      this._renderer.setProperty(this.element, 'value', value);
     }
   }
 
@@ -85,6 +91,8 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   }
 
   ngOnChanges(changes) {
+    if (changes.elementRef && !this.imaskElement) this.imaskElement = DEFAULT_IMASK_ELEMENT;
+
     if (!changes.imask || !this.viewInitialized) return;
 
     if (this.imask) {
@@ -115,7 +123,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     value = value == null ? '' : value;
 
     if (this.maskRef) this.maskValue = value;
-    else this._renderer.setProperty(this._elementRef.nativeElement, 'value', value);
+    else this._renderer.setProperty(this.element, 'value', value);
   }
 
   _onAccept () {
@@ -129,13 +137,13 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   }
 
   private initMask () {
-    this.maskRef = new IMask(this._elementRef.nativeElement, this.imask)
+    this.maskRef = new IMask(this.element, this.imask)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
   }
 
   setDisabledState (isDisabled: boolean) {
-    this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled)
+    this._renderer.setProperty(this.element, 'disabled', isDisabled)
   }
 
   registerOnChange(fn: (_: any) => void): void { this.onChange = fn }
