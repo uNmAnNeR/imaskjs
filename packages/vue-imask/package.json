@@ -22,7 +22,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^4.0.0"
+    "imask": "file:../imask"
   },
   "peerDependencies": {
     "vue": ">=2.2.0"
