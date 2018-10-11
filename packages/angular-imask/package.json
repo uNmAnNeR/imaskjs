@@ -39,6 +39,6 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "imask": "latest"
+    "imask": "^4.0.0"
   }
 }

@@ -21,7 +21,7 @@
     "dist"
   ],
   "dependencies": {
-    "imask": "latest",
+    "imask": "^4.0.0",
     "prop-types": "^15.6.0"
   },
   "peerDependencies": {

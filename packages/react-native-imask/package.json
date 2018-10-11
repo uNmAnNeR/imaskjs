@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "prop-types": "^15.6.0",
-    "react-imask": "latest"
+    "react-imask": "^4.0.0"
   },
   "peerDependencies": {
     "react": ">=0.14.0",
