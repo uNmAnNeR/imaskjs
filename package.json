@@ -49,7 +49,7 @@
     "lerna": "lerna",
     "flow": "lerna run flow -- check",
     "clean": "lerna clean",
-    "build": "lerna run build --parallel",
+    "build": "lerna run build --scope=imask && lerna run build --scope=*-imask",
     "test": "lerna run test --parallel",
     "make": "npm run test && npm run build",
     "release": "npm run doc && npm run make && lerna publish",
