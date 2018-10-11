@@ -6,6 +6,7 @@ const globals = {
   '@angular/core': 'ng.core',
   '@angular/common': 'ng.common',
   '@angular/forms': 'ng.forms',
+  '@angular/platform-browser': 'ng.platformBrowser',
   'imask': 'IMask',
 };
 

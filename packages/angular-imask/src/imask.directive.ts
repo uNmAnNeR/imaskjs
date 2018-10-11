@@ -1,8 +1,17 @@
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
-  HostListener, EventEmitter, OnDestroy, OnChanges, AfterViewInit} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+  EventEmitter, OnDestroy, OnChanges, AfterViewInit,
+  Optional, Inject
+} from '@angular/core';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
+import { ɵgetDOM as getDOM } from '@angular/platform-browser';
 import IMask from 'imask';
+
+
+function _isAndroid(): boolean {
+  const userAgent = getDOM() ? getDOM().getUserAgent() : '';
+  return /android (\d+)/.test(userAgent.toLowerCase());
+}
 
 
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
@@ -13,32 +22,45 @@ export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
 
 @Directive({
   selector: '[imask]',
+  host: {
+    '(input)': '_handleInput($event.target.value)',
+    '(blur)': 'onTouched()',
+    '(compositionstart)': '_compositionStart()',
+    '(compositionend)': '_compositionEnd($event.target.value)'
+  },
   providers: [MASKEDINPUT_VALUE_ACCESSOR]
 })
 export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
   maskRef: any;
-  _onTouched: any;
-  _onChange: any;
+  onTouched: any;
+  onChange: any;
   private viewInitialized;
+  private _composing;
 
   @Input() imask;
   @Input() unmask?: boolean|'typed';
   @Output() accept: EventEmitter<any>;
   @Output() complete: EventEmitter<any>;
 
-  constructor(private elementRef: ElementRef,
-              private renderer: Renderer2) {
+  constructor(private _elementRef: ElementRef,
+              private _renderer: Renderer2,
+              @Optional() @Inject(COMPOSITION_BUFFER_MODE)private _compositionMode: boolean) {
     // init here to support AOT
-    this._onTouched = () => {};
-    this._onChange = () => {};
+    this.onTouched = () => {};
+    this.onChange = () => {};
     this.accept = new EventEmitter();
     this.complete = new EventEmitter();
     this.viewInitialized = false;
+    this._composing = false;
+
+    if (this._compositionMode == null) {
+      this._compositionMode = !_isAndroid();
+    }
   }
 
 
   get maskValue () {
-    if (!this.maskRef) return this.elementRef.nativeElement.value;
+    if (!this.maskRef) return this._elementRef.nativeElement.value;
 
     if (this.unmask === 'typed') return this.maskRef.typedValue;
     if (this.unmask) return this.maskRef.unmaskedValue;
@@ -51,7 +73,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
       else if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
     } else {
-      this.renderer.setProperty(this.elementRef.nativeElement, 'value', value);
+      this._renderer.setProperty(this._elementRef.nativeElement, 'value', value);
     }
   }
 
@@ -67,7 +89,10 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
 
     if (this.imask) {
       if (this.maskRef) this.maskRef.updateOptions(this.imask);
-      else this.initMask();
+      else {
+        this.initMask();
+        this.onChange(this.maskValue);
+      }
     } else {
       this.destroyMask();
     }
@@ -90,12 +115,12 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     value = value == null ? '' : value;
 
     if (this.maskRef) this.maskValue = value;
-    else this.renderer.setProperty(this.elementRef.nativeElement, 'value', value);
+    else this._renderer.setProperty(this._elementRef.nativeElement, 'value', value);
   }
 
   _onAccept () {
-    this._onChange(this.maskValue);
-    this._onTouched();
+    this.onChange(this.maskValue);
+    this.onTouched();
     this.accept.emit(this.maskValue);
   }
 
@@ -104,16 +129,31 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   }
 
   private initMask () {
-    this.maskRef = new IMask(this.elementRef.nativeElement, this.imask)
+    this.maskRef = new IMask(this._elementRef.nativeElement, this.imask)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
   }
 
   setDisabledState (isDisabled: boolean) {
-    this.renderer.setProperty(this.elementRef.nativeElement, 'disabled', isDisabled)
+    this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled)
   }
 
-  registerOnChange(fn: (value: any) => any): void { this._onChange = fn; }
-  registerOnTouched(fn: () => any): void { this._onTouched = fn; }
-  @HostListener('blur') onBlur() { this._onTouched(); }
+  registerOnChange(fn: (_: any) => void): void { this.onChange = fn }
+  registerOnTouched(fn: () => void): void { this.onTouched = fn }
+
+  _handleInput(value: any): void {
+    // if mask is attached all input goes throw mask
+    if (this.maskRef) return;
+
+    if (!this._compositionMode || (this._compositionMode && !this._composing)) {
+      this.onChange(value);
+    }
+  }
+
+  _compositionStart(): void { this._composing = true; }
+
+  _compositionEnd(value: any): void {
+    this._composing = false;
+    this._compositionMode && this._handleInput(value);
+  }
 }
