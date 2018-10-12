@@ -89,7 +89,7 @@ class MaskedNumber extends Masked<Number> {
     mid += '\\d*';
 
     let end = (this.scale ?
-      '(' + this.radix + '\\d{0,' + this.scale + '})?' :
+      '(' + escapeRegExp(this.radix) + '\\d{0,' + this.scale + '})?' :
       '') + '$';
 
     this._numberRegExpInput = new RegExp(start + midInput + end);
