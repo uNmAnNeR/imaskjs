@@ -32,7 +32,7 @@ class InputMask {
   _unmaskedValue: string;
   _saveSelection: (?Event) => void;
   _selection: Selection;
-  _onInput: (Event) => void;
+  _onInput: () => void;
   _onChange: () => void;
   _onDrop: (Event) => void;
   _cursorChanging: TimeoutID;
