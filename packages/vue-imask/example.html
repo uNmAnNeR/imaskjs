@@ -21,6 +21,7 @@
       <imask-input
         v-model="numberValue"
         :mask="numberMask"
+        :pad-fractional-zeros="true"
         :unmask="numberUnmask"
         @accept="onAcceptNumber"
         @complete="onCompleteNumber">

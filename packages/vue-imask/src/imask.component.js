@@ -38,17 +38,18 @@ const IMaskComponent = {
 
   watch: {
     '$props': {
-      handler () {
+      handler (props, prevProps) {
         const maskOptions = this.maskOptions;
         if (maskOptions.mask) {
           if (this.maskRef) {
             this.maskRef.updateOptions(maskOptions);
-            this._updateValue();
+            if (props.value !== prevProps.value) this._updateValue();
           } else {
             this._initMask(maskOptions);
           }
         } else {
           this._destroyMask();
+          if (props.value !== prevProps.value) this._updateValue();
         }
       },
       deep: true
