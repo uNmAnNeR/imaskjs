@@ -23,6 +23,7 @@
         :mask="numberMask"
         :pad-fractional-zeros="true"
         :unmask="numberUnmask"
+        @focus="onFocusNumber"
         @accept="onAcceptNumber"
         @complete="onCompleteNumber">
     </label>
@@ -64,6 +65,9 @@
           console.log('complete date!', e.detail.unmaskedValue);
         },
 
+        onFocusNumber: function () {
+          console.log('focus num');
+        },
         onAcceptNumber: function (value) {
           console.log('accept num', value, typeof value);
         },

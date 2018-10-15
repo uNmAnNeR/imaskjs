@@ -10,12 +10,13 @@ const IMaskComponent = {
       domProps: {
         value: this.maskRef ? this.maskRef.value : this.value
       },
+      on: this.$listeners,
     };
 
     // if there is no mask use default input event
-    if (!this.$props.mask) props.on = {
-      input: event => this.$emit('input', event.target.value)
-    };
+    if (!this.$props.mask) {
+      props.on.input = event => this.$emit('input', event.target.value);
+    }
 
     return createElement('input', props);
   },
