@@ -30,9 +30,11 @@ import {IMaskModule} from 'angular-imask';
     `unmaskedValue` if `unmask=true`,
     `typedValue` if `unmask='typed'`-->
   (complete)="onComplete"
+  <!-- OPTIONAL: provide custom element getter -->
+  [imaskElement]="(elementRef, directiveRef) => maskElement" <!-- default = elementRef.nativeElement -->
 />
 ```
 More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
 
 ## Support Development
-[https://www.paypal.me/alexeykryazhev](https://www.paypal.me/alexeykryazhev)
+[Paypal](https://www.paypal.me/alexeykryazhev/3)
