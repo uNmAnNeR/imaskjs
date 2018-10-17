@@ -119,6 +119,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   }
 
   /**
+    @override
   */
   doDispatch(appended: string, flags: AppendFlags={}) {
     return this.dispatch(appended, this, flags);

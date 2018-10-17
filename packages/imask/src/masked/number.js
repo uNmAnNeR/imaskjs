@@ -133,6 +133,7 @@ class MaskedNumber extends Masked<Number> {
     return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
+  /** */
   _separatorsCount (value: string=this._value) {
     let rawValueLength = this._removeThousandsSeparators(value).length;
 

@@ -462,12 +462,14 @@ class MaskedPattern extends Masked<string> {
     }
   }
 
+  /** */
   _blockStartPos (blockIndex: number): number {
     return this._blocks
       .slice(0, blockIndex)
       .reduce((pos, b) => pos += b.value.length, 0);
   }
 
+  /** */
   _forEachBlocksInRange (fromPos: number, toPos: number=this.value.length, fn: (block: PatternBlock, blockIndex: number, fromPos?: number, toPos?: number) => void) {
     const fromBlock = this._mapPosToBlock(fromPos);
 
@@ -563,17 +565,6 @@ class MaskedPattern extends Masked<string> {
       }
 
       return this.value.length;
-
-      // // <-
-      // for (let bi=Math.min(searchBlockIndex, this._blocks.length-1); bi >= 0; --bi) {
-      //   const block = this._blocks[bi];
-      //   const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.LEFT);
-      //   if (blockInputPos !== 0) {
-      //     return this._blockStartPos(bi) + blockInputPos;
-      //   }
-      // }
-
-      // return 0;
     }
 
     if (direction === DIRECTION.LEFT || direction === DIRECTION.FORCE_LEFT) {

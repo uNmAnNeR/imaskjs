@@ -86,6 +86,7 @@ class Masked<MaskType> {
     Object.assign(this, opts);
   }
 
+  /** Mask state */
   get state (): any {
     return {
       _value: this.value,
