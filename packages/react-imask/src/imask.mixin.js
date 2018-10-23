@@ -48,7 +48,10 @@ const MASK_PROPS = {
   max: PropTypes.number,
 
   // dynamic
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+
+  // ref
+  inputRef: PropTypes.func
 };
 
 const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
@@ -87,7 +90,7 @@ function IMaskMixin(ComposedComponent) {
       return React.createElement(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
         defaultValue: this.props.value,
-        inputRef: (el) => this.element = el,
+        inputRef: this._inputRef.bind(this),
       });
     }
 
@@ -151,6 +154,11 @@ function IMaskMixin(ComposedComponent) {
 
     _onComplete () {
       if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
+    }
+
+    _inputRef(el){
+      this.element = el;
+      if (this.props.inputRef) this.props.inputRef(el);
     }
   };
   MaskedComponent.propTypes = MASK_PROPS;
