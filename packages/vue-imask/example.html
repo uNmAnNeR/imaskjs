@@ -27,6 +27,7 @@
         @accept="onAcceptNumber"
         @complete="onCompleteNumber">
     </label>
+    {{numberValue}}
     <button
       @click="toggleNumberMask"
       >{{numberMask ? 'Disable' : 'Enable'}} mask</button>

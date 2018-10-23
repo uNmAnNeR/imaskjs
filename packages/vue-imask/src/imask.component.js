@@ -16,6 +16,8 @@ const IMaskComponent = {
     // if there is no mask use default input event
     if (!this.$props.mask) {
       props.on.input = event => this.$emit('input', event.target.value);
+    } else {
+      delete props.on.input;
     }
 
     return createElement('input', props);
@@ -39,18 +41,19 @@ const IMaskComponent = {
 
   watch: {
     '$props': {
-      handler (props, prevProps) {
+      handler (props) {
         const maskOptions = this.maskOptions;
         if (maskOptions.mask) {
           if (this.maskRef) {
             this.maskRef.updateOptions(maskOptions);
-            if (props.value !== prevProps.value) this._updateValue();
+            if (props.value !== this._maskValue()) this._updateValue();
           } else {
             this._initMask(maskOptions);
+            if (props.value !== this._maskValue()) this._onAccept();
           }
         } else {
           this._destroyMask();
-          if (props.value !== prevProps.value) this._updateValue();
+          if ('value' in props) this.$el.value = props.value;
         }
       },
       deep: true
