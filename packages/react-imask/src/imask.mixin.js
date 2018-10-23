@@ -55,11 +55,19 @@ const MASK_PROPS = {
 };
 
 const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
-
+const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'];
+const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
+  NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
+);
 
 export
 function IMaskMixin(ComposedComponent) {
   const MaskedComponent = class extends React.Component {
+    constructor (...args) {
+      super(...args);
+      this._inputRef = this._inputRef.bind(this);
+    }
+
     componentDidMount () {
       if (!this.props.mask) return;
 
@@ -68,13 +76,14 @@ function IMaskMixin(ComposedComponent) {
 
     componentWillReceiveProps (nextProps) {
       const props = {...this.props, ...nextProps};
-      const maskOptions = this._extractOptionsFromProps(props);
+      const maskOptions = this._extractMaskOptionsFromProps(props);
       if (maskOptions.mask) {
         if (this.maskRef) {
           this.maskRef.updateOptions(maskOptions);
-          if ('value' in props) this.maskValue = props.value;
+          if ('value' in props && props.value !== this.maskValue) this.maskValue = props.value;
         } else {
           this.initMask(maskOptions);
+          if (props.value !== this.maskValue) this._onAccept();
         }
       } else {
         this.destroyMask();
@@ -86,15 +95,20 @@ function IMaskMixin(ComposedComponent) {
       this.destroyMask();
     }
 
+    _inputRef (el) {
+      this.element = el;
+      if (this.props.inputRef) this.props.inputRef(el);
+    }
+
     render () {
       return React.createElement(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
         defaultValue: this.props.value,
-        inputRef: this._inputRef.bind(this),
+        inputRef: this._inputRef,
       });
     }
 
-    initMask (maskOptions=this._extractOptionsFromProps({...this.props})) {
+    initMask (maskOptions=this._extractMaskOptionsFromProps({...this.props})) {
       this.maskRef = new IMask(this.element, maskOptions)
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
@@ -109,18 +123,16 @@ function IMaskMixin(ComposedComponent) {
       }
     }
 
-    _extractOptionsFromProps (props) {
+    _extractMaskOptionsFromProps (props) {
       props = {...props};
 
-      // keep only mask props
+      // keep only mask options props
       Object.keys(props)
-        .filter(prop => MASK_PROPS_NAMES.indexOf(prop) < 0)
+        .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop) < 0)
         .forEach(nonMaskProp => {
           delete props[nonMaskProp];
         });
 
-      delete props.value;
-      delete props.unmask;
 
       return props;
     }
@@ -154,11 +166,6 @@ function IMaskMixin(ComposedComponent) {
 
     _onComplete () {
       if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
-    }
-
-    _inputRef(el){
-      this.element = el;
-      if (this.props.inputRef) this.props.inputRef(el);
     }
   };
   MaskedComponent.propTypes = MASK_PROPS;

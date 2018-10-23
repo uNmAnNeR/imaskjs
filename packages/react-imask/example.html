@@ -31,10 +31,14 @@
               console.log('accept', value, typeof value, mask);
               this.setState({value});
             },
+            onInput: (e) => {
+              if (!this.state.mask) this.setState({ value: e.target.value });
+            },
             onComplete: (value, mask) => console.log('complete!', value, mask),
 
             placeholder: 'Enter here',
           }),
+          React.createElement('p', {}, this.state.value),
           React.createElement('button', {
             key: 'toggler',
             onClick: (event) => this.setState({mask: this.state.mask ? null : mask})

@@ -46,7 +46,7 @@ const IMaskComponent = {
         if (maskOptions.mask) {
           if (this.maskRef) {
             this.maskRef.updateOptions(maskOptions);
-            if (props.value !== this._maskValue()) this._updateValue();
+            if ('value' in props && props.value !== this._maskValue()) this._updateValue();
           } else {
             this._initMask(maskOptions);
             if (props.value !== this._maskValue()) this._onAccept();
