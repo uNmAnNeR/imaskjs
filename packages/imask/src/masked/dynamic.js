@@ -96,22 +96,31 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     const prevMask = this.currentMask;
     const details = new ChangeDetails();
 
-    // dispatch SHOULD NOT modify mask
+    const prevMaskState = prevMask && prevMask.state;
+    const prevMaskBeforeTailState = prevMask && prevMask._beforeTailState;
+
     this.currentMask = this.doDispatch(appended, flags);
 
     // restore state after dispatch
-    if (this.currentMask && this.currentMask !== prevMask) {
-      // if mask changed reapply input
-      this.currentMask.reset();
+    if (this.currentMask) {
+      if (this.currentMask !== prevMask) {
+        // if mask changed reapply input
+        this.currentMask.reset();
 
-      // $FlowFixMe - it's ok, we don't change current mask above
-      const d = this.currentMask.append(insertValue, {raw: true});
-      details.tailShift = d.inserted.length - prevValueBeforeTail.length;
-
-      this._storeBeforeTailState();
-      if (tailValue) {
         // $FlowFixMe - it's ok, we don't change current mask above
-        details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
+        const d = this.currentMask.append(insertValue, {raw: true});
+        details.tailShift = d.inserted.length - prevValueBeforeTail.length;
+
+        this._storeBeforeTailState();
+        if (tailValue) {
+          // $FlowFixMe - it's ok, we don't change current mask above
+          details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
+        }
+      } else {
+        // Dispatch can do something bad with state, so
+        // restore prev mask state
+        this.currentMask.state = prevMaskState;
+        this.currentMask._beforeTailState = prevMaskBeforeTailState;
       }
     }
 
@@ -270,13 +279,9 @@ MaskedDynamic.DEFAULTS = {
 
     // simulate input
     const inputs = masked.compiledMasks.map((m, index) => {
-      const mState = m.state;
-
       m.rawInputValue = inputValue;
       m.append(appended, flags);
       const weight = m.rawInputValue.length;
-
-      m.state = mState;
 
       return {weight, index};
     });
