@@ -122,8 +122,11 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   writeValue(value: any) {
     value = value == null ? '' : value;
 
-    if (this.maskRef) this.maskValue = value;
-    else this._renderer.setProperty(this.element, 'value', value);
+    if (this.maskRef) {
+      if (this.maskValue !== value) this.maskValue = value;
+    } else {
+      this._renderer.setProperty(this.element, 'value', value);
+    }
   }
 
   _onAccept () {
