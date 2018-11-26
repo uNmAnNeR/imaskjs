@@ -96,6 +96,7 @@ class HTMLMaskElement extends MaskElement {
 }
 HTMLMaskElement.EVENTS_MAP = {
   selectionChange: 'keydown',
+  onSelect: 'mouseup',
   input: 'input',
   drop: 'drop',
   click: 'click',

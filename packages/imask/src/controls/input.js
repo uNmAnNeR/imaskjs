@@ -125,6 +125,7 @@ class InputMask {
   _bindEvents () {
     this.el.bindEvents({
       selectionChange: this._saveSelection,
+      onSelect: this._saveSelection,
       input: this._onInput,
       drop: this._onDrop,
       click: this.alignCursorFriendly,
