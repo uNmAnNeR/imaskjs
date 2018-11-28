@@ -41,8 +41,8 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   _update (opts: any) {
     super._update(opts);
     // mask could be totally dynamic with only `dispatch` option
-    this.compiledMasks = Array.isArray(opts.mask) ?
-      opts.mask.map(m => createMask(m)) :
+    this.compiledMasks = Array.isArray(this.mask) ?
+      this.mask.map(m => createMask(m)) :
       [];
   }
 

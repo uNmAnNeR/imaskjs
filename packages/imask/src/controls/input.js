@@ -214,11 +214,11 @@ class InputMask {
   updateOptions (opts: {[string]: any}) {
     if (objectIncludes(this.masked, opts)) return;
 
-    opts = {...opts};
+    const { mask, ...restOpts } = opts;
 
-    this.mask = opts.mask;
-    delete opts.mask;
-    this.masked.updateOptions(opts);
+    this.mask = mask;
+    if (Object.keys(restOpts).length) this.masked.updateOptions(restOpts);
+
     this.updateControl();
   }
 
