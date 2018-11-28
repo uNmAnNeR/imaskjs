@@ -217,7 +217,7 @@ class InputMask {
     const { mask, ...restOpts } = opts;
 
     this.mask = mask;
-    if (Object.keys(restOpts).length) this.masked.updateOptions(restOpts);
+    this.masked.updateOptions(restOpts);
 
     this.updateControl();
   }

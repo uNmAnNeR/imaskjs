@@ -10,7 +10,7 @@ class MaskedFunction extends Masked<Function> {
     @param {Object} opts
   */
   _update (opts: MaskedOptions<Function>) {
-    opts.validate = opts.mask;
+    if (opts.mask) opts.validate = opts.mask;
     super._update(opts);
   }
 }

@@ -75,6 +75,7 @@ class Masked<MaskType> {
 
   /** Sets and applies new options */
   updateOptions (opts: {[string]: any}) {
+    if (!Object.keys(opts).length) return;
     this.withValueRefresh(this._update.bind(this, opts));
   }
 

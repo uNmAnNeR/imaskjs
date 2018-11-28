@@ -40,22 +40,24 @@ class MaskedDate extends MaskedPattern {
       delete opts.pattern;
     }
 
-    const blocks = opts.blocks;
-    opts.blocks = Object.assign({}, MaskedDate.GET_DEFAULT_BLOCKS());
-    // adjust year block
-    if (opts.min) opts.blocks.Y.from = opts.min.getFullYear();
-    if (opts.max) opts.blocks.Y.to = opts.max.getFullYear();
-    if (opts.min && opts.max && opts.blocks.Y.from === opts.blocks.Y.to
-    ) {
-      opts.blocks.m.from = opts.min.getMonth() + 1;
-      opts.blocks.m.to = opts.max.getMonth() + 1;
+    if (opts.blocks) {
+      const blocks = opts.blocks;
+      opts.blocks = Object.assign({}, MaskedDate.GET_DEFAULT_BLOCKS());
+      // adjust year block
+      if (opts.min) opts.blocks.Y.from = opts.min.getFullYear();
+      if (opts.max) opts.blocks.Y.to = opts.max.getFullYear();
+      if (opts.min && opts.max && opts.blocks.Y.from === opts.blocks.Y.to
+      ) {
+        opts.blocks.m.from = opts.min.getMonth() + 1;
+        opts.blocks.m.to = opts.max.getMonth() + 1;
 
-      if (opts.blocks.m.from === opts.blocks.m.to) {
-        opts.blocks.d.from = opts.min.getDate();
-        opts.blocks.d.to = opts.max.getDate();
+        if (opts.blocks.m.from === opts.blocks.m.to) {
+          opts.blocks.d.from = opts.min.getDate();
+          opts.blocks.d.to = opts.max.getDate();
+        }
       }
+      Object.assign(opts.blocks, blocks);
     }
-    Object.assign(opts.blocks, blocks);
 
     super._update(opts);
   }
