@@ -61,30 +61,6 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
-  /**
-    @override
-  */
-  _storeBeforeTailState () {
-    super._storeBeforeTailState();
-    if (this.currentMask) this.currentMask._storeBeforeTailState();
-  }
-
-  /**
-    @override
-  */
-  _restoreBeforeTailState () {
-    super._restoreBeforeTailState();
-    if (this.currentMask) this.currentMask._restoreBeforeTailState();
-  }
-
-  /**
-    @override
-  */
-  _resetBeforeTailState () {
-    super._resetBeforeTailState();
-    if (this.currentMask) this.currentMask._resetBeforeTailState();
-  }
-
   _applyDispatch (appended: string='', flags: AppendFlags={}) {
     const prevValueBeforeTail = flags.tail && this._beforeTailState ?
       this._beforeTailState._value :
@@ -113,7 +89,6 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
         const d = this.currentMask.append(insertValue, {raw: true});
         details.tailShift = d.inserted.length - prevValueBeforeTail.length;
 
-        this._storeBeforeTailState();
         if (tailValue) {
           // $FlowFixMe - it's ok, we don't change current mask above
           details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
