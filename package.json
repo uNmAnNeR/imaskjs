@@ -19,7 +19,7 @@
     "coveralls": "^3.0.2",
     "documentation": "^8.1.0",
     "eslint-plugin-flowtype": "^2.50.3",
-    "flow-bin": "^0.83.0",
+    "flow-bin": "^0.89.0",
     "karma": "^3.0.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
