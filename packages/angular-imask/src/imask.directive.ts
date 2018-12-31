@@ -37,6 +37,8 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   onChange: any;
   private viewInitialized;
   private _composing;
+  private _writingValue;
+  private _writing;
 
   @Input() imask;
   @Input() unmask?: boolean|'typed';
@@ -55,6 +57,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     this.complete = new EventEmitter();
     this.viewInitialized = false;
     this._composing = false;
+    this._writing = false;
 
     if (this._compositionMode == null) {
       this._compositionMode = !_isAndroid();
@@ -119,10 +122,21 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     this.complete.complete();
   }
 
+  beginWrite (value: any): void {
+    this._writing = true;
+    this._writingValue = value;
+  }
+
+  endWrite (): any {
+    this._writing = false;
+    return this._writingValue;
+  }
+
   writeValue(value: any) {
     value = value == null ? '' : value;
 
     if (this.maskRef) {
+      this.beginWrite(value);
       if (this.maskValue !== value) this.maskValue = value;
     } else {
       this._renderer.setProperty(this.element, 'value', value);
@@ -130,9 +144,13 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   }
 
   _onAccept () {
-    this.onChange(this.maskValue);
+    const value = this.maskValue;
+    // if value was not changed during writing don't fire events
+    // see https://github.com/uNmAnNeR/imaskjs/issues/136 for details
+    if (this._writing && value === this.endWrite()) return;
+    this.onChange(value);
     this.onTouched();
-    this.accept.emit(this.maskValue);
+    this.accept.emit(value);
   }
 
   _onComplete () {
