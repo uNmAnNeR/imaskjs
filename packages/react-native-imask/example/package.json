@@ -5,7 +5,7 @@
   "devDependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "react-native-scripts": "^2.0.1",
-    "react-test-renderer": "^16.5.2"
+    "react-test-renderer": "^16.7.0"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
@@ -15,9 +15,9 @@
     "ios": "react-native-scripts ios"
   },
   "dependencies": {
-    "expo": "^30.0.1",
-    "react": "^16.5.2",
-    "react-native": "^0.57.2",
+    "expo": "^31.0.6",
+    "react": "^16.7.0",
+    "react-native": "^0.57.8",
     "react-native-imask": "0.0.3"
   }
 }
