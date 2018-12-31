@@ -137,7 +137,14 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
 
     if (this.maskRef) {
       this.beginWrite(value);
-      if (this.maskValue !== value) this.maskValue = value;
+
+      if (this.maskValue !== value ||
+        // handle cases like Number('') === 0,
+        // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
+        (typeof value !== 'string' && this.maskRef.value === '')
+      ) {
+        this.maskValue = value;
+      }
     } else {
       this._renderer.setProperty(this.element, 'value', value);
     }
@@ -146,7 +153,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   _onAccept () {
     const value = this.maskValue;
     // if value was not changed during writing don't fire events
-    // see https://github.com/uNmAnNeR/imaskjs/issues/136 for details
+    // for details see https://github.com/uNmAnNeR/imaskjs/issues/136
     if (this._writing && value === this.endWrite()) return;
     this.onChange(value);
     this.onTouched();

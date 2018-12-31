@@ -86,7 +86,14 @@ function IMaskMixin(ComposedComponent) {
       if (maskOptions.mask) {
         if (this.maskRef) {
           this.maskRef.updateOptions(maskOptions);
-          if ('value' in props && props.value !== this.maskValue) this.maskValue = props.value;
+          if ('value' in props &&
+            (props.value !== this.maskValue ||
+              // handle cases like Number('') === 0,
+              // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
+              (typeof props.value !== 'string' && this.maskRef.value === ''))
+          ) {
+            this.maskValue = props.value;
+          }
         } else {
           this.initMask(maskOptions);
           if (props.value !== this.maskValue) this._onAccept();
@@ -160,7 +167,7 @@ function IMaskMixin(ComposedComponent) {
     }
 
     set maskValue (value) {
-      value = value || '';
+      value = value == null ? '' : value;
       if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
       else if (this.props.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;

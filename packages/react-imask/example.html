@@ -16,7 +16,7 @@
     class App extends React.Component {
       constructor (...args) {
         super(...args);
-        this.state = {mask, value: '123'};
+        this.state = {mask, value: 0};
       }
 
       render () {
@@ -25,7 +25,7 @@
             key: 'maskedinput',
             mask: this.state.mask,
             value: this.state.value,
-            unmask: true,
+            unmask: 'typed',
             lazy: false,
             onAccept: (value, mask) => {
               console.log('accept', value, typeof value, mask);

@@ -21,7 +21,6 @@
       <imask-input
         v-model="numberValue"
         :mask="numberMask"
-        :pad-fractional-zeros="true"
         :unmask="numberUnmask"
         @focus="onFocusNumber"
         @accept="onAcceptNumber"
@@ -56,7 +55,7 @@
 
         numberMask: testNumberMask,
         numberUnmask: 'typed',
-        numberValue: 987
+        numberValue: 0
       },
       methods: {
         onAcceptDate: function (e) {
