@@ -44,8 +44,14 @@ const MASK_PROPS = {
   signed: PropTypes.bool,
   normalizeZeros: PropTypes.bool,
   padFractionalZeros: PropTypes.bool,
-  min: PropTypes.number,
-  max: PropTypes.number,
+  min: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.instanceOf(Date),
+  ]),
+  max: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.instanceOf(Date),
+  ]),
 
   // dynamic
   dispatch: PropTypes.func,
