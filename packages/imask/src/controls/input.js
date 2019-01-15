@@ -194,6 +194,7 @@ class InputMask {
   /** Syncronizes model value from view */
   updateValue () {
     this.masked.value = this.el.value;
+    this._value = this.masked.value;
   }
 
   /** Syncronizes view from model value, fires change events */
