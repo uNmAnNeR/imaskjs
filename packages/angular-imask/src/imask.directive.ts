@@ -35,7 +35,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   maskRef: any;
   onTouched: any;
   onChange: any;
-  private viewInitialized;
+  private _viewInitialized;
   private _composing;
   private _writingValue;
   private _writing;
@@ -55,7 +55,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     this.imaskElement = DEFAULT_IMASK_ELEMENT;
     this.accept = new EventEmitter();
     this.complete = new EventEmitter();
-    this.viewInitialized = false;
+    this._viewInitialized = false;
     this._composing = false;
     this._writing = false;
 
@@ -87,16 +87,15 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   }
 
   ngAfterViewInit() {
-    if (!this.imask) return;
+    if (this.imask) this.initMask();
 
-    this.initMask();
-    this.viewInitialized = true;
+    this._viewInitialized = true;
   }
 
   ngOnChanges(changes) {
     if (changes.elementRef && !this.imaskElement) this.imaskElement = DEFAULT_IMASK_ELEMENT;
 
-    if (!changes.imask || !this.viewInitialized) return;
+    if (!changes.imask || !this._viewInitialized) return;
 
     if (this.imask) {
       if (this.maskRef) this.maskRef.updateOptions(this.imask);
