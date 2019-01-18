@@ -303,7 +303,7 @@ class InputMask {
     // fix strange IE behavior
     if (!this._selection) return this.updateValue();
 
-    const actionDetails = new ActionDetails(
+    const details = new ActionDetails(
       // new state
       this.el.value, this.cursorPos,
       // old state
@@ -312,19 +312,19 @@ class InputMask {
     const oldRawValue = this.masked.rawInputValue;
 
     const offset = this.masked.splice(
-      actionDetails.startChangePos,
-      actionDetails.removed.length,
-      actionDetails.inserted,
-      actionDetails.removeDirection).offset;
+      details.startChangePos,
+      details.removed.length,
+      details.inserted,
+      details.removeDirection).offset;
 
     // force align in remove direction only if no input chars were removed
     // otherwise we still need to align with NONE (to get out from fixed symbols for instance)
     const removeDirection = oldRawValue === this.masked.rawInputValue ?
-      actionDetails.removeDirection :
+      details.removeDirection :
       DIRECTION.NONE;
 
     const cursorPos = this.masked.nearestInputPos(
-      actionDetails.startChangePos + changeDetails.offset,
+      details.startChangePos + offset,
       removeDirection,
     );
 
