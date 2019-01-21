@@ -309,13 +309,24 @@ class InputMask {
       // old state
       this.value, this._selection);
 
+    const oldRawValue = this.masked.rawInputValue;
+
     const offset = this.masked.splice(
       details.startChangePos,
       details.removed.length,
       details.inserted,
       details.removeDirection).offset;
 
-    const cursorPos = this.masked.nearestInputPos(details.startChangePos + offset, details.removeDirection);
+    // force align in remove direction only if no input chars were removed
+    // otherwise we still need to align with NONE (to get out from fixed symbols for instance)
+    const removeDirection = oldRawValue === this.masked.rawInputValue ?
+      details.removeDirection :
+      DIRECTION.NONE;
+
+    const cursorPos = this.masked.nearestInputPos(
+      details.startChangePos + offset,
+      removeDirection,
+    );
 
     this.updateControl();
     this.updateCursor(cursorPos);

@@ -1,5 +1,5 @@
 // @flow
-import {escapeRegExp, indexInDirection, posInDirection, type Direction} from '../core/utils.js';
+import {escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION} from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 import {type TailDetails} from '../core/tail-details.js';
 
@@ -148,6 +148,13 @@ class MaskedNumber extends Masked<Number> {
   /**
     @override
   */
+  extractInput (...args: *): string {
+    return this._removeThousandsSeparators(super.extractInput(...args));
+  }
+
+  /**
+    @override
+  */
   _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
     if (!this.thousandsSeparator) return super._appendCharRaw(ch, flags);
 
@@ -186,10 +193,11 @@ class MaskedNumber extends Masked<Number> {
     @override
   */
   nearestInputPos (cursorPos: number, direction?: Direction): number {
-    if (!direction) return cursorPos;
+    if (!direction || direction === DIRECTION.LEFT) return cursorPos;
 
     const nextPos = indexInDirection(cursorPos, direction);
     if (this.value[nextPos] === this.thousandsSeparator) cursorPos = posInDirection(cursorPos, direction);
+
     return cursorPos;
   }
 
