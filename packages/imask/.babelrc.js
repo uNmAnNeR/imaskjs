@@ -23,6 +23,10 @@ if (process.env.BABEL_ENV === 'es') {
 if (process.env.NODE_ENV === 'test') {
   presetOptions.targets = { node: 'current' };
   delete presetOptions.modules;
+  plugins.push(['istanbul', {
+    exclude: ["test/**/*.js"],
+    include: ["src/**/*.js"],
+  }]);
 }
 
 

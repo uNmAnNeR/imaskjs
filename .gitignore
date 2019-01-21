@@ -3,3 +3,4 @@ coverage/
 dist/
 docs/_site/
 *.log
+.nyc_output
