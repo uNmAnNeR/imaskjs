@@ -1,9 +1,6 @@
 language: node_js
-node_js:
-  - "node"
-cache:
-  directories:
-    - "node_modules"
+node_js: "node"
+cache: npm
 sudo: required
 script: npm run make
 after_success: npm run coverage

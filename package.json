@@ -39,7 +39,7 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap --hoist --nohoist=core-js",
+    "postinstall": "lerna bootstrap --hoist --nohoist=core-js --no-ci",
     "doc": "node ./node_modules/documentation/bin/documentation.js build packages/imask/src/imask.js -f html -o docs/api",
     "lerna": "lerna",
     "flow": "lerna run flow -- check",
