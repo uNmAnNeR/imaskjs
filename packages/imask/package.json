@@ -12,7 +12,7 @@
     "npm": ">=4.0.0"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test mocha -r @babel/register --recursive",
+    "test": "cross-env NODE_ENV=test nyc mocha --recursive",
     "pretest": "flow check",
     "watch": "rollup -c -w",
     "build": "npm run build:dev && npm run build:prod",
@@ -34,13 +34,6 @@
   "files": [
     "dist"
   ],
-  "nyc": {
-    "require": [
-      "@babel/register"
-    ],
-    "sourceMap": false,
-    "instrument": false
-  },
   "devDependencies": {
     "core-js": "^2.5.5"
   }
