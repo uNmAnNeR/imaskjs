@@ -12,16 +12,16 @@
     "npm": ">=4.0.0"
   },
   "scripts": {
-    "test": "karma start --single-run --browsers ChromeHeadless",
+    "test": "cross-env NODE_ENV=test mocha -r @babel/register --recursive",
     "pretest": "flow check",
-    "watch": "rollup -c -w --environment format:umd,env:production",
+    "watch": "rollup -c -w",
     "build": "npm run build:dev && npm run build:prod",
     "build:dev": "npm run build:dev:es && npm run build:dev:umd",
     "build:prod": "npm run build:prod:es && npm run build:prod:umd",
-    "build:dev:es": "rollup -c --environment format:es",
-    "build:dev:umd": "rollup -c --environment format:umd",
-    "build:prod:es": "rollup -c --environment format:es,env:production",
-    "build:prod:umd": "rollup -c --environment format:umd,env:production",
+    "build:dev:es": "cross-env BABEL_ENV=es rollup -c",
+    "build:dev:umd": "rollup -c",
+    "build:prod:es": "cross-env NODE_ENV=production BABEL_ENV=es rollup -c",
+    "build:prod:umd": "cross-env NODE_ENV=production rollup -c",
     "flow": "flow",
     "coveralls": "cat ./coverage/lcov.info | ../../node_modules/coveralls/bin/coveralls.js"
   },

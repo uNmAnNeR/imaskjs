@@ -1,3 +1,5 @@
+import { assert } from 'chai';
+
 import MaskedPattern from '../../../src/masked/pattern';
 
 

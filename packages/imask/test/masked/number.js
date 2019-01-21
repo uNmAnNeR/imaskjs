@@ -1,3 +1,5 @@
+import { assert } from 'chai';
+
 import MaskedNumber from '../../src/masked/number';
 
 

@@ -1,3 +1,6 @@
+import { assert } from 'chai';
+import sinon from 'sinon';
+
 import MaskedPattern from '../../../src/masked/pattern';
 import { DIRECTION } from '../../../src/core/utils.js';
 
