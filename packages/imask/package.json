@@ -23,7 +23,7 @@
     "build:prod:es": "cross-env NODE_ENV=production BABEL_ENV=es rollup -c",
     "build:prod:umd": "cross-env NODE_ENV=production rollup -c",
     "flow": "flow",
-    "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | ../../node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "javascript",
