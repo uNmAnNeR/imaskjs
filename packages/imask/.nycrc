@@ -2,6 +2,12 @@
   "require": [
     "@babel/register"
   ],
+  "include": [
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "test/**/*.js"
+  ],
   "sourceMap": false,
   "instrument": false
 }
