@@ -12,7 +12,7 @@
     "npm": ">=4.0.0"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc mocha --recursive",
+    "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive",
     "pretest": "flow check",
     "watch": "rollup -c -w",
     "build": "npm run build:dev && npm run build:prod",
@@ -23,7 +23,7 @@
     "build:prod:es": "cross-env NODE_ENV=production BABEL_ENV=es rollup -c",
     "build:prod:umd": "cross-env NODE_ENV=production rollup -c",
     "flow": "flow",
-    "coveralls": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | ../../node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "javascript",

@@ -8,6 +8,11 @@
   "exclude": [
     "test/**/*.js"
   ],
-  "sourceMap": false,
-  "instrument": false
+  "reporter": [
+    "text",
+    "text-summary"
+  ],
+  "all": true,
+  "cache": false,
+  "sourceMap": false
 }
