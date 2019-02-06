@@ -63,8 +63,8 @@ function IMaskMixin(ComposedComponent) {
       this.initMask();
     }
 
-    componentWillReceiveProps (nextProps) {
-      const props = {...this.props, ...nextProps};
+    componentDidUpdate () {
+      const props = this.props;
       const maskOptions = this._extractOptionsFromProps(props);
       if (maskOptions.mask) {
         if (this.maskRef) {
@@ -93,8 +93,8 @@ function IMaskMixin(ComposedComponent) {
 
     initMask (maskOptions=this._extractOptionsFromProps({...this.props})) {
       this.maskRef = new IMask(this.element, maskOptions)
-        .on('accept', this._onAccept.bind(this))
-        .on('complete', this._onComplete.bind(this));
+          .on('accept', this._onAccept.bind(this))
+          .on('complete', this._onComplete.bind(this));
 
       this.maskValue = this.props.value;
     }
@@ -106,30 +106,31 @@ function IMaskMixin(ComposedComponent) {
       }
     }
 
-    _extractOptionsFromProps (props) {
-      props = {...props};
+    _extractOptionsFromProps (oldProps) {
+      const newProps = {...oldProps};
 
       // keep only mask props
-      Object.keys(props)
-        .filter(prop => MASK_PROPS_NAMES.indexOf(prop) < 0)
-        .forEach(nonMaskProp => {
-          delete props[nonMaskProp];
-        });
+      Object
+          .keys(newProps)
+          .filter(prop => MASK_PROPS_NAMES.indexOf(prop) < 0)
+          .forEach(nonMaskProp => {
+            delete newProps[nonMaskProp];
+          });
 
-      delete props.value;
-      delete props.unmask;
+      delete newProps.value;
+      delete newProps.unmask;
 
-      return props;
+      return newProps;
     }
 
-    _extractNonMaskProps (props) {
-      props = {...props};
+    _extractNonMaskProps (oldProps) {
+      const newProps = {...oldProps};
 
       MASK_PROPS_NAMES.forEach(maskProp => {
-        delete props[maskProp];
+        delete newProps[maskProp];
       });
 
-      return props;
+      return newProps;
     }
 
     get maskValue () {
