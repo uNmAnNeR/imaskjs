@@ -63,7 +63,7 @@ const MASK_PROPS = {
 const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
 const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'];
 const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
-  NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
+    NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
 );
 
 export
@@ -80,9 +80,10 @@ function IMaskMixin(ComposedComponent) {
       this.initMask();
     }
 
-    componentWillReceiveProps (nextProps) {
-      const props = {...this.props, ...nextProps};
+    componentDidUpdate () {
+      const props = this.props;
       const maskOptions = this._extractMaskOptionsFromProps(props);
+
       if (maskOptions.mask) {
         if (this.maskRef) {
           this.maskRef.updateOptions(maskOptions);
@@ -137,27 +138,27 @@ function IMaskMixin(ComposedComponent) {
     }
 
     _extractMaskOptionsFromProps (props) {
-      props = {...props};
+      const newProps = {...props};
 
       // keep only mask options props
-      Object.keys(props)
-        .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop) < 0)
-        .forEach(nonMaskProp => {
-          delete props[nonMaskProp];
-        });
+      Object
+          .keys(newProps)
+          .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop) < 0)
+          .forEach(nonMaskProp => {
+            delete newProps[nonMaskProp];
+          });
 
-
-      return props;
+      return newProps;
     }
 
     _extractNonMaskProps (props) {
-      props = {...props};
+      const newProps = {...props};
 
       MASK_PROPS_NAMES.forEach(maskProp => {
-        delete props[maskProp];
+        delete newProps[maskProp];
       });
 
-      return props;
+      return newProps;
     }
 
     get maskValue () {
@@ -167,10 +168,11 @@ function IMaskMixin(ComposedComponent) {
     }
 
     set maskValue (value) {
-      value = value == null ? '' : value;
-      if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
-      else if (this.props.unmask) this.maskRef.unmaskedValue = value;
-      else this.maskRef.value = value;
+      const newValue = value == null ? '' : value;
+
+      if (this.props.unmask === 'typed') this.maskRef.typedValue = newValue;
+      else if (this.props.unmask) this.maskRef.unmaskedValue = newValue;
+      else this.maskRef.value = newValue;
     }
 
     _onAccept () {
@@ -181,6 +183,7 @@ function IMaskMixin(ComposedComponent) {
       if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
     }
   };
+
   MaskedComponent.propTypes = MASK_PROPS;
 
   const nestedComponentName = ComposedComponent.displayName || ComposedComponent.name || 'Component';
