@@ -63,9 +63,14 @@ function IMaskMixin(ComposedComponent) {
       this.initMask();
     }
 
+    componentWillUnmount () {
+      this.destroyMask();
+    }
+
     componentDidUpdate () {
       const props = this.props;
       const maskOptions = this._extractOptionsFromProps(props);
+
       if (maskOptions.mask) {
         if (this.maskRef) {
           this.maskRef.updateOptions(maskOptions);
@@ -77,10 +82,6 @@ function IMaskMixin(ComposedComponent) {
         this.destroyMask();
         if ('value' in props) this.element.value = props.value;
       }
-    }
-
-    componentWillUnmount () {
-      this.destroyMask();
     }
 
     render () {
@@ -106,8 +107,8 @@ function IMaskMixin(ComposedComponent) {
       }
     }
 
-    _extractOptionsFromProps (oldProps) {
-      const newProps = {...oldProps};
+    _extractOptionsFromProps (props) {
+      const newProps = {...props};
 
       // keep only mask props
       Object
@@ -123,8 +124,8 @@ function IMaskMixin(ComposedComponent) {
       return newProps;
     }
 
-    _extractNonMaskProps (oldProps) {
-      const newProps = {...oldProps};
+    _extractNonMaskProps (props) {
+      const newProps = {...props};
 
       MASK_PROPS_NAMES.forEach(maskProp => {
         delete newProps[maskProp];
@@ -140,10 +141,11 @@ function IMaskMixin(ComposedComponent) {
     }
 
     set maskValue (value) {
-      value = value || '';
-      if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
-      else if (this.props.unmask) this.maskRef.unmaskedValue = value;
-      else this.maskRef.value = value;
+      const newValue = value || '';
+
+      if (this.props.unmask === 'typed') this.maskRef.typedValue = newValue;
+      else if (this.props.unmask) this.maskRef.unmaskedValue = newValue;
+      else this.maskRef.value = newValue;
     }
 
     _onAccept () {
@@ -154,6 +156,7 @@ function IMaskMixin(ComposedComponent) {
       if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
     }
   };
+
   MaskedComponent.propTypes = MASK_PROPS;
 
   const nestedComponentName = ComposedComponent.displayName || ComposedComponent.name || 'Component';
