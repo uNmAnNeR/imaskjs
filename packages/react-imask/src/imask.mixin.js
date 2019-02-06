@@ -44,19 +44,36 @@ const MASK_PROPS = {
   signed: PropTypes.bool,
   normalizeZeros: PropTypes.bool,
   padFractionalZeros: PropTypes.bool,
-  min: PropTypes.number,
-  max: PropTypes.number,
+  min: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.instanceOf(Date),
+  ]),
+  max: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.instanceOf(Date),
+  ]),
 
   // dynamic
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+
+  // ref
+  inputRef: PropTypes.func
 };
 
 const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
-
+const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'];
+const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
+  NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
+);
 
 export
 function IMaskMixin(ComposedComponent) {
   const MaskedComponent = class extends React.Component {
+    constructor (...args) {
+      super(...args);
+      this._inputRef = this._inputRef.bind(this);
+    }
+
     componentDidMount () {
       if (!this.props.mask) return;
 
@@ -74,9 +91,17 @@ function IMaskMixin(ComposedComponent) {
       if (maskOptions.mask) {
         if (this.maskRef) {
           this.maskRef.updateOptions(maskOptions);
-          if ('value' in props) this.maskValue = props.value;
+          if ('value' in props &&
+            (props.value !== this.maskValue ||
+              // handle cases like Number('') === 0,
+              // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
+              (typeof props.value !== 'string' && this.maskRef.value === ''))
+          ) {
+            this.maskValue = props.value;
+          }
         } else {
           this.initMask(maskOptions);
+          if (props.value !== this.maskValue) this._onAccept();
         }
       } else {
         this.destroyMask();
@@ -84,15 +109,20 @@ function IMaskMixin(ComposedComponent) {
       }
     }
 
+    _inputRef (el) {
+      this.element = el;
+      if (this.props.inputRef) this.props.inputRef(el);
+    }
+
     render () {
       return React.createElement(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
         defaultValue: this.props.value,
-        inputRef: (el) => this.element = el,
+        inputRef: this._inputRef,
       });
     }
 
-    initMask (maskOptions=this._extractOptionsFromProps({...this.props})) {
+    initMask (maskOptions=this._extractMaskOptionsFromProps({...this.props})) {
       this.maskRef = new IMask(this.element, maskOptions)
           .on('accept', this._onAccept.bind(this))
           .on('complete', this._onComplete.bind(this));

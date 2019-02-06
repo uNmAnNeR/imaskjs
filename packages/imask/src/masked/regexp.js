@@ -10,7 +10,7 @@ class MaskedRegExp extends Masked<RegExp> {
     @param {Object} opts
   */
   _update (opts: $Shape<MaskedOptions<RegExp>>) {
-    opts.validate = (value) => value.search(opts.mask) >= 0;
+    if (opts.mask) opts.validate = (value) => value.search(opts.mask) >= 0;
     super._update(opts);
   }
 }

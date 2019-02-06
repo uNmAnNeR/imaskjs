@@ -6,5 +6,6 @@ export
 interface TailDetails {
   /** Tail value as string */
   +value: string;
+  /** Start position */
   stop?: number;
 }

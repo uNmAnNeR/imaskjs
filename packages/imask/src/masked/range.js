@@ -23,6 +23,12 @@ class MaskedRange extends MaskedPattern {
     @override
   */
   _update (opts: any) {  // TODO type
+    opts = {
+      to: this.to || 0,
+      from: this.from || 0,
+      ...opts,
+    };
+
     let maxLength = String(opts.to).length;
     if (opts.maxLength != null) maxLength = Math.max(maxLength, opts.maxLength);
     opts.maxLength = maxLength;

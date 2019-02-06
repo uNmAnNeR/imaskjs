@@ -10,12 +10,14 @@ const IMaskComponent = {
       domProps: {
         value: this.maskRef ? this.maskRef.value : this.value
       },
-      on: this.$listeners,
+      on: {...this.$listeners},
     };
 
     // if there is no mask use default input event
     if (!this.$props.mask) {
       props.on.input = event => this.$emit('input', event.target.value);
+    } else {
+      delete props.on.input;
     }
 
     return createElement('input', props);
@@ -39,18 +41,26 @@ const IMaskComponent = {
 
   watch: {
     '$props': {
-      handler (props, prevProps) {
+      handler (props) {
         const maskOptions = this.maskOptions;
         if (maskOptions.mask) {
           if (this.maskRef) {
             this.maskRef.updateOptions(maskOptions);
-            if (props.value !== prevProps.value) this._updateValue();
+            if ('value' in props &&
+              (props.value !== this._maskValue() ||
+                // handle cases like Number('') === 0,
+                // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
+                (typeof props.value !== 'string' && this.maskRef.value === ''))
+            ) {
+              this._updateValue();
+            }
           } else {
             this._initMask(maskOptions);
+            if (props.value !== this._maskValue()) this._onAccept();
           }
         } else {
           this._destroyMask();
-          if (props.value !== prevProps.value) this._updateValue();
+          if ('value' in props) this.$el.value = props.value;
         }
       },
       deep: true
@@ -81,7 +91,7 @@ const IMaskComponent = {
     },
 
     _updateValue () {
-      const value = this.value || '';
+      const value = this.value == null ? '' : this.value;
       if (this.unmask === 'typed') this.maskRef.typedValue = value;
       else if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;
@@ -144,8 +154,8 @@ const IMaskComponent = {
     signed: Boolean,
     normalizeZeros: Boolean,
     padFractionalZeros: Boolean,
-    min: Number,
-    max: Number,
+    min: [Number, Date],
+    max: [Number, Date],
 
     // dynamic
     dispatch: Function

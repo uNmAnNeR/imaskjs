@@ -35,8 +35,10 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   maskRef: any;
   onTouched: any;
   onChange: any;
-  private viewInitialized;
+  private _viewInitialized;
   private _composing;
+  private _writingValue;
+  private _writing;
 
   @Input() imask;
   @Input() unmask?: boolean|'typed';
@@ -53,8 +55,9 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     this.imaskElement = DEFAULT_IMASK_ELEMENT;
     this.accept = new EventEmitter();
     this.complete = new EventEmitter();
-    this.viewInitialized = false;
+    this._viewInitialized = false;
     this._composing = false;
+    this._writing = false;
 
     if (this._compositionMode == null) {
       this._compositionMode = !_isAndroid();
@@ -84,16 +87,15 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   }
 
   ngAfterViewInit() {
-    if (!this.imask) return;
+    if (this.imask) this.initMask();
 
-    this.initMask();
-    this.viewInitialized = true;
+    this._viewInitialized = true;
   }
 
   ngOnChanges(changes) {
     if (changes.elementRef && !this.imaskElement) this.imaskElement = DEFAULT_IMASK_ELEMENT;
 
-    if (!changes.imask || !this.viewInitialized) return;
+    if (!changes.imask || !this._viewInitialized) return;
 
     if (this.imask) {
       if (this.maskRef) this.maskRef.updateOptions(this.imask);
@@ -119,17 +121,42 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
     this.complete.complete();
   }
 
+  beginWrite (value: any): void {
+    this._writing = true;
+    this._writingValue = value;
+  }
+
+  endWrite (): any {
+    this._writing = false;
+    return this._writingValue;
+  }
+
   writeValue(value: any) {
     value = value == null ? '' : value;
 
-    if (this.maskRef) this.maskValue = value;
-    else this._renderer.setProperty(this.element, 'value', value);
+    if (this.maskRef) {
+      this.beginWrite(value);
+
+      if (this.maskValue !== value ||
+        // handle cases like Number('') === 0,
+        // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
+        (typeof value !== 'string' && this.maskRef.value === '')
+      ) {
+        this.maskValue = value;
+      }
+    } else {
+      this._renderer.setProperty(this.element, 'value', value);
+    }
   }
 
   _onAccept () {
-    this.onChange(this.maskValue);
+    const value = this.maskValue;
+    // if value was not changed during writing don't fire events
+    // for details see https://github.com/uNmAnNeR/imaskjs/issues/136
+    if (this._writing && value === this.endWrite()) return;
+    this.onChange(value);
     this.onTouched();
-    this.accept.emit(this.maskValue);
+    this.accept.emit(value);
   }
 
   _onComplete () {

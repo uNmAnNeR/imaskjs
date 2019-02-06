@@ -42,6 +42,7 @@ export
 function posInDirection (pos: number, direction: Direction): number {
   switch (direction) {
     case DIRECTION.LEFT:
+    case DIRECTION.FORCE_LEFT:
       return --pos;
     case DIRECTION.RIGHT:
     case DIRECTION.FORCE_RIGHT:

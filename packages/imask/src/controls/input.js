@@ -194,6 +194,7 @@ class InputMask {
   /** Syncronizes model value from view */
   updateValue () {
     this.masked.value = this.el.value;
+    this._value = this.masked.value;
   }
 
   /** Syncronizes view from model value, fires change events */
@@ -212,15 +213,12 @@ class InputMask {
 
   /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
   updateOptions (opts: {[string]: any}) {
-    opts = {...opts};
+    if (objectIncludes(this.masked, opts)) return;
 
-    this.mask = opts.mask;
-    delete opts.mask;
+    const { mask, ...restOpts } = opts;
 
-    // check if changed
-    if (!objectIncludes(this.masked, opts)) {
-      this.masked.updateOptions(opts);
-    }
+    this.mask = mask;
+    this.masked.updateOptions(restOpts);
 
     this.updateControl();
   }
@@ -311,13 +309,24 @@ class InputMask {
       // old state
       this.value, this._selection);
 
+    const oldRawValue = this.masked.rawInputValue;
+
     const offset = this.masked.splice(
       details.startChangePos,
       details.removed.length,
       details.inserted,
       details.removeDirection).offset;
 
-    const cursorPos = this.masked.nearestInputPos(details.startChangePos + offset, details.removeDirection);
+    // force align in remove direction only if no input chars were removed
+    // otherwise we still need to align with NONE (to get out from fixed symbols for instance)
+    const removeDirection = oldRawValue === this.masked.rawInputValue ?
+      details.removeDirection :
+      DIRECTION.NONE;
+
+    const cursorPos = this.masked.nearestInputPos(
+      details.startChangePos + offset,
+      removeDirection,
+    );
 
     this.updateControl();
     this.updateCursor(cursorPos);

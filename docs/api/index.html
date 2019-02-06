@@ -563,6 +563,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskedstate'
+                        class='regular pre-open'>
+                        #state
+                      </a></li>
+                      
+                      <li><a
                         href='#maskedreset'
                         class='regular pre-open'>
                         #reset
@@ -788,6 +794,16 @@
               
                 
                 <li><a
+                  href='#stop'
+                  class="">
+                  stop
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#maskedpattern'
                   class=" toggle-sibling">
                   MaskedPattern
@@ -936,6 +952,18 @@
                         href='#maskedpattern_mappostoblock'
                         class='regular pre-open'>
                         #_mapPosToBlock
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskedpattern_blockstartpos'
+                        class='regular pre-open'>
+                        #_blockStartPos
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskedpattern_foreachblocksinrange'
+                        class='regular pre-open'>
+                        #_forEachBlocksInRange
                       </a></li>
                       
                       <li><a
@@ -1295,6 +1323,18 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskednumber_separatorscount'
+                        class='regular pre-open'>
+                        #_separatorsCount
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskednumberextractinput'
+                        class='regular pre-open'>
+                        #extractInput
+                      </a></li>
+                      
+                      <li><a
                         href='#maskednumber_appendcharraw'
                         class='regular pre-open'>
                         #_appendCharRaw
@@ -1548,24 +1588,6 @@
                         href='#maskeddynamic_appendcharraw'
                         class='regular pre-open'>
                         #_appendCharRaw
-                      </a></li>
-                      
-                      <li><a
-                        href='#maskeddynamic_storebeforetailstate'
-                        class='regular pre-open'>
-                        #_storeBeforeTailState
-                      </a></li>
-                      
-                      <li><a
-                        href='#maskeddynamic_restorebeforetailstate'
-                        class='regular pre-open'>
-                        #_restoreBeforeTailState
-                      </a></li>
-                      
-                      <li><a
-                        href='#maskeddynamic_resetbeforetailstate'
-                        class='regular pre-open'>
-                        #_resetBeforeTailState
                       </a></li>
                       
                       <li><a
@@ -1827,6 +1849,12 @@
                         href='#htmlmaskelementunbindevents'
                         class='regular pre-open'>
                         #unbindEvents
+                      </a></li>
+                      
+                      <li><a
+                        href='#htmlmaskelement_toggleeventhandler'
+                        class='regular pre-open'>
+                        #_toggleEventHandler
                       </a></li>
                       
                     </ul>
@@ -5927,6 +5955,59 @@
       </div>
     </div>
   
+    <div class='border-bottom' id='maskedstate'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>state</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Mask state</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>state</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>any</code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='maskedreset'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -7985,6 +8066,54 @@
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='stop'>
+      stop
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Start position</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>stop</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='maskedpattern'>
       MaskedPattern
     </h3>
@@ -9406,6 +9535,148 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code>BlockPosData?</code>
     
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskedpattern_blockstartpos'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_blockStartPos(blockIndex)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>_blockStartPos(blockIndex: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>blockIndex</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskedpattern_foreachblocksinrange'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_forEachBlocksInRange(fromPos, toPos, fn)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>_forEachBlocksInRange(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, fn: function (block: <a href="#patternblock">PatternBlock</a>, blockIndex: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): void)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>fromPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>toPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+            = <code>this.value.length</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>fn</span> <code class='quiet'>(function (block: <a href="#patternblock">PatternBlock</a>, blockIndex: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): void)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
   
 
   
@@ -12183,6 +12454,132 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       </div>
     </div>
   
+    <div class='border-bottom' id='maskednumber_separatorscount'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_separatorsCount(value)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>_separatorsCount(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+            = <code>this._value</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskednumberextractinput'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>extractInput(args)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>extractInput(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>args</span> <code class='quiet'>(...any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='maskednumber_appendcharraw'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -14071,147 +14468,6 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="#changedetails">ChangeDetails</a></code>
     
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskeddynamic_storebeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_storeBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
- 
-  
-    <div class='pre p1 fill-light mt0'>_storeBeforeTailState()</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskeddynamic_restorebeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_restoreBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
- 
-  
-    <div class='pre p1 fill-light mt0'>_restoreBeforeTailState()</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskeddynamic_resetbeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_resetBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
- 
-  
-    <div class='pre p1 fill-light mt0'>_resetBeforeTailState()</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
   
 
   
@@ -16294,6 +16550,79 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='htmlmaskelement_toggleeventhandler'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_toggleEventHandler(event, handler)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>_toggleEventHandler(event: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, handler: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>): void</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>event</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>handler</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>void</code>
+    
   
 
   

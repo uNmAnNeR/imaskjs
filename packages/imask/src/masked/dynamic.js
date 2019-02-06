@@ -40,10 +40,12 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   */
   _update (opts: any) {
     super._update(opts);
-    // mask could be totally dynamic with only `dispatch` option
-    this.compiledMasks = Array.isArray(opts.mask) ?
-      opts.mask.map(m => createMask(m)) :
-      [];
+    if ('mask' in opts) {
+      // mask could be totally dynamic with only `dispatch` option
+      this.compiledMasks = Array.isArray(opts.mask) ?
+        opts.mask.map(m => createMask(m)) :
+        [];
+    }
   }
 
   /**
@@ -59,30 +61,6 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
-  /**
-    @override
-  */
-  _storeBeforeTailState () {
-    super._storeBeforeTailState();
-    if (this.currentMask) this.currentMask._storeBeforeTailState();
-  }
-
-  /**
-    @override
-  */
-  _restoreBeforeTailState () {
-    super._restoreBeforeTailState();
-    if (this.currentMask) this.currentMask._restoreBeforeTailState();
-  }
-
-  /**
-    @override
-  */
-  _resetBeforeTailState () {
-    super._resetBeforeTailState();
-    if (this.currentMask) this.currentMask._resetBeforeTailState();
-  }
-
   _applyDispatch (appended: string='', flags: AppendFlags={}) {
     const prevValueBeforeTail = flags.tail && this._beforeTailState ?
       this._beforeTailState._value :
@@ -96,22 +74,30 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     const prevMask = this.currentMask;
     const details = new ChangeDetails();
 
-    // dispatch SHOULD NOT modify mask
+    const prevMaskState = prevMask && prevMask.state;
+    const prevMaskBeforeTailState = prevMask && prevMask._beforeTailState;
+
     this.currentMask = this.doDispatch(appended, flags);
 
     // restore state after dispatch
-    if (this.currentMask && this.currentMask !== prevMask) {
-      // if mask changed reapply input
-      this.currentMask.reset();
+    if (this.currentMask) {
+      if (this.currentMask !== prevMask) {
+        // if mask changed reapply input
+        this.currentMask.reset();
 
-      // $FlowFixMe - it's ok, we don't change current mask above
-      const d = this.currentMask.append(insertValue, {raw: true});
-      details.tailShift = d.inserted.length - prevValueBeforeTail.length;
-
-      this._storeBeforeTailState();
-      if (tailValue) {
         // $FlowFixMe - it's ok, we don't change current mask above
-        details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
+        const d = this.currentMask.append(insertValue, {raw: true});
+        details.tailShift = d.inserted.length - prevValueBeforeTail.length;
+
+        if (tailValue) {
+          // $FlowFixMe - it's ok, we don't change current mask above
+          details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
+        }
+      } else {
+        // Dispatch can do something bad with state, so
+        // restore prev mask state
+        this.currentMask.state = prevMaskState;
+        this.currentMask._beforeTailState = prevMaskBeforeTailState;
       }
     }
 
@@ -119,6 +105,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   }
 
   /**
+    @override
   */
   doDispatch(appended: string, flags: AppendFlags={}) {
     return this.dispatch(appended, this, flags);
@@ -269,13 +256,9 @@ MaskedDynamic.DEFAULTS = {
 
     // simulate input
     const inputs = masked.compiledMasks.map((m, index) => {
-      const mState = m.state;
-
       m.rawInputValue = inputValue;
       m.append(appended, flags);
       const weight = m.rawInputValue.length;
-
-      m.state = mState;
 
       return {weight, index};
     });

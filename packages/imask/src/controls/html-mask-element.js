@@ -81,6 +81,7 @@ class HTMLMaskElement extends MaskElement {
       .forEach(event => this._toggleEventHandler(event));
   }
 
+  /** */
   _toggleEventHandler (event: string, handler?: Function): void {
     if (this._handlers[event]) {
       this.input.removeEventListener(event, this._handlers[event]);
