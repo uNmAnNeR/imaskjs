@@ -63,7 +63,7 @@ const MASK_PROPS = {
 const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
 const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'];
 const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
-    NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
+  NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
 );
 
 export
@@ -83,7 +83,6 @@ function IMaskMixin(ComposedComponent) {
     componentDidUpdate () {
       const props = this.props;
       const maskOptions = this._extractMaskOptionsFromProps(props);
-
       if (maskOptions.mask) {
         if (this.maskRef) {
           this.maskRef.updateOptions(maskOptions);
@@ -138,27 +137,26 @@ function IMaskMixin(ComposedComponent) {
     }
 
     _extractMaskOptionsFromProps (props) {
-      const newProps = {...props};
+      props = {...props};
 
       // keep only mask options props
-      Object
-          .keys(newProps)
-          .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop) < 0)
-          .forEach(nonMaskProp => {
-            delete newProps[nonMaskProp];
-          });
+      Object.keys(props)
+        .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop) < 0)
+        .forEach(nonMaskProp => {
+          delete props[nonMaskProp];
+        });
 
-      return newProps;
+      return props;
     }
 
     _extractNonMaskProps (props) {
-      const newProps = {...props};
+      props = {...props};
 
       MASK_PROPS_NAMES.forEach(maskProp => {
-        delete newProps[maskProp];
+        delete props[maskProp];
       });
 
-      return newProps;
+      return props;
     }
 
     get maskValue () {
@@ -168,11 +166,10 @@ function IMaskMixin(ComposedComponent) {
     }
 
     set maskValue (value) {
-      const newValue = value == null ? '' : value;
-
-      if (this.props.unmask === 'typed') this.maskRef.typedValue = newValue;
-      else if (this.props.unmask) this.maskRef.unmaskedValue = newValue;
-      else this.maskRef.value = newValue;
+      value = value == null ? '' : value;
+      if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
+      else if (this.props.unmask) this.maskRef.unmaskedValue = value;
+      else this.maskRef.value = value;
     }
 
     _onAccept () {
