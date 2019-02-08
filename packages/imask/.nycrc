@@ -1,0 +1,18 @@
+{
+  "require": [
+    "@babel/register"
+  ],
+  "include": [
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "test/**/*.js"
+  ],
+  "reporter": [
+    "text",
+    "text-summary"
+  ],
+  "all": true,
+  "cache": false,
+  "sourceMap": false
+}

@@ -1,3 +1,5 @@
+import { assert } from 'chai';
+
 import IMask from '../../src/imask';
 import InputMask from '../../src/controls/input';
 import MaskElementStub from './mask-element-stub';
@@ -9,7 +11,6 @@ describe('InputMask', function () {
   });
 
   beforeEach(function () {
-    window.IMask = IMask;
     imask.mask = '';
     imask.unmaskedValue = '';
   });

@@ -1,5 +1,7 @@
+import { assert } from 'chai';
+
 import MaskedPattern from '../../../src/masked/pattern';
-import {DIRECTION} from '../../../src/core/utils';
+import { DIRECTION } from '../../../src/core/utils';
 
 
 describe('Align LEFT', function () {

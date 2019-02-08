@@ -5,9 +5,9 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 
 
-const isProd = process.env.env === 'production';
+const isProd = process.env.NODE_ENV === 'production';
+const format = process.env.BABEL_ENV || 'umd';
 
-const format = process.env.format || 'umd';
 const isES = format === 'es';
 const file = 'dist/imask' +
   (format !== 'umd' ? '.' + format : '') +
@@ -15,35 +15,6 @@ const file = 'dist/imask' +
   '.js';
 
 const input = isES ? 'src/imask.js' : 'src/imask.shim.js';
-
-const babelConf = isES ? {
-  presets: [
-    ['@babel/preset-env', {
-      modules: false,
-      useBuiltIns: 'entry',
-      targets: {
-        browsers: [
-          'Chrome >= 60',
-          'Safari >= 10.1',
-          'iOS >= 10.3',
-          'Firefox >= 54',
-          'Edge >= 15',
-        ],
-      },
-    }],
-    '@babel/preset-flow',
-  ],
-} : {
-  presets: [
-    ['@babel/preset-env', {
-      'modules': false,
-      'useBuiltIns': 'entry'
-    }],
-    '@babel/preset-flow',
-  ],
-  exclude: 'node_modules/**',
-  plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/plugin-transform-object-assign']
-};
 
 
 export default {
@@ -57,7 +28,7 @@ export default {
   plugins: [
     eslint({configFile: '../../.eslintrc'}),
     resolve(),
-    babel(babelConf),
+    babel(),
     !isES && commonjs(),
     isProd && terser()
   ]
