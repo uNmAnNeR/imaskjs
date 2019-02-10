@@ -227,21 +227,24 @@ class MaskedNumber extends Masked<Number> {
     @override
   */
   doCommit () {
-    const number = this.number;
-    let validnum = number;
+    if (this.value) {
+      const number = this.number;
+      let validnum = number;
 
-    // check bounds
-    if (this.min != null) validnum = Math.max(validnum, this.min);
-    if (this.max != null) validnum = Math.min(validnum, this.max);
+      // check bounds
+      if (this.min != null) validnum = Math.max(validnum, this.min);
+      if (this.max != null) validnum = Math.min(validnum, this.max);
 
-    if (validnum !== number) this.unmaskedValue = String(validnum);
+      if (validnum !== number) this.unmaskedValue = String(validnum);
 
-    let formatted = this.value;
+      let formatted = this.value;
 
-    if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
-    if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
+      if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
+      if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
-    this._value = this._insertThousandsSeparators(formatted);
+      this._value = this._insertThousandsSeparators(formatted);
+    }
+
     super.doCommit();
   }
 
