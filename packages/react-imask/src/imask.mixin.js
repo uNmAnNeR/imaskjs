@@ -80,8 +80,8 @@ function IMaskMixin(ComposedComponent) {
       this.initMask();
     }
 
-    componentWillReceiveProps (nextProps) {
-      const props = {...this.props, ...nextProps};
+    componentDidUpdate () {
+      const props = this.props;
       const maskOptions = this._extractMaskOptionsFromProps(props);
       if (maskOptions.mask) {
         if (this.maskRef) {
@@ -146,7 +146,6 @@ function IMaskMixin(ComposedComponent) {
           delete props[nonMaskProp];
         });
 
-
       return props;
     }
 
@@ -181,6 +180,7 @@ function IMaskMixin(ComposedComponent) {
       if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
     }
   };
+
   MaskedComponent.propTypes = MASK_PROPS;
 
   const nestedComponentName = ComposedComponent.displayName || ComposedComponent.name || 'Component';
