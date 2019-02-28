@@ -35,6 +35,6 @@
     "dist"
   ],
   "devDependencies": {
-    "core-js": "^2.5.5"
+    "core-js": "^2.6.5"
   }
 }
