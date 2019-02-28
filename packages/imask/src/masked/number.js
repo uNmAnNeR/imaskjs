@@ -78,13 +78,11 @@ class MaskedNumber extends Masked<Number> {
     // use different regexp to process user input (more strict, input suffix) and tail shifting
     const start = '^'
 
-    let midInput = '';
+    let midInput = '(0|([1-9]+\\d*))?';
     let mid = '';
     if (this.allowNegative) {
-      midInput += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
+      midInput = '[+|\\-]?' + midInput;
       mid += '[+|\\-]?';
-    } else {
-      midInput += '(0|([1-9]+\\d*))';
     }
     mid += '\\d*';
 
