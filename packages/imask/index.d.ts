@@ -12,11 +12,23 @@ export class MaskElement {
     unbindEvents(): void;
 }
 
-export type Element = MaskElement | HTMLInputElement | HTMLTextAreaElement;
-
 interface MaskOptions {
-    [key: string]: any;
+    mask: string | String | RegExp | Function | Class<Number> | Class<Date> | any[];
+    prepare?: (value: string, masked: any) => string;
+    validate?: (value: string, masked: any) => boolean;
+    commit?: (value: string, masked: any) => void;
+    scale: number;
+    signed: boolean;
+    thousandsSeparator: string;
+    padFractionalZeros: boolean;
+    normalizeZeros: boolean;
+    radix: string;
+    mapToRadix: string[];
+    min: number;
+    max: number;
 }
+
+export type Element = MaskElement | HTMLInputElement | HTMLTextAreaElement;
 
 export class InputMask {
     el: MaskElement;
@@ -41,17 +53,17 @@ export class InputMask {
     get cursorPos(): number;
     set cursorPos(pos: number);
 
-    updateValue();
-    updateControl();
-    updateOptions(opts: MaskOptions);
-    updateCursor(cursorPos: number);
-    alignCursor();
-    alignCursorFriendly();
+    updateValue(): void;
+    updateControl(): void;
+    updateOptions(opts: MaskOptions): void;
+    updateCursor(cursorPos: number): void;
+    alignCursor(): void;
+    alignCursorFriendly(): void;
 
     on(ev: string, handler: Function): this;
-    off(ev: string, handler: Function): undefined | this;
+    off(ev: string, handler: Function): this;
 
-    destroy();
+    destroy(): void;
 }
 
 export default class IMask extends InputMask {
