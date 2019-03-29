@@ -286,10 +286,10 @@ class InputMask {
 
   /** Removes custom event listener */
   off (ev: string, handler: Function) {
-    if (!this._listeners[ev]) return;
+    if (!this._listeners[ev]) return this;
     if (!handler) {
       delete this._listeners[ev];
-      return;
+      return this;
     }
     const hIndex = this._listeners[ev].indexOf(handler);
     if (hIndex >= 0) this._listeners[ev].splice(hIndex, 1);

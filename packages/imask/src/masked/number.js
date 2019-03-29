@@ -3,7 +3,7 @@ import {escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTIO
 import ChangeDetails from '../core/change-details.js';
 import {type TailDetails} from '../core/tail-details.js';
 
-import Masked, {type MaskedOptions, type AppendFlags} from './base.js';
+import Masked, {type MaskedOptions, type ExtractFlags, type AppendFlags} from './base.js';
 
 
 type MaskedNumberOptions = {
@@ -76,17 +76,9 @@ class MaskedNumber extends Masked<Number> {
   /** */
   _updateRegExps () {
     // use different regexp to process user input (more strict, input suffix) and tail shifting
-    const start = '^'
-
-    let midInput = '';
-    let mid = '';
-    if (this.allowNegative) {
-      midInput += '([+|\\-]?|([+|\\-]?(0|([1-9]+\\d*))))';
-      mid += '[+|\\-]?';
-    } else {
-      midInput += '(0|([1-9]+\\d*))';
-    }
-    mid += '\\d*';
+    let start = '^' + (this.allowNegative ? '[+|\\-]?' : '');
+    let midInput = '(0|([1-9]+\\d*))?';
+    let mid = '\\d*';
 
     let end = (this.scale ?
       '(' + escapeRegExp(this.radix) + '\\d{0,' + this.scale + '})?' :
@@ -134,22 +126,31 @@ class MaskedNumber extends Masked<Number> {
   }
 
   /** */
-  _separatorsCount (value: string=this._value) {
-    let rawValueLength = this._removeThousandsSeparators(value).length;
+  _separatorsCount (to: number, extendOnSeparators: boolean=false): number {
+    let count = 0;
 
-    let valueWithSeparatorsLength = rawValueLength;
-    for (let pos = 0; pos <= valueWithSeparatorsLength; ++pos) {
-      if (this._value[pos] === this.thousandsSeparator) ++valueWithSeparatorsLength;
+    for (let pos = 0; pos < to; ++pos) {
+      if (this._value.indexOf(this.thousandsSeparator, pos) === pos) {
+        ++count;
+        if (extendOnSeparators) to += this.thousandsSeparator.length;
+      }
     }
 
-    return valueWithSeparatorsLength - rawValueLength;
+    return count;
+  }
+
+  /** */
+  _separatorsCountFromSlice (slice: string=this._value): number {
+    return this._separatorsCount(this._removeThousandsSeparators(slice).length, true);
   }
 
   /**
     @override
   */
-  extractInput (...args: *): string {
-    return this._removeThousandsSeparators(super.extractInput(...args));
+  extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
+    [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
+
+    return this._removeThousandsSeparators(super.extractInput(fromPos, toPos, flags));
   }
 
   /**
@@ -158,34 +159,57 @@ class MaskedNumber extends Masked<Number> {
   _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
     if (!this.thousandsSeparator) return super._appendCharRaw(ch, flags);
 
-    const previousBeforeTailSeparatorsCount = this._separatorsCount(flags.tail && this._beforeTailState ?
+    const prevBeforeTailSeparatorsCount = this._separatorsCountFromSlice(flags.tail && this._beforeTailState ?
       this._beforeTailState._value :
       this._value);
     this._value = this._removeThousandsSeparators(this.value);
+
     const appendDetails = super._appendCharRaw(ch, flags);
 
     this._value = this._insertThousandsSeparators(this._value);
-    const beforeTailSeparatorsCount = this._separatorsCount(flags.tail && this._beforeTailState ?
+    const beforeTailSeparatorsCount = this._separatorsCountFromSlice(flags.tail && this._beforeTailState ?
       this._beforeTailState._value :
       this._value);
 
-    appendDetails.tailShift += beforeTailSeparatorsCount - previousBeforeTailSeparatorsCount;
+    appendDetails.tailShift += (beforeTailSeparatorsCount - prevBeforeTailSeparatorsCount) * this.thousandsSeparator.length;
     return appendDetails;
+  }
+
+  /** */
+  _findSeparatorAround (pos: number): number {
+    if (this.thousandsSeparator) {
+      const searchFrom = pos - this.thousandsSeparator.length + 1;
+      const separatorPos = this.value.indexOf(this.thousandsSeparator, searchFrom);
+      if (separatorPos <= pos) return separatorPos;
+    }
+
+    return -1;
+  }
+
+  _adjustRangeWithSeparators (from: number, to: number): [number, number] {
+    const separatorAroundFromPos = this._findSeparatorAround(from);
+    if (separatorAroundFromPos >= 0) from = separatorAroundFromPos;
+
+    const separatorAroundToPos = this._findSeparatorAround(to);
+    if (separatorAroundToPos >= 0) to = separatorAroundToPos + this.thousandsSeparator.length;
+    return [from, to];
   }
 
   /**
     @override
   */
   remove (fromPos?: number=0, toPos?: number=this.value.length): ChangeDetails {
+    [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
+
     const valueBeforePos = this.value.slice(0, fromPos);
     const valueAfterPos = this.value.slice(toPos);
 
-    const previousBeforeTailSeparatorsCount = this._separatorsCount(valueBeforePos);
+    const prevBeforeTailSeparatorsCount = this._separatorsCount(valueBeforePos.length);
     this._value = this._insertThousandsSeparators(this._removeThousandsSeparators(valueBeforePos + valueAfterPos));
-    const beforeTailSeparatorsCount = this._separatorsCount(valueBeforePos);
+    const beforeTailSeparatorsCount = this._separatorsCountFromSlice(valueBeforePos);
 
     return new ChangeDetails({
-      tailShift: beforeTailSeparatorsCount - previousBeforeTailSeparatorsCount,
+      tailShift: (beforeTailSeparatorsCount - prevBeforeTailSeparatorsCount) * this.thousandsSeparator.length,
     });
   }
 
@@ -193,10 +217,32 @@ class MaskedNumber extends Masked<Number> {
     @override
   */
   nearestInputPos (cursorPos: number, direction?: Direction): number {
-    if (!direction || direction === DIRECTION.LEFT) return cursorPos;
+    if (!this.thousandsSeparator) return cursorPos;
 
-    const nextPos = indexInDirection(cursorPos, direction);
-    if (this.value[nextPos] === this.thousandsSeparator) cursorPos = posInDirection(cursorPos, direction);
+    switch (direction) {
+      case DIRECTION.NONE:
+      case DIRECTION.LEFT:
+      case DIRECTION.FORCE_LEFT: {
+        const separatorAtLeftPos = this._findSeparatorAround(cursorPos - 1);
+        if (separatorAtLeftPos >= 0) {
+          const separatorAtLeftEndPos = separatorAtLeftPos + this.thousandsSeparator.length;
+          if (cursorPos < separatorAtLeftEndPos ||
+            this.value.length <= separatorAtLeftEndPos ||
+            direction === DIRECTION.FORCE_LEFT
+          ) {
+            return separatorAtLeftPos;
+          }
+        }
+        break;
+      }
+      case DIRECTION.RIGHT:
+      case DIRECTION.FORCE_RIGHT: {
+        const separatorAtRightPos = this._findSeparatorAround(cursorPos);
+        if (separatorAtRightPos >= 0) {
+          return separatorAtRightPos + this.thousandsSeparator.length;
+        }
+      }
+    }
 
     return cursorPos;
   }
@@ -227,21 +273,24 @@ class MaskedNumber extends Masked<Number> {
     @override
   */
   doCommit () {
-    const number = this.number;
-    let validnum = number;
+    if (this.value) {
+      const number = this.number;
+      let validnum = number;
 
-    // check bounds
-    if (this.min != null) validnum = Math.max(validnum, this.min);
-    if (this.max != null) validnum = Math.min(validnum, this.max);
+      // check bounds
+      if (this.min != null) validnum = Math.max(validnum, this.min);
+      if (this.max != null) validnum = Math.min(validnum, this.max);
 
-    if (validnum !== number) this.unmaskedValue = String(validnum);
+      if (validnum !== number) this.unmaskedValue = String(validnum);
 
-    let formatted = this.value;
+      let formatted = this.value;
 
-    if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
-    if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
+      if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
+      if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
 
-    this._value = this._insertThousandsSeparators(formatted);
+      this._value = this._insertThousandsSeparators(formatted);
+    }
+
     super.doCommit();
   }
 
