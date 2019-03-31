@@ -29,10 +29,11 @@ if (process.env.NODE_ENV === 'test') {
   }]);
 }
 
-
 module.exports = {
   presets: [
     ["@babel/preset-env", presetOptions],
     "@babel/preset-flow"
   ],
+  plugins,
+  exclude,
 };
