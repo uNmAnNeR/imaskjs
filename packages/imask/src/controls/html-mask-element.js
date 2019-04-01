@@ -100,5 +100,5 @@ HTMLMaskElement.EVENTS_MAP = {
   drop: 'drop',
   click: 'click',
   focus: 'focus',
-  commit: 'change',
+  commit: 'blur',
 };
