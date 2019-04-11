@@ -1,7 +1,8 @@
 // @flow
 import ChangeDetails from '../core/change-details.js';
 import {type Direction, DIRECTION} from '../core/utils.js';
-import {type TailDetails} from '../core/tail-details.js';
+import { type TailDetails } from '../core/tail-details.js';
+import ContinuousTailDetails from '../core/continuous-tail-details.js';
 
 
 /** Supported mask type */
@@ -115,7 +116,7 @@ class Masked<MaskType> {
   /** Resolve new value */
   resolve (value: string): string {
     this.reset();
-    this.append(value, {input: true}, {value: ''});
+    this.append(value, {input: true}, new ContinuousTailDetails(''));
     this.doCommit();
     return this.value;
   }
@@ -127,7 +128,7 @@ class Masked<MaskType> {
 
   set unmaskedValue (value: string) {
     this.reset();
-    this.append(value, {}, {value: ''});
+    this.append(value, {}, new ContinuousTailDetails(''));
     this.doCommit();
   }
 
@@ -147,7 +148,7 @@ class Masked<MaskType> {
 
   set rawInputValue (value: string) {
     this.reset();
-    this.append(value, {raw: true}, {value: ''});
+    this.append(value, {raw: true}, new ContinuousTailDetails(''));
     this.doCommit();
   }
 
@@ -168,9 +169,7 @@ class Masked<MaskType> {
 
   /** Extracts tail in range */
   extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
-    return {
-      value: this.extractInput(fromPos, toPos),
-    };
+    return new ContinuousTailDetails(this.extractInput(fromPos, toPos), fromPos);
   }
 
   /** Stores state before tail */
@@ -189,8 +188,9 @@ class Masked<MaskType> {
   }
 
   /** Appends tail */
-  appendTail (tail?: TailDetails): ChangeDetails {
-    return this.append(tail ? tail.value: '', {tail: true});
+  appendTail (tail: TailDetails): ChangeDetails {
+    // TODO move to TailDetails
+    return this.append(tail.value, {tail: true});
   }
 
   /** Appends char */
@@ -236,7 +236,6 @@ class Masked<MaskType> {
 
   /** Appends symbols considering flags */
   append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails {
-    const oldValueLength = this.value.length;
     const details = new ChangeDetails();
 
     for (let ci=0; ci<str.length; ++ci) {

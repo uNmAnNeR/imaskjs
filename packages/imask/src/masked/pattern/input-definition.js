@@ -108,6 +108,10 @@ class PatternInputDefinition implements PatternBlock {
     return details;
   }
 
+  append (...args: *): ChangeDetails {
+    return this.masked.append(...args);
+  }
+
   _appendPlaceholder (): ChangeDetails {
     const details = new ChangeDetails();
 
@@ -122,8 +126,9 @@ class PatternInputDefinition implements PatternBlock {
     return this.masked.extractTail(...args);
   }
 
-  appendTail (...args: *): ChangeDetails {
-    return this.masked.appendTail(...args);
+  appendTail (tail: TailDetails): ChangeDetails {
+    // TODO tail append?
+    return this.masked.appendTail(tail);
   }
 
   extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {

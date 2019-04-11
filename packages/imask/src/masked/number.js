@@ -1,7 +1,6 @@
 // @flow
 import {escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION} from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
-import {type TailDetails} from '../core/tail-details.js';
 
 import Masked, {type MaskedOptions, type ExtractFlags, type AppendFlags} from './base.js';
 
@@ -90,19 +89,6 @@ class MaskedNumber extends Masked<Number> {
       this.mapToRadix.map(escapeRegExp).join('') +
     ']', 'g');
     this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
-  }
-
-  /**
-    @override
-  */
-  extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
-    const tail = super.extractTail(fromPos, toPos);
-
-    // $FlowFixMe no ideas
-    return {
-      ...tail,
-      value: this._removeThousandsSeparators(tail.value),
-    };
   }
 
   /** */

@@ -2,6 +2,7 @@
 import ChangeDetails from '../../core/change-details.js';
 import {DIRECTION, type Direction} from '../../core/utils.js';
 import {type TailDetails} from '../../core/tail-details.js';
+import ContinuousTailDetails from '../../core/continuous-tail-details.js';
 import {type ExtractFlags, type AppendFlags, type MaskedState} from '../base.js';
 import {type PatternBlock} from './block.js';
 
@@ -76,7 +77,7 @@ class PatternFixedDefinition implements PatternBlock {
     return true;
   }
 
-  _appendChar (str: string, flags: AppendFlags) {
+  _appendChar (str: string, flags?: AppendFlags={}) {
     const details = new ChangeDetails();
 
     if (this._value) return details;
@@ -99,13 +100,22 @@ class PatternFixedDefinition implements PatternBlock {
   }
 
   extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
-    return {
-      value: '',
-    };
+    return new ContinuousTailDetails('');
   }
 
-  appendTail (tail?: TailDetails): ChangeDetails {
-    return this._appendChar(tail ? tail.value: '', {tail: true});
+  appendTail (tail: TailDetails): ChangeDetails {
+    // TODO use TailDetails append?
+    return this.append(tail.value, {tail: true});
+  }
+
+  append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails {
+    const details = this._appendChar(str, flags);
+
+    if (tail != null) {
+      details.tailShift += this.appendTail(tail).tailShift;
+    }
+
+    return details;
   }
 
   doCommit () {}
