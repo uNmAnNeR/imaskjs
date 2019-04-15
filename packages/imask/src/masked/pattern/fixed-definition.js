@@ -1,10 +1,10 @@
 // @flow
 import ChangeDetails from '../../core/change-details.js';
-import {DIRECTION, type Direction} from '../../core/utils.js';
-import {type TailDetails} from '../../core/tail-details.js';
+import { DIRECTION, type Direction, isString } from '../../core/utils.js';
+import { type TailDetails } from '../../core/tail-details.js';
 import ContinuousTailDetails from '../../core/continuous-tail-details.js';
-import {type ExtractFlags, type AppendFlags, type MaskedState} from '../base.js';
-import {type PatternBlock} from './block.js';
+import { type ExtractFlags, type AppendFlags, type MaskedState } from '../base.js';
+import { type PatternBlock } from './block.js';
 
 
 /** */
@@ -103,9 +103,11 @@ class PatternFixedDefinition implements PatternBlock {
     return new ContinuousTailDetails('');
   }
 
-  appendTail (tail: TailDetails): ChangeDetails {
-    // TODO use TailDetails append?
-    return this.append(tail.value, {tail: true});
+  // $FlowFixMe no ideas
+  appendTail (tail: string | TailDetails): ChangeDetails {
+    if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
+
+    return tail.appendTo(this);
   }
 
   append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails {

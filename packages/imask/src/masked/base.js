@@ -1,8 +1,8 @@
 // @flow
 import ChangeDetails from '../core/change-details.js';
-import {type Direction, DIRECTION} from '../core/utils.js';
-import { type TailDetails } from '../core/tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
+import { type Direction, DIRECTION, isString } from '../core/utils.js';
+import { type TailDetails } from '../core/tail-details.js';
 
 
 /** Supported mask type */
@@ -54,7 +54,7 @@ class Masked<MaskType> {
 
   /** @type {Mask} */
   mask: MaskType;
-  /** */ // $FlowFixMe TODO no ideas
+  /** */ // $FlowFixMe no ideas
   parent: ?Masked<*>;
   /** Transforms value before mask processing */
   prepare: (string, Masked<MaskType>, AppendFlags) => string;
@@ -116,7 +116,7 @@ class Masked<MaskType> {
   /** Resolve new value */
   resolve (value: string): string {
     this.reset();
-    this.append(value, {input: true}, new ContinuousTailDetails(''));
+    this.append(value, {input: true}, '');
     this.doCommit();
     return this.value;
   }
@@ -128,7 +128,7 @@ class Masked<MaskType> {
 
   set unmaskedValue (value: string) {
     this.reset();
-    this.append(value, {}, new ContinuousTailDetails(''));
+    this.append(value, {}, '');
     this.doCommit();
   }
 
@@ -148,7 +148,7 @@ class Masked<MaskType> {
 
   set rawInputValue (value: string) {
     this.reset();
-    this.append(value, {raw: true}, new ContinuousTailDetails(''));
+    this.append(value, {raw: true}, '');
     this.doCommit();
   }
 
@@ -188,9 +188,11 @@ class Masked<MaskType> {
   }
 
   /** Appends tail */
-  appendTail (tail: TailDetails): ChangeDetails {
-    // TODO move to TailDetails
-    return this.append(tail.value, {tail: true});
+  // $FlowFixMe no ideas
+  appendTail (tail: string | TailDetails): ChangeDetails {
+    if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
+
+    return tail.appendTo(this);
   }
 
   /** Appends char */
@@ -203,7 +205,7 @@ class Masked<MaskType> {
   }
 
   /** Appends char */
-  _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
+  _appendChar (ch: string, flags: AppendFlags={}, checkTail?: string | TailDetails): ChangeDetails {
     ch = this.doPrepare(ch, flags);
     if (!ch) return new ChangeDetails();
 
@@ -219,7 +221,7 @@ class Masked<MaskType> {
 
         const tailDetails = this.appendTail(checkTail);
 
-        appended = tailDetails.rawInserted === checkTail.value;
+        appended = tailDetails.rawInserted === checkTail.toString();
 
         // if ok, rollback state after tail
         if (appended && tailDetails.inserted) this._restoreBeforeTailState();
@@ -235,7 +237,7 @@ class Masked<MaskType> {
   }
 
   /** Appends symbols considering flags */
-  append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails {
+  append (str: string, flags?: AppendFlags, tail?: string | TailDetails): ChangeDetails {
     const details = new ChangeDetails();
 
     for (let ci=0; ci<str.length; ++ci) {

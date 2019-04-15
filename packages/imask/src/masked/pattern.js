@@ -4,8 +4,8 @@ import ChangeDetails from '../core/change-details.js';
 import Masked, {type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState} from './base.js';
 import PatternInputDefinition, {DEFAULT_INPUT_DEFINITIONS, type Definitions} from './pattern/input-definition.js';
 import PatternFixedDefinition from './pattern/fixed-definition.js';
-import {ChunksTailDetails, type TailInputChunk} from './pattern/chunk-tail-details.js';
 import { type TailDetails } from '../core/tail-details.js';
+import ChunksTailDetails from './pattern/chunk-tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import {type PatternBlock} from './pattern/block.js';
 import createMask from './factory.js';
@@ -263,14 +263,8 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  appendTail (tail?: ChunksTailDetails | TailDetails): ChangeDetails {
-    const details = new ChangeDetails();
-    if (tail) {
-      details.aggregate(tail instanceof ChunksTailDetails ?
-        this._appendTailChunks(tail.chunks) :
-        super.appendTail(tail));
-    }
-    return details.aggregate(this._appendPlaceholder());
+  appendTail (tail: string | TailDetails): ChangeDetails {
+    return super.appendTail(tail).aggregate(this._appendPlaceholder());
   }
 
   /**
@@ -296,47 +290,23 @@ class MaskedPattern extends Masked<string> {
     return details;
   }
 
-  /** Appends chunks splitted by stop chars */
-  _appendTailChunks (chunks: Array<TailInputChunk>) {
-    const details = new ChangeDetails();
-
-    for (let ci=0; ci < chunks.length && !details.skip; ++ci) {
-      const chunk = chunks[ci];
-
-      const lastBlockIter = this._mapPosToBlock(this.value.length);
-      const stop = chunk.stop;
-      let chunkBlock;
-      if (stop &&
-        this._stops.indexOf(stop) >= 0 &&
-        // if block not found or stop is behind lastBlock
-        (!lastBlockIter || lastBlockIter.index <= stop)
-      ) {
-        details.aggregate(this._appendPlaceholder(stop));
-        chunkBlock = chunk instanceof ChunksTailDetails && this._blocks[stop];
-      }
-
-      if (chunkBlock) {
-        const tailDetails = chunkBlock.appendTail(chunk);
-        tailDetails.skip = false; // always ignore skip, it will be set on last
-        details.aggregate(tailDetails);
-        this._value += tailDetails.inserted;
-
-        // get not inserted chars
-        const remainChars = chunk.value.slice(tailDetails.rawInserted.length);
-        if (remainChars) details.aggregate(this.append(remainChars, {tail: true}));
-      } else {
-        details.aggregate(this.append(chunk.value, {tail: true}));
-      }
-    };
-
-    return details;
-  }
-
   /**
     @override
   */
   extractTail (fromPos?: number=0, toPos?: number=this.value.length): ChunksTailDetails {
-    return new ChunksTailDetails(this._extractTailChunks(fromPos, toPos));
+    const chunkTail = new ChunksTailDetails();
+    if (fromPos === toPos) return chunkTail;
+
+    this._forEachBlocksInRange(fromPos, toPos, (b, bi, bFromPos, bToPos) => {
+      const blockChunk = b.extractTail(bFromPos, bToPos);
+      blockChunk.stop = this._findStopBefore(bi);
+      blockChunk.from = this._blockStartPos(bi) + bFromPos;
+      if (blockChunk instanceof ChunksTailDetails) blockChunk.blockIndex = bi;
+
+      chunkTail.extend(blockChunk);
+    });
+
+    return chunkTail;
   }
 
   /**
@@ -354,73 +324,14 @@ class MaskedPattern extends Masked<string> {
     return input;
   }
 
-  /** Extracts chunks from input splitted by stop chars */
-  _extractTailChunks (fromPos: number=0, toPos: number=this.value.length): Array<TailInputChunk> {
-    if (fromPos === toPos) return [];
-
-    const chunks = [];
-    let lastChunk;
-    this._forEachBlocksInRange(fromPos, toPos, (b, bi, bFromPos, bToPos) => {
-      const blockChunk = b.extractTail(bFromPos, bToPos);
-
-      let nearestStop;
-      for (let si=0; si<this._stops.length; ++si) {
-        const stop = this._stops[si];
-        if (stop <= bi) nearestStop = stop;
-        else break;
-      }
-
-      if (blockChunk instanceof ChunksTailDetails) {
-        // TODO append to lastChunk with same index
-        if (nearestStop == null) {
-          // try append floating chunks to existed lastChunk
-          let headFloatChunksCount = blockChunk.chunks.length;
-          for (let ci=0; ci< blockChunk.chunks.length; ++ci) {
-            if (blockChunk.chunks[ci].stop != null) {
-              headFloatChunksCount = ci;
-              break;
-            }
-          }
-
-          const headFloatChunks = blockChunk.chunks.splice(0, headFloatChunksCount);
-          headFloatChunks
-            .filter(chunk => chunk.value)
-            .forEach(chunk => {
-              if (lastChunk) lastChunk.value += chunk.value;
-              // will flat nested chunks
-              else lastChunk = new ContinuousTailDetails(chunk.value);
-            });
-        }
-
-        // if block chunk still has stops
-        if (blockChunk.chunks.length) {
-          if (lastChunk) chunks.push(lastChunk);
-          blockChunk.stop = nearestStop;
-          chunks.push(blockChunk);
-          // we cant append to ChunksTailDetails, so just reset lastChunk to force adding new
-          lastChunk = null;
-        }
-      } else {
-        if (nearestStop != null) {
-          // on middle chunks consider stop flag and do not consider value
-          // add block even if it is empty
-          if (lastChunk) chunks.push(lastChunk);
-          blockChunk.stop = nearestStop;
-
-          // blockChunk.stop = nearestStop
-        } else if (lastChunk) {
-          lastChunk.value += blockChunk.value;
-          return;
-        }
-        // chunkTail.append(blockChunk, from);
-        // inside check {stop, from} -> appendLast || appendNew
-        lastChunk = blockChunk;
-      }
-    });
-
-    if (lastChunk && lastChunk.value) chunks.push(lastChunk);
-
-    return chunks;
+  _findStopBefore (blockIndex: number): ?number {
+    let stopBefore;
+    for (let si=0; si<this._stops.length; ++si) {
+      const stop = this._stops[si];
+      if (stop <= blockIndex) stopBefore = stop;
+      else break;
+    }
+    return stopBefore;
   }
 
   /** Appends placeholder depending on laziness */
@@ -474,7 +385,7 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** */
-  _forEachBlocksInRange (fromPos: number, toPos: number=this.value.length, fn: (block: PatternBlock, blockIndex: number, fromPos?: number, toPos?: number) => void) {
+  _forEachBlocksInRange (fromPos: number, toPos: number=this.value.length, fn: (block: PatternBlock, blockIndex: number, fromPos: number, toPos: number) => void) {
     const fromBlockIter = this._mapPosToBlock(fromPos);
 
     if (fromBlockIter) {
@@ -482,13 +393,15 @@ class MaskedPattern extends Masked<string> {
       // process first block
       const isSameBlock = toBlockIter && fromBlockIter.index === toBlockIter.index;
       const fromBlockStartPos = fromBlockIter.offset;
-      const fromBlockEndPos = toBlockIter && isSameBlock ? toBlockIter.offset : undefined;
+      const fromBlockEndPos = toBlockIter && isSameBlock ?
+        toBlockIter.offset :
+        this._blocks[fromBlockIter.index].value.length;
       fn(this._blocks[fromBlockIter.index], fromBlockIter.index, fromBlockStartPos, fromBlockEndPos);
 
       if (toBlockIter && !isSameBlock) {
         // process intermediate blocks
         for (let bi=fromBlockIter.index+1; bi<toBlockIter.index; ++bi) {
-          fn(this._blocks[bi], bi);
+          fn(this._blocks[bi], bi, 0, this._blocks[bi].value.length);
         }
 
         // process last block

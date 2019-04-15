@@ -24,7 +24,7 @@ interface PatternBlock {
   extractInput (fromPos?: number, toPos?: number, flags?: ExtractFlags): string;
   extractTail (fromPos?: number, toPos?: number): TailDetails;
   append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails;
-  appendTail (tail: TailDetails): ChangeDetails;
+  appendTail (tail: string | TailDetails): ChangeDetails;
   _appendChar (str: string, flags: AppendFlags): ChangeDetails;
   doCommit (): void;
   nearestInputPos (cursorPos: number, direction: Direction): number;

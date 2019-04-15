@@ -126,9 +126,8 @@ class PatternInputDefinition implements PatternBlock {
     return this.masked.extractTail(...args);
   }
 
-  appendTail (tail: TailDetails): ChangeDetails {
-    // TODO tail append?
-    return this.masked.appendTail(tail);
+  appendTail (...args: *): ChangeDetails {
+    return this.masked.appendTail(...args);
   }
 
   extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
