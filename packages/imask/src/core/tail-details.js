@@ -15,8 +15,11 @@ interface TailDetails {
   from: number;
   /** Start position */
   stop: ?number;
+  /** */
+  state: any;
 
   toString (): string;
   extend (value: string | TailDetails): void;
   appendTo (masked: AppendTail): ChangeDetails;
+  shiftBefore (pos: number): string;
 }

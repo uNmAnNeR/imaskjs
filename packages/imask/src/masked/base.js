@@ -44,6 +44,7 @@ type MaskedOptions<MaskType> = {
   prepare?: $PropertyType<Masked<MaskType>, 'prepare'>,
   validate?: $PropertyType<Masked<MaskType>, 'validate'>,
   commit?: $PropertyType<Masked<MaskType>, 'commit'>,
+  overwrite?: $PropertyType<Masked<MaskType>, 'overwrite'>,
 };
 
 
@@ -62,6 +63,8 @@ class Masked<MaskType> {
   validate: (string, Masked<MaskType>, AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
   commit: (string, AppendFlags) => void;
+  /** */
+  overwrite: ?boolean;
   /** */
   isInitialized: boolean;
   _value: string;
@@ -205,11 +208,12 @@ class Masked<MaskType> {
   }
 
   /** Appends char */
-  _appendChar (ch: string, flags: AppendFlags={}, checkTail?: string | TailDetails): ChangeDetails {
+  _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
     ch = this.doPrepare(ch, flags);
     if (!ch) return new ChangeDetails();
 
     const consistentState: MaskedState = this.state;
+    let consistentTail;
     const details: ChangeDetails = this._appendCharRaw(ch, flags);
 
     if (details.inserted) {
@@ -218,6 +222,10 @@ class Masked<MaskType> {
       if (appended && checkTail != null) {
         // validation ok, check tail
         this._storeBeforeTailState();
+        if (this.overwrite) {
+          consistentTail = checkTail.state;
+          checkTail.shiftBefore(this.value.length);
+        }
 
         const tailDetails = this.appendTail(checkTail);
 
@@ -231,23 +239,26 @@ class Masked<MaskType> {
       if (!appended) {
         details.rawInserted = details.inserted = '';
         this.state = consistentState;
+        if (checkTail && consistentTail) checkTail.state = consistentTail;
       }
     }
     return details;
   }
 
   /** Appends symbols considering flags */
+  // $FlowFixMe no ideas
   append (str: string, flags?: AppendFlags, tail?: string | TailDetails): ChangeDetails {
     const details = new ChangeDetails();
+    const checkTail = tail && (isString(tail) ? new ContinuousTailDetails(String(tail)) : tail);
 
     for (let ci=0; ci<str.length; ++ci) {
-      details.aggregate(this._appendChar(str[ci], flags, tail));
+      details.aggregate(this._appendChar(str[ci], flags, checkTail));
     }
 
     // append tail but aggregate only tailShift
-    if (tail != null) {
+    if (checkTail != null) {
       this._storeBeforeTailState();
-      details.tailShift += this.appendTail(tail).tailShift;
+      details.tailShift += this.appendTail(checkTail).tailShift;
       // TODO it's a good idea to clear state after appending ends
       // but it causes bugs when one append calls another (when dynamic dispatch set rawInputValue)
       // this._resetBeforeTailState();

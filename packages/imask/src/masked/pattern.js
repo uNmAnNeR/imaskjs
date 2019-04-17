@@ -300,7 +300,7 @@ class MaskedPattern extends Masked<string> {
     this._forEachBlocksInRange(fromPos, toPos, (b, bi, bFromPos, bToPos) => {
       const blockChunk = b.extractTail(bFromPos, bToPos);
       blockChunk.stop = this._findStopBefore(bi);
-      blockChunk.from = this._blockStartPos(bi) + bFromPos;
+      blockChunk.from = this._blockStartPos(bi);
       if (blockChunk instanceof ChunksTailDetails) blockChunk.blockIndex = bi;
 
       chunkTail.extend(blockChunk);

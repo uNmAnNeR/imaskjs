@@ -6,6 +6,13 @@ import { isString } from '../../core/utils.js';
 import ContinuousTailDetails from '../../core/continuous-tail-details.js';
 
 
+type ChunksTailState = {
+  chunks: $PropertyType<ChunksTailDetails, 'chunks'>,
+  from: $PropertyType<ChunksTailDetails, 'from'>,
+  stop?: $PropertyType<ChunksTailDetails, 'stop'>,
+  blockIndex?: $PropertyType<ChunksTailDetails, 'blockIndex'>,
+};
+
 export default
 class ChunksTailDetails implements TailDetails {
   chunks: Array<TailDetails>;
@@ -50,7 +57,7 @@ class ChunksTailDetails implements TailDetails {
         let firstTailChunk;
         while (tailChunk.chunks.length && tailChunk.chunks[0].stop == null) {
           firstTailChunk = tailChunk.chunks.shift();
-          firstTailChunk.from += this.from + this.toString().length;
+          firstTailChunk.from += tailChunk.from;
           this.extend(firstTailChunk);
         }
       }
@@ -107,5 +114,52 @@ class ChunksTailDetails implements TailDetails {
     };
 
     return details;
+  }
+
+  get state (): ChunksTailState {
+    return {
+      chunks: this.chunks.map(c => c.state),
+      from: this.from,
+      stop: this.stop,
+      blockIndex: this.blockIndex,
+    };
+  }
+
+  set state (state: ChunksTailState) {
+    const { chunks, ...props } = state;
+    Object.assign(this, props);
+    this.chunks = chunks.map(cstate => {
+      const chunk = "chunks" in cstate ?
+        new ChunksTailDetails() :
+        new ContinuousTailDetails();
+      // $FlowFixMe already checked above
+      chunk.state = cstate;
+      return chunk;
+    });
+  }
+
+  shiftBefore (pos: number): string {
+    if (this.from >= pos || !this.chunks.length) return '';
+
+    const chunkShiftPos = pos - this.from;
+    let ci=0;
+    while (ci < this.chunks.length) {
+      const chunk = this.chunks[ci];
+      const shiftChar = chunk.shiftBefore(chunkShiftPos);
+
+      if (chunk.toString()) {
+        // chunk still contains value
+        // but not shifted - means no more available chars to shift
+        if (!shiftChar) break;
+        ++ci;
+      } else {
+        // clean if chunk has no value
+        this.chunks.splice(ci, 1);
+      }
+
+      if (shiftChar) return shiftChar;
+    }
+
+    return '';
   }
 }
