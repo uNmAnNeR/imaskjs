@@ -20,6 +20,7 @@ const MASK_PROPS = {
   prepare: PropTypes.func,
   validate: PropTypes.func,
   commit: PropTypes.func,
+  overwrite: PropTypes.bool,
 
   // events
   onAccept: PropTypes.func,

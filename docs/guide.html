@@ -32,7 +32,7 @@ var maskOptions = {
 };
 var mask = new IMask(element, maskOptions);</code></pre>
 
-  <p>Since v1.0.0 IMask consists of two independent layers: model and view.<br>
+  <p>IMask consists of two independent layers: model and view.<br>
   Model layer contains all masking facilities which can be used independently without UI.</p>
   <p id="support-older">View layer is a glue between UI element and model, it connects listeners and controls changes in both directions.</p>
   <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. <ins>In order to support older browsers</ins> manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
@@ -141,7 +141,7 @@ console.log(masked.unmaskedValue);</code></pre>
 
 
   <h2 id="common" class="section-h"><a href="#common">Input Mask Common Behavior</a></h2>
-  <p><a href="#common">IMask.Masked</a> is a base class of all other Masked* classes. Almost all base class options are applicable to subclasses.</p>
+  <p><a href="#common">IMask.Masked</a> is a base class of all other <code>Masked*</code> classes. Almost all base class options are applicable to subclasses.</p>
   <p>Example usage:</p>
   <div class="toggle-panel">
     <label for="validate-mask-demo" class="muted">demo</label>
@@ -231,6 +231,32 @@ console.log(masked.typedValue);</code></pre>
   }
 });</code></pre>
 
+  <h3 id="overwrite" class="section-h"><a href="#overwrite">Overwrite Mode</a></h3>
+  <p>There is new <code>overwrite</code> flag available for all masks from v5.0.0. It enables characters overwriting instead of inserting:</p>
+  <div class="form-item">
+    <label><code>Date</code> mask in overwrite mode</label>
+    <input id="date-overwrite-mask" type="text" value="">
+
+    <div class="toggle-panel">
+      <label for="date-overwrite-mask-source" class="muted">source</label>
+      <input id="date-overwrite-mask-source" type="checkbox">
+      <div class="toggle-panel-content">
+        <pre><code>var overwriteMask = new IMask(
+  document.getElementById('date-overwrite-mask'),
+  {
+    mask: Date,
+    lazy: false,
+    overwrite: true,
+    blocks: {
+      d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
+      m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
+      Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2999, maxLength: 4}
+    }
+  }
+);</code></pre>
+      </div>
+    </div>
+  </div>
 
   <h2 id="number" class="section-h"><a href="#number">Number Mask</a></h2>
   <p>Number mask restricts input to integer or decimal numbers in many ways:</p>
@@ -347,14 +373,14 @@ console.log(masked.typedValue);</code></pre>
             </div>
             <div class="col col-4">
               <div class="form-item">
-                <label>Placeholder mode</label>
-                <label class="checkbox"><input type="checkbox" name="ph-show">lazy</label>
+                <label>Placeholder char</label>
+                <input type="text" maxlength="1" name="ph-char" value="_">
               </div>
             </div>
             <div class="col col-4">
-              <div class="form-item">
-                <label>Placeholder char</label>
-                <input type="text" maxlength="1" name="ph-char" value="_">
+              <div class="form-item pattern-options-checkboxes">
+                <label class="checkbox"><input type="checkbox" name="ph-show">lazy placeholder</label>
+                <label class="checkbox"><input type="checkbox" name="overwrite">overwrite mode</label>
               </div>
             </div>
           </div>
@@ -805,6 +831,7 @@ var momentMask = new IMask(element, {
       var mask = customEl.querySelector('[name=mask]').value;
 
       var lazy = customEl.querySelector('[name=ph-show]').checked;
+      var overwrite = customEl.querySelector('[name=overwrite]').checked;
       var placeholderChar = customEl.querySelector('[name=ph-char]').value || '_';
 
       var value = customEl.querySelector('[name=raw]').value;
@@ -816,6 +843,7 @@ var momentMask = new IMask(element, {
       customMask.updateOptions({
         mask: mask,
         lazy: lazy,
+        overwrite: overwrite,
         placeholderChar: placeholderChar
       });
       if (value) customMask.value = value;
@@ -901,6 +929,20 @@ var momentMask = new IMask(element, {
     }).on('accept', function() {
       document.getElementById('enum-value').innerHTML = enumMask.value || '-';
     });
+
+    var overwriteMask = new IMask(
+      document.getElementById('date-overwrite-mask'),
+      {
+        mask: Date,
+        lazy: false,
+        overwrite: true,
+        blocks: {
+          d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
+          m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
+          Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2999, maxLength: 4}
+        }
+      }
+    );
 
     var numberMask = new IMask(document.getElementById('numbers-mask'), {
       mask: Number,

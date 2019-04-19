@@ -63,7 +63,7 @@ class Masked<MaskType> {
   validate: (string, Masked<MaskType>, AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
   commit: (string, AppendFlags) => void;
-  /** */
+  /** Enable characters overwriting */
   overwrite: ?boolean;
   /** */
   isInitialized: boolean;

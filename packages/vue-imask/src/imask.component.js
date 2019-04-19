@@ -134,6 +134,7 @@ const IMaskComponent = {
     prepare: Function,
     validate: Function,
     commit: Function,
+    overwrite: Boolean,
 
     // pattern
     placeholderChar: String,
