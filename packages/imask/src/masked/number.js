@@ -30,7 +30,7 @@ type MaskedNumberOptions = {
   @param {boolean} opts.padFractionalZeros - Flag to pad trailing zeros after point in the end of editing
 */
 export default
-class MaskedNumber extends Masked<Number> {
+class MaskedNumber extends Masked<Class<Number>> {
   static DEFAULTS: $Shape<MaskedNumberOptions>;
 
   /** Single char */

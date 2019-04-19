@@ -8,6 +8,7 @@
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs",
+  "types": "index.d.ts",
   "engines": {
     "npm": ">=4.0.0"
   },
