@@ -2,7 +2,7 @@ export as namespace IMask;
 export = IMask;
 
 
-declare function IMask (el: IMask.MaskElement | IMask.HTMLMaskingElement, opts: IMask.AnyMaskedOptions): IMask.InputMask;
+declare function IMask<Opts extends IMask.AnyMaskedOptions> (el: IMask.MaskElement | IMask.HTMLMaskingElement, opts: Opts): IMask.InputMask<Opts>;
 
 declare namespace IMask {
   export type HTMLMaskingElement = HTMLTextAreaElement | HTMLInputElement;
@@ -274,19 +274,19 @@ declare namespace IMask {
   export class MaskedDate extends MaskedPattern {
     static GET_DEFAULT_BLOCKS: () => {
       d: {
-        mask: MaskedRange,
+        mask: typeof MaskedRange,
         from: number,
         to: number,
         maxLength: number,
       },
       m: {
-        mask: MaskedRange,
+        mask: typeof MaskedRange,
         from: number,
         to: number,
         maxLength: number,
       },
       Y: {
-        mask: MaskedRange,
+        mask: typeof MaskedRange,
         from: number,
         to: number,
       },
@@ -323,32 +323,40 @@ declare namespace IMask {
     MaskedOptions<Function> |
     MaskedOptions<AnyMaskedOptionsArray> |
     MaskedOptions<AnyMaskedOptionsMasked> |
+    MaskedOptions<MaskedPattern> |
+    MaskedOptions<MaskedNumber> |
+    MaskedOptions<MaskedFunction> |
+    MaskedOptions<MaskedRegExp> |
+    MaskedOptions<MaskedDynamic> |
+    MaskedOptions<MaskedDate> |
+    MaskedOptions<MaskedEnum> |
+    MaskedOptions<MaskedRange> |
     MaskedOptions<typeof Masked>;
   interface AnyMaskedOptionsArray extends Array<AnyMaskedOptions> { }
   interface AnyMaskedOptionsMasked extends Masked<AnyMaskedOptions> { }
 
-  export function createMask<Opts extends AnyMaskedOptions> (opts: Opts): Masked<
+  type DeduceMasked<Opts extends AnyMaskedOptions> =
+    Opts extends MaskedPatternOptions ? MaskedPattern :
     Opts extends MaskedDateOptions ? MaskedDate :
     Opts extends MaskedNumberOptions ? MaskedNumber :
-    Opts extends MaskedPatternOptions ? MaskedPattern :
     Opts extends MaskedOptions<RegExp> ? MaskedRegExp :
     Opts extends MaskedOptions<Function> ? MaskedFunction :
     Opts extends MaskedOptions<AnyMaskedOptionsArray> ? MaskedDynamic :
-    Masked<Opts['mask']>
-  >;
+    Masked<Opts['mask']>;
+  export function createMask<Opts extends AnyMaskedOptions> (opts: Opts): DeduceMasked<Opts>;
 
   export type AnyMask = AnyMaskedOptions['mask'];
-  export class InputMask {
+  export class InputMask<Opts extends AnyMaskedOptions> {
     el: MaskElement;
-    masked: AnyMasked;
-    mask: AnyMask;
+    masked: DeduceMasked<Opts>;
+    mask: DeduceMasked<Opts>['mask'];
     value: string;
     unmaskedValue: string;
     typedValue: any;
     cursorPos: number;
     readonly selectionStart: number;
 
-    constructor (el: MaskElement | HTMLMaskingElement, opts: AnyMaskedOptions);
+    constructor (el: MaskElement | HTMLMaskingElement, opts: Opts);
 
     alignCursor (): void;
     alignCursorFriendly (): void;
