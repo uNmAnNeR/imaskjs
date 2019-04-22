@@ -2,7 +2,7 @@ export as namespace IMask;
 export = IMask;
 
 
-declare function IMask (el: HTMLInputElement | HTMLTextAreaElement): IMask.InputMask;
+declare function IMask (el: IMask.MaskElement | IMask.HTMLMaskingElement, opts: IMask.MaskedOptionsAny): IMask.InputMask;
 
 declare namespace IMask {
   type HTMLMaskingElement = HTMLTextAreaElement | HTMLInputElement;
@@ -79,25 +79,32 @@ declare namespace IMask {
     aggregate (details: ChangeDetails): ChangeDetails;
   }
 
+  type MaskedOptions<MaskType> = {
+    mask: MaskType
+  } & Partial<Pick<Masked<MaskType>,
+    'parent' |
+    'prepare' |
+    'validate' |
+    'commit' |
+    'overwrite'
+  >>;
   export class Masked<MaskType> {
-    static DEFAULTS: any; // TODO any
-    mask: MaskType; // TODO any
+    mask: MaskType;
     state: any;
     value: string;
     unmaskedValue: string;
     typedValue: any;
     rawInputValue: string;
     readonly isComplete: boolean;
-    parent?: Masked<any>; // TODO any
+    parent?: AnyMasked;
     prepare: (value: string, masked: Masked<MaskType>, type: AppendType) => string;
     validate: (value: string, masked: Masked<MaskType>, type: AppendType) => boolean;
     commit: (value: string, masked: Masked<MaskType>) => void;
-    ovewrite?: boolean;
+    overwrite?: boolean;
     isInitialized: boolean;
 
-    // TODO any
-    constructor (opts: {[key: string]: any});
-    updateOptions (opts: {[key: string]: any});
+    constructor (opts: MaskedOptions<MaskType>);
+    updateOptions (opts: Partial<MaskedOptions<MaskType>>);
     reset ();
     resolve (value: string): string;
     nearestInputPos (cursorPos: number, direction?: Direction): number;
@@ -110,18 +117,26 @@ declare namespace IMask {
     doCommit (): boolean;
     splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction): ChangeDetails;
   }
+  interface AnyMasked extends Masked<AnyMask> {}
 
+  type MaskedPatternOptions = MaskedOptions<string> & Partial<Pick<MaskedPattern,
+    'blocks' |
+    'definitions' |
+    'placeholderChar' |
+    'lazy'
+  >>;
+  type MaskedPatternOptionsDefaults = Pick<MaskedPattern, 'lazy' | 'placeholderChar'>;
   export class MaskedPattern extends Masked<string> {
-    static DEFAULTS: any; // TODO
+    static DEFAULTS: MaskedPatternOptionsDefaults;
     static STOP_CHAR: string;
     static ESCAPE_CHAR: string;
-    blocks: {[key: string]: Masked<any>}; // TODO
+    blocks: { [key: string]: AnyMasked };
     definitions: MaskedPattern.Definitions;
     placeholderChar: string;
     lazy: boolean;
-    // TODO state
 
-    constructor (opts: any); // TODO
+    constructor (opts: MaskedPatternOptions);
+    updateOptions (opts: Partial<MaskedPatternOptions>);
     maskedBlock (name: string): MaskedPattern.PatternBlock | undefined;
     maskedBlocks (name: string): Array<MaskedPattern.PatternBlock>;
   }
@@ -143,21 +158,22 @@ declare namespace IMask {
       doCommit (): void;
       nearestInputPos (cursorPos: number, direction: Direction): number;
     }
-    type Definitions = {[key: string]: Mask};
+    type Definitions = {[key: string]: AnyMask};
     type PatternInputDefinitionOptions = {
-      parent: Masked<any>,
-      mask: Mask,
-      isOptional?: boolean,
-      lazy?: boolean,
-      placeholderChar: string,
-    };
+      mask: AnyMask
+    } & Pick<InputDefinition,
+      'parent' |
+      'isOptional' |
+      'lazy' |
+      'placeholderChar'
+    >;
     class InputDefinition implements PatternBlock {
-      readonly masked: Masked<any>; // TODO
+      readonly masked: AnyMasked;
       readonly value: string;
       readonly unmaskedValue: string;
       readonly isComplete: boolean;
       state: any;
-      parent: Masked<any>; // TODO
+      parent: AnyMasked;
       isOptional: boolean;
       lazy: boolean;
       placeholderChar: string;
@@ -174,10 +190,10 @@ declare namespace IMask {
       doValidate (flags: AppendFlags): boolean;
       doCommit (): void;
     }
-    type PatternFixedDefinitionOptions = {
-      char: string,
-      isUnmasking?: boolean,
-    };
+    type PatternFixedDefinitionOptions = Pick<FixedDefinition,
+      'char' |
+      'isUnmasking'
+    >;
     class FixedDefinition implements PatternBlock {
       readonly value: string;
       readonly unmaskedValue: string;
@@ -208,9 +224,27 @@ declare namespace IMask {
     readonly to: number;
   }
 
-  // TODO any
-  export class MaskedNumber extends Masked<any> {
-    static DEFAULTS: { [key: string]: any }; // TODO shape
+  type MaskedNumberOptions = MaskedOptions<typeof Number> & Partial<Pick<MaskedNumber,
+    'radix' |
+    'thousandsSeparator' |
+    'mapToRadix' |
+    'min' |
+    'max' |
+    'scale' |
+    'signed' |
+    'normalizeZeros' |
+    'padFractionalZeros'
+  >>;
+  export class MaskedNumber extends Masked<typeof Number> {
+    static DEFAULTS: Pick<MaskedNumber,
+      'radix' |
+      'thousandsSeparator' |
+      'mapToRadix' |
+      'scale' |
+      'signed' |
+      'normalizeZeros' |
+      'padFractionalZeros'
+    >;
     readonly radix: string;
     readonly thousandsSeparator: string;
     readonly mapToRadix: Array<string>;
@@ -224,12 +258,40 @@ declare namespace IMask {
     typedValue: number;
     number: number;
 
-    constructor (opts: { [key: string]: any }); // TODO shape
+    constructor (opts: MaskedNumberOptions);
+    updateOptions (opts: Partial<MaskedNumberOptions>);
   }
 
+  type MaskedDateOptions = {
+    mask: typeof Date | string,
+  } & Pick<MaskedPatternOptions, Exclude<keyof MaskedPatternOptions, 'mask'>> & Partial<Pick<MaskedDate,
+    'parse' |
+    'format' |
+    'pattern' |
+    'min' |
+    'max'
+  >>;
   export class MaskedDate extends MaskedPattern {
-    static GET_DEFAULT_BLOCKS: () => {[key: string]: any};
-    static DEFAULTS: any;
+    static GET_DEFAULT_BLOCKS: () => {
+      d: {
+        mask: MaskedRange,
+        from: number,
+        to: number,
+        maxLength: number,
+      },
+      m: {
+        mask: MaskedRange,
+        from: number,
+        to: number,
+        maxLength: number,
+      },
+      Y: {
+        mask: MaskedRange,
+        from: number,
+        to: number,
+      },
+    };
+    static DEFAULTS: MaskedPatternOptionsDefaults & Pick<MaskedDate, 'pattern' | 'format' | 'parse'>;
     readonly parse: (string) => Date;
     readonly format: (Date) => string;
     readonly pattern: string;
@@ -237,41 +299,62 @@ declare namespace IMask {
     readonly max?: Date;
     date: Date;
     typedValue: Date;
+
+    constructor (opts: MaskedDateOptions);
+    updateOptions (opts: Partial<MaskedDateOptions>);
     isDateExist (str: string): boolean;
   }
 
   export class MaskedRegExp extends Masked<RegExp> {}
   export class MaskedFunction extends Masked<Function> {}
 
-  // TODO any
-  export class MaskedDynamic extends Masked<Array<{[key: string]: any}>> {
-    static DEFAULTS: any;
-    readonly currentMask?: Masked<any>;
-    readonly compiledMasks: Array<Masked<any>>;
-    dispatch: (value: string, masked: Masked<any>, flags: AppendFlags) => Masked<any>;
+  export class MaskedDynamic extends Masked<MaskedOptionsAnyArray> {
+    static DEFAULTS: Pick<MaskedDynamic, 'dispatch'>;
+    readonly currentMask?: AnyMasked;
+    readonly compiledMasks: Array<AnyMasked>;
+    dispatch: (value: string, masked: AnyMasked, flags: AppendFlags) => AnyMasked;
   }
 
-  // TODO any
-  export function createMask (opts: any): Masked<any>;
+  type MaskedOptionsAny =
+    MaskedDateOptions |
+    MaskedNumberOptions |
+    MaskedPatternOptions |
+    MaskedOptions<RegExp> |
+    MaskedOptions<Function> |
+    MaskedOptions<MaskedOptionsAnyArray> |
+    MaskedOptions<MaskedOptionsAnyMasked> |
+    MaskedOptions<typeof Masked>;
+  interface MaskedOptionsAnyArray extends Array<MaskedOptionsAny> { }
+  interface MaskedOptionsAnyMasked extends Masked<MaskedOptionsAny> { }
 
-  export type Mask = any; // TODO
+  export function createMask<Opts extends MaskedOptionsAny> (opts: Opts): Masked<
+    Opts extends MaskedDateOptions ? MaskedDate :
+    Opts extends MaskedNumberOptions ? MaskedNumber :
+    Opts extends MaskedPatternOptions ? MaskedPattern :
+    Opts extends MaskedOptions<RegExp> ? MaskedRegExp :
+    Opts extends MaskedOptions<Function> ? MaskedFunction :
+    Opts extends MaskedOptions<MaskedOptionsAnyArray> ? MaskedDynamic :
+    Masked<Opts['mask']>
+  >;
+
+  export type AnyMask = MaskedOptionsAny['mask'];
   export class InputMask {
     el: MaskElement;
-    masked: Masked<any>; // TODO any?
-    mask: Mask;
+    masked: AnyMasked;
+    mask: AnyMask;
     value: string;
     unmaskedValue: string;
     typedValue: any;
     cursorPos: number;
     readonly selectionStart: number;
 
-    constructor (el: MaskElement | HTMLMaskingElement, opts: {[key: string]: any});  // TODO opts types
+    constructor (el: MaskElement | HTMLMaskingElement, opts: MaskedOptionsAny);
 
     alignCursor (): void;
     alignCursorFriendly (): void;
     updateValue (): void;
     updateControl (): void;
-    updateOptions (opts: {[key: string]: any}): void;
+    updateOptions (opts: Partial<MaskedOptionsAny>): void;
     updateCursor (cursorPos: number): void;
     on (ev: string, handler: Function): this;
     off (ev: string, handler: Function): this;

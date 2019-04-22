@@ -112,24 +112,22 @@ MaskedDate.DEFAULTS = {
     return new Date(year, month - 1, day);
   },
 };
-MaskedDate.GET_DEFAULT_BLOCKS = () => {
-  return {
-    d: {
-      mask: MaskedRange,
-      from: 1,
-      to: 31,
-      maxLength: 2,
-    },
-    m: {
-      mask: MaskedRange,
-      from: 1,
-      to: 12,
-      maxLength: 2,
-    },
-    Y: {
-      mask: MaskedRange,
-      from: 1900,
-      to: 9999,
-    }
-  };
-};
+MaskedDate.GET_DEFAULT_BLOCKS = () => ({
+  d: {
+    mask: MaskedRange,
+    from: 1,
+    to: 31,
+    maxLength: 2,
+  },
+  m: {
+    mask: MaskedRange,
+    from: 1,
+    to: 12,
+    maxLength: 2,
+  },
+  Y: {
+    mask: MaskedRange,
+    from: 1900,
+    to: 9999,
+  }
+});

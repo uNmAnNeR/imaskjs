@@ -13,10 +13,10 @@ import createMask from './factory.js';
 
 type MaskedPatternOptions = {
   ...MaskedOptions<string>,
-  definitions: $PropertyType<MaskedPattern, 'definitions'>,
-  blocks: $PropertyType<MaskedPattern, 'blocks'>,
-  placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>,
-  lazy: $PropertyType<MaskedPattern, 'lazy'>,
+  definitions?: $PropertyType<MaskedPattern, 'definitions'>,
+  blocks?: $PropertyType<MaskedPattern, 'blocks'>,
+  placeholderChar?: $PropertyType<MaskedPattern, 'placeholderChar'>,
+  lazy?: $PropertyType<MaskedPattern, 'lazy'>,
 };
 
 type MaskedPatternState = {|
