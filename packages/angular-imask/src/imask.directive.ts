@@ -31,8 +31,8 @@ const DEFAULT_IMASK_ELEMENT = elementRef => elementRef.nativeElement;
   },
   providers: [MASKEDINPUT_VALUE_ACCESSOR]
 })
-export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
-  maskRef: IMask.InputMask;
+export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
+  maskRef: IMask.InputMask<Opts>;
   onTouched: any;
   onChange: any;
   private _viewInitialized;
@@ -40,7 +40,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   private _writingValue;
   private _writing;
 
-  @Input() imask: IMask.AnyMaskedOptions;
+  @Input() imask: Opts;
   @Input() unmask?: boolean|'typed';
   @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => IMask.MaskElement;
   @Output() accept: EventEmitter<any>;
@@ -48,7 +48,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
 
   constructor(private _elementRef: ElementRef,
               private _renderer: Renderer2,
-              @Optional() @Inject(COMPOSITION_BUFFER_MODE)private _compositionMode: boolean) {
+              @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
     // init here to support AOT
     this.onTouched = () => {};
     this.onChange = () => {};

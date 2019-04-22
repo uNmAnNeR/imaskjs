@@ -1,3 +1,3 @@
-import 'core-js/fn/string/repeat';
-import 'core-js/fn/string/pad-start';
-import 'core-js/fn/string/pad-end';
+import 'core-js/features/string/repeat';
+import 'core-js/features/string/pad-start';
+import 'core-js/features/string/pad-end';
