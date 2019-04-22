@@ -32,7 +32,7 @@ const DEFAULT_IMASK_ELEMENT = elementRef => elementRef.nativeElement;
   providers: [MASKEDINPUT_VALUE_ACCESSOR]
 })
 export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
-  maskRef: any;
+  maskRef: IMask.InputMask;
   onTouched: any;
   onChange: any;
   private _viewInitialized;
@@ -40,9 +40,9 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   private _writingValue;
   private _writing;
 
-  @Input() imask;
+  @Input() imask: IMask.AnyMaskedOptions;
   @Input() unmask?: boolean|'typed';
-  @Input() imaskElement: (elementRef: any, directiveRef: any) => any;
+  @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => IMask.MaskElement;
   @Output() accept: EventEmitter<any>;
   @Output() complete: EventEmitter<any>;
 
@@ -164,7 +164,7 @@ export class IMaskDirective implements ControlValueAccessor, AfterViewInit, OnDe
   }
 
   private initMask () {
-    this.maskRef = new IMask(this.element, this.imask)
+    this.maskRef = IMask(this.element, this.imask)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
   }
