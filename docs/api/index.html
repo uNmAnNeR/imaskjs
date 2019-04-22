@@ -3,12 +3,12 @@
 <head>
   <meta charset='utf-8' />
   <title>  | Documentation</title>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
-  <link href='assets/style.css' type='text/css' rel='stylesheet' />
-  <link href='assets/github.css' type='text/css' rel='stylesheet' />
-  <link href='assets/split.css' type='text/css' rel='stylesheet' />
   <meta name='description' content='vanilla javascript input mask'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' rel='stylesheet' />
+  <link href='assets/style.css' rel='stylesheet' />
+  <link href='assets/github.css' rel='stylesheet' />
+  <link href='assets/split.css' rel='stylesheet' />
 </head>
 <body class='documentation m0'>
     <div class='flex'>
@@ -136,9 +136,9 @@
               
                 
                 <li><a
-                  href='#'
+                  href='#direction'
                   class="">
-                  
+                  DIRECTION
                   
                 </a>
                 
@@ -146,9 +146,9 @@
               
                 
                 <li><a
-                  href='#direction'
+                  href='#'
                   class="">
-                  DIRECTION
+                  
                   
                 </a>
                 
@@ -545,6 +545,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskedoverwrite'
+                        class='regular pre-open'>
+                        #overwrite
+                      </a></li>
+                      
+                      <li><a
                         href='#maskedisinitialized'
                         class='regular pre-open'>
                         #isInitialized
@@ -831,12 +837,6 @@
                       </a></li>
                       
                       <li><a
-                        href='#maskedpattern_appendtailchunks'
-                        class='regular pre-open'>
-                        #_appendTailChunks
-                      </a></li>
-                      
-                      <li><a
                         href='#maskedpatternextracttail'
                         class='regular pre-open'>
                         #extractTail
@@ -846,12 +846,6 @@
                         href='#maskedpatternextractinput'
                         class='regular pre-open'>
                         #extractInput
-                      </a></li>
-                      
-                      <li><a
-                        href='#maskedpattern_extracttailchunks'
-                        class='regular pre-open'>
-                        #_extractTailChunks
                       </a></li>
                       
                       <li><a
@@ -1088,6 +1082,56 @@
               
                 
                 <li><a
+                  href='#blockindex'
+                  class="">
+                  blockIndex
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#continuoustaildetails'
+                  class=" toggle-sibling">
+                  ContinuousTailDetails
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#continuoustaildetailsvalue'
+                        class='regular pre-open'>
+                        #value
+                      </a></li>
+                      
+                      <li><a
+                        href='#continuoustaildetailsfrom'
+                        class='regular pre-open'>
+                        #from
+                      </a></li>
+                      
+                      <li><a
+                        href='#continuoustaildetailsstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
                   href='#maskedenum'
                   class=" toggle-sibling">
                   MaskedEnum
@@ -1259,12 +1303,6 @@
                       </a></li>
                       
                       <li><a
-                        href='#maskednumberextracttail'
-                        class='regular pre-open'>
-                        #extractTail
-                      </a></li>
-                      
-                      <li><a
                         href='#maskednumber_removethousandsseparators'
                         class='regular pre-open'>
                         #_removeThousandsSeparators
@@ -1289,6 +1327,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskednumber_separatorscountfromslice'
+                        class='regular pre-open'>
+                        #_separatorsCountFromSlice
+                      </a></li>
+                      
+                      <li><a
                         href='#maskednumberextractinput'
                         class='regular pre-open'>
                         #extractInput
@@ -1298,6 +1342,12 @@
                         href='#maskednumber_appendcharraw'
                         class='regular pre-open'>
                         #_appendCharRaw
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskednumber_findseparatoraround'
+                        class='regular pre-open'>
+                        #_findSeparatorAround
                       </a></li>
                       
                       <li><a
@@ -1850,10 +1900,7 @@
 
   <p>Applies mask on element.</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new IMask(el: (<a href="https://developer.mozilla.org/docs/Web/API/HTMLInputElement">HTMLInputElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLTextAreaElement">HTMLTextAreaElement</a> | <a href="#maskelement">MaskElement</a>), opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#inputmask">InputMask</a></div>
-   
   
   
 
@@ -1924,10 +1971,7 @@
 
   <p><a href="#inputmask">InputMask</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>InputMask</div>
-   
   
   
 
@@ -1936,6 +1980,8 @@
   
   
   
+  
+
   
 
   
@@ -1972,10 +2018,7 @@
 
   <p><a href="#masked">Masked</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>Masked</div>
-   
   
   
 
@@ -1984,6 +2027,8 @@
   
   
   
+  
+
   
 
   
@@ -2020,10 +2065,7 @@
 
   <p><a href="#maskedpattern">MaskedPattern</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedPattern</div>
-   
   
   
 
@@ -2032,6 +2074,8 @@
   
   
   
+  
+
   
 
   
@@ -2068,10 +2112,7 @@
 
   <p><a href="#maskedenum">MaskedEnum</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedEnum</div>
-   
   
   
 
@@ -2080,6 +2121,8 @@
   
   
   
+  
+
   
 
   
@@ -2116,10 +2159,7 @@
 
   <p><a href="#maskedrange">MaskedRange</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedRange</div>
-   
   
   
 
@@ -2128,6 +2168,8 @@
   
   
   
+  
+
   
 
   
@@ -2164,10 +2206,7 @@
 
   <p><a href="#maskednumber">MaskedNumber</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedNumber</div>
-   
   
   
 
@@ -2176,6 +2215,8 @@
   
   
   
+  
+
   
 
   
@@ -2212,10 +2253,7 @@
 
   <p><a href="#maskeddate">MaskedDate</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedDate</div>
-   
   
   
 
@@ -2224,6 +2262,8 @@
   
   
   
+  
+
   
 
   
@@ -2260,10 +2300,7 @@
 
   <p><a href="#maskedregexp">MaskedRegExp</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedRegExp</div>
-   
   
   
 
@@ -2272,6 +2309,8 @@
   
   
   
+  
+
   
 
   
@@ -2308,10 +2347,7 @@
 
   <p><a href="#maskedfunction">MaskedFunction</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedFunction</div>
-   
   
   
 
@@ -2320,6 +2356,8 @@
   
   
   
+  
+
   
 
   
@@ -2356,10 +2394,7 @@
 
   <p><a href="#maskeddynamic">MaskedDynamic</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskedDynamic</div>
-   
   
   
 
@@ -2368,6 +2403,8 @@
   
   
   
+  
+
   
 
   
@@ -2404,10 +2441,7 @@
 
   <p><a href="#createmask">createMask</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>createMask</div>
-   
   
   
 
@@ -2416,6 +2450,8 @@
   
   
   
+  
+
   
 
   
@@ -2452,10 +2488,7 @@
 
   <p><a href="#maskelement">MaskElement</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>MaskElement</div>
-   
   
   
 
@@ -2464,6 +2497,8 @@
   
   
   
+  
+
   
 
   
@@ -2500,10 +2535,7 @@
 
   <p><a href="#htmlmaskelement">HTMLMaskElement</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>HTMLMaskElement</div>
-   
   
   
 
@@ -2512,6 +2544,8 @@
   
   
   
+  
+
   
 
   
@@ -2541,8 +2575,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -2560,10 +2597,7 @@
 
   <p>Checks if value is string</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>isString(str: any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-   
   
   
 
@@ -2607,56 +2641,11 @@
   
 
   
+
+  
 </section>
 
-        
           
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id=''>
-      
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Direction</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'></div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -2674,10 +2663,7 @@
 
   <p>Direction</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>DIRECTION</div>
-   
   
   
 
@@ -2738,8 +2724,59 @@
   
 
   
+
+  
 </section>
 
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id=''>
+      
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Direction</p>
+
+    <div class='pre p1 fill-light mt0'></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -2757,10 +2794,7 @@
 
   <p>Returns next char index in direction</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>indexInDirection(pos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, direction: Direction): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-   
   
   
 
@@ -2812,8 +2846,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -2831,10 +2868,7 @@
 
   <p>Returns next char position in direction</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>posInDirection(pos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, direction: Direction): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-   
   
   
 
@@ -2886,8 +2920,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -2904,10 +2941,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>forceDirection(direction: Direction): Direction</div>
-   
   
   
 
@@ -2951,8 +2985,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -2970,10 +3007,7 @@
 
   <p>Escapes regular expression control chars</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>escapeRegExp(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -3017,8 +3051,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -3036,10 +3073,7 @@
 
   <p>Selection range</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>Selection</div>
-   
   
     <p>
       Type:
@@ -3087,8 +3121,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -3106,10 +3143,7 @@
 
   <p>Listens to element events and controls changes between element and <a href="#masked">Masked</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new InputMask(el: (<a href="#maskelement">MaskElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLInputElement">HTMLInputElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLTextAreaElement">HTMLTextAreaElement</a>), opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
 
@@ -3171,10 +3205,7 @@
 
   <p>View element</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>el</div>
-   
   
     <p>
       Type:
@@ -3188,6 +3219,8 @@
   
   
   
+  
+
   
 
   
@@ -3224,10 +3257,7 @@
 
   <p>Internal <a href="#masked">Masked</a> model</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>masked</div>
-   
   
     <p>
       Type:
@@ -3241,6 +3271,8 @@
   
   
   
+  
+
   
 
   
@@ -3277,10 +3309,7 @@
 
   <p>Read or update mask</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>mask</div>
-   
   
   
 
@@ -3311,6 +3340,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -3330,10 +3361,7 @@
 
   <p>Raw value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>value</div>
-   
   
   
 
@@ -3353,6 +3381,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -3383,10 +3413,7 @@
 
   <p>Unmasked value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>unmaskedValue</div>
-   
   
   
 
@@ -3417,6 +3444,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -3436,10 +3465,7 @@
 
   <p>Typed unmasked value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>typedValue</div>
-   
   
   
 
@@ -3470,6 +3496,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -3489,10 +3517,7 @@
 
   <p>Starts listening to element events</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_bindEvents()</div>
-   
   
   
 
@@ -3501,6 +3526,8 @@
   
   
   
+  
+
   
 
   
@@ -3537,10 +3564,7 @@
 
   <p>Stops listening to element events</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_unbindEvents()</div>
-   
   
   
 
@@ -3549,6 +3573,8 @@
   
   
   
+  
+
   
 
   
@@ -3585,10 +3611,7 @@
 
   <p>Fires custom event</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_fireEvent(ev: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
-   
   
   
 
@@ -3627,6 +3650,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -3646,10 +3671,7 @@
 
   <p>Current selection start</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>selectionStart</div>
-   
   
   
 
@@ -3669,6 +3691,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
     
+  
+
   
 
   
@@ -3699,10 +3723,7 @@
 
   <p>Current cursor position</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>cursorPos</div>
-   
   
   
 
@@ -3733,6 +3754,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -3752,10 +3775,7 @@
 
   <p>Stores current selection</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_saveSelection()</div>
-   
   
   
 
@@ -3764,6 +3784,8 @@
   
   
   
+  
+
   
 
   
@@ -3800,10 +3822,7 @@
 
   <p>Syncronizes model value from view</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>updateValue()</div>
-   
   
   
 
@@ -3812,6 +3831,8 @@
   
   
   
+  
+
   
 
   
@@ -3848,10 +3869,7 @@
 
   <p>Syncronizes view from model value, fires change events</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>updateControl()</div>
-   
   
   
 
@@ -3860,6 +3878,8 @@
   
   
   
+  
+
   
 
   
@@ -3896,10 +3916,7 @@
 
   <p>Updates options with deep equal check, recreates @{link Masked} model if mask type changes</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>updateOptions(opts: {})</div>
-   
   
   
 
@@ -3938,6 +3955,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -3957,10 +3976,7 @@
 
   <p>Updates cursor</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>updateCursor(cursorPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</div>
-   
   
   
 
@@ -3999,6 +4015,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -4018,10 +4036,7 @@
 
   <p>Fires custom events</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_fireChangeEvents()</div>
-   
   
   
 
@@ -4030,6 +4045,8 @@
   
   
   
+  
+
   
 
   
@@ -4066,10 +4083,7 @@
 
   <p>Aligns cursor to nearest available position</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>alignCursor()</div>
-   
   
   
 
@@ -4078,6 +4092,8 @@
   
   
   
+  
+
   
 
   
@@ -4114,10 +4130,7 @@
 
   <p>Aligns cursor only if selection is empty</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>alignCursorFriendly()</div>
-   
   
   
 
@@ -4126,6 +4139,8 @@
   
   
   
+  
+
   
 
   
@@ -4162,10 +4177,7 @@
 
   <p>Adds listener on custom event</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>on(ev: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, handler: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</div>
-   
   
   
 
@@ -4197,6 +4209,8 @@
         </div>
       
     </div>
+  
+
   
 
   
@@ -4231,10 +4245,7 @@
 
   <p>Removes custom event listener</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>off(ev: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, handler: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</div>
-   
   
   
 
@@ -4281,6 +4292,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -4300,10 +4313,7 @@
 
   <p>Handles view input event</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_onInput()</div>
-   
   
   
 
@@ -4312,6 +4322,8 @@
   
   
   
+  
+
   
 
   
@@ -4348,10 +4360,7 @@
 
   <p>Handles view change event and commits model value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_onChange()</div>
-   
   
   
 
@@ -4360,6 +4369,8 @@
   
   
   
+  
+
   
 
   
@@ -4396,10 +4407,7 @@
 
   <p>Handles view drop event, prevents by default</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_onDrop(ev: <a href="https://developer.mozilla.org/docs/Web/API/Event">Event</a>)</div>
-   
   
   
 
@@ -4438,6 +4446,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -4457,10 +4467,7 @@
 
   <p>Unbind view events and removes element reference</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>destroy()</div>
-   
   
   
 
@@ -4469,6 +4476,8 @@
   
   
   
+  
+
   
 
   
@@ -4496,8 +4505,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -4515,10 +4527,7 @@
 
   <p>Provides details of changing input</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new ActionDetails(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, cursorPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, oldValue: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, oldSelection: <a href="#selection">Selection</a>)</div>
-   
   
   
 
@@ -4596,10 +4605,7 @@
 
   <p>Current input value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>value</div>
-   
   
     <p>
       Type:
@@ -4613,6 +4619,8 @@
   
   
   
+  
+
   
 
   
@@ -4649,10 +4657,7 @@
 
   <p>Current cursor position</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>cursorPos</div>
-   
   
     <p>
       Type:
@@ -4666,6 +4671,8 @@
   
   
   
+  
+
   
 
   
@@ -4702,10 +4709,7 @@
 
   <p>Old input value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>oldValue</div>
-   
   
     <p>
       Type:
@@ -4719,6 +4723,8 @@
   
   
   
+  
+
   
 
   
@@ -4755,10 +4761,7 @@
 
   <p>Old selection</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>oldSelection</div>
-   
   
     <p>
       Type:
@@ -4772,6 +4775,8 @@
   
   
   
+  
+
   
 
   
@@ -4808,10 +4813,7 @@
 
   <p>Start changing position</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>startChangePos</div>
-   
   
   
 
@@ -4831,6 +4833,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
     
+  
+
   
 
   
@@ -4861,10 +4865,7 @@
 
   <p>Inserted symbols count</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>insertedCount</div>
-   
   
   
 
@@ -4884,6 +4885,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
     
+  
+
   
 
   
@@ -4914,10 +4917,7 @@
 
   <p>Inserted symbols</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>inserted</div>
-   
   
   
 
@@ -4937,6 +4937,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -4967,10 +4969,7 @@
 
   <p>Removed symbols count</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>removedCount</div>
-   
   
   
 
@@ -5001,6 +5000,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -5020,10 +5021,7 @@
 
   <p>Removed symbols</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>removed</div>
-   
   
   
 
@@ -5043,6 +5041,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -5073,10 +5073,7 @@
 
   <p>Unchanged head symbols</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>head</div>
-   
   
   
 
@@ -5096,6 +5093,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -5126,10 +5125,7 @@
 
   <p>Unchanged tail symbols</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>tail</div>
-   
   
   
 
@@ -5160,6 +5156,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -5179,10 +5177,7 @@
 
   <p>Remove direction</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>removeDirection</div>
-   
   
   
 
@@ -5213,6 +5208,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -5223,8 +5220,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -5242,10 +5242,7 @@
 
   <p>Supported mask type</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>Mask</div>
-   
   
     <p>
       Type:
@@ -5276,8 +5273,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -5295,10 +5295,7 @@
 
   <p>Append flags</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>AppendFlags</div>
-   
   
     <p>
       Type:
@@ -5352,8 +5349,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -5371,10 +5371,7 @@
 
   <p>Extract flags</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>ExtractFlags</div>
-   
   
     <p>
       Type:
@@ -5416,8 +5413,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -5435,10 +5435,7 @@
 
   <p>Provides common masking stuff</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new Masked(opts: {})</div>
-   
   
   
 
@@ -5491,10 +5488,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>mask</div>
-   
   
     <p>
       Type:
@@ -5508,6 +5502,8 @@
   
   
   
+  
+
   
 
   
@@ -5543,10 +5539,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>parent</div>
-   
   
     <p>
       Type:
@@ -5560,6 +5553,8 @@
   
   
   
+  
+
   
 
   
@@ -5596,10 +5591,7 @@
 
   <p>Transforms value before mask processing</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>prepare</div>
-   
   
     <p>
       Type:
@@ -5613,6 +5605,8 @@
   
   
   
+  
+
   
 
   
@@ -5649,10 +5643,7 @@
 
   <p>Validates if value is acceptable</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>validate</div>
-   
   
     <p>
       Type:
@@ -5666,6 +5657,8 @@
   
   
   
+  
+
   
 
   
@@ -5702,14 +5695,11 @@
 
   <p>Does additional processing in the end of editing</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>commit</div>
-   
   
     <p>
       Type:
-      function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#appendflags">AppendFlags</a>): void
+      function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#masked">Masked</a>&#x3C;MaskType>): void
     </p>
   
   
@@ -5719,6 +5709,60 @@
   
   
   
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskedoverwrite'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>overwrite</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Enable characters overwriting</p>
+
+    <div class='pre p1 fill-light mt0'>overwrite</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
   
 
   
@@ -5754,10 +5798,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>isInitialized</div>
-   
   
     <p>
       Type:
@@ -5771,6 +5812,8 @@
   
   
   
+  
+
   
 
   
@@ -5807,10 +5850,7 @@
 
   <p>Sets and applies new options</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>updateOptions(opts: {})</div>
-   
   
   
 
@@ -5834,6 +5874,8 @@
         </div>
       
     </div>
+  
+
   
 
   
@@ -5868,10 +5910,7 @@
 
   <p>Sets new options</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: {})</div>
-   
   
   
 
@@ -5910,6 +5949,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -5929,10 +5970,7 @@
 
   <p>Mask state</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>state</div>
-   
   
   
 
@@ -5963,6 +6001,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -5982,10 +6022,7 @@
 
   <p>Resets value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>reset()</div>
-   
   
   
 
@@ -5994,6 +6031,8 @@
   
   
   
+  
+
   
 
   
@@ -6029,10 +6068,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>value</div>
-   
   
   
 
@@ -6063,6 +6099,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6082,10 +6120,7 @@
 
   <p>Resolve new value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>resolve(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -6129,6 +6164,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6147,10 +6184,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>unmaskedValue</div>
-   
   
   
 
@@ -6181,6 +6215,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6199,10 +6235,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>typedValue</div>
-   
   
   
 
@@ -6233,6 +6266,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6252,10 +6287,7 @@
 
   <p>Value that includes raw user input</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>rawInputValue</div>
-   
   
   
 
@@ -6286,6 +6318,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6304,10 +6338,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>isComplete</div>
-   
   
   
 
@@ -6338,6 +6369,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6357,10 +6390,7 @@
 
   <p>Finds nearest input position in direction</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>nearestInputPos(cursorPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, direction: Direction): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-   
   
   
 
@@ -6412,6 +6442,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6431,10 +6463,7 @@
 
   <p>Extracts value in range considering flags</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>extractInput(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, flags: <a href="#extractflags">ExtractFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -6496,6 +6525,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6515,10 +6546,7 @@
 
   <p>Extracts tail in range</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): TailDetails</div>
-   
   
   
 
@@ -6572,6 +6600,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6591,10 +6621,7 @@
 
   <p>Stores state before tail</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_storeBeforeTailState()</div>
-   
   
   
 
@@ -6603,6 +6630,8 @@
   
   
   
+  
+
   
 
   
@@ -6639,10 +6668,7 @@
 
   <p>Restores state before tail</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_restoreBeforeTailState()</div>
-   
   
   
 
@@ -6651,6 +6677,8 @@
   
   
   
+  
+
   
 
   
@@ -6687,10 +6715,7 @@
 
   <p>Resets state before tail</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_resetBeforeTailState()</div>
-   
   
   
 
@@ -6699,6 +6724,8 @@
   
   
   
+  
+
   
 
   
@@ -6735,10 +6762,7 @@
 
   <p>Appends tail</p>
 
- 
-  
-    <div class='pre p1 fill-light mt0'>appendTail(tail: TailDetails): <a href="#changedetails">ChangeDetails</a></div>
-   
+    <div class='pre p1 fill-light mt0'>appendTail(tail: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | TailDetails)): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -6755,7 +6779,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>tail</span> <code class='quiet'>(TailDetails)</code>
+            <span class='code bold'>tail</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | TailDetails))</code>
 	    
           </div>
           
@@ -6771,6 +6795,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="#changedetails">ChangeDetails</a></code>
     
+  
+
   
 
   
@@ -6801,10 +6827,7 @@
 
   <p>Appends char</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_appendCharRaw(ch: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -6857,6 +6880,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6876,10 +6901,7 @@
 
   <p>Appends char</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_appendChar(ch: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>, checkTail: TailDetails): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -6940,6 +6962,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -6959,10 +6983,7 @@
 
   <p>Appends symbols considering flags</p>
 
- 
-  
-    <div class='pre p1 fill-light mt0'>append(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>, tail: TailDetails): <a href="#changedetails">ChangeDetails</a></div>
-   
+    <div class='pre p1 fill-light mt0'>append(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>, tail: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | TailDetails)): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -6995,7 +7016,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>tail</span> <code class='quiet'>(TailDetails)</code>
+            <span class='code bold'>tail</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | TailDetails))</code>
 	    
           </div>
           
@@ -7011,6 +7032,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="#changedetails">ChangeDetails</a></code>
     
+  
+
   
 
   
@@ -7040,10 +7063,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>remove(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -7097,6 +7117,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -7116,10 +7138,7 @@
 
   <p>Calls function and reapplies current value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>withValueRefresh(fn: function (): T): T</div>
-   
   
   
 
@@ -7163,6 +7182,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -7182,10 +7203,7 @@
 
   <p>Prepares string before mask processing</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>doPrepare(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -7238,6 +7256,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -7257,10 +7277,7 @@
 
   <p>Validates if value is acceptable</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>doValidate(flags: <a href="#appendflags">AppendFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-   
   
   
 
@@ -7304,6 +7321,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -7323,10 +7342,7 @@
 
   <p>Does additional processing in the end of editing</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>doCommit()</div>
-   
   
   
 
@@ -7335,6 +7351,8 @@
   
   
   
+  
+
   
 
   
@@ -7370,10 +7388,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>splice(start: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, deleteCount: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, inserted: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, removeDirection: Direction): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -7441,6 +7456,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -7451,8 +7468,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -7470,10 +7490,7 @@
 
   <p>Pattern mask</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedPattern(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
     <p>
@@ -7582,10 +7599,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>blocks</div>
-   
   
     <p>
       Type:
@@ -7599,6 +7613,8 @@
   
   
   
+  
+
   
 
   
@@ -7634,10 +7650,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>definitions</div>
-   
   
     <p>
       Type:
@@ -7651,6 +7664,8 @@
   
   
   
+  
+
   
 
   
@@ -7687,10 +7702,7 @@
 
   <p>Single char for empty input</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>placeholderChar</div>
-   
   
     <p>
       Type:
@@ -7704,6 +7716,8 @@
   
   
   
+  
+
   
 
   
@@ -7740,10 +7754,7 @@
 
   <p>Show placeholder only when needed</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>lazy</div>
-   
   
     <p>
       Type:
@@ -7757,6 +7768,8 @@
   
   
   
+  
+
   
 
   
@@ -7792,10 +7805,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
 
@@ -7835,6 +7845,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -7853,10 +7865,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_rebuildMask()</div>
-   
   
   
 
@@ -7865,6 +7874,8 @@
   
   
   
+  
+
   
 
   
@@ -7900,10 +7911,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>state</div>
-   
   
   
 
@@ -7934,6 +7942,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -7952,10 +7962,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_storeBeforeTailState()</div>
-   
   
   
 
@@ -7964,6 +7971,8 @@
   
   
   
+  
+
   
 
   
@@ -7999,10 +8008,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_restoreBeforeTailState()</div>
-   
   
   
 
@@ -8011,6 +8017,8 @@
   
   
   
+  
+
   
 
   
@@ -8046,10 +8054,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_resetBeforeTailState()</div>
-   
   
   
 
@@ -8058,6 +8063,8 @@
   
   
   
+  
+
   
 
   
@@ -8093,10 +8100,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>reset()</div>
-   
   
   
 
@@ -8105,6 +8109,8 @@
   
   
   
+  
+
   
 
   
@@ -8140,10 +8146,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>isComplete</div>
-   
   
   
 
@@ -8174,6 +8177,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -8192,10 +8197,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doCommit()</div>
-   
   
   
 
@@ -8204,6 +8206,8 @@
   
   
   
+  
+
   
 
   
@@ -8239,10 +8243,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>unmaskedValue</div>
-   
   
   
 
@@ -8262,6 +8263,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -8291,10 +8294,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>value</div>
-   
   
   
 
@@ -8325,6 +8325,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -8343,10 +8345,7 @@
   
 
   
- 
-  
-    <div class='pre p1 fill-light mt0'>appendTail(tail: (ChunksTailDetails | TailDetails)): <a href="#changedetails">ChangeDetails</a></div>
-   
+    <div class='pre p1 fill-light mt0'>appendTail(tail: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | TailDetails)): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -8363,7 +8362,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>tail</span> <code class='quiet'>((ChunksTailDetails | TailDetails))</code>
+            <span class='code bold'>tail</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | TailDetails))</code>
 	    
           </div>
           
@@ -8379,6 +8378,8 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="#changedetails">ChangeDetails</a></code>
     
+  
+
   
 
   
@@ -8408,10 +8409,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_appendCharRaw(ch: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -8464,65 +8462,6 @@
   
 
   
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskedpattern_appendtailchunks'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_appendTailChunks(chunks)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Appends chunks splitted by stop chars</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>_appendTailChunks(chunks: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk>)</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>chunks</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 </section>
@@ -8543,10 +8482,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): ChunksTailDetails</div>
-   
   
   
 
@@ -8600,6 +8536,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -8618,10 +8556,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>extractInput(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, flags: <a href="#extractflags">ExtractFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -8684,80 +8619,6 @@
   
 
   
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskedpattern_extracttailchunks'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_extractTailChunks(fromPos, toPos)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Extracts chunks from input splitted by stop chars</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>_extractTailChunks(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk></div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>fromPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-            = <code>0</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>toPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-            = <code>this.value.length</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;TailInputChunk></code>
-    
-  
-
-  
-
-  
-
-  
-
-  
 
   
 </section>
@@ -8779,10 +8640,7 @@
 
   <p>Appends placeholder depending on laziness</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_appendPlaceholder(toBlockIndex: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -8826,6 +8684,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -8845,10 +8705,7 @@
 
   <p>Finds block in pos</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_mapPosToBlock(pos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): BlockPosData?</div>
-   
   
   
 
@@ -8892,6 +8749,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -8910,10 +8769,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_blockStartPos(blockIndex: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-   
   
   
 
@@ -8957,6 +8813,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -8975,10 +8833,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_forEachBlocksInRange(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, fn: function (block: PatternBlock, blockIndex: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): void)</div>
-   
   
   
 
@@ -9034,6 +8889,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -9052,10 +8909,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>remove(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -9109,6 +8963,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -9127,10 +8983,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>nearestInputPos(cursorPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, direction: Direction): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-   
   
   
 
@@ -9183,6 +9036,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -9202,10 +9057,7 @@
 
   <p>Get block by name</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>maskedBlock(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): PatternBlock?</div>
-   
   
   
 
@@ -9249,6 +9101,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -9268,10 +9122,7 @@
 
   <p>Get all blocks by name</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>maskedBlocks(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;PatternBlock></div>
-   
   
   
 
@@ -9315,6 +9166,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -9325,8 +9178,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -9344,10 +9200,7 @@
 
   <p>Provides details of changing model value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new ChangeDetails(details: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</div>
-   
   
   
 
@@ -9453,10 +9306,7 @@
 
   <p>Inserted symbols</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>inserted</div>
-   
   
     <p>
       Type:
@@ -9470,6 +9320,8 @@
   
   
   
+  
+
   
 
   
@@ -9506,10 +9358,7 @@
 
   <p>Can skip chars</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>skip</div>
-   
   
     <p>
       Type:
@@ -9523,6 +9372,8 @@
   
   
   
+  
+
   
 
   
@@ -9559,10 +9410,7 @@
 
   <p>Additional offset if any changes occurred before tail</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>tailShift</div>
-   
   
     <p>
       Type:
@@ -9576,6 +9424,8 @@
   
   
   
+  
+
   
 
   
@@ -9612,10 +9462,7 @@
 
   <p>Raw inserted is used by dynamic mask</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>rawInserted</div>
-   
   
     <p>
       Type:
@@ -9629,6 +9476,8 @@
   
   
   
+  
+
   
 
   
@@ -9665,10 +9514,7 @@
 
   <p>Aggregate changes</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>aggregate(details: <a href="#changedetails">ChangeDetails</a>): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -9715,6 +9561,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -9734,10 +9582,7 @@
 
   <p>Total offset considering all changes</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>offset</div>
-   
   
   
 
@@ -9768,6 +9613,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -9778,8 +9625,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -9796,10 +9646,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>PatternInputDefinitionOptions</div>
-   
   
     <p>
       Type:
@@ -9865,8 +9712,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -9883,10 +9733,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>new PatternInputDefinition(opts: <a href="#patterninputdefinitionoptions">PatternInputDefinitionOptions</a>)</div>
-   
   
   
 
@@ -9939,10 +9786,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>masked</div>
-   
   
     <p>
       Type:
@@ -9956,6 +9800,8 @@
   
   
   
+  
+
   
 
   
@@ -9991,10 +9837,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>parent</div>
-   
   
     <p>
       Type:
@@ -10008,6 +9851,8 @@
   
   
   
+  
+
   
 
   
@@ -10043,10 +9888,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>isOptional</div>
-   
   
     <p>
       Type:
@@ -10060,6 +9902,8 @@
   
   
   
+  
+
   
 
   
@@ -10095,10 +9939,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_isFilled</div>
-   
   
     <p>
       Type:
@@ -10112,6 +9953,8 @@
   
   
   
+  
+
   
 
   
@@ -10147,10 +9990,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>lazy</div>
-   
   
     <p>
       Type:
@@ -10164,6 +10004,8 @@
   
   
   
+  
+
   
 
   
@@ -10199,10 +10041,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>placeholderChar</div>
-   
   
     <p>
       Type:
@@ -10233,6 +10072,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -10243,8 +10084,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -10261,10 +10105,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>PatternFixedDefinitionOptions</div>
-   
   
     <p>
       Type:
@@ -10312,8 +10153,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -10330,10 +10174,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_value</div>
-   
   
     <p>
       Type:
@@ -10364,8 +10205,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -10382,10 +10226,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>char</div>
-   
   
     <p>
       Type:
@@ -10416,8 +10257,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -10434,10 +10278,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>isUnmasking</div>
-   
   
     <p>
       Type:
@@ -10468,8 +10309,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -10486,10 +10330,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_isRawInput</div>
-   
   
     <p>
       Type:
@@ -10520,8 +10361,304 @@
   
 
   
+
+  
 </section>
 
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='blockindex'>
+      blockIndex
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>blockIndex</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='continuoustaildetails'>
+      ContinuousTailDetails
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Provides details of continuous extracted tail</p>
+
+    <div class='pre p1 fill-light mt0'>new ContinuousTailDetails(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, from: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, stop: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+            = <code>&#39;&#39;</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>from</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+            = <code>0</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>stop</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='continuoustaildetailsvalue'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>value</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Tail value as string</p>
+
+    <div class='pre p1 fill-light mt0'>value</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='continuoustaildetailsfrom'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>from</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Tail start position</p>
+
+    <div class='pre p1 fill-light mt0'>from</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='continuoustaildetailsstop'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>stop</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Start position</p>
+
+    <div class='pre p1 fill-light mt0'>stop</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -10539,10 +10676,7 @@
 
   <p>Pattern which validates enum values</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedEnum()</div>
-   
   
   
     <p>
@@ -10589,10 +10723,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
 
@@ -10631,6 +10762,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -10649,10 +10782,7 @@
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doValidate(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-   
   
   
 
@@ -10696,6 +10826,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -10706,8 +10838,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -10725,10 +10860,7 @@
 
   <p>Pattern which accepts ranges</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedRange()</div>
-   
   
   
     <p>
@@ -10777,10 +10909,7 @@
   <p>Optionally sets max length of pattern.
 Used when pattern length is longer then <code>to</code> param length. Pads zeros at start in this case.</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>maxLength</div>
-   
   
     <p>
       Type:
@@ -10794,6 +10923,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -10830,10 +10961,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Min bound</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>from</div>
-   
   
     <p>
       Type:
@@ -10847,6 +10975,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -10883,10 +11013,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Max bound</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>to</div>
-   
   
     <p>
       Type:
@@ -10900,6 +11027,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -10935,10 +11064,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: any)</div>
-   
   
   
 
@@ -10977,6 +11103,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -10995,10 +11123,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>isComplete</div>
-   
   
   
 
@@ -11029,6 +11154,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -11047,10 +11174,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doValidate(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-   
   
   
 
@@ -11094,6 +11218,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -11104,8 +11230,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -11123,10 +11252,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Number mask</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedNumber(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
     <p>
@@ -11282,10 +11408,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Single char</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>radix</div>
-   
   
     <p>
       Type:
@@ -11299,6 +11422,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11335,10 +11460,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Single char</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>thousandsSeparator</div>
-   
   
     <p>
       Type:
@@ -11352,6 +11474,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11388,10 +11512,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Array of single chars</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>mapToRadix</div>
-   
   
     <p>
       Type:
@@ -11405,6 +11526,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11440,10 +11563,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>min</div>
-   
   
     <p>
       Type:
@@ -11457,6 +11577,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11492,10 +11614,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>max</div>
-   
   
     <p>
       Type:
@@ -11509,6 +11628,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11545,10 +11666,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Digits after point</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>scale</div>
-   
   
     <p>
       Type:
@@ -11562,6 +11680,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11597,10 +11717,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>signed</div>
-   
   
     <p>
       Type:
@@ -11614,6 +11731,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11650,10 +11769,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Flag to remove leading and trailing zeros in the end of editing</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>normalizeZeros</div>
-   
   
     <p>
       Type:
@@ -11667,6 +11783,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11703,10 +11821,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Flag to pad trailing zeros after point in the end of editing</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>padFractionalZeros</div>
-   
   
     <p>
       Type:
@@ -11720,6 +11835,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -11755,10 +11872,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: MaskedNumberOptions)</div>
-   
   
   
 
@@ -11797,6 +11911,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -11815,10 +11931,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_updateRegExps()</div>
-   
   
   
 
@@ -11835,79 +11948,6 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   
 
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskednumberextracttail'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>extractTail(fromPos, toPos)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
- 
-  
-    <div class='pre p1 fill-light mt0'>extractTail(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): TailDetails</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>fromPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-            = <code>0</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>toPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-            = <code>this.value.length</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>TailDetails</code>
-    
   
 
   
@@ -11937,10 +11977,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_removeThousandsSeparators(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -11973,6 +12010,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -12002,10 +12041,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_insertThousandsSeparators(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -12049,6 +12085,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -12067,10 +12105,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doPrepare(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, args: ...any)</div>
-   
   
   
 
@@ -12117,6 +12152,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -12126,7 +12163,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_separatorsCount(value)</span>
+            <span class='code strong strong truncate'>_separatorsCount(to, extendOnSeparators)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -12135,10 +12172,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
-    <div class='pre p1 fill-light mt0'>_separatorsCount(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
-   
+    <div class='pre p1 fill-light mt0'>_separatorsCount(to: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, extendOnSeparators: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
   
   
 
@@ -12155,7 +12189,80 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+            <span class='code bold'>to</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>extendOnSeparators</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
+            = <code>false</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskednumber_separatorscountfromslice'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_separatorsCountFromSlice(slice)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>_separatorsCountFromSlice(slice: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>slice</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
             = <code>this._value</code>)</code>
 	    
           </div>
@@ -12165,6 +12272,13 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
     </div>
   
 
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
+    
   
 
   
@@ -12187,7 +12301,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>extractInput(args)</span>
+            <span class='code strong strong truncate'>extractInput(fromPos, toPos, flags)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -12196,10 +12310,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
-    <div class='pre p1 fill-light mt0'>extractInput(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
+    <div class='pre p1 fill-light mt0'>extractInput(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, flags: <a href="#extractflags">ExtractFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
   
   
 
@@ -12216,7 +12327,25 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>args</span> <code class='quiet'>(...any)</code>
+            <span class='code bold'>fromPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+            = <code>0</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>toPos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+            = <code>this.value.length</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>flags</span> <code class='quiet'>(<a href="#extractflags">ExtractFlags</a>)</code>
 	    
           </div>
           
@@ -12232,6 +12361,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -12261,10 +12392,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_appendCharRaw(ch: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -12317,6 +12445,72 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskednumber_findseparatoraround'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_findSeparatorAround(pos)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>_findSeparatorAround(pos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>pos</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 </section>
 
       </div>
@@ -12335,10 +12529,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>remove(fromPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, toPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -12392,6 +12583,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -12410,10 +12603,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>nearestInputPos(cursorPos: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, direction: Direction): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-   
   
   
 
@@ -12465,6 +12655,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -12483,10 +12675,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doValidate(flags: <a href="#appendflags">AppendFlags</a>)</div>
-   
   
   
 
@@ -12525,6 +12714,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -12543,10 +12734,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doCommit()</div>
-   
   
   
 
@@ -12555,6 +12743,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -12590,10 +12780,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_normalizeZeros(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -12626,6 +12813,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -12655,10 +12844,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_padFractionalZeros(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -12702,6 +12888,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -12720,10 +12908,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>unmaskedValue</div>
-   
   
   
 
@@ -12743,6 +12928,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -12773,10 +12960,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Parsed Number</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>number</div>
-   
   
   
 
@@ -12796,6 +12980,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
     
+  
+
   
 
   
@@ -12825,10 +13011,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>typedValue</div>
-   
   
   
 
@@ -12848,6 +13031,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
     
+  
+
   
 
   
@@ -12878,10 +13063,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Is negative allowed</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>allowNegative</div>
-   
   
   
 
@@ -12912,6 +13094,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -12922,8 +13106,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -12941,10 +13128,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Date mask</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedDate(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
     <p>
@@ -13005,10 +13189,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Parse string to Date</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>parse</div>
-   
   
     <p>
       Type:
@@ -13022,6 +13203,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -13058,10 +13241,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Format Date to string</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>format</div>
-   
   
     <p>
       Type:
@@ -13075,6 +13255,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -13111,10 +13293,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Pattern mask for date according to <a href="#maskeddateformat">MaskedDate#format</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>pattern</div>
-   
   
     <p>
       Type:
@@ -13128,6 +13307,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -13164,10 +13345,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Start date</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>min</div>
-   
   
     <p>
       Type:
@@ -13181,6 +13359,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -13217,10 +13397,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>End date</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>max</div>
-   
   
     <p>
       Type:
@@ -13234,6 +13411,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -13269,10 +13448,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: any)</div>
-   
   
   
 
@@ -13311,6 +13487,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -13329,10 +13507,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doValidate(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-   
   
   
 
@@ -13376,6 +13551,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -13395,10 +13572,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Checks if date is exists</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>isDateExist(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-   
   
   
 
@@ -13442,6 +13616,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -13461,10 +13637,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Parsed Date</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>date</div>
-   
   
   
 
@@ -13484,6 +13657,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a>?</code>
     
+  
+
   
 
   
@@ -13513,10 +13688,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>typedValue</div>
-   
   
   
 
@@ -13547,6 +13719,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -13557,8 +13731,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -13576,10 +13753,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Masking by RegExp</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedRegExp()</div>
-   
   
   
     <p>
@@ -13626,10 +13800,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
 
@@ -13668,6 +13839,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -13678,8 +13851,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -13697,10 +13873,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Masking by custom Function</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedFunction()</div>
-   
   
   
     <p>
@@ -13747,10 +13920,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
 
@@ -13789,6 +13959,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -13799,8 +13971,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -13818,10 +13993,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Dynamic mask for choosing apropriate mask in run-time</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskedDynamic(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-   
   
   
     <p>
@@ -13882,10 +14054,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Currently chosen mask</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>currentMask</div>
-   
   
     <p>
       Type:
@@ -13899,6 +14068,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -13935,10 +14106,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Compliled <a href="#masked">Masked</a> options</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>compiledMasks</div>
-   
   
     <p>
       Type:
@@ -13952,6 +14120,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -13988,10 +14158,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Chooses <a href="#masked">Masked</a> depending on input value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>dispatch</div>
-   
   
     <p>
       Type:
@@ -14005,6 +14172,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -14040,10 +14209,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_update(opts: any)</div>
-   
   
   
 
@@ -14082,6 +14248,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14100,10 +14268,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_appendCharRaw(args: ...any): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -14147,6 +14312,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14165,10 +14332,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doDispatch(appended: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>)</div>
-   
   
   
 
@@ -14216,6 +14380,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14234,10 +14400,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doValidate(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
-   
   
   
 
@@ -14281,6 +14444,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14299,10 +14464,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>reset()</div>
-   
   
   
 
@@ -14311,6 +14473,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -14346,10 +14510,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>value</div>
-   
   
   
 
@@ -14369,6 +14530,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
+  
+
   
 
   
@@ -14398,10 +14561,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>unmaskedValue</div>
-   
   
   
 
@@ -14432,6 +14592,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14450,10 +14612,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>typedValue</div>
-   
   
   
 
@@ -14484,6 +14643,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14502,10 +14663,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>isComplete</div>
-   
   
   
 
@@ -14536,6 +14694,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14554,10 +14714,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>remove(args: ...any): <a href="#changedetails">ChangeDetails</a></div>
-   
   
   
 
@@ -14601,6 +14758,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14619,10 +14778,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>state</div>
-   
   
   
 
@@ -14653,6 +14809,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14671,10 +14829,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>extractInput(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
-   
   
   
 
@@ -14718,6 +14873,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14736,10 +14893,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>extractTail(args: ...any): TailDetails</div>
-   
   
   
 
@@ -14783,6 +14937,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14801,10 +14957,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>doCommit()</div>
-   
   
   
 
@@ -14813,6 +14966,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -14848,10 +15003,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>nearestInputPos(args: ...any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
-   
   
   
 
@@ -14895,6 +15047,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -14905,8 +15059,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -14924,10 +15081,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Get Masked class by mask type</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>maskedClass(mask: <a href="#mask">Mask</a>): Class&#x3C;<a href="#masked">Masked</a>&#x3C;any>></div>
-   
   
   
 
@@ -14971,8 +15125,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -14990,10 +15147,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Creates new <a href="#masked">Masked</a> depending on mask type</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>createMask(opts: {mask: <a href="#mask">Mask</a>}): <a href="#masked">Masked</a>&#x3C;any></div>
-   
   
   
 
@@ -15037,8 +15191,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -15056,10 +15213,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Generic element API to use with mask</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new MaskElement()</div>
-   
   
   
 
@@ -15099,10 +15253,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_unsafeSelectionStart</div>
-   
   
     <p>
       Type:
@@ -15116,6 +15267,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -15151,10 +15304,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_unsafeSelectionEnd</div>
-   
   
     <p>
       Type:
@@ -15168,6 +15318,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -15203,10 +15355,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>value</div>
-   
   
     <p>
       Type:
@@ -15220,6 +15369,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -15256,10 +15407,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Safely returns selection start</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>selectionStart</div>
-   
   
   
 
@@ -15279,6 +15427,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
     
+  
+
   
 
   
@@ -15309,10 +15459,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Safely returns selection end</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>selectionEnd</div>
-   
   
   
 
@@ -15343,6 +15490,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -15362,10 +15511,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Safely sets element selection</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>select(start: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, end: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</div>
-   
   
   
 
@@ -15412,6 +15558,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -15431,10 +15579,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Should be overriden in subclasses</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_unsafeSelect(start: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, end: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): void</div>
-   
   
   
 
@@ -15486,6 +15631,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -15505,10 +15652,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Should be overriden in subclasses</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>isActive</div>
-   
   
   
 
@@ -15539,6 +15683,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -15558,10 +15704,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Should be overriden in subclasses</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>bindEvents(handlers: {})</div>
-   
   
   
 
@@ -15600,6 +15743,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -15619,10 +15764,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Should be overriden in subclasses</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>unbindEvents(): void</div>
-   
   
   
 
@@ -15653,6 +15795,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -15663,8 +15807,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -15682,10 +15829,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Bridge between HTMLElement and <a href="#masked">Masked</a></p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>new HTMLMaskElement(input: (<a href="https://developer.mozilla.org/docs/Web/API/HTMLInputElement">HTMLInputElement</a> | <a href="https://developer.mozilla.org/docs/Web/API/HTMLTextAreaElement">HTMLTextAreaElement</a>))</div>
-   
   
   
     <p>
@@ -15744,10 +15888,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Mapping between HTMLElement events and mask internal events</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>EVENTS_MAP</div>
-   
   
     <p>
       Type:
@@ -15761,6 +15902,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -15805,10 +15948,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>HTMLElement to use mask on</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>input</div>
-   
   
     <p>
       Type:
@@ -15822,6 +15962,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -15858,10 +16000,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Is element in focus</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>isActive</div>
-   
   
   
 
@@ -15892,6 +16031,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -15911,10 +16052,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Returns HTMLElement selection start</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_unsafeSelectionStart</div>
-   
   
   
 
@@ -15934,6 +16072,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
     
+  
+
   
 
   
@@ -15964,10 +16104,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Returns HTMLElement selection end</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_unsafeSelectionEnd</div>
-   
   
   
 
@@ -15998,6 +16135,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -16017,10 +16156,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Sets HTMLElement selection</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>_unsafeSelect(start: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, end: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</div>
-   
   
   
 
@@ -16067,6 +16203,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -16086,10 +16224,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>HTMLElement value</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>value</div>
-   
   
   
 
@@ -16120,6 +16255,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -16139,10 +16276,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Binds HTMLElement events to mask internal events</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>bindEvents(handlers: {})</div>
-   
   
   
 
@@ -16181,6 +16315,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -16200,10 +16336,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
 
   <p>Unbinds HTMLElement events to mask internal events</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>unbindEvents()</div>
-   
   
   
 
@@ -16212,6 +16345,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
   
   
+  
+
   
 
   
@@ -16247,10 +16382,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
- 
-  
     <div class='pre p1 fill-light mt0'>_toggleEventHandler(event: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, handler: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>): void</div>
-   
   
   
 
@@ -16302,6 +16434,8 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
       </div>
@@ -16312,8 +16446,11 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
+
+  
 </section>
 
+          
         
       </div>
     </div>
