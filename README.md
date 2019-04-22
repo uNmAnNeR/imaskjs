@@ -10,6 +10,7 @@ vanilla javascript input mask
 ## Features
 * get and set *raw* and *unmasked* values easily
 * no external dependencies
+* *overwrite* mode
 * **RegExp** mask
 * **Function** mask
 * **Number** mask (integer and decimal)
@@ -44,12 +45,6 @@ Supports all major browsers and IE11+ [need to support older?](https://unmanner.
 
 ## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
-
-## Further Plans
-* [DefinitelyTyped typings](https://github.com/uNmAnNeR/imaskjs/issues/17)
-* [Improved API docs](https://github.com/uNmAnNeR/imaskjs/issues/9)
-* [More unit tests](https://github.com/uNmAnNeR/imaskjs/issues/51)
-* [React Native plugin (development frozen)](https://github.com/uNmAnNeR/imaskjs/issues/12)
 
 ## Many Thanks to
 [@Viktor Yakovlev](https://github.com/vcrazyV)

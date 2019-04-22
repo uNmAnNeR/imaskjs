@@ -30,7 +30,7 @@ title: Input Mask Guide
 var maskOptions = {
   mask: '+{7}(000)000-00-00'
 };
-var mask = new IMask(element, maskOptions);</code></pre>
+var mask = IMask(element, maskOptions);</code></pre>
 
   <p>IMask consists of two independent layers: model and view.<br>
   Model layer contains all masking facilities which can be used independently without UI.</p>
@@ -38,7 +38,7 @@ var mask = new IMask(element, maskOptions);</code></pre>
   <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. <ins>In order to support older browsers</ins> manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
   <p>Currently, view layer contains only one component <code>InputMask</code> which supports HTML input-like API. Instance of <code>InputMask</code> is returned when IMask constructor is called.</p>
   <p>To create new mask on element use:</p>
-  <pre><code>var mask = new IMask(element, maskOptions);</code></pre>
+  <pre><code>var mask = IMask(element, maskOptions);</code></pre>
 
   <p>Get/set value and unmasked value:</p>
   <pre><code>mask.value = "+7(999)999-99-99";
@@ -155,7 +155,7 @@ console.log(masked.unmaskedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var digitsMask = new IMask(element, {
+  <pre><code>var digitsMask = IMask(element, {
   mask: /^\d+$/
 });</code></pre>
 
@@ -187,7 +187,7 @@ console.log(masked.typedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var caseMask = new IMask(element, {
+  <pre><code>var caseMask = IMask(element, {
   mask: /^\w+$/,
   prepare: function (str) {
     return str.toUpperCase();
@@ -203,7 +203,7 @@ console.log(masked.typedValue);</code></pre>
   <p><strong>Note: don't change <code>Masked</code> instance inside callbacks.</strong></p>
   <fieldset>
     <p><strong>Also make sure that mask or validator works with any of intermediate states, not just final value. For example to restrict input to "123" you do:</strong></p>
-    <pre><code>var masked = new IMask.Masked({
+    <pre><code>var masked = IMask.Masked({
   mask: /^123$/
 });</code></pre>
     <p>But it does not allow to input any symbol at all, because it matches only whole string "123" and not "1" nor "12". Always take care of intermediate values at first, otherwise it might not work as expected. In complex cases it is better to use <code>Pattern</code> or <code>Function</code> masks.</p>
@@ -221,7 +221,7 @@ console.log(masked.typedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var sequenceMask = new IMask(element, {
+  <pre><code>var sequenceMask = IMask(element, {
   mask: function (value) {
     return /^\d*$/.test(value) &amp;&amp;
       value.split('').every(function(ch, i) {
@@ -241,7 +241,7 @@ console.log(masked.typedValue);</code></pre>
       <label for="date-overwrite-mask-source" class="muted">source</label>
       <input id="date-overwrite-mask-source" type="checkbox">
       <div class="toggle-panel-content">
-        <pre><code>var overwriteMask = new IMask(
+        <pre><code>var overwriteMask = IMask(
   document.getElementById('date-overwrite-mask'),
   {
     mask: Date,
@@ -324,7 +324,7 @@ console.log(masked.typedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var numberMask = new IMask(element, {
+  <pre><code>var numberMask = IMask(element, {
   mask: Number,  // enable number mask
 
   // other options are optional with defaults below
@@ -410,12 +410,12 @@ console.log(masked.typedValue);</code></pre>
     </div>
   </div>
 
-  <pre><code>var patternMask = new IMask(element, {
+  <pre><code>var patternMask = IMask(element, {
   mask: '{#}000[aaa]/NIC-`*[**]'
 });
 
 // or without UI element
-var masked = new IMask.PatternMasked({
+var masked = IMask.PatternMasked({
   mask: '{#}000[aaa]/NIC-`*[**]'
 });</code></pre>
   where definitions are:
@@ -444,7 +444,7 @@ var masked = new IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var zipMask = new IMask(element, {
+  <pre><code>var zipMask = IMask(element, {
   mask: '#00000',
   definitions: {
     // &lt;any single char&gt;: &lt;same type as mask (RegExp, Function, etc.)&gt;
@@ -466,7 +466,7 @@ var masked = new IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var phoneMask = new IMask(element, {
+  <pre><code>var phoneMask = IMask(element, {
   mask: '+{7}(000)000-00-00',
   lazy: false,  // make placeholder always visible
   placeholderChar: '#'     // defaults to '_'
@@ -485,7 +485,7 @@ var masked = new IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var blocksMask = new IMask(element, {
+  <pre><code>var blocksMask = IMask(element, {
   mask: 'Ple\\ase fill ye\\ar 19<ins>YY</ins>, month <ins>MM</ins> \\and v\\alue <ins>VL</ins>',
   lazy: false,  // make placeholder always visible
 
@@ -523,7 +523,7 @@ var masked = new IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var rangeMask = new IMask(element, {
+  <pre><code>var rangeMask = IMask(element, {
   mask: IMask.MaskedRange,
   from: 1,
   to: 99,
@@ -551,7 +551,7 @@ var masked = new IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var enumMask = new IMask(element, {
+  <pre><code>var enumMask = IMask(element, {
   mask: IMask.MaskedEnum,
   // all values should be same length!
   enum: ['F1', 'G2', 'H3'],
@@ -579,7 +579,7 @@ var masked = new IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var dateMask = new IMask(element, {
+  <pre><code>var dateMask = IMask(element, {
   mask: Date,  // enable date mask
 
   // other options are optional
@@ -643,7 +643,7 @@ var masked = new IMask.PatternMasked({
     </div>
   </div>
   <pre><code>var momentFormat = 'YYYY/MM/DD HH:mm';
-var momentMask = new IMask(element, {
+var momentMask = IMask(element, {
   mask: Date,
   pattern: momentFormat,
   lazy: false,
@@ -704,7 +704,7 @@ var momentMask = new IMask(element, {
       </form>
     </div>
   </div>
-  <pre><code>var dynamicMask = new IMask(element, {
+  <pre><code>var dynamicMask = IMask(element, {
   mask: [
     {
       mask: 'RGB,RGB,RGB',
@@ -735,7 +735,7 @@ var momentMask = new IMask(element, {
         </form>
       </div>
     </div>
-    <pre><code>var dispatchMask = new IMask(element, {
+    <pre><code>var dispatchMask = IMask(element, {
     mask: [
       {
         mask: '+00 {21} 0 000 0000',
@@ -776,7 +776,7 @@ var momentMask = new IMask(element, {
 <script defer src="https://unpkg.com/imask"></script>
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
-    var startPhoneMask = new IMask(document.getElementById('start-phone-mask'), {
+    var startPhoneMask = IMask(document.getElementById('start-phone-mask'), {
       mask: '+{7}(000)000-00-00'
     }).on('accept', function() {
       document.getElementById('start-phone-complete').style.display = '';
@@ -786,12 +786,12 @@ var momentMask = new IMask(element, {
     });
 
 
-    new IMask(document.getElementById('validate-mask'), {
+    IMask(document.getElementById('validate-mask'), {
       mask: /^\d+$/  // mask is mandatory
     });
 
 
-    new IMask(document.getElementById('uppercase-mask'), {
+    IMask(document.getElementById('uppercase-mask'), {
       mask: /^\w+$/,
       prepare: function (str) {
         return str.toUpperCase();
@@ -804,7 +804,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    new IMask(document.getElementById('sequence-mask'), {
+    IMask(document.getElementById('sequence-mask'), {
       mask: function (value) {
         return /^\d*$/.test(value) &&
           value.split('').every(function(ch, i) {
@@ -815,7 +815,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var customMask = new IMask(document.getElementById('pattern-nic-mask'), {
+    var customMask = IMask(document.getElementById('pattern-nic-mask'), {
         mask: '{#}000[aaa]/NIC-`*[**]',
         lazy: false
     });
@@ -851,7 +851,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var patternZipMask = new IMask(document.getElementById('pattern-zip-mask'), {
+    var patternZipMask = IMask(document.getElementById('pattern-zip-mask'), {
       mask: '#00000',
       definitions: {
         // <any single char>: <same type as mask (RegExp, Function, etc.)>
@@ -866,7 +866,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var patternPhoneMask = new IMask(document.getElementById('pattern-phone-mask'), {
+    var patternPhoneMask = IMask(document.getElementById('pattern-phone-mask'), {
       mask: '+{7}(000)000-00-00',
       lazy: false,  // make placeholder always visible
       placeholderChar: '#'     // defaults to '_'
@@ -878,7 +878,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var patternGroupsMask = new IMask(document.getElementById('pattern-blocks-mask'), {
+    var patternGroupsMask = IMask(document.getElementById('pattern-blocks-mask'), {
       mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',
       lazy: false,  // make placeholder always visible
 
@@ -907,7 +907,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var rangeMask = new IMask(document.getElementById('range-mask'), {
+    var rangeMask = IMask(document.getElementById('range-mask'), {
       mask: IMask.MaskedRange,
       from: 1,
       to: 99,
@@ -919,7 +919,7 @@ var momentMask = new IMask(element, {
       document.getElementById('range-value').innerHTML = rangeMask.value || '-';
     });
 
-    var enumMask = new IMask(document.getElementById('enum-mask'), {
+    var enumMask = IMask(document.getElementById('enum-mask'), {
       mask: IMask.MaskedEnum,
       // all values should be same length!
       enum: ['F1', 'G2', 'H3'],
@@ -930,7 +930,7 @@ var momentMask = new IMask(element, {
       document.getElementById('enum-value').innerHTML = enumMask.value || '-';
     });
 
-    var overwriteMask = new IMask(
+    var overwriteMask = IMask(
       document.getElementById('date-overwrite-mask'),
       {
         mask: Date,
@@ -944,7 +944,7 @@ var momentMask = new IMask(element, {
       }
     );
 
-    var numberMask = new IMask(document.getElementById('numbers-mask'), {
+    var numberMask = IMask(document.getElementById('numbers-mask'), {
       mask: Number,
       scale: 2,
       // signed: true,
@@ -977,7 +977,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var dateMask = new IMask(document.getElementById('date-mask'), {
+    var dateMask = IMask(document.getElementById('date-mask'), {
       mask: Date,
       pattern: 'Y-`m-`d',
       lazy: false,
@@ -1004,7 +1004,7 @@ var momentMask = new IMask(element, {
 
 
     var momentFormat = 'YYYY/MM/DD HH:mm';
-    var momentMask = new IMask(document.getElementById('moment-mask'), {
+    var momentMask = IMask(document.getElementById('moment-mask'), {
       mask: Date,
       pattern: momentFormat,
       lazy: false,
@@ -1050,7 +1050,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var dynamicMask = new IMask(
+    var dynamicMask = IMask(
       document.getElementById('dynamic-mask'),
       {
         mask: [
@@ -1081,7 +1081,7 @@ var momentMask = new IMask(element, {
     });
 
 
-    var dispatchMask = new IMask(
+    var dispatchMask = IMask(
       document.getElementById('dispatch-mask'),
       {
         mask: [

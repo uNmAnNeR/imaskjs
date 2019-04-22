@@ -47,7 +47,7 @@ title: Javascript Input Mask
             <label for="regexp-mask-source" class="muted">source</label>
             <input id="regexp-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var regExpMask = new IMask(
+              <pre><code>var regExpMask = IMask(
   document.getElementById('regexp-mask'),
   {
     mask: /^[1-6]\d{0,5}$/
@@ -65,7 +65,7 @@ title: Javascript Input Mask
             <label for="phone-mask-source" class="muted">source</label>
             <input id="phone-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var phoneMask = new IMask(
+              <pre><code>var phoneMask = IMask(
   document.getElementById('phone-mask'), {
     mask: '+{7}(000)000-00-00'
   });
@@ -82,7 +82,7 @@ title: Javascript Input Mask
             <label for="number-mask-source" class="muted">source</label>
             <input id="number-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var numberMask = new IMask(
+              <pre><code>var numberMask = IMask(
   document.getElementById('number-mask'),
   {
     mask: Number,
@@ -103,7 +103,7 @@ title: Javascript Input Mask
             <label for="date-mask-source" class="muted">source</label>
             <input id="date-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var dateMask = new IMask(
+              <pre><code>var dateMask = IMask(
   document.getElementById('date-mask'),
   {
     mask: Date,
@@ -124,7 +124,7 @@ title: Javascript Input Mask
             <label for="dynamic-mask-source" class="muted">source</label>
             <input id="dynamic-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var dynamicMask = new IMask(
+              <pre><code>var dynamicMask = IMask(
   document.getElementById('dynamic-mask'),
   {
     mask: [
@@ -149,7 +149,7 @@ title: Javascript Input Mask
             <label for="currency-mask-source" class="muted">source</label>
             <input id="currency-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var currencyMask = new IMask(
+              <pre><code>var currencyMask = IMask(
   document.getElementById('currency-mask'),
   {
     mask: '$num',
@@ -173,7 +173,7 @@ title: Javascript Input Mask
 <script defer src="https://unpkg.com/imask"></script>
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
-    var phoneMask = new IMask(document.getElementById('phone-mask'), {
+    var phoneMask = IMask(document.getElementById('phone-mask'), {
       mask: '+{7}(000)000-00-00'
     }).on('accept', function() {
       document.getElementById('phone-complete').style.display = '';
@@ -182,11 +182,11 @@ title: Javascript Input Mask
       document.getElementById('phone-complete').style.display = 'inline-block';
     });
 
-    var regExpMask = new IMask(document.getElementById('regexp-mask'), {
+    var regExpMask = IMask(document.getElementById('regexp-mask'), {
       mask: /^[1-6]\d{0,5}$/
     });
 
-    var numberMask = new IMask(document.getElementById('number-mask'), {
+    var numberMask = IMask(document.getElementById('number-mask'), {
       mask: Number,
       min: -10000,
       max: 10000,
@@ -195,7 +195,7 @@ title: Javascript Input Mask
       document.getElementById('number-value').innerHTML = numberMask.masked.number;
     });
 
-    var dateMask = new IMask(
+    var dateMask = IMask(
       document.getElementById('date-mask'),
       {
         mask: Date,
@@ -207,7 +207,7 @@ title: Javascript Input Mask
       document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
     });
 
-    var dynamicMask = new IMask(
+    var dynamicMask = IMask(
       document.getElementById('dynamic-mask'),
       {
         mask: [
@@ -223,7 +223,7 @@ title: Javascript Input Mask
       document.getElementById('dynamic-value').innerHTML = dynamicMask.masked.unmaskedValue || '-';
     });
 
-    var currencyMask = new IMask(
+    var currencyMask = IMask(
       document.getElementById('currency-mask'),
       {
         mask: '$num',
