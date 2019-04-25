@@ -52,7 +52,7 @@ class MaskedRange extends MaskedPattern {
     return super.isComplete && Boolean(this.value);
   }
 
-  bounds (str: string): [string, string] {
+  boundaries (str: string): [string, string] {
     let minstr = '';
     let maxstr = '';
 
@@ -67,6 +67,9 @@ class MaskedRange extends MaskedPattern {
     return [minstr, maxstr];
   }
 
+  /**
+    @override
+  */
   doPrepare (str: string, flags: AppendFlags={}): string {
     str = super.doPrepare(str, flags).replace(/\D/g, '');
     if (!this.autofix) return str;
@@ -78,7 +81,7 @@ class MaskedRange extends MaskedPattern {
     let prepStr = '';
     for (let ci=0; ci<str.length; ++ci) {
       const nextVal = val + prepStr + str[ci];
-      const [minstr, maxstr] = this.bounds(nextVal);
+      const [minstr, maxstr] = this.boundaries(nextVal);
 
       if (Number(maxstr) < this.from) prepStr += fromStr[nextVal.length - 1];
       else if (Number(minstr) > this.to) prepStr += toStr[nextVal.length - 1];
@@ -97,7 +100,7 @@ class MaskedRange extends MaskedPattern {
     const firstNonZero = str.search(/[^0]/);
     if (firstNonZero === -1 && str.length <= this._matchFrom) return true;
 
-    const [minstr, maxstr] = this.bounds(str);
+    const [minstr, maxstr] = this.boundaries(str);
 
     return this.from <= Number(maxstr) && Number(minstr) <= this.to &&
       super.doValidate(...args);
