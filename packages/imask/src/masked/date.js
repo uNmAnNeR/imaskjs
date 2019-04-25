@@ -19,6 +19,8 @@ class MaskedDate extends MaskedPattern {
   min: ?Date;
   /** End date */
   max: ?Date;
+  /** */
+  autofix: boolean;
 
   /**
     @param {Object} opts
@@ -56,6 +58,12 @@ class MaskedDate extends MaskedPattern {
       }
     }
     Object.assign(opts.blocks, blocks);
+
+    // add autofix
+    Object.keys(opts.blocks).forEach(bk => {
+      const b = opts.blocks[bk];
+      if (!('autofix' in b)) b.autofix = opts.autofix;
+    });
 
     super._update(opts);
   }

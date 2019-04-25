@@ -234,7 +234,7 @@ console.log(masked.typedValue);</code></pre>
   <h3 id="overwrite" class="section-h"><a href="#overwrite">Overwrite Mode</a></h3>
   <p>There is new <code>overwrite</code> flag available for all masks from v5.0.0. It enables characters overwriting instead of inserting:</p>
   <div class="form-item">
-    <label><code>Date</code> mask in overwrite mode</label>
+    <label><code>Date</code> mask in overwrite and autofix modes</label>
     <input id="date-overwrite-mask" type="text" value="">
 
     <div class="toggle-panel">
@@ -247,6 +247,7 @@ console.log(masked.typedValue);</code></pre>
     mask: Date,
     lazy: false,
     overwrite: true,
+    autofix: true,
     blocks: {
       d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
       m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
@@ -526,9 +527,10 @@ var masked = IMask.PatternMasked({
   <pre><code>var rangeMask = IMask(element, {
   mask: IMask.MaskedRange,
   from: 1,
-  to: 99,
+  to: 90,
   // maxLength is optional parameter to set the length of mask. To input smaller values pad zeros at start
   maxLength: 3,
+  autofix: true,  // bound value
 
   // also Pattern options can be set
   lazy: false
@@ -622,11 +624,16 @@ var masked = IMask.PatternMasked({
   },
 
   // optional interval options
-  min: new Date(2000, 0, 1),  // defaults to 1900-01-01
-  max: new Date(2020, 0, 1),  // defaults to 9999-01-01
+  min: new Date(2000, 0, 1),  // defaults to `1900-01-01`
+  max: new Date(2020, 0, 1),  // defaults to `9999-01-01`
+
+  autofix: true,  // defaults to `false`
 
   // also Pattern options can be set
-  lazy: false
+  lazy: false,
+
+  // and other common options
+  overwrite: true  // defaults to `false`
 });</code></pre>
   <p>It is easy to use it with <a href="https://momentjs.com/">Moment.js</a>:</p>
   <div class="toggle-panel">
@@ -910,8 +917,9 @@ var momentMask = IMask(element, {
     var rangeMask = IMask(document.getElementById('range-mask'), {
       mask: IMask.MaskedRange,
       from: 1,
-      to: 99,
+      to: 90,
       maxLength: 3,
+      autofix: true,
 
       // also Pattern options can be set
       lazy: false
@@ -936,6 +944,7 @@ var momentMask = IMask(element, {
         mask: Date,
         lazy: false,
         overwrite: true,
+        autofix: true,
         blocks: {
           d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
           m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
@@ -997,7 +1006,9 @@ var momentMask = IMask(element, {
         return new Date(yearMonthDay[0], yearMonthDay[1] - 1, yearMonthDay[2]);
       },
       min: new Date(2000, 0, 1),
-      max: new Date(2020, 0, 1)
+      max: new Date(2020, 0, 1),
+      overwrite: true,
+      autofix: true
     }).on('accept', function() {
       document.getElementById('date-value').innerHTML = dateMask.masked.date || '-';
     });
