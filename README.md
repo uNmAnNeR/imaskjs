@@ -14,7 +14,7 @@ vanilla javascript input mask
 * **RegExp** mask
 * **Function** mask
 * **Number** mask (integer and decimal)
-* **Date** mask (various format support)
+* **Date** mask (various format support, *autofix* mode)
 * **Dynamic/on-the-fly** mask
 * **Pattern** mask
   - show placeholder always and only when necessary
