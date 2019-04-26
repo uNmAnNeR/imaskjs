@@ -35,6 +35,7 @@ class InputMask {
   _onInput: () => void;
   _onChange: () => void;
   _onDrop: (Event) => void;
+  _onFocus: (Event) => void;
   _cursorChanging: TimeoutID;
 
   /**
@@ -55,6 +56,7 @@ class InputMask {
     this._onInput = this._onInput.bind(this);
     this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
+    this._onFocus = this._onFocus.bind(this);
     this.alignCursor = this.alignCursor.bind(this);
     this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
 
@@ -128,7 +130,7 @@ class InputMask {
       input: this._onInput,
       drop: this._onDrop,
       click: this.alignCursorFriendly,
-      focus: this.alignCursorFriendly,
+      focus: this._onFocus,
       commit: this._onChange,
     });
   }
@@ -273,7 +275,7 @@ class InputMask {
 
   /** Aligns cursor only if selection is empty */
   alignCursorFriendly () {
-    if (this.selectionStart !== this.cursorPos) return;
+    if (this.selectionStart !== this.cursorPos) return;  // skip if range is selected
     this.alignCursor();
   }
 
@@ -339,12 +341,20 @@ class InputMask {
     }
     this.masked.doCommit();
     this.updateControl();
+    this._saveSelection();
   }
 
   /** Handles view drop event, prevents by default */
   _onDrop (ev: Event) {
     ev.preventDefault();
     ev.stopPropagation();
+  }
+
+  /** Restore last selection on focus */
+  _onFocus (ev: Event) {
+    if (this.selectionStart !== this.cursorPos) return;  // skip if range is selected
+    if (this._selection) this.cursorPos = this._selection.end;
+    this.alignCursorFriendly();
   }
 
   /** Unbind view events and removes element reference */
