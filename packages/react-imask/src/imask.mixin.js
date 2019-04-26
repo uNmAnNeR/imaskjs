@@ -36,6 +36,7 @@ const MASK_PROPS = {
   pattern: PropTypes.string,
   format: PropTypes.func,
   parse: PropTypes.func,
+  autofix: PropTypes.bool,
 
   // number
   radix: PropTypes.string,

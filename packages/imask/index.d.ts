@@ -214,14 +214,29 @@ declare namespace IMask {
     }
   }
 
+  type MaskedEnumOptions = MaskedPatternOptions & Partial<Pick<MaskedEnum,
+    'enum'
+  >>;
   export class MaskedEnum extends MaskedPattern {
     readonly enum: Array<string>;
+
+    constructor (opts: MaskedEnumOptions);
+    updateOptions (opts: Partial<MaskedEnumOptions>);
   }
 
+  type MaskedRangeOptions = MaskedPatternOptions & Partial<Pick<MaskedRange,
+    'from' |
+    'to' |
+    'autofix'
+  >>;
   export class MaskedRange extends MaskedPattern {
     readonly maxLength: number;
     readonly from: number;
     readonly to: number;
+    readonly autofix?: boolean;
+
+    constructor (opts: MaskedRangeOptions);
+    updateOptions (opts: Partial<MaskedRangeOptions>);
   }
 
   type MaskedNumberOptions = MaskedOptions<typeof Number> & Partial<Pick<MaskedNumber,
@@ -269,7 +284,8 @@ declare namespace IMask {
     'format' |
     'pattern' |
     'min' |
-    'max'
+    'max' |
+    'autofix'
   >>;
   export class MaskedDate extends MaskedPattern {
     static GET_DEFAULT_BLOCKS: () => {
@@ -297,6 +313,7 @@ declare namespace IMask {
     readonly pattern: string;
     readonly min?: Date;
     readonly max?: Date;
+    readonly autofix?: boolean;
     date: Date;
     typedValue: Date;
 

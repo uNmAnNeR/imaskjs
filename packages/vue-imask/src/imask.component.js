@@ -146,6 +146,7 @@ const IMaskComponent = {
     pattern: String,
     format: Function,
     parse: Function,
+    autofix: Boolean,
 
     // number
     radix: String,
