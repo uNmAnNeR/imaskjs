@@ -88,4 +88,17 @@ describe('InputMask', function () {
       assert.strictEqual(imask.unmaskedValue, str);
     });
   });
+
+  describe('#update value when overwrite option is true', function () {
+    it('should update mask and set new value', function () {
+      imask.updateOptions({
+        mask: Number,
+        overwrite: true
+      });
+
+      const value = "100";
+      imask.value = value;
+      assert.strictEqual(imask.value, value);
+    });
+  });
 });

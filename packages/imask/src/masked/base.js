@@ -219,7 +219,7 @@ class Masked<MaskType> {
     if (details.inserted) {
       let appended = this.doValidate(flags) !== false;
 
-      if (appended && checkTail != null) {
+      if (appended && checkTail) {
         // validation ok, check tail
         this._storeBeforeTailState();
         if (this.overwrite) {
