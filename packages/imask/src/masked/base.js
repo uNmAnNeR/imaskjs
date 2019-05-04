@@ -219,7 +219,7 @@ class Masked<MaskType> {
     if (details.inserted) {
       let appended = this.doValidate(flags) !== false;
 
-      if (appended && checkTail) {
+      if (appended && checkTail != null) {
         // validation ok, check tail
         this._storeBeforeTailState();
         if (this.overwrite) {
@@ -249,7 +249,7 @@ class Masked<MaskType> {
   // $FlowFixMe no ideas
   append (str: string, flags?: AppendFlags, tail?: string | TailDetails): ChangeDetails {
     const details = new ChangeDetails();
-    const checkTail = tail && (isString(tail) ? new ContinuousTailDetails(String(tail)) : tail);
+    const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail;
 
     for (let ci=0; ci<str.length; ++ci) {
       details.aggregate(this._appendChar(str[ci], flags, checkTail));
