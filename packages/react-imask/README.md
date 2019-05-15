@@ -41,7 +41,7 @@ const StyledInput = styled.input`
 
 const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
   <StyledInput
-    ...props
+    {...props}
     innerRef={inputRef}  // bind internal input (if you use styled-components V4, use "ref" instead "innerRef")
   />
 ));
