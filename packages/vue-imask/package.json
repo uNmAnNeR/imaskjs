@@ -26,9 +26,5 @@
   },
   "peerDependencies": {
     "vue": ">=2.2.0"
-  },
-  "files": [
-    "src",
-    "dist"
-  ]
+  }
 }

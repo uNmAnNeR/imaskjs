@@ -17,10 +17,6 @@
     "input",
     "mask"
   ],
-  "files": [
-    "src",
-    "dist"
-  ],
   "dependencies": {
     "prop-types": "^15.6.0",
     "react-imask": "file:../react-imask"

@@ -3,6 +3,4 @@
 !README.md
 !dist
 !dist/**/*
-!src
-!src/**/*
 !index.d.ts

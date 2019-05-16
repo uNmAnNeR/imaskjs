@@ -32,9 +32,6 @@
     "input",
     "mask"
   ],
-  "files": [
-    "dist"
-  ],
   "devDependencies": {
     "core-js": "^3.0.1"
   }

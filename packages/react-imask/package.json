@@ -16,10 +16,6 @@
     "input",
     "mask"
   ],
-  "files": [
-    "src",
-    "dist"
-  ],
   "dependencies": {
     "imask": "file:../imask",
     "prop-types": "^15.6.0"

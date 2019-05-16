@@ -8,9 +8,6 @@
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "rimraf dist && ngc && rollup -c"
   },
