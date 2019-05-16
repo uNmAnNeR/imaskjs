@@ -248,6 +248,7 @@ class Masked<MaskType> {
   /** Appends symbols considering flags */
   // $FlowFixMe no ideas
   append (str: string, flags?: AppendFlags, tail?: string | TailDetails): ChangeDetails {
+    if (!isString(str)) throw new Error('value should be string');
     const details = new ChangeDetails();
     const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail;
 
