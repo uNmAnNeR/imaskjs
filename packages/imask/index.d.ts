@@ -1,5 +1,5 @@
 export as namespace IMask;
-export = IMask;
+export default IMask;
 
 
 declare function IMask<Opts extends IMask.AnyMaskedOptions> (el: IMask.MaskElement | IMask.HTMLMaskingElement, opts: Opts): IMask.InputMask<Opts>;
