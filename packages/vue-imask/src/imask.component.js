@@ -11,6 +11,7 @@ const IMaskComponent = {
         value: this.maskRef ? this.maskRef.value : this.value
       },
       on: {...this.$listeners},
+      ref: 'input',
     };
 
     // if there is no mask use default input event
@@ -119,6 +120,14 @@ const IMaskComponent = {
         this.maskRef.destroy();
         delete this.maskRef;
       }
+    },
+    
+    focus () {
+      this.$refs.input.focus();
+    },
+    
+    blur () {
+      this.$refs.input.blur();
     }
   },
 
