@@ -12,7 +12,7 @@ react-imask
 import {IMaskInput} from 'react-imask';
 
 <IMaskInput
-  mask=Number
+  mask={Number}
   radix="."
   value="123"
   unmask="true" // true|false|'typed'
