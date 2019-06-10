@@ -348,7 +348,9 @@ class MaskedPattern extends Masked<string> {
 
     this._blocks.slice(startBlockIndex, endBlockIndex)
       .forEach(b => {
-        if (typeof b._appendPlaceholder === 'function') {
+        if (typeof b._appendPlaceholder === 'function' &&
+          (!b.lazy || toBlockIndex != null)
+        ) {
           // $FlowFixMe `_blocks` may not be present
           const args = b._blocks != null ? [b._blocks.length] : [];
           const bDetails = b._appendPlaceholder.apply(b, args);

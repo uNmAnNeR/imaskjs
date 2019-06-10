@@ -17,6 +17,7 @@ interface PatternBlock {
   +unmaskedValue: string;
   +isComplete: boolean;
   +_appendPlaceholder?: (?number) => ChangeDetails;
+  +lazy?: boolean;
   state: any;
 
   reset (): void;
