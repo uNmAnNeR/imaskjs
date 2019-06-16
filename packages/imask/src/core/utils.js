@@ -111,6 +111,8 @@ function objectIncludes (b: any, a: any): boolean {
       if(!objectIncludes(b[keys[i]], a[keys[i]])) return false;
 
     return true;
+  } else if (a && b && typeof a === 'function' && typeof b === 'function') {
+      return a.toString() === b.toString()
   }
 
   return false;
