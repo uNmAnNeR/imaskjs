@@ -39,7 +39,6 @@ class MaskedDate extends MaskedPattern {
     if (opts.mask === Date) delete opts.mask;
     if (opts.pattern) {
       opts.mask = opts.pattern;
-      delete opts.pattern;
     }
 
     const blocks = opts.blocks;
