@@ -215,18 +215,10 @@ class InputMask {
 
   /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
   updateOptions (opts: {[string]: any}) {
-    if (opts.mask === Date) delete opts.mask;
-    if (opts.pattern) {
-      opts.mask = opts.pattern;
-      delete opts.pattern;
-    }
-		
-    if (objectIncludes(this.masked, opts)) return;
-
     const { mask, ...restOpts } = opts;
 
     this.mask = mask;
-    this.masked.updateOptions(restOpts);
+    if (!objectIncludes(this.masked, restOpts)) this.masked.updateOptions(restOpts);
 
     this.updateControl();
   }
