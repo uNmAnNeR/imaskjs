@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "imask": "file:../imask",
-    "prop-types": "^15.6.0"
+    "prop-types": "^15.7.2"
   },
   "peerDependencies": {
     "react": ">=0.14.0"
