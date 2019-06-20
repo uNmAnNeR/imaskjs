@@ -475,7 +475,7 @@ declare namespace IMask {
     mask: DeduceMasked<Opts>['mask'];
     value: string;
     unmaskedValue: string;
-    typedValue: DeduceMasked<Opts>['typedValue'];
+    typedValue: string;
     cursorPos: number;
     readonly selectionStart: number;
 
