@@ -484,7 +484,7 @@ class MaskedPattern extends Masked<string> {
         }
       }
 
-      return this.value.length;
+      return cursorPos;
     }
 
     if (direction === DIRECTION.LEFT || direction === DIRECTION.FORCE_LEFT) {
@@ -520,9 +520,7 @@ class MaskedPattern extends Masked<string> {
       for (let bi=searchBlockIndex-1; bi >= 0; --bi) {
         const block = this._blocks[bi];
         const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.FORCE_LEFT);
-        if (firstEmptyInputBlockIndex == null && (!block.value || blockInputPos !== 0)) {
-          firstEmptyInputBlockIndex = bi;
-        }
+        if (!block.value || blockInputPos !== 0) firstEmptyInputBlockIndex = bi;
         if (blockInputPos !== 0) {
           if (blockInputPos !== block.value.length) {
             // aligned inside block - return immediately
@@ -541,10 +539,10 @@ class MaskedPattern extends Masked<string> {
           const block = this._blocks[bi];
           const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
           const blockAlignedPos = this._blockStartPos(bi) + blockInputPos;
-          // if block is empty and last or not lazy input
-          if ((!block.value.length && blockAlignedPos === this.value.length || blockInputPos !== block.value.length) && blockAlignedPos <= cursorPos) {
-            return blockAlignedPos;
-          }
+
+          if (blockAlignedPos > cursorPos) break;
+          // if block is not lazy input
+          if (blockInputPos !== block.value.length) return blockAlignedPos;
         }
       }
 

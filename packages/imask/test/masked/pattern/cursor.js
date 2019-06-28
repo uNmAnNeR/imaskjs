@@ -69,7 +69,7 @@ describe('Align LEFT', function () {
     });
 
     masked.value = '1X';
-    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), masked.value.length);
+    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 1);
   });
 });
 
