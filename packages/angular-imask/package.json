@@ -9,7 +9,7 @@
   "module": "dist/fesm5/angular-imask.js",
   "typings": "dist/angular-imask.d.ts",
   "scripts": {
-    "build": "ng-packagr"
+    "build": "npm i && ng-packagr"
   },
   "keywords": [
     "angular",
