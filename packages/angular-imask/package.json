@@ -45,6 +45,5 @@
   "esm2015": "dist/esm2015/angular-imask.js",
   "fesm5": "dist/fesm5/angular-imask.js",
   "fesm2015": "dist/fesm2015/angular-imask.js",
-  "metadata": "dist/angular-imask.metadata.json",
-  "sideEffects": false
+  "metadata": "dist/angular-imask.metadata.json"
 }

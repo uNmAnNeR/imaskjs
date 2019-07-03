@@ -1,31 +1,29 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
+    "target": "es2015",
     "module": "es2015",
-    "target": "es5",
     "moduleResolution": "node",
+    "declaration": true,
     "sourceMap": true,
+    "inlineSources": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "stripInternal": true,
-    "declaration": true,
-    "outDir": "dist",
-    "lib": ["es2015", "dom"],
+    "importHelpers": true,
+    "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@angular/*": ["node_modules/@angular/*"],
-      "rxjs/*": ["node_modules/rxjs/*"],
       "imask": ["../imask"]
-    }
+    },
+    "types": [],
+    "lib": ["dom", "es2018"]
   },
-  "files": [
-    "src/index.ts"
-  ],
   "angularCompilerOptions": {
+    "annotateForClosureCompiler": true,
     "skipTemplateCodegen": true,
-    "skipMetadataEmit": false,
-    "strictMetadataEmit" : true,
-    "annotationsAs": "decorators"
+    "strictMetadataEmit": true,
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true,
+    "enableResourceInlining": true
   }
 }
