@@ -16,7 +16,6 @@ interface PatternBlock {
   +value: string;
   +unmaskedValue: string;
   +isComplete: boolean;
-  +_appendPlaceholder?: (?number) => ChangeDetails;
   +lazy?: boolean;
   state: any;
 
@@ -27,6 +26,7 @@ interface PatternBlock {
   append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails;
   appendTail (tail: string | TailDetails): ChangeDetails;
   _appendChar (str: string, flags: AppendFlags): ChangeDetails;
+  _appendPlaceholder (?number): ChangeDetails;
   doCommit (): void;
   nearestInputPos (cursorPos: number, direction: Direction): number;
 }

@@ -6,6 +6,7 @@ import type ChangeDetails from './change-details.js';
 export
 interface AppendTail {
   append (str: string, flags?: AppendFlags): ChangeDetails;
+  _appendPlaceholder (): ChangeDetails;
 }
 
 /** Provides details of extracted tail */

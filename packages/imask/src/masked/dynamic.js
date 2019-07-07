@@ -63,22 +63,22 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   }
 
   _applyDispatch (appended: string='', flags: AppendFlags={}) {
-    const prevValueBeforeTail = flags.tail && this._beforeTailState ?
-      this._beforeTailState._value :
+    const prevValueBeforeTail = flags.tail && flags._beforeTailState != null ?
+      flags._beforeTailState._value :
       this.value;
     const inputValue = this.rawInputValue;
-    const insertValue = flags.tail && this._beforeTailState ?
+    const insertValue = flags.tail && flags._beforeTailState != null ?
       // $FlowFixMe - tired to fight with type system
-      this._beforeTailState._rawInputValue :
+      flags._beforeTailState._rawInputValue :
       inputValue;
     const tailValue = inputValue.slice(insertValue.length);
     const prevMask = this.currentMask;
     const details = new ChangeDetails();
 
     const prevMaskState = prevMask && prevMask.state;
-    const prevMaskBeforeTailState = prevMask && prevMask._beforeTailState;
 
-    this.currentMask = this.doDispatch(appended, flags);
+    // clone flags to prevent overwriting `_beforeTailState`
+    this.currentMask = this.doDispatch(appended, { ...flags });
 
     // restore state after dispatch
     if (this.currentMask) {
@@ -98,8 +98,17 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
         // Dispatch can do something bad with state, so
         // restore prev mask state
         this.currentMask.state = prevMaskState;
-        this.currentMask._beforeTailState = prevMaskBeforeTailState;
       }
+    }
+
+    return details;
+  }
+
+  _appendPlaceholder (...args: *) {
+    const details = this._applyDispatch(...args);
+
+    if (this.currentMask) {
+      details.aggregate(this.currentMask._appendPlaceholder());
     }
 
     return details;
@@ -257,7 +266,8 @@ MaskedDynamic.DEFAULTS = {
 
     // simulate input
     const inputs = masked.compiledMasks.map((m, index) => {
-      m.rawInputValue = inputValue;
+      m.reset();
+      m.append(inputValue, { raw: true });
       m.append(appended, flags);
       const weight = m.rawInputValue.length;
 

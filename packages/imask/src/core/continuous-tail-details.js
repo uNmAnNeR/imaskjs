@@ -32,7 +32,8 @@ class ContinuousTailDetails implements TailDetails {
   }
 
   appendTo (masked: AppendTail): ChangeDetails {
-    return masked.append(this.toString(), { tail: true });
+    return masked.append(this.toString(), { tail: true })
+      .aggregate(masked._appendPlaceholder());
   }
 
   get state (): ContinuousTailState {

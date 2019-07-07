@@ -122,12 +122,12 @@ describe('Align NONE', function () {
     assert.equal(masked.nearestInputPos(1, DIRECTION.NONE), 1);
   });
 
-  it('should align at end', function () {
+  it('should align before last fixed', function () {
     masked.updateOptions({
       mask: '0.',
     });
 
     masked.value = '1.';
-    assert.equal(masked.nearestInputPos(2, DIRECTION.NONE), 2);
+    assert.equal(masked.nearestInputPos(2, DIRECTION.NONE), 1);
   });
 });

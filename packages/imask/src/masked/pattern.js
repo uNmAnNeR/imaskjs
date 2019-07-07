@@ -178,45 +178,6 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  _storeBeforeTailState () {
-    this._blocks.forEach(b => {
-      // $FlowFixMe _storeBeforeTailState is not exist in PatternBlock
-      if (typeof b._storeBeforeTailState === 'function') {
-        b._storeBeforeTailState();
-      }
-    });
-    super._storeBeforeTailState();
-  }
-
-  /**
-    @override
-  */
-  _restoreBeforeTailState () {
-    this._blocks.forEach(b => {
-      // $FlowFixMe _restoreBeforeTailState is not exist in PatternBlock
-      if (typeof b._restoreBeforeTailState === 'function') {
-        b._restoreBeforeTailState();
-      }
-    });
-    super._restoreBeforeTailState();
-  }
-
-  /**
-    @override
-  */
-  _resetBeforeTailState () {
-    this._blocks.forEach(b => {
-      // $FlowFixMe _resetBeforeTailState is not exist in PatternBlock
-      if (typeof b._resetBeforeTailState === 'function') {
-        b._resetBeforeTailState();
-      }
-    });
-    super._resetBeforeTailState();
-  }
-
-  /**
-    @override
-  */
   reset () {
     super.reset();
     this._blocks.forEach(b => b.reset());
@@ -348,12 +309,10 @@ class MaskedPattern extends Masked<string> {
 
     this._blocks.slice(startBlockIndex, endBlockIndex)
       .forEach(b => {
-        if (typeof b._appendPlaceholder === 'function' &&
-          (!b.lazy || toBlockIndex != null)
-        ) {
+        if (!b.lazy || toBlockIndex != null) {
           // $FlowFixMe `_blocks` may not be present
           const args = b._blocks != null ? [b._blocks.length] : [];
-          const bDetails = b._appendPlaceholder.apply(b, args);
+          const bDetails = b._appendPlaceholder(...args);
           this._value += bDetails.inserted;
           details.aggregate(bDetails);
         }
@@ -481,6 +440,17 @@ class MaskedPattern extends Masked<string> {
         const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
         if (blockInputPos !== block.value.length) {
           return this._blockStartPos(bi) + blockInputPos;
+        }
+      }
+
+      // <-
+      // find first non-fixed symbol
+      for (let bi=searchBlockIndex-1; bi >= 0; --bi) {
+        const block = this._blocks[bi];
+        const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
+        // is input
+        if (!block.value.length || blockInputPos !== block.value.length) {
+          return this._blockStartPos(bi) + block.value.length;
         }
       }
 

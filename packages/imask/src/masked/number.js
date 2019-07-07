@@ -145,17 +145,19 @@ class MaskedNumber extends Masked<Class<Number>> {
   _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
     if (!this.thousandsSeparator) return super._appendCharRaw(ch, flags);
 
-    const prevBeforeTailSeparatorsCount = this._separatorsCountFromSlice(flags.tail && this._beforeTailState ?
-      this._beforeTailState._value :
-      this._value);
+    const prevBeforeTailValue = flags.tail && flags._beforeTailState ?
+      flags._beforeTailState._value :
+      this._value;
+    const prevBeforeTailSeparatorsCount = this._separatorsCountFromSlice(prevBeforeTailValue);
     this._value = this._removeThousandsSeparators(this.value);
 
     const appendDetails = super._appendCharRaw(ch, flags);
 
     this._value = this._insertThousandsSeparators(this._value);
-    const beforeTailSeparatorsCount = this._separatorsCountFromSlice(flags.tail && this._beforeTailState ?
-      this._beforeTailState._value :
-      this._value);
+    const beforeTailValue = flags.tail && flags._beforeTailState ?
+      flags._beforeTailState._value :
+      this._value;
+    const beforeTailSeparatorsCount = this._separatorsCountFromSlice(beforeTailValue);
 
     appendDetails.tailShift += (beforeTailSeparatorsCount - prevBeforeTailSeparatorsCount) * this.thousandsSeparator.length;
     return appendDetails;

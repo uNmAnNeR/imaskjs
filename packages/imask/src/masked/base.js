@@ -28,7 +28,8 @@ export
 type AppendFlags = {
   input?: boolean,
   tail?: boolean,
-  raw?: boolean
+  raw?: boolean,
+  _beforeTailState?: any,  // TODO types...
 };
 
 /** Extract flags */
@@ -69,7 +70,6 @@ class Masked<MaskType> {
   isInitialized: boolean;
   _value: string;
   _refreshing: boolean;
-  _beforeTailState: ?MaskedState;
 
   constructor (opts: {[string]: any}) {
     this._value = '';
@@ -175,21 +175,6 @@ class Masked<MaskType> {
     return new ContinuousTailDetails(this.extractInput(fromPos, toPos), fromPos);
   }
 
-  /** Stores state before tail */
-  _storeBeforeTailState () {
-    this._beforeTailState = this.state;
-  }
-
-  /** Restores state before tail */
-  _restoreBeforeTailState () {
-    this.state = this._beforeTailState;
-  }
-
-  /** Resets state before tail */
-  _resetBeforeTailState () {
-    this._beforeTailState = null;
-  }
-
   /** Appends tail */
   // $FlowFixMe no ideas
   appendTail (tail: string | TailDetails): ChangeDetails {
@@ -221,7 +206,7 @@ class Masked<MaskType> {
 
       if (appended && checkTail != null) {
         // validation ok, check tail
-        this._storeBeforeTailState();
+        const beforeTailState = this.state;
         if (this.overwrite) {
           consistentTail = checkTail.state;
           checkTail.shiftBefore(this.value.length);
@@ -232,7 +217,7 @@ class Masked<MaskType> {
         appended = tailDetails.rawInserted === checkTail.toString();
 
         // if ok, rollback state after tail
-        if (appended && tailDetails.inserted) this._restoreBeforeTailState();
+        if (appended && tailDetails.inserted) this.state = beforeTailState;
       }
 
       // revert all if something went wrong
@@ -245,12 +230,18 @@ class Masked<MaskType> {
     return details;
   }
 
+  /** Appends optional placeholder at end */
+  _appendPlaceholder (): ChangeDetails {
+    return new ChangeDetails();
+  }
+
   /** Appends symbols considering flags */
   // $FlowFixMe no ideas
   append (str: string, flags?: AppendFlags, tail?: string | TailDetails): ChangeDetails {
     if (!isString(str)) throw new Error('value should be string');
     const details = new ChangeDetails();
     const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail;
+    if (flags.tail) flags._beforeTailState = this.state;
 
     for (let ci=0; ci<str.length; ++ci) {
       details.aggregate(this._appendChar(str[ci], flags, checkTail));
@@ -258,7 +249,6 @@ class Masked<MaskType> {
 
     // append tail but aggregate only tailShift
     if (checkTail != null) {
-      this._storeBeforeTailState();
       details.tailShift += this.appendTail(checkTail).tailShift;
       // TODO it's a good idea to clear state after appending ends
       // but it causes bugs when one append calls another (when dynamic dispatch set rawInputValue)
