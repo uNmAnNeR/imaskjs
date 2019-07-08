@@ -641,24 +641,6 @@
                       </a></li>
                       
                       <li><a
-                        href='#masked_storebeforetailstate'
-                        class='regular pre-open'>
-                        #_storeBeforeTailState
-                      </a></li>
-                      
-                      <li><a
-                        href='#masked_restorebeforetailstate'
-                        class='regular pre-open'>
-                        #_restoreBeforeTailState
-                      </a></li>
-                      
-                      <li><a
-                        href='#masked_resetbeforetailstate'
-                        class='regular pre-open'>
-                        #_resetBeforeTailState
-                      </a></li>
-                      
-                      <li><a
                         href='#maskedappendtail'
                         class='regular pre-open'>
                         #appendTail
@@ -674,6 +656,12 @@
                         href='#masked_appendchar'
                         class='regular pre-open'>
                         #_appendChar
+                      </a></li>
+                      
+                      <li><a
+                        href='#masked_appendplaceholder'
+                        class='regular pre-open'>
+                        #_appendPlaceholder
                       </a></li>
                       
                       <li><a
@@ -878,24 +866,6 @@
                         href='#maskedpatternstate'
                         class='regular pre-open'>
                         #state
-                      </a></li>
-                      
-                      <li><a
-                        href='#maskedpattern_storebeforetailstate'
-                        class='regular pre-open'>
-                        #_storeBeforeTailState
-                      </a></li>
-                      
-                      <li><a
-                        href='#maskedpattern_restorebeforetailstate'
-                        class='regular pre-open'>
-                        #_restoreBeforeTailState
-                      </a></li>
-                      
-                      <li><a
-                        href='#maskedpattern_resetbeforetailstate'
-                        class='regular pre-open'>
-                        #_resetBeforeTailState
                       </a></li>
                       
                       <li><a
@@ -5458,7 +5428,7 @@
   
     <p>
       Type:
-      {input: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?, tail: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?, raw: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?}
+      {input: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?, tail: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?, raw: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?, _beforeTailState: any?}
     </p>
   
   
@@ -5490,6 +5460,12 @@
       
         <div class='space-bottom0'>
           <span class='code bold'>raw</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>_beforeTailState</span> <code class='quiet'>(any?)</code>
           
           
         </div>
@@ -6796,147 +6772,6 @@
       </div>
     </div>
   
-    <div class='border-bottom' id='masked_storebeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_storeBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Stores state before tail</p>
-
-    <div class='pre p1 fill-light mt0'>_storeBeforeTailState()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='masked_restorebeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_restoreBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Restores state before tail</p>
-
-    <div class='pre p1 fill-light mt0'>_restoreBeforeTailState()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='masked_resetbeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_resetBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Resets state before tail</p>
-
-    <div class='pre p1 fill-light mt0'>_resetBeforeTailState()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
     <div class='border-bottom' id='maskedappendtail'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -7131,6 +6966,58 @@
         </div>
       
     </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='masked_appendplaceholder'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_appendPlaceholder()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Appends optional placeholder at end</p>
+
+    <div class='pre p1 fill-light mt0'>_appendPlaceholder(): <a href="#changedetails">ChangeDetails</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
   
 
   
@@ -8818,144 +8705,6 @@
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code>MaskedPatternState</code>
     
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskedpattern_storebeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_storeBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
-    <div class='pre p1 fill-light mt0'>_storeBeforeTailState()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskedpattern_restorebeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_restoreBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
-    <div class='pre p1 fill-light mt0'>_restoreBeforeTailState()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='maskedpattern_resetbeforetailstate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_resetBeforeTailState()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
-    <div class='pre p1 fill-light mt0'>_resetBeforeTailState()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
   
 
   
