@@ -68,7 +68,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     return this.imaskElement(this._elementRef, this);
   }
 
-  get maskValue () {
+  get maskValue (): any {
     if (!this.maskRef) return this.element.value;
 
     if (this.unmask === 'typed') return this.maskRef.typedValue;
@@ -76,7 +76,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     return this.maskRef.value;
   }
 
-  set maskValue (value) {
+  set maskValue (value: any) {
     if (this.maskRef) {
       if (this.unmask === 'typed') this.maskRef.typedValue = value;
       else if (this.unmask) this.maskRef.unmaskedValue = value;
