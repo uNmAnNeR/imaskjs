@@ -6,6 +6,10 @@ vanilla javascript input mask
 [![npm version](https://badge.fury.io/js/imask.svg)](https://badge.fury.io/jas/imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+<a href="https://opencollective.com/imask/donate" target="_blank">
+  <img src="https://opencollective.com/imask/donate/button.png?color=blue" width=300 />
+</a>
+
 ## Docs, Examples, Demo
 [https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
 

@@ -7,6 +7,10 @@ vanilla javascript input mask
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
+<a href="https://opencollective.com/imask/donate" target="_blank">
+  <img src="https://opencollective.com/imask/donate/button.png?color=blue" width=300 />
+</a>
+
 ## Features
 * get and set *raw* and *unmasked* values easily
 * no external dependencies

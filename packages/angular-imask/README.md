@@ -4,6 +4,10 @@ angular-imask
 [![npm version](https://badge.fury.io/js/angular-imask.svg)](https://badge.fury.io/js/angular-imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+<a href="https://opencollective.com/imask/donate" target="_blank">
+  <img src="https://opencollective.com/imask/donate/button.png?color=blue" width=300 />
+</a>
+
 ## Install
 `npm install angular-imask`
 
