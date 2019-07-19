@@ -144,7 +144,7 @@ declare namespace IMask {
     static DEFAULTS: MaskedPatternOptionsDefaults<string>;
     static STOP_CHAR: string;
     static ESCAPE_CHAR: string;
-    blocks: { [key: string]: AnyMasked };
+    blocks: { [key: string]: AnyMaskedOptions; };
     definitions: MaskedPattern.Definitions;
     placeholderChar: string;
     lazy: boolean;
