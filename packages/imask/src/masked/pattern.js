@@ -61,7 +61,7 @@ class MaskedPattern extends Masked<string> {
     opts.definitions = Object.assign({}, DEFAULT_INPUT_DEFINITIONS, opts.definitions);
     super({
       ...MaskedPattern.DEFAULTS,
-      ...opts
+      ...opts,
     });
   }
 

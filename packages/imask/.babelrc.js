@@ -11,7 +11,9 @@ if (process.env.BABEL_ENV === 'es') {
 } else {
   presetOptions.targets = '> 0.25%, not dead';
   exclude.push('node_modules/**');
-  plugins.push('@babel/plugin-proposal-object-rest-spread', '@babel/plugin-transform-object-assign');
+  plugins.push(
+    ['@babel/plugin-proposal-object-rest-spread', { loose: true, useBuiltIns: true }]
+  );
 }
 
 if (process.env.NODE_ENV === 'test') {
