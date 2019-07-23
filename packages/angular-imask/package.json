@@ -4,12 +4,12 @@
   "license": "MIT",
   "version": "5.1.7",
   "description": "Angular IMask Plugin",
-  "main": "dist/angular-imask.umd.js",
+  "main": "dist/bundles/angular-imask.umd.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
-  "module": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "module": "dist/fesm5/angular-imask.js",
+  "typings": "dist/angular-imask.d.ts",
   "scripts": {
-    "build": "rimraf dist && ngc && rollup -c"
+    "build": "npm i && ng-packagr"
   },
   "keywords": [
     "angular",
@@ -19,23 +19,30 @@
     "mask"
   ],
   "peerDependencies": {
-    "@angular/common": ">=4.0.0",
-    "@angular/core": ">=4.0.0",
-    "@angular/forms": ">=4.0.0",
-    "@angular/platform-browser": ">=4.0.0"
+    "@angular/common": ">=6.0.0",
+    "@angular/core": ">=6.0.0",
+    "@angular/forms": ">=6.0.0",
+    "@angular/platform-browser": ">=6.0.0"
   },
   "devDependencies": {
-    "@angular/common": "^4.0.0",
-    "@angular/compiler": "^4.0.0",
-    "@angular/compiler-cli": "^4.0.0",
-    "@angular/core": "^4.0.0",
-    "@angular/forms": "^4.0.0",
-    "@angular/platform-browser": "^4.0.0",
-    "rimraf": "^2.6.2",
-    "rxjs": "^5.5.3",
-    "typescript": "^3.5.2"
+    "@angular/common": "^8.1.0",
+    "@angular/compiler": "^8.1.0",
+    "@angular/compiler-cli": "^8.1.0",
+    "@angular/core": "^8.1.0",
+    "@angular/forms": "^8.1.0",
+    "@angular/platform-browser": "^8.1.0",
+    "ng-packagr": "^5.3.0",
+    "rxjs": "^6.4.0",
+    "typescript": ">=2.7 and < 3.5",
+    "zone.js": "^0.9.1"
   },
   "dependencies": {
     "imask": "file:../imask"
-  }
+  },
+  "es2015": "dist/fesm2015/angular-imask.js",
+  "esm5": "dist/esm5/angular-imask.js",
+  "esm2015": "dist/esm2015/angular-imask.js",
+  "fesm5": "dist/fesm5/angular-imask.js",
+  "fesm2015": "dist/fesm2015/angular-imask.js",
+  "metadata": "dist/angular-imask.metadata.json"
 }
