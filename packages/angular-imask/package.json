@@ -9,7 +9,7 @@
   "module": "dist/fesm5/angular-imask.js",
   "typings": "dist/angular-imask.d.ts",
   "scripts": {
-    "build": "npm i && ng-packagr"
+    "build": "ng-packagr"
   },
   "keywords": [
     "angular",
@@ -25,15 +25,15 @@
     "@angular/platform-browser": ">=6.0.0"
   },
   "devDependencies": {
-    "@angular/common": "^8.1.0",
-    "@angular/compiler": "^8.1.0",
-    "@angular/compiler-cli": "^8.1.0",
-    "@angular/core": "^8.1.0",
-    "@angular/forms": "^8.1.0",
-    "@angular/platform-browser": "^8.1.0",
+    "@angular/common": "^8.1.2",
+    "@angular/compiler": "^8.1.2",
+    "@angular/compiler-cli": "^8.1.2",
+    "@angular/core": "^8.1.2",
+    "@angular/forms": "^8.1.2",
+    "@angular/platform-browser": "^8.1.2",
     "ng-packagr": "^5.3.0",
-    "rxjs": "^6.4.0",
-    "typescript": ">=2.7 and < 3.5",
+    "rxjs": "^6.5.2",
+    "typescript": "<3.5.0",
     "zone.js": "^0.9.1"
   },
   "dependencies": {

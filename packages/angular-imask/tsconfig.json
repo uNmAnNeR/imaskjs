@@ -12,6 +12,8 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
+      "@angular/*": ["node_modules/@angular/*"],
+      "rxjs/*": ["node_modules/rxjs/*"],
       "imask": ["../imask"]
     },
     "types": [],

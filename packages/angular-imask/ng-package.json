@@ -7,5 +7,5 @@
       "imask": "imask"
     }
   },
-  "whitelistedNonPeerDependencies": ["imask", "tslib"]
+  "whitelistedNonPeerDependencies": ["imask"]
 }

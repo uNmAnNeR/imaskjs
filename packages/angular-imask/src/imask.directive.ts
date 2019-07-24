@@ -49,7 +49,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   constructor(private _elementRef: ElementRef,
               private _renderer: Renderer2,
               @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
-    // init here to support AOT
+    // init here to support AOT (TODO may be will work with ng-packgr - need to check)
     this.onTouched = () => {};
     this.onChange = () => {};
     this.imaskElement = DEFAULT_IMASK_ELEMENT;
