@@ -4,7 +4,7 @@
   "author": "Alexey Kryazhev",
   "license": "MIT",
   "bugs": "https://github.com/uNmAnNeR/imaskjs/issues",
-  "homepage": "https://unmanner.github.io/imaskjs/",
+  "homepage": "https://imask.js.org/",
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs",

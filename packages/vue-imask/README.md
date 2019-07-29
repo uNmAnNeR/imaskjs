@@ -87,7 +87,7 @@ vue-imask
   }
 </script>
 ```
-More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
+More options see in a [guide](https://imask.js.org/guide.html).
 
 ## Many Thanks to
 [@Yegor Loginov](https://github.com/naprimer)

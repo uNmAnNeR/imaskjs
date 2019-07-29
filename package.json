@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "vanilla javascript input mask",
   "bugs": "https://github.com/uNmAnNeR/imaskjs/issues",
-  "homepage": "https://unmanner.github.io/imaskjs/",
+  "homepage": "https://imask.js.org/",
   "repository": "https://github.com/uNmAnNeR/imaskjs",
   "devDependencies": {
     "@babel/core": "^7.5.5",

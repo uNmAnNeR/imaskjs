@@ -45,10 +45,10 @@ or use CDN:
 `npm run make`
 
 ## Compatibility
-Supports all major browsers and IE11+ [need to support older?](https://unmanner.github.io/imaskjs/guide.html#support-older)
+Supports all major browsers and IE11+ [need to support older?](https://imask.js.org/guide.html#support-older)
 
 ## Docs, Examples, Demo
-[https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
+[https://imask.js.org/](https://imask.js.org/)
 
 ## Many Thanks to
 [@Viktor Yakovlev](https://github.com/vcrazyV)

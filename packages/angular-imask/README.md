@@ -38,7 +38,7 @@ import {IMaskModule} from 'angular-imask';
   [imaskElement]="(elementRef, directiveRef) => maskElement" <!-- default = elementRef.nativeElement -->
 />
 ```
-More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
+More options see in a [guide](https://imask.js.org/guide.html).
 
 ## Support Development
 [Paypal](https://www.paypal.me/alexeykryazhev/3)

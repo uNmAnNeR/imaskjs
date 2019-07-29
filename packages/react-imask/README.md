@@ -59,7 +59,7 @@ const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
   // ...other styled props
 />
 ```
-More options see in a [guide](https://unmanner.github.io/imaskjs/guide.html).
+More options see in a [guide](https://imask.js.org/guide.html).
 
 ## Many Thanks to
 [@Yordis Prieto](https://github.com/yordis)

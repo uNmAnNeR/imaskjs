@@ -11,7 +11,7 @@ vanilla javascript input mask
 </a>
 
 ## Docs, Examples, Demo
-[https://unmanner.github.io/imaskjs/](https://unmanner.github.io/imaskjs/)
+[https://imask.js.org/](https://imask.js.org/)
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
