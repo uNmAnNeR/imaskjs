@@ -9,7 +9,7 @@
   "module": "dist/fesm5/angular-imask.js",
   "typings": "dist/angular-imask.d.ts",
   "scripts": {
-    "build": "ng-packagr"
+    "build": "ng-packagr --config tsconfig.json"
   },
   "keywords": [
     "angular",
@@ -33,6 +33,7 @@
     "@angular/platform-browser": "^8.1.2",
     "ng-packagr": "^5.3.0",
     "rxjs": "^6.5.2",
+    "tsickle": "^0.36.0",
     "typescript": "<3.5.0",
     "zone.js": "^0.9.1"
   },
