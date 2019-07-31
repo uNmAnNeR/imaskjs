@@ -1,7 +1,7 @@
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
   EventEmitter, OnDestroy, OnChanges, AfterViewInit,
-  Optional, Inject
+  Optional, Inject, SimpleChanges,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 import { ɵgetDOM as getDOM } from '@angular/platform-browser';
@@ -20,7 +20,7 @@ export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
   multi: true
 };
 
-const DEFAULT_IMASK_ELEMENT = elementRef => elementRef.nativeElement;
+const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
 @Directive({
   selector: '[imask]',
   host: {
@@ -32,15 +32,15 @@ const DEFAULT_IMASK_ELEMENT = elementRef => elementRef.nativeElement;
   providers: [MASKEDINPUT_VALUE_ACCESSOR]
 })
 export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
-  maskRef: IMask.InputMask<Opts>;
+  maskRef?: IMask.InputMask<Opts>;
   onTouched: any;
   onChange: any;
-  private _viewInitialized;
-  private _composing;
-  private _writingValue;
-  private _writing;
+  private _viewInitialized: boolean;
+  private _composing: boolean;
+  private _writingValue: any;
+  private _writing: boolean;
 
-  @Input() imask: Opts;
+  @Input() imask?: Opts;
   @Input() unmask?: boolean|'typed';
   @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => IMask.MaskElement;
   @Output() accept: EventEmitter<any>;
@@ -49,7 +49,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   constructor(private _elementRef: ElementRef,
               private _renderer: Renderer2,
               @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
-    // init here to support AOT
+    // init here to support AOT (TODO may be will work with ng-packgr - need to check)
     this.onTouched = () => {};
     this.onChange = () => {};
     this.imaskElement = DEFAULT_IMASK_ELEMENT;
@@ -92,7 +92,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     this._viewInitialized = true;
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: SimpleChanges) {
     if (changes.elementRef && !this.imaskElement) this.imaskElement = DEFAULT_IMASK_ELEMENT;
 
     if (!changes.imask || !this._viewInitialized) return;
@@ -164,7 +164,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   }
 
   private initMask () {
-    this.maskRef = IMask(this.element, this.imask)
+    this.maskRef = IMask(this.element, this.imask as Opts)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
   }
