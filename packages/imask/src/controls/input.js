@@ -72,10 +72,14 @@ class InputMask {
     return this.masked.mask;
   }
 
-  set mask (mask: Mask) {
-    if (mask == null ||
+  maskEquals (mask: Mask) {
+    return mask == null ||
       mask === this.masked.mask ||
-      mask === Date && this.masked instanceof MaskedDate) return;
+      mask === Date && this.masked instanceof MaskedDate;
+  }
+
+  set mask (mask: Mask) {
+    if (this.maskEquals(mask)) return;
 
     if (this.masked.constructor === maskedClass(mask)) {
       this.masked.updateOptions({mask});
@@ -217,10 +221,13 @@ class InputMask {
   updateOptions (opts: {[string]: any}) {
     const { mask, ...restOpts } = opts;
 
-    this.mask = mask;
-    if (!objectIncludes(this.masked, restOpts)) this.masked.updateOptions(restOpts);
+    const updateMask = !this.maskEquals(mask);
+    const updateOpts = !objectIncludes(this.masked, restOpts);
 
-    this.updateControl();
+    if (updateMask) this.mask = mask;
+    if (updateOpts) this.masked.updateOptions(restOpts);
+
+    if (updateMask || updateOpts) this.updateControl();
   }
 
   /** Updates cursor */
