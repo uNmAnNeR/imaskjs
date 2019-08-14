@@ -40,10 +40,6 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     @override
   */
   _update (opts: any) {
-    if ('overwrite' in opts) {
-      console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
-      delete opts.overwrite;
-    }
     super._update(opts);
     if ('mask' in opts) {
       // mask could be totally dynamic with only `dispatch` option
@@ -265,6 +261,10 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return this.currentMask ?
       this.currentMask.overwrite :
       super.overwrite;
+  }
+
+  set overwrite (overwrite: *) {
+    console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
   }
 }
 
