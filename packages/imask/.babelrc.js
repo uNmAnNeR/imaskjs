@@ -1,5 +1,4 @@
 const presetOptions = {
-  modules: false,
   useBuiltIns: 'entry',
   corejs: '3',
 };
