@@ -437,9 +437,9 @@ class MaskedPattern extends Masked<string> {
       // ->
       let firstInputAtRight = searchBlockIndex;
       for (let bi=firstInputAtRight; bi < this._blocks.length; ++bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-        if (blockInputPos !== block.value.length) {
+        const blockAtRight = this._blocks[bi];
+        const blockInputPos = blockAtRight.nearestInputPos(0, DIRECTION.NONE);
+        if (!blockAtRight.value.length || blockInputPos !== blockAtRight.value.length) {
           return this._blockStartPos(bi) + blockInputPos;
         }
       }
