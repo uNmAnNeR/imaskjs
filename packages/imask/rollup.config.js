@@ -3,24 +3,19 @@ import { terser } from 'rollup-plugin-terser';
 import { eslint } from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import polyfill from 'rollup-plugin-polyfill';
 
 
-const isProd = process.env.NODE_ENV === 'production';
 const format = process.env.BABEL_ENV || 'umd';
 
-const isES = format === 'es';
-const file = 'dist/imask' +
-  (format !== 'umd' ? '.' + format : '') +
-  (isProd ? '.min' : '') +
-  '.js';
-
-const input = isES ? 'src/imask.js' : 'src/imask.shim.js';
+const isES = format.indexOf('es') === 0;
+const basePath = 'dist/imask' + (format !== 'umd' ? '.' + format : '');
 
 
-export default {
-  input,
+export default [false, true].map(min => ({
+  input: 'src/imask.js',
   output: {
-    file,
+    file: `${basePath}${min ? '.min' : ''}.js`,
     format,
     name: 'IMask',
     sourcemap: true,
@@ -30,6 +25,7 @@ export default {
     resolve(),
     babel(),
     !isES && commonjs(),
-    isProd && terser()
-  ]
-}
+    !isES && polyfill(['./polyfills.js']),
+    min && terser(),
+  ],
+}));

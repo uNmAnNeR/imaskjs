@@ -28,13 +28,14 @@
     "rollup-plugin-commonjs": "^10.0.1",
     "rollup-plugin-eslint": "^7.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-polyfill": "^3.0.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-terser": "^5.1.1",
     "sinon": "^7.3.2"
   },
   "engines": {
     "npm": ">=4.0.0",
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "postinstall": "lerna bootstrap --hoist --nohoist=core-js --no-ci",
