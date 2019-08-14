@@ -101,6 +101,7 @@ class MaskedPattern extends Masked<string> {
             parent: this,
             lazy: this.lazy,
             placeholderChar: this.placeholderChar,
+            overwrite: this.overwrite,
             ...this.blocks[bName]
           });
 
