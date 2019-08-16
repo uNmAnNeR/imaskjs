@@ -155,7 +155,6 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     // for details see https://github.com/uNmAnNeR/imaskjs/issues/136
     if (this._writing && value === this.endWrite()) return;
     this.onChange(value);
-    this.onTouched();
     this.accept.emit(value);
   }
 
