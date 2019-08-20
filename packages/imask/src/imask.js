@@ -58,3 +58,19 @@ IMask.MaskElement = MaskElement;
 IMask.HTMLMaskElement = HTMLMaskElement;
 
 g.IMask = IMask;
+
+export {
+  InputMask,
+  Masked,
+  MaskedPattern,
+  MaskedEnum,
+  MaskedRange,
+  MaskedNumber,
+  MaskedDate,
+  MaskedRegExp,
+  MaskedFunction,
+  MaskedDynamic,
+  createMask,
+  MaskElement,
+  HTMLMaskElement,
+};
