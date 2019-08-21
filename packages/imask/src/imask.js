@@ -23,7 +23,6 @@ import HTMLMaskElement from './controls/html-mask-element.js';
  * @param {Object} opts - Custom mask options
  * @return {InputMask}
  */
-export default
 function IMask (el, opts={}) {
 	// currently available only for input-like elements
   return new InputMask(el, opts);
@@ -59,6 +58,7 @@ IMask.HTMLMaskElement = HTMLMaskElement;
 
 g.IMask = IMask;
 
+export default IMask;
 export {
   InputMask,
   Masked,
