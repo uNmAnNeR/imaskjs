@@ -38,7 +38,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap --hoist --nohoist=core-js --no-ci",
+    "postinstall": "lerna bootstrap --hoist --nohoist=core-js --no-ci && opencollective-postinstall",
     "doc": "node ./node_modules/documentation/bin/documentation.js build packages/imask/src/imask.js -f html -o docs/api",
     "lerna": "lerna",
     "flow": "lerna run flow -- check",
@@ -50,5 +50,12 @@
     "make": "npm run test && npm run build",
     "release": "npm run doc && npm run make && lerna publish",
     "coverage": "lerna run coveralls --scope imask"
+  },
+  "dependencies": {
+    "opencollective-postinstall": "^2.0.2"
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/imask"
   }
 }
