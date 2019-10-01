@@ -23,6 +23,7 @@
     "lerna": "^3.16.4",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
+    "opencollective-postinstall": "^2.0.2",
     "rollup": "^1.20.2",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -50,9 +51,6 @@
     "make": "npm run test && npm run build",
     "release": "npm run doc && npm run make && lerna publish",
     "coverage": "lerna run coveralls --scope imask"
-  },
-  "dependencies": {
-    "opencollective-postinstall": "^2.0.2"
   },
   "collective": {
     "type": "opencollective",
