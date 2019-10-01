@@ -2,7 +2,7 @@
 vanilla javascript input mask
 
 [![Build Status](https://travis-ci.com/uNmAnNeR/imaskjs.svg?branch=master)](https://travis-ci.com/uNmAnNeR/imaskjs)
-[![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=master)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=master)
+[![Financial Contributors on Open Collective](https://opencollective.com/imask/all/badge.svg?label=financial+contributors)](https://opencollective.com/imask) [![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=master)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=master)
 [![npm version](https://badge.fury.io/js/imask.svg)](https://badge.fury.io/jas/imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
@@ -57,3 +57,33 @@ Supports all major browsers and IE11+ [need to support older?](https://imask.js.
 
 ## Support Development
 [Paypal](https://www.paypal.me/alexeykryazhev/3)
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/uNmAnNeR/imaskjs/graphs/contributors"><img src="https://opencollective.com/imask/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/imask/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/imask"><img src="https://opencollective.com/imask/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/imask/contribute)]
+
+<a href="https://opencollective.com/imask/organization/0/website"><img src="https://opencollective.com/imask/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/1/website"><img src="https://opencollective.com/imask/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/2/website"><img src="https://opencollective.com/imask/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/3/website"><img src="https://opencollective.com/imask/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/4/website"><img src="https://opencollective.com/imask/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/5/website"><img src="https://opencollective.com/imask/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/6/website"><img src="https://opencollective.com/imask/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/7/website"><img src="https://opencollective.com/imask/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/8/website"><img src="https://opencollective.com/imask/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/imask/organization/9/website"><img src="https://opencollective.com/imask/organization/9/avatar.svg"></a>
