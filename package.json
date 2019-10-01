@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
   "description": "vanilla javascript input mask",
