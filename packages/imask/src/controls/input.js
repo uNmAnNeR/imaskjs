@@ -357,8 +357,6 @@ class InputMask {
 
   /** Restore last selection on focus */
   _onFocus (ev: Event) {
-    if (this.selectionStart !== this.cursorPos) return;  // skip if range is selected
-    if (this._selection) this.cursorPos = this._selection.end;
     this.alignCursorFriendly();
   }
 
