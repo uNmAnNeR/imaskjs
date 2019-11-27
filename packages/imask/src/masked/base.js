@@ -46,6 +46,8 @@ type MaskedOptions<MaskType> = {
   validate?: $PropertyType<Masked<MaskType>, 'validate'>,
   commit?: $PropertyType<Masked<MaskType>, 'commit'>,
   overwrite?: $PropertyType<Masked<MaskType>, 'overwrite'>,
+  format?: $PropertyType<Masked<MaskType>, 'format'>,
+  parse?: $PropertyType<Masked<MaskType>, 'parse'>,
 };
 
 
@@ -64,6 +66,10 @@ class Masked<MaskType> {
   validate: (string, Masked<MaskType>, AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
   commit: (string, Masked<MaskType>) => void;
+  /** Format typed value to string */
+  format: (any, Masked<MaskType>) => string;
+  /** Parse strgin to get typed value */
+  parse: (string, Masked<MaskType>) => any;
   /** Enable characters overwriting */
   overwrite: ?boolean;
   /** */
@@ -73,7 +79,10 @@ class Masked<MaskType> {
 
   constructor (opts: {[string]: any}) {
     this._value = '';
-    this._update(opts);
+    this._update({
+      ...Masked.DEFAULTS,
+      ...opts,
+    });
     this.isInitialized = true;
   }
 
@@ -137,11 +146,11 @@ class Masked<MaskType> {
 
   /** */
   get typedValue (): any {
-    return this.unmaskedValue;
+    return this.parse(this.value, this);
   }
 
   set typedValue (value: any) {
-    this.unmaskedValue = value;
+    this.value = this.format(value, this);
   }
 
   /** Value that includes raw user input */
@@ -325,3 +334,7 @@ class Masked<MaskType> {
     return changeDetails;
   }
 }
+Masked.DEFAULTS = {
+  format: v => v,
+  parse: v => v,
+};

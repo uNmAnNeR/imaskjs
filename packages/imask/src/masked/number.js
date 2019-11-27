@@ -6,7 +6,7 @@ import Masked, {type MaskedOptions, type ExtractFlags, type AppendFlags} from '.
 
 
 type MaskedNumberOptions = {
-  ...MaskedOptions<Number>,
+  ...MaskedOptions<Class<Number>>,
   radix: $PropertyType<MaskedNumber, 'radix'>,
   thousandsSeparator: $PropertyType<MaskedNumber, 'thousandsSeparator'>,
   mapToRadix: $PropertyType<MaskedNumber, 'mapToRadix'>,
@@ -51,6 +51,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   normalizeZeros: boolean;
   /** Flag to pad trailing zeros after point in the end of editing */
   padFractionalZeros: boolean;
+
   _numberRegExp: RegExp;
   _numberRegExpInput: RegExp;
   _thousandsSeparatorRegExp: RegExp;
@@ -325,22 +326,11 @@ class MaskedNumber extends Masked<Class<Number>> {
 
   /** Parsed Number */
   get number (): number {
-    return Number(this.unmaskedValue);
+    return this.typedValue;
   }
 
   set number (number: number) {
-    this.unmaskedValue = String(number);
-  }
-
-  /**
-    @override
-  */
-  get typedValue (): number {
-    return this.number;
-  }
-
-  set typedValue (value: number) {
-    this.number = value;
+    this.typedValue = number;
   }
 
   /**
@@ -361,4 +351,6 @@ MaskedNumber.DEFAULTS = {
   signed: false,
   normalizeZeros: true,
   padFractionalZeros: false,
+  parse: (str: string, masked: Masked<*>) => Number(masked.unmaskedValue),
+  format: (num: number, masked: any) => String(num).replace('.', masked.radix),
 };
