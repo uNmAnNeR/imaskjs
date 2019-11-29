@@ -407,6 +407,7 @@ declare namespace IMask {
   export function createMask<Opts extends AnyMaskedOptions>(
     opts: Opts
   ): DeduceMasked<Opts>;
+  export function createMask<T extends AnyMasked>(masked: T): T;
 
   export type AnyMask = AnyMaskedOptions['mask'];
   export class InputMask<Opts extends AnyMaskedOptions> {
