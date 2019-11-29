@@ -7,17 +7,32 @@
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
-    var imask = new IMask(document.getElementById('input'), {
-      mask: 'dw',
+    class MaskedCurrency extends IMask.MaskedPattern {
+      get typedValue () {
+        return this.maskedBlock('d').typedValue;
+      }
+      set typedValue (num) {
+        this.maskedBlock('d').typedValue = num;
+      }
+    }
+    const currencyMask = new MaskedCurrency({
+      mask: '$d',
       lazy: false,
       blocks: {
         d: {
-          mask: '00',
+          mask: Number,
+          thousandsSeparator: '.',
+          radix: ',',
+          scale: 2,
+          signed: false,
+          mapToRadix: ['.']
         },
-        w: {
-          mask: 'aa',
-        },
-      }
+      },
+    })
+    var imask = new IMask(document.getElementById('input'), {
+      mask: currencyMask,
+    }).on('accept', () => {
+      console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
   </script>
 </body>

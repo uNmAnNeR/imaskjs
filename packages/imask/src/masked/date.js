@@ -9,10 +9,6 @@ class MaskedDate extends MaskedPattern {
   static GET_DEFAULT_BLOCKS: () => {[string]: any};
   static DEFAULTS: any;
 
-  /** Parse string to Date */
-  parse: (string) => Date;
-  /** Format Date to string */
-  format: (Date) => string;
   /** Pattern mask for date according to {@link MaskedDate#format} */
   pattern: string;
   /** Start date */
@@ -80,27 +76,25 @@ class MaskedDate extends MaskedPattern {
 
   /** Checks if date is exists */
   isDateExist (str: string): boolean {
-    return this.format(this.parse(str)) === str;
+    return this.format(this.parse(str, this), this) === str;
   }
 
   /** Parsed Date */
   get date (): ?Date {
-    return this.isComplete ?
-      this.parse(this.value) :
-      null;
+    return this.typedValue;
   }
   set date (date: Date) {
-    this.value = this.format(date);
+    this.typedValue = date;
   }
 
   /**
     @override
   */
   get typedValue (): ?Date {
-    return this.date;
+    return this.isComplete ? super.typedValue : null;
   }
   set typedValue (value: Date) {
-    this.date = value;
+    super.typedValue = value;
   }
 }
 MaskedDate.DEFAULTS = {

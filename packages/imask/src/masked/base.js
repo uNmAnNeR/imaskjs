@@ -46,6 +46,8 @@ type MaskedOptions<MaskType> = {
   validate?: $PropertyType<Masked<MaskType>, 'validate'>,
   commit?: $PropertyType<Masked<MaskType>, 'commit'>,
   overwrite?: $PropertyType<Masked<MaskType>, 'overwrite'>,
+  format?: $PropertyType<Masked<MaskType>, 'format'>,
+  parse?: $PropertyType<Masked<MaskType>, 'parse'>,
 };
 
 
@@ -64,16 +66,24 @@ class Masked<MaskType> {
   validate: (string, Masked<MaskType>, AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
   commit: (string, Masked<MaskType>) => void;
+  /** Format typed value to string */
+  format: (any, Masked<MaskType>) => string;
+  /** Parse strgin to get typed value */
+  parse: (string, Masked<MaskType>) => any;
   /** Enable characters overwriting */
   overwrite: ?boolean;
   /** */
   isInitialized: boolean;
   _value: string;
   _refreshing: boolean;
+  _isolated: boolean;
 
   constructor (opts: {[string]: any}) {
     this._value = '';
-    this._update(opts);
+    this._update({
+      ...Masked.DEFAULTS,
+      ...opts,
+    });
     this.isInitialized = true;
   }
 
@@ -137,11 +147,11 @@ class Masked<MaskType> {
 
   /** */
   get typedValue (): any {
-    return this.unmaskedValue;
+    return this.doParse(this.value);
   }
 
   set typedValue (value: any) {
-    this.unmaskedValue = value;
+    this.value = this.doFormat(value);
   }
 
   /** Value that includes raw user input */
@@ -284,6 +294,20 @@ class Masked<MaskType> {
     return ret;
   }
 
+  /** */
+  runIsolated<T>(fn: (masked: any) => T): T {
+    if (this._isolated || !this.isInitialized) return fn(this);
+    this._isolated = true;
+    const state = this.state;
+
+    const ret = fn(this);
+
+    this.state = state;
+    delete this._isolated;
+
+    return ret;
+  }
+
   /**
     Prepares string before mask processing
     @protected
@@ -312,6 +336,16 @@ class Masked<MaskType> {
   }
 
   /** */
+  doFormat (value: any) {
+    return this.format ? this.format(value, this) : value;
+  }
+
+  /** */
+  doParse (str: string) {
+    return this.parse ? this.parse(str, this) : str;
+  }
+
+  /** */
   splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction): ChangeDetails {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);
@@ -325,3 +359,7 @@ class Masked<MaskType> {
     return changeDetails;
   }
 }
+Masked.DEFAULTS = {
+  format: v => v,
+  parse: v => v,
+};
