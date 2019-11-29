@@ -324,6 +324,17 @@ class MaskedNumber extends Masked<Class<Number>> {
     super.unmaskedValue = unmaskedValue.replace('.', this.radix);
   }
 
+  /**
+    @override
+  */
+  get typedValue (): number {
+    return Number(this.unmaskedValue);
+  }
+
+  set typedValue (n: number) {
+    super.unmaskedValue = String(n);
+  }
+
   /** Parsed Number */
   get number (): number {
     return this.typedValue;
@@ -351,6 +362,4 @@ MaskedNumber.DEFAULTS = {
   signed: false,
   normalizeZeros: true,
   padFractionalZeros: false,
-  parse: (str: string, masked: Masked<*>) => Number(masked.unmaskedValue),
-  format: (num: number, masked: any) => String(num).replace('.', masked.radix),
 };

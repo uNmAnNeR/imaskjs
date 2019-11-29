@@ -7,7 +7,15 @@
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
-    var imask = new IMask(document.getElementById('input'), {
+    class MaskedCurrency extends IMask.MaskedPattern {
+      get typedValue () {
+        return this.maskedBlock('d').typedValue;
+      }
+      set typedValue (num) {
+        this.maskedBlock('d').typedValue = num;
+      }
+    }
+    const currencyMask = new MaskedCurrency({
       mask: '$d',
       lazy: false,
       blocks: {
@@ -20,10 +28,11 @@
           mapToRadix: ['.']
         },
       },
-      format: (str, masked) => masked.maskedBlock('d').doFormat(str),
-      parse: (num, masked) => masked.maskedBlock('d').doParse(num),
+    })
+    var imask = new IMask(document.getElementById('input'), {
+      mask: currencyMask,
     }).on('accept', () => {
-      console.log(imask.typedValue);
+      console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
   </script>
 </body>

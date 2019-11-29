@@ -76,6 +76,7 @@ class Masked<MaskType> {
   isInitialized: boolean;
   _value: string;
   _refreshing: boolean;
+  _isolated: boolean;
 
   constructor (opts: {[string]: any}) {
     this._value = '';
@@ -146,11 +147,11 @@ class Masked<MaskType> {
 
   /** */
   get typedValue (): any {
-    return this.parse(this.value, this);
+    return this.doParse(this.value);
   }
 
   set typedValue (value: any) {
-    this.value = this.format(value, this);
+    this.value = this.doFormat(value);
   }
 
   /** Value that includes raw user input */
@@ -290,6 +291,20 @@ class Masked<MaskType> {
     }
 
     delete this._refreshing;
+    return ret;
+  }
+
+  /** */
+  doIsolated<T>(fn: (masked: any) => T): T {
+    if (this._isolated || !this.isInitialized) return fn(this);
+    this._isolated = true;
+    const state = this.state;
+
+    const ret = fn(this);
+
+    this.state = state;
+    delete this._isolated;
+
     return ret;
   }
 
