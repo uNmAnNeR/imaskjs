@@ -295,7 +295,7 @@ class Masked<MaskType> {
   }
 
   /** */
-  doIsolated<T>(fn: (masked: any) => T): T {
+  runIsolated<T>(fn: (masked: any) => T): T {
     if (this._isolated || !this.isInitialized) return fn(this);
     this._isolated = true;
     const state = this.state;
