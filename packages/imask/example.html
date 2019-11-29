@@ -8,16 +8,22 @@
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = new IMask(document.getElementById('input'), {
-      mask: 'dw',
+      mask: '$d',
       lazy: false,
       blocks: {
         d: {
-          mask: '00',
+          mask: Number,
+          thousandsSeparator: '.',
+          radix: ',',
+          scale: 2,
+          signed: false,
+          mapToRadix: ['.']
         },
-        w: {
-          mask: 'aa',
-        },
-      }
+      },
+      format: (str, masked) => masked.maskedBlock('d').doFormat(str),
+      parse: (num, masked) => masked.maskedBlock('d').doParse(num),
+    }).on('accept', () => {
+      console.log(imask.typedValue);
     });
   </script>
 </body>

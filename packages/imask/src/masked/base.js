@@ -321,6 +321,16 @@ class Masked<MaskType> {
   }
 
   /** */
+  doFormat (value: any) {
+    return this.format ? this.format(value, this) : value;
+  }
+
+  /** */
+  doParse (str: string) {
+    return this.parse ? this.parse(str, this) : str;
+  }
+
+  /** */
   splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction): ChangeDetails {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);
