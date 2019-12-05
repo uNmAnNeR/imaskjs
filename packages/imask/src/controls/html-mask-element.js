@@ -25,7 +25,12 @@ class HTMLMaskElement extends MaskElement {
     @readonly
   */
   get isActive (): boolean {
-    return this.input === document.activeElement;
+    const rootElement = this.input.getRootNode
+      ? this.input.getRootNode()
+      : document;
+
+    //$FlowFixMe
+    return this.input === rootElement.activeElement;
   }
 
   /**
