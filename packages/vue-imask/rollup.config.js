@@ -17,7 +17,9 @@ export default {
   },
   plugins: [
     eslint({configFile: '../../.eslintrc'}),
-    babel(),
+    babel({
+      rootMode: 'upward',
+    }),
   ],
   external: Object.keys(globals),
 }

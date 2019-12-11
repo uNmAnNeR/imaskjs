@@ -14,7 +14,7 @@
     "npm": ">=4.0.0"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive",
+    "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive --root-mode=upward",
     "pretest": "flow check",
     "watch": "rollup -c -w",
     "build": "npm run build:umd && npm run build:es && npm run build:esm",
@@ -29,8 +29,5 @@
     "jquery",
     "input",
     "mask"
-  ],
-  "devDependencies": {
-    "core-js": "^3.1.4"
-  }
+  ]
 }
