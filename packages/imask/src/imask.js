@@ -1,4 +1,4 @@
-import {g} from './core/utils.js';
+import '@ungap/global-this';
 
 import InputMask from './controls/input.js';
 
@@ -63,7 +63,8 @@ IMask.createPipe = createPipe;
 /** {@link HTMLMaskElement} */
 IMask.PIPE_TYPE = PIPE_TYPE;
 
-g.IMask = IMask;
+// $FlowFixMe
+globalThis.IMask = IMask;
 
 export default IMask;
 export {

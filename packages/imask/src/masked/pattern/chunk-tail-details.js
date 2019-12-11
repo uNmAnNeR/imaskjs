@@ -1,5 +1,4 @@
 // @flow
-import { g } from '../../core/utils.js';
 import type { TailDetails, AppendTail } from '../../core/tail-details.js';
 import ChangeDetails from '../../core/change-details.js';
 import { isString } from '../../core/utils.js';
@@ -72,7 +71,8 @@ class ChunksTailDetails implements TailDetails {
   }
 
   appendTo (masked: AppendTail): ChangeDetails {
-    if (!(masked instanceof g.IMask.MaskedPattern)) {
+    // $FlowFixMe
+    if (!(masked instanceof globalThis.IMask.MaskedPattern)) {
       const tail = new ContinuousTailDetails(this.toString());
       return tail.appendTo(masked);
     }
