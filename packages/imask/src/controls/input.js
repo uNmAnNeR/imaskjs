@@ -36,7 +36,7 @@ class InputMask {
   _onChange: () => void;
   _onDrop: (Event) => void;
   _onFocus: (Event) => void;
-  _cursorChanging: TimeoutID;
+  _cursorChanging: ?TimeoutID;
 
   /**
     @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
@@ -365,6 +365,7 @@ class InputMask {
     this._unbindEvents();
     // $FlowFixMe why not do so?
     this._listeners.length = 0;
+    // $FlowFixMe
     delete this.el;
   }
 }

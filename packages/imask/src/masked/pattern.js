@@ -46,7 +46,7 @@ class MaskedPattern extends Masked<string> {
   static FixedDefinition: Class<PatternFixedDefinition>;
 
   /** */
-  blocks: {[string]: Masked<*>};
+  blocks: {[string]: MaskedOptions<any>};
   /** */
   definitions: Definitions;
   /** Single char for empty input */
@@ -102,7 +102,8 @@ class MaskedPattern extends Masked<string> {
             lazy: this.lazy,
             placeholderChar: this.placeholderChar,
             overwrite: this.overwrite,
-            ...this.blocks[bName]
+            // $FlowFixMe
+            ...this.blocks[bName],
           });
 
           if (maskedBlock) {

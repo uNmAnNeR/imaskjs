@@ -29,8 +29,5 @@
     "jquery",
     "input",
     "mask"
-  ],
-  "devDependencies": {
-    "core-js": "^3.1.4"
-  }
+  ]
 }

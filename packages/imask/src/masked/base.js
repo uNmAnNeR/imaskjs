@@ -75,8 +75,8 @@ class Masked<MaskType> {
   /** */
   isInitialized: boolean;
   _value: string;
-  _refreshing: boolean;
-  _isolated: boolean;
+  _refreshing: ?boolean;
+  _isolated: ?boolean;
 
   constructor (opts: {[string]: any}) {
     this._value = '';

@@ -23,7 +23,10 @@ export default [false, true].map(min => ({
   plugins: [
     eslint({configFile: '../../.eslintrc'}),
     resolve(),
-    babel(),
+    babel({
+      extends: './.babelrc',
+      rootMode: 'upward',
+    }),
     !isES && commonjs(),
     !isES && polyfill(['./polyfills.js']),
     min && terser(),

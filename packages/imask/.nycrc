@@ -1,6 +1,6 @@
 {
   "require": [
-    "@babel/register"
+    "./nyc-babel-register.js"
   ],
   "include": [
     "src/**/*.js"
