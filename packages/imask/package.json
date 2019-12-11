@@ -14,7 +14,7 @@
     "npm": ">=4.0.0"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive --root-mode=upward",
+    "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive",
     "pretest": "flow check",
     "watch": "rollup -c -w",
     "build": "npm run build:umd && npm run build:es && npm run build:esm",
