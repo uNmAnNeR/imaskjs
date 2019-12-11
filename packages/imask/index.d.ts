@@ -432,4 +432,15 @@ declare namespace IMask {
     off(ev: string, handler: Function): this;
     destroy(): void;
   }
+
+  export
+  const PIPE_TYPE: {
+    MASKED: 'value',
+    UNMASKED: 'unmaskedValue',
+    TYPED: 'typedValue',
+  };
+
+  type PIPE_TYPE_VALUES = typeof PIPE_TYPE[keyof typeof PIPE_TYPE];
+  export function createPipe(masked: AnyMasked | AnyMask, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
+  export function pipe(value: any, masked: AnyMasked | AnyMask, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
 }

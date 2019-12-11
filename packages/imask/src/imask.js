@@ -14,6 +14,7 @@ import MaskedDynamic from './masked/dynamic.js';
 import createMask from './masked/factory.js';
 import MaskElement from './controls/mask-element.js';
 import HTMLMaskElement from './controls/html-mask-element.js';
+import { createPipe, pipe, PIPE_TYPE } from './masked/pipe.js';
 
 
 /**
@@ -55,6 +56,12 @@ IMask.createMask = createMask;
 IMask.MaskElement = MaskElement;
 /** {@link HTMLMaskElement} */
 IMask.HTMLMaskElement = HTMLMaskElement;
+/** {@link HTMLMaskElement} */
+IMask.pipe = pipe;
+/** {@link HTMLMaskElement} */
+IMask.createPipe = createPipe;
+/** {@link HTMLMaskElement} */
+IMask.PIPE_TYPE = PIPE_TYPE;
 
 g.IMask = IMask;
 
@@ -73,4 +80,7 @@ export {
   createMask,
   MaskElement,
   HTMLMaskElement,
+  pipe,
+  createPipe,
+  PIPE_TYPE,
 };
