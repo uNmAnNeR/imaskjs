@@ -14,6 +14,7 @@ import MaskedDynamic from './masked/dynamic.js';
 import createMask from './masked/factory.js';
 import MaskElement from './controls/mask-element.js';
 import HTMLMaskElement from './controls/html-mask-element.js';
+import HTMLContenteditableMaskElement from './controls/html-contenteditable-mask-element.js';
 import { createPipe, pipe, PIPE_TYPE } from './masked/pipe.js';
 
 
@@ -56,11 +57,13 @@ IMask.createMask = createMask;
 IMask.MaskElement = MaskElement;
 /** {@link HTMLMaskElement} */
 IMask.HTMLMaskElement = HTMLMaskElement;
-/** {@link HTMLMaskElement} */
+/** {@link HTMLContenteditableMaskElement} */
+IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;
+/** {@link pipe} */
 IMask.pipe = pipe;
-/** {@link HTMLMaskElement} */
+/** {@link createPipe} */
 IMask.createPipe = createPipe;
-/** {@link HTMLMaskElement} */
+/** {@link PIPE_TYPE} */
 IMask.PIPE_TYPE = PIPE_TYPE;
 
 // $FlowFixMe
