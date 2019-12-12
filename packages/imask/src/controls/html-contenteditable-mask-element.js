@@ -46,9 +46,9 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
   */
   get value (): string {
     // $FlowFixMe
-    return this.input.innerText;
+    return this.input.textContent;
   }
   set value (value: string) {
-    this.input.innerText = value;
+    this.input.textContent = value;
   }
 }
