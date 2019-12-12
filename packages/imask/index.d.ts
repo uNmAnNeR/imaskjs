@@ -7,7 +7,7 @@ declare function IMask<Opts extends IMask.AnyMaskedOptions>(
 ): IMask.InputMask<Opts>;
 
 declare namespace IMask {
-  export type HTMLMaskingElement = HTMLTextAreaElement | HTMLInputElement;
+  export type HTMLMaskingElement = HTMLElement;
   export type ElementEvent =
     | 'selectionChange'
     | 'input'
