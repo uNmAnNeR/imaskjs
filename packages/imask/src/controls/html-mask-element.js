@@ -20,17 +20,21 @@ class HTMLMaskElement extends MaskElement {
     this._handlers = {};
   }
 
+  /** */
+  // $FlowFixMe https://github.com/facebook/flow/issues/2839
+  get rootElement (): HTMLDocument {
+    return this.input.getRootNode
+      ? this.input.getRootNode()
+      : document;
+  }
+
   /**
     Is element in focus
     @readonly
   */
   get isActive (): boolean {
-    const rootElement = this.input.getRootNode
-      ? this.input.getRootNode()
-      : document;
-
     //$FlowFixMe
-    return this.input === rootElement.activeElement;
+    return this.input === this.rootElement.activeElement;
   }
 
   /**

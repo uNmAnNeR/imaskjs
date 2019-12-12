@@ -28,7 +28,7 @@ export default [false, true].map(min => ({
       rootMode: 'upward',
     }),
     !isES && commonjs(),
-    !isES && polyfill(['./polyfills.js']),
+    // !isES && polyfill(['./polyfills.js']),
     min && terser(),
   ],
 }));

@@ -4,6 +4,7 @@
 <body>
   <h1>IMask Core Demo</h1>
   <input type="text" id="input">
+  <div contenteditable="true" id="ce"></div>
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
@@ -29,7 +30,7 @@
         },
       },
     })
-    var imask = new IMask(document.getElementById('input'), {
+    var imask = new IMask(document.getElementById('ce'), {
       mask: currencyMask,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);

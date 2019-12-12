@@ -7,6 +7,7 @@ import type Masked from '../masked/base.js';
 import {type Mask} from '../masked/base.js';
 import MaskElement from './mask-element.js';
 import HTMLMaskElement from './html-mask-element.js';
+import HTMLContenteditableMaskElement from './html-contenteditable-mask-element.js';
 
 
 /** Listens to element events and controls changes between element and {@link Masked} */
@@ -43,8 +44,9 @@ class InputMask {
     @param {Object} opts
   */
   constructor (el: MaskElement | HTMLTextAreaElement | HTMLInputElement, opts: {[string]: any}) {
-    this.el = (el instanceof MaskElement) ?
-      el :
+    this.el =
+      (el instanceof MaskElement) ? el :
+      (el.isContentEditable) ? new HTMLContenteditableMaskElement(el) :
       new HTMLMaskElement(el);
     this.masked = createMask(opts);
 
