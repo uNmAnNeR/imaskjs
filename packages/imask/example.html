@@ -30,7 +30,7 @@
         },
       },
     })
-    var imask = new IMask(new IMask.HTMLContenteditableMaskElement(document.getElementById('ce')), {
+    var imask = new IMask(document.getElementById('ce'), {
       mask: currencyMask,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
