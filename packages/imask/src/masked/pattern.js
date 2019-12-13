@@ -623,4 +623,4 @@ function isInput (block: PatternBlock): boolean {
 
 
 // $FlowFixMe
-globalThis.IMask.MaskedPattern = MaskedPattern;
+if (globalThis.IMask) globalThis.IMask.MaskedPattern = MaskedPattern;

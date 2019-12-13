@@ -68,4 +68,4 @@ class MaskElement {
 
 
 // $FlowFixMe
-globalThis.IMask.MaskElement = MaskElement;
+if (globalThis.IMask) globalThis.IMask.MaskElement = MaskElement;

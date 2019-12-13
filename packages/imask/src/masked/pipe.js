@@ -25,6 +25,8 @@ function pipe (value, ...pipeArgs) {
   return createPipe(...pipeArgs)(value);
 }
 
-globalThis.IMask.PIPE_TYPE = PIPE_TYPE;
-globalThis.IMask.createPipe = createPipe;
-globalThis.IMask.pipe = pipe;
+if (globalThis.IMask) {
+  globalThis.IMask.PIPE_TYPE = PIPE_TYPE;
+  globalThis.IMask.createPipe = createPipe;
+  globalThis.IMask.pipe = pipe;
+}

@@ -22,32 +22,32 @@ function maskedClass (mask: Mask): Class<Masked<*>> {
   // $FlowFixMe
   if (Array.isArray(mask) || mask === Array) return globalThis.IMask.MaskedDynamic;
   // $FlowFixMe
-  if (mask.prototype instanceof globalThis.IMask.Masked) return mask;
+  if (globalThis.IMask && globalThis.IMask.Masked && mask.prototype instanceof globalThis.IMask.Masked) return mask;
   // $FlowFixMe
   if (mask instanceof Function) return globalThis.IMask.MaskedFunction;
 
   console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
   // $FlowFixMe
-  return globalThis.IMask.Masked;
+  return globalThis.IMask && globalThis.IMask.Masked;
 }
 
 /** Creates new {@link Masked} depending on mask type */
 export default
 function createMask (opts: {mask: Mask} | Masked<*>): Masked<*> {
   // $FlowFixMe
-  if (opts instanceof globalThis.IMask.Masked) return opts;
+  if (globalThis.IMask && globalThis.IMask.Masked && opts instanceof globalThis.IMask.Masked) return opts;
 
   opts = {...opts};
   const mask = opts.mask;
 
   // $FlowFixMe
-  if (mask instanceof globalThis.IMask.Masked) return mask;
+  if (globalThis.IMask && globalThis.IMask.Masked && mask instanceof globalThis.IMask.Masked) return mask;
 
   const MaskedClass = maskedClass(mask);
-  if (!MaskedClass) throw 'Masked class is not found for provided mask, appropriate module needs to be import manually before creating mask.';
+  if (!MaskedClass) throw new Error('Masked class is not found for provided mask, appropriate module needs to be import manually before creating mask.');
   return new MaskedClass(opts);
 }
 
 
 // $FlowFixMe
-globalThis.IMask.createMask = createMask;
+if (globalThis.IMask) globalThis.IMask.createMask = createMask;

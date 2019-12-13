@@ -292,4 +292,4 @@ MaskedDynamic.DEFAULTS = {
 };
 
 // $FlowFixMe
-globalThis.IMask.MaskedDynamic = MaskedDynamic;
+if (globalThis.IMask) globalThis.IMask.MaskedDynamic = MaskedDynamic;

@@ -132,4 +132,4 @@ MaskedDate.GET_DEFAULT_BLOCKS = () => ({
 });
 
 // $FlowFixMe
-globalThis.IMask.MaskedDate = MaskedDate;
+if (globalThis.IMask) globalThis.IMask.MaskedDate = MaskedDate;

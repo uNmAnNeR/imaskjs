@@ -365,4 +365,4 @@ MaskedNumber.DEFAULTS = {
 };
 
 // $FlowFixMe
-globalThis.IMask.MaskedNumber = MaskedNumber;
+if (globalThis.IMask) globalThis.IMask.MaskedNumber = MaskedNumber;

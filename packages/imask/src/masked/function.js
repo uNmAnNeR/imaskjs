@@ -16,4 +16,4 @@ class MaskedFunction extends Masked<Function> {
 }
 
 // $FlowFixMe
-globalThis.IMask.MaskedFunction = MaskedFunction;
+if (globalThis.IMask) globalThis.IMask.MaskedFunction = MaskedFunction;

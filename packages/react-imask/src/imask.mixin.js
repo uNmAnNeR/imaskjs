@@ -124,7 +124,7 @@ function IMaskMixin(ComposedComponent) {
     }
 
     initMask (maskOptions=this._extractMaskOptionsFromProps({...this.props})) {
-      this.maskRef = new IMask(this.element, maskOptions)
+      this.maskRef = IMask(this.element, maskOptions)
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
 

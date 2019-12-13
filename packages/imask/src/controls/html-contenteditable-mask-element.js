@@ -55,4 +55,4 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
 
 
 // $FlowFixMe
-globalThis.IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;
+if (globalThis.IMask) globalThis.IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;

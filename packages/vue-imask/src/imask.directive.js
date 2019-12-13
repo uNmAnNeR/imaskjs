@@ -35,7 +35,7 @@ function fireEvent (el, eventName, data) {
 }
 
 function initMask (el, opts) {
-  el.maskRef = new IMask(el, opts)
+  el.maskRef = IMask(el, opts)
     .on('accept', () => fireEvent(el, 'accept', el.maskRef))
     .on('complete', () => fireEvent(el, 'complete', el.maskRef));
 }

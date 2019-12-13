@@ -366,4 +366,4 @@ Masked.DEFAULTS = {
 
 
 // $FlowFixMe
-globalThis.IMask.Masked = Masked;
+if (globalThis.IMask) globalThis.IMask.Masked = Masked;

@@ -27,4 +27,4 @@ class MaskedEnum extends MaskedPattern {
 }
 
 // $FlowFixMe
-globalThis.IMask.MaskedEnum = MaskedEnum;
+if (globalThis.IMask) globalThis.IMask.MaskedEnum = MaskedEnum;

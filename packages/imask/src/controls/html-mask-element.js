@@ -114,4 +114,4 @@ HTMLMaskElement.EVENTS_MAP = {
 
 
 // $FlowFixMe
-globalThis.IMask.HTMLMaskElement = HTMLMaskElement;
+if (globalThis.IMask) globalThis.IMask.HTMLMaskElement = HTMLMaskElement;

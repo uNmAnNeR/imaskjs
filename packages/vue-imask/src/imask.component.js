@@ -108,7 +108,7 @@ const IMaskComponent = {
     },
 
     _initMask (maskOptions=this.maskOptions) {
-      this.maskRef = new IMask(this.$el, maskOptions)
+      this.maskRef = IMask(this.$el, maskOptions)
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
       this._updateValue();

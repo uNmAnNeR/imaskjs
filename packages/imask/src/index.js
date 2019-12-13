@@ -17,6 +17,42 @@ import HTMLContenteditableMaskElement from './controls/html-contenteditable-mask
 import { createPipe, pipe, PIPE_TYPE } from './masked/pipe.js';
 
 
+/** {@link InputMask} */
+IMask.InputMask = InputMask;
+/** {@link Masked} */
+IMask.Masked = Masked;
+/** {@link MaskedPattern} */
+IMask.MaskedPattern = MaskedPattern;
+/** {@link MaskedEnum} */
+IMask.MaskedEnum = MaskedEnum;
+/** {@link MaskedRange} */
+IMask.MaskedRange = MaskedRange;
+/** {@link MaskedNumber} */
+IMask.MaskedNumber = MaskedNumber;
+/** {@link MaskedDate} */
+IMask.MaskedDate = MaskedDate;
+/** {@link MaskedRegExp} */
+IMask.MaskedRegExp = MaskedRegExp;
+/** {@link MaskedFunction} */
+IMask.MaskedFunction = MaskedFunction;
+/** {@link MaskedDynamic} */
+IMask.MaskedDynamic = MaskedDynamic;
+/** {@link createMask} */
+IMask.createMask = createMask;
+/** {@link MaskElement} */
+IMask.MaskElement = MaskElement;
+/** {@link HTMLMaskElement} */
+IMask.HTMLMaskElement = HTMLMaskElement;
+/** {@link HTMLContenteditableMaskElement} */
+IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;
+/** {@link pipe} */
+IMask.pipe = pipe;
+/** {@link createPipe} */
+IMask.createPipe = createPipe;
+/** {@link PIPE_TYPE} */
+IMask.PIPE_TYPE = PIPE_TYPE;
+
+
 export default IMask;
 export {
   InputMask,

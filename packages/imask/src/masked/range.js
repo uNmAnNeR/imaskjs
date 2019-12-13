@@ -109,4 +109,4 @@ class MaskedRange extends MaskedPattern {
 
 
 // $FlowFixMe
-globalThis.IMask.MaskedRange = MaskedRange;
+if (globalThis.IMask) globalThis.IMask.MaskedRange = MaskedRange;
