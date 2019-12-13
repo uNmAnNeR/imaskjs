@@ -106,3 +106,7 @@ class MaskedRange extends MaskedPattern {
       super.doValidate(...args);
   }
 }
+
+
+// $FlowFixMe
+globalThis.IMask.MaskedRange = MaskedRange;

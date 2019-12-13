@@ -111,3 +111,7 @@ HTMLMaskElement.EVENTS_MAP = {
   focus: 'focus',
   commit: 'blur',
 };
+
+
+// $FlowFixMe
+globalThis.IMask.HTMLMaskElement = HTMLMaskElement;

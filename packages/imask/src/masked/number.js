@@ -363,3 +363,6 @@ MaskedNumber.DEFAULTS = {
   normalizeZeros: true,
   padFractionalZeros: false,
 };
+
+// $FlowFixMe
+globalThis.IMask.MaskedNumber = MaskedNumber;

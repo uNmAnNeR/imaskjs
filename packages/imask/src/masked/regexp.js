@@ -14,3 +14,7 @@ class MaskedRegExp extends Masked<RegExp> {
     super._update(opts);
   }
 }
+
+
+// $FlowFixMe
+globalThis.IMask.MaskedRegExp = MaskedRegExp;

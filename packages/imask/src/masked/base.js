@@ -363,3 +363,7 @@ Masked.DEFAULTS = {
   format: v => v,
   parse: v => v,
 };
+
+
+// $FlowFixMe
+globalThis.IMask.Masked = Masked;

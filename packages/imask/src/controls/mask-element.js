@@ -65,3 +65,7 @@ class MaskElement {
   /** Should be overriden in subclasses */
   unbindEvents (): void {}
 }
+
+
+// $FlowFixMe
+globalThis.IMask.MaskElement = MaskElement;

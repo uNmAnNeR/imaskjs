@@ -25,3 +25,6 @@ class MaskedEnum extends MaskedPattern {
       super.doValidate(...args);
   }
 }
+
+// $FlowFixMe
+globalThis.IMask.MaskedEnum = MaskedEnum;

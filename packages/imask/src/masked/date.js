@@ -130,3 +130,6 @@ MaskedDate.GET_DEFAULT_BLOCKS = () => ({
     to: 9999,
   }
 });
+
+// $FlowFixMe
+globalThis.IMask.MaskedDate = MaskedDate;

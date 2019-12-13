@@ -52,3 +52,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     this.input.textContent = value;
   }
 }
+
+
+// $FlowFixMe
+globalThis.IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;

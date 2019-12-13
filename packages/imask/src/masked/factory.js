@@ -44,5 +44,10 @@ function createMask (opts: {mask: Mask} | Masked<*>): Masked<*> {
   if (mask instanceof globalThis.IMask.Masked) return mask;
 
   const MaskedClass = maskedClass(mask);
+  if (!MaskedClass) throw 'Masked class is not found for provided mask, appropriate module needs to be import manually before creating mask.';
   return new MaskedClass(opts);
 }
+
+
+// $FlowFixMe
+globalThis.IMask.createMask = createMask;

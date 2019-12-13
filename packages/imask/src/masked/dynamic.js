@@ -290,3 +290,6 @@ MaskedDynamic.DEFAULTS = {
     return masked.compiledMasks[inputs[0].index];
   }
 };
+
+// $FlowFixMe
+globalThis.IMask.MaskedDynamic = MaskedDynamic;

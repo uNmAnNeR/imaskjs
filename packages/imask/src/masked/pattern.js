@@ -620,3 +620,7 @@ function isInput (block: PatternBlock): boolean {
   const value = block.value;
   return !value || block.nearestInputPos(0, DIRECTION.NONE) !== value.length;
 }
+
+
+// $FlowFixMe
+globalThis.IMask.MaskedPattern = MaskedPattern;

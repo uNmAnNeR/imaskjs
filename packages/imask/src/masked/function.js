@@ -14,3 +14,6 @@ class MaskedFunction extends Masked<Function> {
     super._update(opts);
   }
 }
+
+// $FlowFixMe
+globalThis.IMask.MaskedFunction = MaskedFunction;

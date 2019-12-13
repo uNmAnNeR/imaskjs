@@ -13,7 +13,7 @@ const basePath = 'dist/imask' + (format !== 'umd' ? '.' + format : '');
 
 
 export default [false, true].map(min => ({
-  input: 'src/imask.js',
+  input: 'src/index.js',
   output: {
     file: `${basePath}${min ? '.min' : ''}.js`,
     format,
