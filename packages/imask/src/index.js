@@ -1,3 +1,4 @@
+import '@ungap/global-this';
 import IMask from './imask.js';
 import InputMask from './controls/input.js';
 
@@ -17,6 +18,7 @@ import HTMLContenteditableMaskElement from './controls/html-contenteditable-mask
 import { createPipe, pipe, PIPE_TYPE } from './masked/pipe.js';
 
 
+globalThis.IMask = IMask;
 export default IMask;
 export {
   InputMask,
