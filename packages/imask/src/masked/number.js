@@ -3,6 +3,7 @@ import {escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTIO
 import ChangeDetails from '../core/change-details.js';
 
 import Masked, {type MaskedOptions, type ExtractFlags, type AppendFlags} from './base.js';
+import IMask from '../core/holder.js';
 
 
 type MaskedNumberOptions = {
@@ -364,5 +365,5 @@ MaskedNumber.DEFAULTS = {
   padFractionalZeros: false,
 };
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedNumber = MaskedNumber;
+
+IMask.MaskedNumber = MaskedNumber;

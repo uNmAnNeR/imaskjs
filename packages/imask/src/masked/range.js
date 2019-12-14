@@ -1,6 +1,7 @@
 // @flow
 import MaskedPattern from './pattern.js';
 import { type AppendFlags } from './base.js';
+import IMask from '../core/holder.js';
 
 
 /** Pattern which accepts ranges */
@@ -108,5 +109,4 @@ class MaskedRange extends MaskedPattern {
 }
 
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedRange = MaskedRange;
+IMask.MaskedRange = MaskedRange;

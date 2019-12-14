@@ -1,6 +1,7 @@
 // @flow
 import MaskedPattern from './pattern.js';
 import MaskedRange from './range.js';
+import IMask from '../core/holder.js';
 
 
 /** Date mask */
@@ -131,5 +132,5 @@ MaskedDate.GET_DEFAULT_BLOCKS = () => ({
   }
 });
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedDate = MaskedDate;
+
+IMask.MaskedDate = MaskedDate;

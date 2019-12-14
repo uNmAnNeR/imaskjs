@@ -1,5 +1,6 @@
 // @flow
 import Masked, {type MaskedOptions} from './base.js';
+import IMask from '../core/holder.js';
 
 
 /** Masking by custom Function */
@@ -15,5 +16,5 @@ class MaskedFunction extends Masked<Function> {
   }
 }
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedFunction = MaskedFunction;
+
+IMask.MaskedFunction = MaskedFunction;

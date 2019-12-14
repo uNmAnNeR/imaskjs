@@ -1,4 +1,6 @@
 // @flow
+import IMask from '../core/holder.js';
+
 
 export
 type ElementEvent =
@@ -67,5 +69,4 @@ class MaskElement {
 }
 
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskElement = MaskElement;
+IMask.MaskElement = MaskElement;

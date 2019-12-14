@@ -3,6 +3,7 @@ import ChangeDetails from '../core/change-details.js';
 import createMask from './factory.js';
 import Masked, {type AppendFlags, type MaskedState} from './base.js';
 import { type TailDetails } from '../core/tail-details.js';
+import IMask from '../core/holder.js';
 
 
 type MaskedDynamicState = {|
@@ -291,5 +292,5 @@ MaskedDynamic.DEFAULTS = {
   }
 };
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedDynamic = MaskedDynamic;
+
+IMask.MaskedDynamic = MaskedDynamic;

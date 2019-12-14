@@ -1,4 +1,5 @@
 import createMask from './factory';
+import IMask from '../core/holder.js';
 
 
 /** Mask pipe source and destination types */
@@ -25,8 +26,7 @@ function pipe (value, ...pipeArgs) {
   return createPipe(...pipeArgs)(value);
 }
 
-if (globalThis.IMask) {
-  globalThis.IMask.PIPE_TYPE = PIPE_TYPE;
-  globalThis.IMask.createPipe = createPipe;
-  globalThis.IMask.pipe = pipe;
-}
+
+IMask.PIPE_TYPE = PIPE_TYPE;
+IMask.createPipe = createPipe;
+IMask.pipe = pipe;

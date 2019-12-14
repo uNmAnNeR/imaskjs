@@ -9,6 +9,7 @@ import ChunksTailDetails from './pattern/chunk-tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import {type PatternBlock} from './pattern/block.js';
 import createMask from './factory.js';
+import IMask from '../core/holder.js';
 
 
 type MaskedPatternOptions = {
@@ -622,5 +623,4 @@ function isInput (block: PatternBlock): boolean {
 }
 
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedPattern = MaskedPattern;
+IMask.MaskedPattern = MaskedPattern;

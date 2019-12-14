@@ -3,6 +3,7 @@ import ChangeDetails from '../core/change-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import { type Direction, DIRECTION, isString } from '../core/utils.js';
 import { type TailDetails } from '../core/tail-details.js';
+import IMask from '../core/holder.js';
 
 
 /** Supported mask type */
@@ -365,5 +366,4 @@ Masked.DEFAULTS = {
 };
 
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.Masked = Masked;
+IMask.Masked = Masked;

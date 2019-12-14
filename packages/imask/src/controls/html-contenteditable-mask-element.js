@@ -1,5 +1,6 @@
 // @flow
 import HTMLMaskElement from './html-mask-element.js';
+import IMask from '../core/holder.js';
 
 
 export default
@@ -29,6 +30,8 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     @override
   */
   _unsafeSelect (start: number, end: number) {
+    if (!this.rootElement.createRange) return;
+
     const range = this.rootElement.createRange();
     range.setStart(this.input.firstChild || this.input, start);
     range.setEnd(this.input.lastChild || this.input, end);
@@ -54,5 +57,4 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
 }
 
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;
+IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;

@@ -1,5 +1,6 @@
 // @flow
 import MaskedPattern from './pattern.js';
+import IMask from '../core/holder.js';
 
 
 /** Pattern which validates enum values */
@@ -26,5 +27,5 @@ class MaskedEnum extends MaskedPattern {
   }
 }
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedEnum = MaskedEnum;
+
+IMask.MaskedEnum = MaskedEnum;

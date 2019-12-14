@@ -1,5 +1,6 @@
 // @flow
 import Masked, {type MaskedOptions} from './base.js';
+import IMask from '../core/holder.js';
 
 
 /** Masking by RegExp */
@@ -16,5 +17,4 @@ class MaskedRegExp extends Masked<RegExp> {
 }
 
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.MaskedRegExp = MaskedRegExp;
+IMask.MaskedRegExp = MaskedRegExp;

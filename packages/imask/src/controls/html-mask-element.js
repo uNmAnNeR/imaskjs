@@ -1,5 +1,6 @@
 // @flow
 import MaskElement, {type ElementEvent} from './mask-element.js';
+import IMask from '../core/holder.js';
 
 
 /** Bridge between HTMLElement and {@link Masked} */
@@ -113,5 +114,4 @@ HTMLMaskElement.EVENTS_MAP = {
 };
 
 
-// $FlowFixMe
-if (globalThis.IMask) globalThis.IMask.HTMLMaskElement = HTMLMaskElement;
+IMask.HTMLMaskElement = HTMLMaskElement;
