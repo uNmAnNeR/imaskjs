@@ -1,5 +1,5 @@
 import React from 'react';
-import {IMaskMixin} from './imask.mixin.js';
+import IMaskMixin from './mixin';
 
 
 const InputComponent = ({inputRef, ...props}) =>
@@ -8,5 +8,6 @@ const InputComponent = ({inputRef, ...props}) =>
     ref: inputRef
   });
 
-export
+
 const IMaskInput = IMaskMixin(InputComponent);
+export default IMaskInput;

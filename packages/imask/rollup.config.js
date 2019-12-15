@@ -34,12 +34,10 @@ export default [
   })),
   {
     input: ['src/**/*.js'],
-    output: [
-      {
-        format: 'esm',
-        dir: 'esm',
-      },
-    ],
+    output: {
+      format: 'esm',
+      dir: 'esm',
+    },
     plugins: [
       multiInput(),
       ...commonPlugins,

@@ -1,2 +1,3 @@
-export * from './imask.mixin.js';
-export * from './imask.input.js';
+import 'imask';
+export { default as IMaskMixin } from './mixin';
+export { default as IMaskInput } from './input';

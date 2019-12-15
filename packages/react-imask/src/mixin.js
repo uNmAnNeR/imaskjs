@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import IMask from 'imask';
+import IMask from 'imask/esm/imask';
+
 
 const MASK_PROPS = {
   // common
@@ -68,7 +69,7 @@ const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
 );
 
-export
+export default
 function IMaskMixin(ComposedComponent) {
   const MaskedComponent = class extends React.Component {
     constructor (...args) {
@@ -92,7 +93,8 @@ function IMaskMixin(ComposedComponent) {
             (props.value !== this.maskValue ||
               // handle cases like Number('') === 0,
               // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
-              (typeof props.value !== 'string' && this.maskRef.value === ''))
+              (typeof props.value !== 'string' && this.maskRef.value === '') &&
+                !this.maskRef.el.isActive)
           ) {
             this.maskValue = props.value;
           }

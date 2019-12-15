@@ -1,2 +1,3 @@
-export * from './imask.component.js';
-export * from './imask.directive.js';
+import 'imask';
+export { default as IMaskComponent } from './component';
+export { default as IMaskDirective } from './directive';

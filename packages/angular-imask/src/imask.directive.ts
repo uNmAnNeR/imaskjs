@@ -140,7 +140,8 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
       if (this.maskValue !== value ||
         // handle cases like Number('') === 0,
         // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
-        (typeof value !== 'string' && this.maskRef.value === '')
+        (typeof value !== 'string' && this.maskRef.value === '') &&
+          !this.maskRef.el.isActive
       ) {
         this.maskValue = value;
       }

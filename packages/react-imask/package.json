@@ -6,6 +6,7 @@
   "homepage": "https://imask.js.org/",
   "description": "React input mask",
   "main": "dist/react-imask.js",
+  "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "scripts": {
     "build": "rollup -c"

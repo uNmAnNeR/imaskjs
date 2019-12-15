@@ -1,7 +1,6 @@
-import IMask from 'imask';
+import IMask from 'imask/esm/imask';
 
 
-export
 const IMaskDirective = {
   name: 'imask',
 
@@ -46,3 +45,6 @@ function destroyMask (el) {
     delete el.maskRef;
   }
 }
+
+
+export default IMaskDirective;
