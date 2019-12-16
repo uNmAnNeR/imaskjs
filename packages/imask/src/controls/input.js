@@ -47,7 +47,7 @@ class InputMask {
   constructor (el: MaskElement | HTMLTextAreaElement | HTMLInputElement, opts: {[string]: any}) {
     this.el =
       (el instanceof MaskElement) ? el :
-      (el.isContentEditable) ? new HTMLContenteditableMaskElement(el) :
+      (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
       new HTMLMaskElement(el);
     this.masked = createMask(opts);
 
