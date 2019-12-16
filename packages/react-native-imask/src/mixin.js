@@ -1,9 +1,9 @@
 import React from 'react';
-import {IMaskMixin} from 'react-imask';
+import IMaskMixin from 'react-imask/esm/mixin';
 import NativeMaskElement from './native-mask-element';
 
 
-export
+export default
 function IMaskNativeMixin(ComposedComponent) {
   const MaskedComponent = class extends React.Component {
     constructor (...args) {
