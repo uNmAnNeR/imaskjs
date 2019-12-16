@@ -1,6 +1,7 @@
 node_modules/
 coverage/
 dist/
+esm/
 docs/_site/
 *.log
 .nyc_output

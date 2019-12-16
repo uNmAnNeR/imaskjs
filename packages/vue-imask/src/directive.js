@@ -1,7 +1,6 @@
-import IMask from 'imask';
+import IMask from 'imask/esm/imask';
 
 
-export
 const IMaskDirective = {
   name: 'imask',
 
@@ -35,7 +34,7 @@ function fireEvent (el, eventName, data) {
 }
 
 function initMask (el, opts) {
-  el.maskRef = new IMask(el, opts)
+  el.maskRef = IMask(el, opts)
     .on('accept', () => fireEvent(el, 'accept', el.maskRef))
     .on('complete', () => fireEvent(el, 'complete', el.maskRef));
 }
@@ -46,3 +45,6 @@ function destroyMask (el) {
     delete el.maskRef;
   }
 }
+
+
+export default IMaskDirective;

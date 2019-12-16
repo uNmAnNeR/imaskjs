@@ -1,5 +1,6 @@
 // @flow
 import MaskedPattern from './pattern.js';
+import IMask from '../core/holder.js';
 
 
 /** Pattern which validates enum values */
@@ -25,3 +26,6 @@ class MaskedEnum extends MaskedPattern {
       super.doValidate(...args);
   }
 }
+
+
+IMask.MaskedEnum = MaskedEnum;

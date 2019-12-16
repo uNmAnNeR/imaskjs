@@ -1,4 +1,5 @@
 import createMask from './factory';
+import IMask from '../core/holder.js';
 
 
 /** Mask pipe source and destination types */
@@ -24,3 +25,8 @@ export
 function pipe (value, ...pipeArgs) {
   return createPipe(...pipeArgs)(value);
 }
+
+
+IMask.PIPE_TYPE = PIPE_TYPE;
+IMask.createPipe = createPipe;
+IMask.pipe = pipe;

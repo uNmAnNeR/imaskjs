@@ -1,4 +1,6 @@
 // @flow
+import IMask from '../core/holder.js';
+
 
 export
 type ElementEvent =
@@ -65,3 +67,6 @@ class MaskElement {
   /** Should be overriden in subclasses */
   unbindEvents (): void {}
 }
+
+
+IMask.MaskElement = MaskElement;

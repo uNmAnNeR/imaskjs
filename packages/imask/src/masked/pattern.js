@@ -9,6 +9,7 @@ import ChunksTailDetails from './pattern/chunk-tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import {type PatternBlock} from './pattern/block.js';
 import createMask from './factory.js';
+import IMask from '../core/holder.js';
 
 
 type MaskedPatternOptions = {
@@ -620,3 +621,6 @@ function isInput (block: PatternBlock): boolean {
   const value = block.value;
   return !value || block.nearestInputPos(0, DIRECTION.NONE) !== value.length;
 }
+
+
+IMask.MaskedPattern = MaskedPattern;

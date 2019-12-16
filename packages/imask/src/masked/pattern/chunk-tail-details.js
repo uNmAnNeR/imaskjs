@@ -3,6 +3,7 @@ import type { TailDetails, AppendTail } from '../../core/tail-details.js';
 import ChangeDetails from '../../core/change-details.js';
 import { isString } from '../../core/utils.js';
 import ContinuousTailDetails from '../../core/continuous-tail-details.js';
+import IMask from '../../core/holder.js';
 
 
 type ChunksTailState = {
@@ -72,7 +73,7 @@ class ChunksTailDetails implements TailDetails {
 
   appendTo (masked: AppendTail): ChangeDetails {
     // $FlowFixMe
-    if (!(masked instanceof globalThis.IMask.MaskedPattern)) {
+    if (!(masked instanceof IMask.MaskedPattern)) {
       const tail = new ContinuousTailDetails(this.toString());
       return tail.appendTo(masked);
     }

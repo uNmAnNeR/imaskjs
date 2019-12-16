@@ -1,5 +1,6 @@
 // @flow
 import Masked, {type MaskedOptions} from './base.js';
+import IMask from '../core/holder.js';
 
 
 /** Masking by custom Function */
@@ -14,3 +15,6 @@ class MaskedFunction extends Masked<Function> {
     super._update(opts);
   }
 }
+
+
+IMask.MaskedFunction = MaskedFunction;

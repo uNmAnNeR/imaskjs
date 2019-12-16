@@ -8,6 +8,7 @@ import {type Mask} from '../masked/base.js';
 import MaskElement from './mask-element.js';
 import HTMLMaskElement from './html-mask-element.js';
 import HTMLContenteditableMaskElement from './html-contenteditable-mask-element.js';
+import IMask from '../core/holder.js';
 
 
 /** Listens to element events and controls changes between element and {@link Masked} */
@@ -371,3 +372,6 @@ class InputMask {
     delete this.el;
   }
 }
+
+
+IMask.InputMask = InputMask;

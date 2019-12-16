@@ -4,31 +4,43 @@ import { eslint } from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import polyfill from 'rollup-plugin-polyfill';
+import multiInput from 'rollup-plugin-multi-input';
 
 
-const format = process.env.BABEL_ENV || 'umd';
+const commonPlugins = [
+  resolve(),
+  babel({
+    extends: './.babelrc',
+    rootMode: 'upward',
+  }),
+];
 
-const isES = format.indexOf('es') === 0;
-const basePath = 'dist/imask' + (format !== 'umd' ? '.' + format : '');
-
-
-export default [false, true].map(min => ({
-  input: 'src/imask.js',
-  output: {
-    file: `${basePath}${min ? '.min' : ''}.js`,
-    format,
-    name: 'IMask',
-    sourcemap: true,
-  },
-  plugins: [
-    eslint({configFile: '../../.eslintrc'}),
-    resolve(),
-    babel({
-      extends: './.babelrc',
-      rootMode: 'upward',
-    }),
-    !isES && commonjs(),
-    // !isES && polyfill(['./polyfills.js']),
-    min && terser(),
-  ],
-}));
+export default [
+  ...[false, true].map(min => ({
+    input: 'src/index.js',
+    output: {
+      file: `dist/imask${min ? '.min' : ''}.js`,
+      format: 'umd',
+      name: 'IMask',
+      sourcemap: true,
+    },
+    plugins: [
+      eslint({configFile: '../../.eslintrc'}),
+      ...commonPlugins,
+      commonjs(),
+      polyfill(['./polyfills.js']),
+      min && terser(),
+    ],
+  })),
+  {
+    input: ['src/**/*.js'],
+    output: {
+      format: 'esm',
+      dir: 'esm',
+    },
+    plugins: [
+      multiInput(),
+      ...commonPlugins,
+    ]
+  }
+];

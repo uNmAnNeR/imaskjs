@@ -30,6 +30,7 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-eslint": "^7.0.0",
+    "rollup-plugin-multi-input": "^1.0.3",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-polyfill": "^3.0.0",
     "rollup-plugin-sourcemaps": "^0.4.2",

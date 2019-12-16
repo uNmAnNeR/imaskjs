@@ -1,7 +1,6 @@
 import { assert } from 'chai';
 
-import IMask from '../../src/imask';
-import InputMask from '../../src/controls/input';
+import IMask, { InputMask } from '../../src';
 import MaskElementStub from './mask-element-stub';
 
 

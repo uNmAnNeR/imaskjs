@@ -1,7 +1,6 @@
-import IMask from 'imask';
+import IMask from 'imask/esm/imask';
 
 
-export
 const IMaskComponent = {
   name: 'imask-input',
 
@@ -50,7 +49,8 @@ const IMaskComponent = {
               (props.value !== this._maskValue() ||
                 // handle cases like Number('') === 0,
                 // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
-                (typeof props.value !== 'string' && this.maskRef.value === ''))
+                (typeof props.value !== 'string' && this.maskRef.value === '') &&
+                  !this.maskRef.el.isActive)
             ) {
               this._updateValue();
             }
@@ -108,7 +108,7 @@ const IMaskComponent = {
     },
 
     _initMask (maskOptions=this.maskOptions) {
-      this.maskRef = new IMask(this.$el, maskOptions)
+      this.maskRef = IMask(this.$el, maskOptions)
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
       this._updateValue();
@@ -163,3 +163,6 @@ const IMaskComponent = {
     dispatch: Function
   },
 }
+
+
+export default IMaskComponent;

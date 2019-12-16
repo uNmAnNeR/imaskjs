@@ -1,6 +1,7 @@
 // @flow
 import MaskedPattern from './pattern.js';
 import { type AppendFlags } from './base.js';
+import IMask from '../core/holder.js';
 
 
 /** Pattern which accepts ranges */
@@ -106,3 +107,6 @@ class MaskedRange extends MaskedPattern {
       super.doValidate(...args);
   }
 }
+
+
+IMask.MaskedRange = MaskedRange;

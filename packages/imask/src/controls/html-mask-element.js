@@ -1,5 +1,6 @@
 // @flow
 import MaskElement, {type ElementEvent} from './mask-element.js';
+import IMask from '../core/holder.js';
 
 
 /** Bridge between HTMLElement and {@link Masked} */
@@ -111,3 +112,6 @@ HTMLMaskElement.EVENTS_MAP = {
   focus: 'focus',
   commit: 'blur',
 };
+
+
+IMask.HTMLMaskElement = HTMLMaskElement;

@@ -60,6 +60,7 @@
       methods: {
         onAcceptDate: function (e) {
           console.log('accept date', e.detail.value);
+          this.dateValue = e.detail.value;
         },
         onCompleteDate: function (e) {
           console.log('complete date!', e.detail.unmaskedValue);

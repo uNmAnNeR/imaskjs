@@ -1,6 +1,7 @@
 // @flow
 import MaskedPattern from './pattern.js';
 import MaskedRange from './range.js';
+import IMask from '../core/holder.js';
 
 
 /** Date mask */
@@ -130,3 +131,6 @@ MaskedDate.GET_DEFAULT_BLOCKS = () => ({
     to: 9999,
   }
 });
+
+
+IMask.MaskedDate = MaskedDate;
