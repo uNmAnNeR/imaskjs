@@ -3,3 +3,5 @@
 !README.md
 !dist
 !dist/**/*
+!esm
+!esm/**/*
