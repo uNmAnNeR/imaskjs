@@ -1,12 +1,19 @@
+
 # React Native IMask Plugin
 react-native-imask
 
-[![npm version](https://badge.fury.io/js/react-imask.svg)](https://badge.fury.io/js/react-native-imask)
+[![npm version](https://badge.fury.io/js/react-native-imask.svg)](https://badge.fury.io/js/react-native-imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <a href="https://opencollective.com/imask/donate" target="_blank">
   <img src="https://opencollective.com/imask/donate/button.png?color=blue" width=300 />
 </a>
+
+**Read this before using**
+
+> I can't say that this plugin is production ready, use it by your own risk. Why?
+> Because React Native Textinput behavior differs from html input, varies by platform and contains several bugs ([1](https://github.com/facebook/react-native/issues/24585), [2](https://github.com/facebook/react-native/issues/23578)), so some things are not possible to implement.
+> Any PRs are welcomed.
 
 ## Install
 `npm install react-native-imask`
@@ -68,4 +75,4 @@ More options see in a [guide](https://imask.js.org/guide.html).
 [@Yordis Prieto](https://github.com/yordis)
 
 ## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/3)
+[Paypal](https://www.paypal.me/alexeykryazhev/5)

@@ -1,7 +1,7 @@
 import React from 'react';
 import {TextInput} from 'react-native';
 
-import {IMaskNativeMixin} from './imask.native.mixin.js';
+import IMaskNativeMixin from './mixin';
 
 
 const InputComponent = ({inputRef, ...props}) =>
@@ -9,6 +9,7 @@ const InputComponent = ({inputRef, ...props}) =>
     ...props,
     ref: inputRef
   });
-
-export
 const IMaskTextInput = IMaskNativeMixin(InputComponent);
+
+
+export default IMaskTextInput;

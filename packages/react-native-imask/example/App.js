@@ -1,21 +1,19 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { IMaskTextInput } from 'react-native-imask';
+import 'imask/esm';
 
 
-export default class App extends React.Component {
-  constructor () {
-    super();
-    this.state = {
-      phone: '999'
-    };
-  }
+export default
+class App extends Component {
+  state = {
+    phone: '999'
+  };
 
   render() {
     return (
       <View style={styles.container}>
         <Text>Open up App.js to start working on your app!</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
         <IMaskTextInput
           style={{
             height: 40,
@@ -33,7 +31,6 @@ export default class App extends React.Component {
           }}
           editable={true}
         />
-        <Text>Changes you make will automatically reload.</Text>
       </View>
     );
   }
