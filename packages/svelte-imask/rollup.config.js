@@ -1,27 +1,25 @@
 import babel from 'rollup-plugin-babel';
+// import svelte from 'rollup-plugin-svelte';
 import { eslint } from 'rollup-plugin-eslint';
 import multiInput from 'rollup-plugin-multi-input';
 import pkg from './package.json';
 
 
 const globals = {
-  react: 'React',
-  'react-native': 'ReactNative',
-  'react-imask': 'ReactIMask',
-  'prop-types': 'PropTypes',
-  'imask': 'IMask',
+  imask: 'IMask'
 };
+
 
 export default [
   {
     input: 'src/index.js',
     external: Object.keys(globals),
     output: {
-      name: 'ReactNativeIMask',
+      name: 'SvelteIMask',
       file: pkg.main,
-      globals,
       format: 'umd',
       sourcemap: true,
+      globals,
     },
     plugins: [
       eslint({configFile: '../../.eslintrc'}),
@@ -38,9 +36,10 @@ export default [
     },
     plugins: [
       multiInput(),
+      // svelte(),
       babel({
         rootMode: 'upward',
       }),
     ]
   }
-];
+]

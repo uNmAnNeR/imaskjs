@@ -5,6 +5,7 @@
   "version": "5.2.1",
   "description": "Vue input mask",
   "main": "dist/vue-imask.js",
+  "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask",
   "contributors": [
     "naprimer",

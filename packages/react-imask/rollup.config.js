@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import { eslint } from 'rollup-plugin-eslint';
 import multiInput from 'rollup-plugin-multi-input';
+import pkg from './package.json';
 
 
 const globals = {
@@ -15,7 +16,7 @@ export default [
     external: Object.keys(globals),
     output: {
       name: 'ReactIMask',
-      file: 'dist/react-imask.js',
+      file: pkg.main,
       globals,
       format: 'umd',
       sourcemap: true,
