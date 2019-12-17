@@ -1,5 +1,5 @@
 import '@ungap/global-this';
-export { default as IMask } from './imask.js';
+import IMask from './imask.js';
 export { default as InputMask } from './controls/input.js';
 
 export { default as Masked } from './masked/base.js';
