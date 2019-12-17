@@ -14,7 +14,6 @@ function IMaskNativeMixin(ComposedComponent) {
     render () {
       const {inputRef, ...props} = this.props;
 
-      // console.log('RENDER');
       return React.createElement(ComposedComponent, {
         ...this.wrapHandlers(props),
         ...this.state,

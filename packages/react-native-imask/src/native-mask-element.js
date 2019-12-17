@@ -17,7 +17,7 @@ class NativeMaskElement extends MaskElement {
 
   set value (value) {
     this._syncValue = value;
-    // console.log('VALUE CHANGED', value);
+
     this.component.setState(prevState => ({
       ...prevState,
       value,
@@ -26,7 +26,7 @@ class NativeMaskElement extends MaskElement {
 
   get _selection () {
     return this._syncSelection ||
-      this.component.state.selection ||
+      this.input.props.selection ||
       {};
   }
 
@@ -40,14 +40,15 @@ class NativeMaskElement extends MaskElement {
 
   _unsafeSelect (start, end) {
     this._syncSelection = {start, end};
-    // console.log('SELECTION CHANGED', this._syncSelection);
-    this.component.setState(prevState => ({
-      ...prevState,
-      selection: {start, end},
-    }));
+
+    if (this._processInput) {
+      setTimeout(() => this._unsafeSelect(start, end));
+    } else {
+      this.input.setNativeProps({selection: this._syncSelection});
+    }
   }
 
-  isActive () {
+  get isActive () {
     return this.input.isFocused();
   }
 
@@ -62,13 +63,12 @@ class NativeMaskElement extends MaskElement {
         // TODO rewrite?
         if (event === 'selectionChange') {
           handler = (e) => {
-            const {nativeEvent: {selection}} = e;
-            // console.log('HANDLE SELECTION', selection);
+            const selection = e.nativeEvent.selection;
             this._unsafeSelect(selection.start, selection.end);
 
             // if waiting to handle input
             if (this._processInput) this.component.state.maskHandlers['onChangeText'](this.value);
-            internalHandler(e);
+            else internalHandler(e);
 
             delete this._processInput;
           }
@@ -86,6 +86,12 @@ class NativeMaskElement extends MaskElement {
             // console.log('CACHE VALUE', text);
             this._processInput = true;
             this.value = text;
+          }
+        } else if (event === 'click' || event === 'focus') {
+          handler = function handler (e) {
+            // cursor is still in old position here
+            // delay handler to wait for cursor is changed
+            setTimeout(internalHandler, 0, e);
           }
         }
 
@@ -111,6 +117,6 @@ NativeMaskElement.EVENTS_MAP = {
   selectionChange: 'onSelectionChange',
   input: 'onChangeText',
   focus: 'onFocus',
-  click: 'onTouchStart',
+  click: 'onTouchEnd',
   commit: 'onBlur',
 };
