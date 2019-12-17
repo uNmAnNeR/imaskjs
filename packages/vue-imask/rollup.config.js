@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import { eslint } from 'rollup-plugin-eslint';
 import multiInput from 'rollup-plugin-multi-input';
+import pkg from './package.json';
 
 
 const globals = {
@@ -14,7 +15,7 @@ export default [
     external: Object.keys(globals),
     output: {
       name: 'VueIMask',
-      file: 'dist/vue-imask.js',
+      file: pkg.main,
       format: 'umd',
       sourcemap: true,
       globals,
