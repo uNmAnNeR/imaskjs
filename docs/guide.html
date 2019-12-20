@@ -86,7 +86,7 @@ mask.off("complete");</code></pre>
   <pre><code>var masked = mask.masked;
 masked.reset(); // UI will NOT be updated</code></pre>
 
-  <p>In the above example all changes are proxied to the model layer first and then UI is updated. The core of masking on model layer is <a href="#common">IMask.Masked</a> base class.
+  <p>In the above example all changes are proxied to the model layer first and then UI is updated. The core of masking on model layer is <a href="#masked-base">IMask.Masked</a> base class.
   There are also several other model classes for the different <code>mask</code> property types that provide additional functionality:</p>
   <table>
     <thead>
@@ -98,31 +98,31 @@ masked.reset(); // UI will NOT be updated</code></pre>
     <tbody>
       <tr>
         <td><code>IMask.Masked</code> descendant or instance</td>
-        <td><a href="#common">IMask.Masked</a></td>
+        <td><a href="#masked-base">IMask.Masked</a></td>
       </tr>
       <tr>
         <td><code>RegExp</code></td>
-        <td><a href="#common">IMask.MaskedRegExp</a></td>
+        <td><a href="#masked-base">IMask.MaskedRegExp</a></td>
       </tr>
       <tr>
         <td><code>Function</code></td>
-        <td><a href="#common">IMask.MaskedFunction</a></td>
+        <td><a href="#masked-base">IMask.MaskedFunction</a></td>
       </tr>
       <tr>
         <td><code>String</code></td>
-        <td><a href="#pattern">IMask.MaskedPattern</a></td>
+        <td><a href="#masked-pattern">IMask.MaskedPattern</a></td>
       </tr>
       <tr>
         <td><code>Number</code></td>
-        <td><a href="#number">IMask.MaskedNumber</a></td>
+        <td><a href="#masked-number">IMask.MaskedNumber</a></td>
       </tr>
       <tr>
         <td><code>Date</code></td>
-        <td><a href="#date">IMask.MaskedDate</a></td>
+        <td><a href="#masked-date">IMask.MaskedDate</a></td>
       </tr>
       <tr>
         <td><code>Array</code> of masks</td>
-        <td><a href="#dynamic">IMask.MaskedDynamic</a></td>
+        <td><a href="#masked-dynamic">IMask.MaskedDynamic</a></td>
       </tr>
     </tbody>
   </table>
@@ -139,9 +139,22 @@ console.log(masked.value);  // same as maskedValue
 // get unmasked value
 console.log(masked.unmaskedValue);</code></pre>
 
+  <h2 id="masked" class="section-h"><a href="#masked">Masked</a></h2>
+  <nav class="breadcrumbs push-center">
+    <ul>
+      <li><a href="#masked-base">base</a></li>
+      <li><a href="#masked-number">number</a></li>
+      <li><a href="#masked-pattern">pattern</a></li>
+      <li><a href="#masked-range">range</a></li>
+      <li><a href="#masked-enum">enum</a></li>
+      <li><a href="#masked-date">date</a></li>
+      <li><a href="#masked-dynamic">dynamic</a></li>
+    </ul>
+  </nav>
 
-  <h2 id="common" class="section-h"><a href="#common">Input Mask Common Behavior</a></h2>
-  <p><a href="#common">IMask.Masked</a> is a base class of all other <code>Masked*</code> classes. Almost all base class options are applicable to subclasses.</p>
+
+  <h3 id="masked-base" class="section-h"><a href="#masked-base">Common Behavior</a></h3>
+  <p><a href="#masked-base">IMask.Masked</a> is a base class of all other <code>Masked*</code> classes. Almost all base class options are applicable to subclasses.</p>
   <p>Example usage:</p>
   <div class="toggle-panel">
     <label for="validate-mask-demo" class="muted">demo</label>
@@ -200,7 +213,7 @@ console.log(masked.typedValue);</code></pre>
 });</code></pre>
   <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from <code>Masked</code> to add some specific behavior.</p>
   <p>Additionaly to <code>mask</code> option custom validator can be set as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves.</p>
-  <p><strong>Note: don't change <code>Masked</code> instance inside callbacks.</strong></p>
+  <p><strong>Note: do not mutate <code>Masked</code> instance inside callbacks.</strong></p>
   <fieldset>
     <p><strong>Also make sure that mask or validator works with any of intermediate states, not just final value. For example to restrict input to "123" you do:</strong></p>
     <pre><code>var masked = IMask.Masked({
@@ -232,7 +245,7 @@ console.log(masked.typedValue);</code></pre>
 });</code></pre>
 
   <h3 id="overwrite" class="section-h"><a href="#overwrite">Overwrite Mode</a></h3>
-  <p>There is new <code>overwrite</code> flag available for all masks from v5.0.0. It enables characters overwriting instead of inserting:</p>
+  <p>There is <code>overwrite</code> flag available for all masks from v5.0.0. It enables characters overwriting instead of inserting:</p>
   <div class="form-item">
     <label><code>Date</code> mask in overwrite and autofix modes</label>
     <input id="date-overwrite-mask" type="text" value="">
@@ -259,7 +272,7 @@ console.log(masked.typedValue);</code></pre>
     </div>
   </div>
 
-  <h2 id="number" class="section-h"><a href="#number">Number Mask</a></h2>
+  <h3 id="masked-number" class="section-h"><a href="#masked-number">Number Mask</a></h3>
   <p>Number mask restricts input to integer or decimal numbers in many ways:</p>
   <div class="toggle-panel">
     <label for="numbers-mask-demo" class="muted">demo</label>
@@ -343,7 +356,7 @@ console.log(masked.typedValue);</code></pre>
 });</code></pre>
 
 
-  <h2 id="pattern" class="section-h"><a href="#pattern">Pattern Mask</a></h2>
+  <h3 id="masked-pattern" class="section-h"><a href="#masked-pattern">Pattern Mask</a></h3>
   Use pattern when:
   <ul>
     <li>mask is complex or contains nested masks</li>
@@ -509,8 +522,8 @@ var masked = IMask.PatternMasked({
 });</code></pre>
 
 
-  <h2 id="range" class="section-h"><a href="#range">Range Mask</a></h2>
-  <p>Range mask extends <a href="#pattern">Pattern</a> mask and can be used to restrict input in a number range.</p>
+  <h3 id="masked-range" class="section-h"><a href="#range">Range Mask</a></h3>
+  <p>Range mask extends <a href="#masked-pattern">Pattern</a> mask and can be used to restrict input in a number range.</p>
   <div class="toggle-panel">
     <label for="range-mask-demo" class="muted">demo</label>
     <input id="range-mask-demo" type="checkbox">
@@ -535,11 +548,11 @@ var masked = IMask.PatternMasked({
   // also Pattern options can be set
   lazy: false
 });</code></pre>
-  <p>Unlike <a href="#number">Number</a> mask Range mask is fixed in size, accepts only integer values but can use placeholder.</p>
+  <p>Unlike <a href="#masked-number">Number</a> mask Range mask is fixed in size, accepts only integer values but can use placeholder.</p>
 
 
-  <h2 id="enum" class="section-h"><a href="#enum">Enum Mask</a></h2>
-  <p>Enum mask extends <a href="#pattern">Pattern</a> mask and can be used to restrict input within characters enum.</p>
+  <h3 id="masked-enum" class="section-h"><a href="#enum">Enum Mask</a></h3>
+  <p>Enum mask extends <a href="#masked-pattern">Pattern</a> mask and can be used to restrict input within characters enum.</p>
   <div class="toggle-panel">
     <label for="enum-mask-demo" class="muted">demo</label>
     <input id="enum-mask-demo" type="checkbox">
@@ -563,8 +576,8 @@ var masked = IMask.PatternMasked({
 });</code></pre>
 
 
-  <h2 id="date" class="section-h"><a href="#date">Date Mask</a></h2>
-  <p>Date mask extends <a href="#pattern">Pattern</a> mask with more options.</p>
+  <h3 id="masked-date" class="section-h"><a href="#masked-date">Date Mask</a></h3>
+  <p>Date mask extends <a href="#masked-pattern">Pattern</a> mask with more options.</p>
   <fieldset>
     <strong>Note: if you set <code>pattern</code> option, then you also have to provide <code>format</code> and <code>parse</code> options</strong>
   </fieldset>
@@ -694,7 +707,7 @@ var momentMask = IMask(element, {
 });</code></pre>
 
 
-  <h2 id="dynamic" class="section-h"><a href="#dynamic">Dynamic Mask</a></h2>
+  <h3 id="masked-dynamic" class="section-h"><a href="#masked-dynamic">Dynamic Mask</a></h3>
   <p>Dynamic mask automatically selects appropriate mask from provided array of masks. Mask with the largest number of fitting characters is selected considering provided masks order.</p>
   <div class="toggle-panel">
     <label for="dynamic-mask-demo" class="muted">demo</label>
@@ -777,10 +790,72 @@ var momentMask = IMask(element, {
     }
   }
 )</code></pre>
+
+
+  <h2 id="pipe" class="section-h"><a href="#pipe">Pipe <kbd>since 6.0</kbd></a></h2>
+  <p>Since v6.0.0 <code>IMask</code> can be used for formatting or converting values through mask with <code>pipe</code> and <code>createPipe</code> routines:</p>
+  <pre><code>var numberPipe = IMask.createPipe({
+  mask: Number,
+  scale: 2,
+  thousandsSeparator: ' ',
+  normalizeZeros: true,
+  padFractionalZeros: true,
+});
+// `numberPipe` is just a function, call it to format values
+numberPipe('1'); // "1,00"
+
+// if `numberPipe` will not be reused, then just use `IMask.pipe` inplace:
+IMask.pipe('1', {
+  mask: Number,
+  scale: 2,
+  thousandsSeparator: ' ',
+  normalizeZeros: true,
+  padFractionalZeros: true,
+}); // "1,00"
+</code></pre>
+  <p>By default <code>pipe</code> expects masked value on input and produces masked input as well. This behavior is exactly the same as if a value was pasted in input.</p>
+  <p>Pipe also provides a way to customize source and destination types:</p>
+  <pre><code>// pipe(value, mask|masked, sourcetype, destinationtype);
+// PIPE_TYPE = {TYPED, MASKED, UNMASKED}
+// converts formated string to number
+IMask.pipe(
+  '1,01',
+  {
+    mask: Number,
+    scale: 2,
+    thousandsSeparator: ' ',
+    normalizeZeros: true,
+    padFractionalZeros: true,
+  },
+  IMask.PIPE_TYPE.MASKED,
+  IMask.PIPE_TYPE.TYPED
+); // 1.01 of number type
+</code></pre>
+  <fieldset>
+    <strong>Note:</strong> it is possible to share single <code>Masked</code> instance both for input handling and formatting with <code>pipe</code>. Just pass <code>Masked</code> to <code>pipe</code> instead of mask options. In that case <code>pipe</code> will not create or clone <code>Masked</code> instance, <code>Masked</code> state also will not be changed during formatting.
+  </fieldset>
+  <p><a href="https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask">Angular plugin</a> provides <code>IMaskPipe</code> for convinience.</p>
+
+
+  <h2 id="advanced" class="section-h"><a href="#advanced">Advanced</a></h2>
+  <h3 id="treeshaking" class="section-h"><a href="#treeshaking">Treeshaking <kbd>since 6.0</kbd></a></h3>
+  <p><code>IMask</code> contains a lot of cool features, which makes it pretty big in size. But you might not need all features and want to reduce your bundle size. Since v6.0.0 <code>IMask</code> provides such possibility and ships chunks along side with assembled bundle. Despite mask has been already support esm modules treeshaking did not work on it because of recursive masks and therefore circular dependencies inside. So now you can import only features that you want, for instance if only number mask is used:</p>
+  <pre><code>// was before
+// import IMask from 'imask'; // imports all modules
+
+// enable treeshaking
+import IMask from 'imask/esm/imask'; // imports only factory
+// add needed features
+import 'imask/esm/masked/number';
+// now factory can work with number masks, but not any other
+
+// usage is same in both cases
+var numberMask = IMask(element, { mask: Number });
+</code></pre>
 </main>
 
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-<script defer src="https://unpkg.com/imask"></script>
+<script defer src="https://unpkg.com/imask@6.0.0-alpha.0"></script>
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
     var startPhoneMask = IMask(document.getElementById('start-phone-mask'), {
@@ -960,6 +1035,7 @@ var momentMask = IMask(element, {
       thousandsSeparator: ' ',
       // padFractionalZeros: true,
       normalizeZeros: true,
+      padFractionalZeros: true,
       min: -10000,
       max: 10000
       // radix: ',',

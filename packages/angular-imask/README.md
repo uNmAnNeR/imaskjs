@@ -26,6 +26,7 @@ import {IMaskModule} from 'angular-imask';
 
 ## Usage
 ```html
+<!-- directive -->
 <input
   [imask]="{mask: '+{7}(000)000-00-00'}"  <!--see more mask props in a guide-->
   [unmask]="true"  <!--true|false|'typed'-->
@@ -37,6 +38,9 @@ import {IMaskModule} from 'angular-imask';
   <!-- OPTIONAL: provide custom element getter -->
   [imaskElement]="(elementRef, directiveRef) => maskElement" <!-- default = elementRef.nativeElement -->
 />
+
+<!-- pipe -->
+<p>{{ value | imask:mask }}</p>
 ```
 More options see in a [guide](https://imask.js.org/guide.html).
 

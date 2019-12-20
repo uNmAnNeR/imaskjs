@@ -151,3 +151,8 @@ footer {
 .pattern-options-checkboxes {
   margin-top: 23px;
 }
+
+kbd {
+  font-size: 14px;
+  font-weight: normal;
+}

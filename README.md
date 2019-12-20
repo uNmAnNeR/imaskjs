@@ -14,26 +14,29 @@ vanilla javascript input mask
 ## Features
 * get and set *raw* and *unmasked* values easily
 * no external dependencies
-* *overwrite* mode
-* **RegExp** mask
-* **Function** mask
-* **Number** mask (integer and decimal)
-* **Date** mask (various format support, *autofix* mode)
-* **Dynamic/on-the-fly** mask
-* **Pattern** mask
+* supports *[overwrite](https://imask.js.org/guide.html#overwrite)* mode
+* supports *web components*
+* supports *contenteditable*
+* **[RegExp](https://imask.js.org/guide.html#masked-base)** mask
+* **[Function](https://imask.js.org/guide.html#masked-function)** mask
+* **[Number](https://imask.js.org/guide.html#masked-number)** mask (integer and decimal)
+* **[Date](https://imask.js.org/guide.html#masked-date)** mask (various format support, *autofix* mode)
+* **[Dynamic/on-the-fly](https://imask.js.org/guide.html#masked-dynamic)** mask
+* **[Pattern](https://imask.js.org/guide.html#masked-pattern)** mask
   - show placeholder always and only when necessary
   - unmasked value can contain fixed parts
   - optional input parts (greedy)
   - custom definitions
   - reusable blocks
-  - **Enum** and **Range** masks
+  - **[Enum](https://imask.js.org/guide.html#masked-enum)** and **[Range](https://imask.js.org/guide.html#masked-range)** masks
+* convert and format values with **[pipe](https://imask.js.org/guide.html#pipe)**
 
 ## Plugins
 * [Vue plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask)
 * [Angular plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask)
 * [React plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)
-* [React Native plugin<sup>beta</sup>](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)
-* [Svelte plugin<sup>external</sup>](https://www.npmjs.com/package/svelte-imask)
+* [React Native plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)
+* [Svelte plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask) (and [external alternative](https://www.npmjs.com/package/svelte-imask))
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`

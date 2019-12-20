@@ -13,26 +13,31 @@ title: Javascript Input Mask
         <li>no external dependencies</li>
         <li>supports <a href="guide.html#overwrite">overwrite</a> mode</li>
         <li>supports all major browsers and <span class="req">*</span><a href="guide.html#support-older">IE11+</a></li>
-        <li><strong>RegExp</strong> mask</li>
-        <li><strong>Function</strong> mask</li>
-        <li><strong>Number</strong> mask (integer and decimal support)</li>
-        <li><strong>Date</strong> mask (with various format support and autofix mode)</li>
-        <li><strong>Dynamic/on-the-fly</strong> mask</li>
-        <li><strong>Pattern</strong> mask</li>
+        <li>supports <em>web components</em></li>
+        <li>supports <em>contenteditable</em></li>
+        <li><a href="guide.html#masked-base"><strong>RegExp</strong> mask</a></li>
+        <li><a href="guide.html#masked-base"><strong>Function</strong> mask</a></li>
+        <li><a href="guide.html#masked-number"><strong>Number</strong> mask</a> (integer and decimal support)</li>
+        <li><a href="guide.html#masked-date"><strong>Date</strong> mask</a> (with various format support and autofix mode)</li>
+        <li><a href="guide.html#masked-dynamic"><strong>Dynamic/on-the-fly</strong> mask</a></li>
+        <li><a href="guide.html#masked-pattern"><strong>Pattern</strong> mask</a></li>
         <ul>
           <li>show placeholder always or when needed</li>
           <li>unmasked value can contain fixed parts</li>
           <li>optional input parts (greedy)</li>
           <li>custom definitions</li>
           <li>reusable blocks</li>
-          <li><strong>Enum</strong> and <strong>Range</strong> masks</li>
+          <li><a href="guide.html#masked-enum"><strong>Enum</strong></a> and <a href="guide.html#masked-range"><strong>Range</strong></a> masks</li>
         </ul>
+        <li>convert and format values with <a href="guide.html#pipe"><strong>pipe</strong></a></li>
       </ul>
       <h4>Plugins</h4>
       <ul>
         <li><a href="{{ site.repository }}/tree/master/packages/vue-imask">Vue plugin</a></li>
         <li><a href="{{ site.repository }}/tree/master/packages/angular-imask">Angular plugin</a></li>
         <li><a href="{{ site.repository }}/tree/master/packages/react-imask">React plugin</a></li>
+        <li><a href="{{ site.repository }}/tree/master/packages/react-native-imask">React native plugin</a></li>
+        <li><a href="{{ site.repository }}/tree/master/packages/svelte-imask">Svelte plugin</a> (and <a href="https://github.com/PaulMaly/svelte-imask">external alternative</a>)</li>
       </ul>
     </div>
 
@@ -51,7 +56,7 @@ title: Javascript Input Mask
   {
     mask: /^[1-6]\d{0,5}$/
   });
-<a href="guide.html#common" class="learn-more">learn more</a></code></pre>
+<a href="guide.html#masked-base" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -68,7 +73,7 @@ title: Javascript Input Mask
   document.getElementById('phone-mask'), {
     mask: '+{7}(000)000-00-00'
   });
-<a href="guide.html#pattern" class="learn-more">learn more</a></code></pre>
+<a href="guide.html#masked-pattern" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -89,7 +94,7 @@ title: Javascript Input Mask
     max: 10000,
     thousandsSeparator: ' '
   });
-<a href="guide.html#number" class="learn-more">learn more</a></code></pre>
+<a href="guide.html#masked-number" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -110,7 +115,7 @@ title: Javascript Input Mask
     max: new Date(2020, 0, 1),
     lazy: false
   });
-<a href="guide.html#date" class="learn-more">learn more</a></code></pre>
+<a href="guide.html#masked-date" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -135,7 +140,7 @@ title: Javascript Input Mask
       }
     ]
   });
-<a href="guide.html#dynamic" class="learn-more">learn more</a></code></pre>
+<a href="guide.html#masked-dynamic" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -160,7 +165,25 @@ title: Javascript Input Mask
       }
     }
   });
-<a href="guide.html#pattern" class="learn-more">learn more</a></code></pre>
+<a href="guide.html#masked-pattern" class="learn-more">learn more</a></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-item">
+          <label>Pipe <span class="desc">unmasked -> masked</span></label>
+          <input id="pipe-mask" type="text">
+          <div class="unmasked-value desc">masked: <span id="pipe-value"></span><span id="pipe-complete" class="example__complete"></span></div>
+          <div class="toggle-panel">
+            <label for="pipe-mask-source" class="muted">source</label>
+            <input id="pipe-mask-source" type="checkbox">
+            <div class="toggle-panel-content">
+              <pre><code>var phonePipe = IMask.createPipe(
+  phoneMask.masked,
+  IMask.PIPE_TYPE.UNMASKED,
+  IMask.PIPE_TYPE.MASKED
+);
+<a href="guide.html#pipe" class="learn-more">learn more</a></code></pre>
             </div>
           </div>
         </div>
@@ -169,7 +192,7 @@ title: Javascript Input Mask
   </div>
 </main>
 
-<script defer src="https://unpkg.com/imask"></script>
+<script defer src="https://unpkg.com/imask@6.0.0-alpha.0"></script>
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
     var phoneMask = IMask(document.getElementById('phone-mask'), {
@@ -235,6 +258,11 @@ title: Javascript Input Mask
       }
     ).on('accept', function() {
       document.getElementById('currency-value').innerHTML = currencyMask.masked.unmaskedValue || '-';
+    });
+
+    var phonePipe = IMask.createPipe(phoneMask.masked, IMask.PIPE_TYPE.UNMASKED, IMask.PIPE_TYPE.MASKED);
+    document.getElementById('pipe-mask').addEventListener('input', function (e) {
+      document.getElementById('pipe-value').innerHTML = phonePipe(e.target.value) || '-';
     });
   });
 </script>

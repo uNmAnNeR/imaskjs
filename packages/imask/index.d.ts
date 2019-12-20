@@ -29,8 +29,10 @@ declare namespace IMask {
   export class HTMLMaskElement extends MaskElement {
     static EVENTS_MAP: { [key in ElementEvent]: string };
     input: HTMLMaskingElement;
-    constructor(input: HTMLMaskingElement);
+    constructor (el: HTMLMaskingElement);
   }
+
+  export class HTMLContenteditableMaskElement extends HTMLMaskElement {}
 
   type AppendFlags = {
     input?: boolean;
@@ -444,3 +446,21 @@ declare namespace IMask {
   export function createPipe(masked: AnyMasked | AnyMask, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
   export function pipe(value: any, masked: AnyMasked | AnyMask, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
 }
+
+export import InputMask = IMask.InputMask;
+export import Masked = IMask.Masked;
+export import MaskedPattern = IMask.MaskedPattern;
+export import MaskedEnum = IMask.MaskedEnum;
+export import MaskedRange = IMask.MaskedRange;
+export import MaskedNumber = IMask.MaskedNumber;
+export import MaskedDate = IMask.MaskedDate;
+export import MaskedRegExp = IMask.MaskedRegExp;
+export import MaskedFunction = IMask.MaskedFunction;
+export import MaskedDynamic = IMask.MaskedDynamic;
+export import createMask = IMask.createMask;
+export import MaskElement = IMask.MaskElement;
+export import HTMLMaskElement = IMask.HTMLMaskElement;
+export import HTMLContenteditableMaskElement = IMask.HTMLContenteditableMaskElement;
+export import pipe = IMask.pipe;
+export import createPipe = IMask.createPipe;
+export import PIPE_TYPE = IMask.PIPE_TYPE;
