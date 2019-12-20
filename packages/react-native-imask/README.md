@@ -11,8 +11,8 @@ react-native-imask
 
 **Read this before using**
 
-> I can't say that this plugin is production ready, use it by your own risk. Why?
-> Because React Native Textinput behavior differs from html input, varies by platform and contains several bugs ([1](https://github.com/facebook/react-native/issues/24585), [2](https://github.com/facebook/react-native/issues/23578)), so some things are not possible to implement.
+> I can't say that this plugin is production ready, use it on your own risk.
+> React Native Textinput behavior differs from html input, varies by platform and contains several bugs ([1](https://github.com/facebook/react-native/issues/24585), [2](https://github.com/facebook/react-native/issues/23578)), so some things are not possible to implement.
 > Any PRs are welcomed.
 
 ## Install
