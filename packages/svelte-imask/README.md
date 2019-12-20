@@ -1,7 +1,7 @@
 # Svelte IMask Plugin
-svelte-imask
+@imask/svelte
 
-[![npm version](https://badge.fury.io/js/svelte-imask.svg)](https://badge.fury.io/js/svelte-imask)
+[![npm version](https://badge.fury.io/js/%40imask%2Fsvelte.svg)](https://badge.fury.io/js/%40imask%2Fsvelte)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <a href="https://opencollective.com/imask/donate" target="_blank">
@@ -9,7 +9,7 @@ svelte-imask
 </a>
 
 ## Install
-`npm install svelte-imask`
+`npm install @imask/svelte`
 
 ## Mask Action Example
 ```html
