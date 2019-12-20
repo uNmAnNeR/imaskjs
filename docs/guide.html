@@ -579,7 +579,9 @@ var masked = IMask.PatternMasked({
   <h3 id="masked-date" class="section-h"><a href="#masked-date">Date Mask</a></h3>
   <p>Date mask extends <a href="#masked-pattern">Pattern</a> mask with more options.</p>
   <fieldset>
-    <strong>Note: if you set <code>pattern</code> option, then you also have to provide <code>format</code> and <code>parse</code> options</strong>
+    <strong>Please note</strong>
+    <p>if you set <code>pattern</code> option, then you also have to provide <code>format</code> and <code>parse</code> options.</p>
+    <p>Also Date mask uses independent pattern blocks so it's possible to input inexistent dates until mask is complete. When last character is inserted then input is converted to Date object and get verified. This leads to weird situations when you might have incorrect day, but not being able to insert year. It is not possible to validate Date intermediate states in general way, but you still can use <code>validate</code> callback on application side to check your specific case.</p>
   </fieldset>
   <div class="toggle-panel">
     <label for="date-mask-demo" class="muted">demo</label>

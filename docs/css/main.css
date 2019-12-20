@@ -156,3 +156,11 @@ kbd {
   font-size: 14px;
   font-weight: normal;
 }
+
+fieldset p {
+  margin: 10px 0;
+}
+
+fieldset *:last-child {
+  margin-bottom: 0;
+}
