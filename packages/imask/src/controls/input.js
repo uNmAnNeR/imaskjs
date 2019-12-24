@@ -38,6 +38,7 @@ class InputMask {
   _onChange: () => void;
   _onDrop: (Event) => void;
   _onFocus: (Event) => void;
+  _onClick: (Event) => void;
   _cursorChanging: ?TimeoutID;
 
   /**
@@ -60,6 +61,7 @@ class InputMask {
     this._onChange = this._onChange.bind(this);
     this._onDrop = this._onDrop.bind(this);
     this._onFocus = this._onFocus.bind(this);
+    this._onClick = this._onClick.bind(this);
     this.alignCursor = this.alignCursor.bind(this);
     this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
 
@@ -136,7 +138,7 @@ class InputMask {
       selectionChange: this._saveSelection,
       input: this._onInput,
       drop: this._onDrop,
-      click: this.alignCursorFriendly,
+      click: this._onClick,
       focus: this._onFocus,
       commit: this._onChange,
     });
@@ -360,6 +362,11 @@ class InputMask {
 
   /** Restore last selection on focus */
   _onFocus (ev: Event) {
+    this.alignCursorFriendly();
+  }
+
+  /** Restore last selection on focus */
+  _onClick (ev: Event) {
     this.alignCursorFriendly();
   }
 
