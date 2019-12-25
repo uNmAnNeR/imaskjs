@@ -2,7 +2,7 @@
   "name": "react-native-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "6.0.0-alpha.0",
+  "version": "6.0.0",
   "homepage": "https://imask.js.org/",
   "description": "React Native Input Mask",
   "main": "dist/react-native-imask.js",
