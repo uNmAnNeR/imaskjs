@@ -41,7 +41,12 @@
 </script>
 ```
 More options see in a [guide](https://imask.js.org/guide.html).
-Plugin does not have component for input with 2-way binding support because it is not possible to pass all event listeners to child ([issue](https://github.com/sveltejs/svelte/issues/2837)).
+
+## Input Mask Component
+Currently plugin does not have component for input with 2-way binding support because it is not possible to pass all event listeners to child ([issue](https://github.com/sveltejs/svelte/issues/2837)).
+
+Workaround is here:
+https://svelte.dev/repl/b590cddb69f4452b8f7704bd1e721e76?version=3.16.7
 
 
 ## Support Development
