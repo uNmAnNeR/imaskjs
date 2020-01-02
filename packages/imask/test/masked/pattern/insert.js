@@ -100,5 +100,14 @@ describe('Insert', function () {
       masked.rawInputValue = '123';
       assert.equal(masked.rawInputValue, '123');
     });
+
+    it('should keep trailing fixed on update options', function () {
+      masked.updateOptions({mask: '0+'});
+      masked.unmaskedValue = '11';
+      assert.equal(masked.value, '1+');
+
+      masked.updateOptions({ lazy: true });
+      assert.equal(masked.value, '1+');
+    });
   });
 });

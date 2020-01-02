@@ -134,11 +134,19 @@ const IMaskComponent = {
     prepare: Function,
     validate: Function,
     commit: Function,
-    overwrite: Boolean,
+    overwrite: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
 
     // pattern
     placeholderChar: String,
-    lazy: Boolean,
+    lazy: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
     definitions: Object,
     blocks: Object,
 
@@ -146,16 +154,32 @@ const IMaskComponent = {
     pattern: String,
     format: Function,
     parse: Function,
-    autofix: Boolean,
+    autofix: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
 
     // number
     radix: String,
     thousandsSeparator: String,
     mapToRadix: Array,
     scale: Number,
-    signed: Boolean,
-    normalizeZeros: Boolean,
-    padFractionalZeros: Boolean,
+    signed: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
+    normalizeZeros: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
+    padFractionalZeros: {
+      type: Boolean,
+      required: false,
+      default: undefined,
+    },
     min: [Number, Date],
     max: [Number, Date],
 

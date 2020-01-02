@@ -280,15 +280,15 @@ class Masked<MaskType> {
     if (this._refreshing || !this.isInitialized) return fn();
     this._refreshing = true;
 
-    const unmasked = this.unmaskedValue;
+    const rawInput = this.rawInputValue;
     const value = this.value;
 
     const ret = fn();
 
-    // try to update with raw value first to keep fixed chars
-    if (this.resolve(value) !== value) {
-      // or fallback to unmasked
-      this.unmaskedValue = unmasked;
+    this.rawInputValue = rawInput;
+    // append lost trailing chars at end
+    if (this.value !== value && value.indexOf(this._value) === 0) {
+      this.append(value.slice(this._value.length), {}, '');
     }
 
     delete this._refreshing;
