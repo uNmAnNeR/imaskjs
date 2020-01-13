@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 import { ɵgetDOM as getDOM } from '@angular/platform-browser';
+// TODO import only types when ts 3.8 released or when move IMask to ts
 import IMask from 'imask';
 
 

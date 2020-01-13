@@ -4,10 +4,7 @@
   "license": "MIT",
   "version": "6.0.1",
   "description": "Angular IMask Plugin",
-  "main": "dist/bundles/angular-imask.umd.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
-  "module": "dist/fesm5/angular-imask.js",
-  "typings": "dist/angular-imask.d.ts",
   "scripts": {
     "build": "ng-packagr --config tsconfig.json"
   },
@@ -25,25 +22,22 @@
     "@angular/platform-browser": ">=6.0.0"
   },
   "devDependencies": {
-    "@angular/common": "^8.1.2",
-    "@angular/compiler": "^8.1.2",
-    "@angular/compiler-cli": "^8.1.2",
-    "@angular/core": "^8.1.2",
-    "@angular/forms": "^8.1.2",
-    "@angular/platform-browser": "^8.1.2",
-    "ng-packagr": "^5.3.0",
+    "@angular/common": "^8.2.14",
+    "@angular/compiler": "^8.2.14",
+    "@angular/compiler-cli": "^8.2.14",
+    "@angular/core": "^8.2.14",
+    "@angular/forms": "^8.2.14",
+    "@angular/platform-browser": "^8.2.14",
+    "ng-packagr": "^5.7.1",
     "rxjs": "^6.5.2",
     "tsickle": "^0.36.0",
-    "typescript": "<3.5.0",
-    "zone.js": "^0.9.1"
+    "typescript": "<3.6.0",
+    "zone.js": "^0.10.2"
   },
   "dependencies": {
     "imask": "file:../imask"
   },
-  "es2015": "dist/fesm2015/angular-imask.js",
-  "esm5": "dist/esm5/angular-imask.js",
-  "esm2015": "dist/esm2015/angular-imask.js",
-  "fesm5": "dist/fesm5/angular-imask.js",
-  "fesm2015": "dist/fesm2015/angular-imask.js",
-  "metadata": "dist/angular-imask.metadata.json"
+  "publishConfig": {
+    "directory": "dist"
+  }
 }

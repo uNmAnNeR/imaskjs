@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import IMask from 'imask';
-export { PIPE_TYPE } from 'imask';
+import { pipe } from 'imask';
+export { PIPE_TYPE, pipe } from 'imask';
 
 
 /*
@@ -14,7 +14,7 @@ export { PIPE_TYPE } from 'imask';
 */
 @Pipe({name: 'imask'})
 export class IMaskPipe implements PipeTransform {
-  transform (...args: Parameters<typeof IMask.pipe>): ReturnType<typeof IMask.pipe> {
-    return IMask.pipe(...args);
+  transform (...args: Parameters<typeof pipe>): ReturnType<typeof pipe> {
+    return pipe(...args);
   }
 }
