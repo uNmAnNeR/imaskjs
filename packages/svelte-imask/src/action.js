@@ -8,17 +8,15 @@ function fireEvent (el, eventName, data) {
 }
 
 function initMask (el, opts) {
-  let maskRef = IMask(el, opts)
+  return IMask(el, opts)
     .on('accept', () => fireEvent(el, 'accept', maskRef))
     .on('complete', () => fireEvent(el, 'complete', maskRef));
-
-  return maskRef;
 }
 
 
 export default
 function IMaskAction (el, options) {
-  let maskRef;
+  let maskRef = initMask(el, options);
 
   function destroy () {
     if (maskRef) {
@@ -35,8 +33,6 @@ function IMaskAction (el, options) {
       destroy();
     }
   }
-
-  initMask(el, options);
 
   return {
     update,
