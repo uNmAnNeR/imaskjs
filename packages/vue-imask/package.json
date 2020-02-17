@@ -23,9 +23,10 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "file:../imask"
+    "imask": "^6.0.2"
   },
   "peerDependencies": {
     "vue": ">=2.2.0"
-  }
+  },
+  "gitHead": "39ecbf42bdd942811a286dc7eea8d4609b78641a"
 }
