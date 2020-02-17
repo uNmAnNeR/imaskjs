@@ -149,7 +149,7 @@ class InputMask {
     @protected
    */
   _unbindEvents () {
-    this.el.unbindEvents();
+    if (this.el) this.el.unbindEvents();
   }
 
   /**
