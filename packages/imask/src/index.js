@@ -1,4 +1,4 @@
-import '@ungap/global-this';
+import 'core-js/features/global-this';  // https://github.com/uNmAnNeR/imaskjs/issues/300
 import IMask from './imask.js';
 export { default as InputMask } from './controls/input.js';
 

@@ -26,8 +26,5 @@
     "jquery",
     "input",
     "mask"
-  ],
-  "dependencies": {
-    "@ungap/global-this": "^0.3.1"
-  }
+  ]
 }
