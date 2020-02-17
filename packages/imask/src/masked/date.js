@@ -77,7 +77,7 @@ class MaskedDate extends MaskedPattern {
 
   /** Checks if date is exists */
   isDateExist (str: string): boolean {
-    return this.format(this.parse(str, this), this) === str;
+    return this.format(this.parse(str, this), this).indexOf(str) >= 0;
   }
 
   /** Parsed Date */
