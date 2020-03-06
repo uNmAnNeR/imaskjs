@@ -21,6 +21,8 @@ import {IMaskInput} from 'react-imask';
   value="123"
   unmask={true} // true|false|'typed'
   inputRef={el => this.input = el}  // access to nested input
+  // DO NOT USE onChange TO HANDLE CHANGES!
+  // USE onAccept INSTEAD
   onAccept={
     // depending on prop above first argument is
     // `value` if `unmask=false`,
