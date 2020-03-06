@@ -73,6 +73,7 @@ vue-imask
         },
         onAccept (e) {
           const maskRef = e.detail;
+          this.value = maskRef.value;
           console.log('accept', maskRef.value);
         },
         onComplete (e) {
