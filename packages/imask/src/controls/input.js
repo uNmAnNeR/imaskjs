@@ -40,6 +40,7 @@ class InputMask {
   _onFocus: (Event) => void;
   _onClick: (Event) => void;
   _cursorChanging: ?TimeoutID;
+  _inputEvent: ?InputEvent;
 
   /**
     @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
@@ -156,11 +157,11 @@ class InputMask {
     Fires custom event
     @protected
    */
-  _fireEvent (ev: string) {
+  _fireEvent (ev: string, ...args: *) {
     const listeners = this._listeners[ev];
     if (!listeners) return;
 
-    listeners.forEach(l => l());
+    listeners.forEach(l => l(...args));
   }
 
   /**
@@ -182,7 +183,7 @@ class InputMask {
       this.el.selectionEnd;
   }
   set cursorPos (pos: number) {
-    if (!this.el.isActive) return;
+    if (!this.el || !this.el.isActive) return;
 
     this.el.select(pos, pos);
     this._saveSelection();
@@ -263,8 +264,8 @@ class InputMask {
     @protected
   */
   _fireChangeEvents () {
-    this._fireEvent('accept');
-    if (this.masked.isComplete) this._fireEvent('complete');
+    this._fireEvent('accept', this._inputEvent);
+    if (this.masked.isComplete) this._fireEvent('complete', this._inputEvent);
   }
 
   /**
@@ -309,7 +310,8 @@ class InputMask {
   }
 
   /** Handles view input event */
-  _onInput () {
+  _onInput (e: InputEvent) {
+    this._inputEvent = e;
     this._abortUpdateCursor();
 
     // fix strange IE behavior
@@ -342,6 +344,7 @@ class InputMask {
 
     this.updateControl();
     this.updateCursor(cursorPos);
+    delete this._inputEvent;
   }
 
   /** Handles view change event and commits model value */

@@ -176,12 +176,12 @@ function IMaskMixin(ComposedComponent) {
       else this.maskRef.value = value;
     }
 
-    _onAccept () {
-      if (this.props.onAccept) this.props.onAccept(this.maskValue, this.maskRef);
+    _onAccept (...args) {
+      if (this.props.onAccept) this.props.onAccept(this.maskValue, this.maskRef, ...args);
     }
 
-    _onComplete () {
-      if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef);
+    _onComplete (...args) {
+      if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef, ...args);
     }
   };
 
