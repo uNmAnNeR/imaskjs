@@ -27,7 +27,16 @@ function maskedClass (mask: Mask): Class<Masked<*>> {
   // $FlowFixMe
   if (mask instanceof Function) return IMask.MaskedFunction;
 
-  console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
+  if (!(mask instanceof IMask.MaskedRegExp) 
+    && !(mask instanceof IMask.MaskedPattern) 
+    && !(mask instanceof IMask.MaskedDate) 
+    && !(mask instanceof IMask.MaskedNumber) 
+    && !(mask instanceof IMask.MaskedDynamic) 
+    && !(mask instanceof IMask.Masked) 
+    && !(mask instanceof IMask.MaskedFunction)) {
+    console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
+  }
+  
   // $FlowFixMe
   return IMask.Masked;
 }
