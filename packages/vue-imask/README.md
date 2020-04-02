@@ -51,6 +51,7 @@ vue-imask
 ```
 
 ## Mask Directive Example
+In some cases value bindings (`v-model`) might not work for directive, you can use `@accept` or `@complete` events to update the value.
 ```html
 <template>
   <input
