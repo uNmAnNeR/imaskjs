@@ -43,7 +43,7 @@ import {IMaskMixin} from 'react-imask';
 
 // extend style component
 const StyledInput = styled.input`
-  color: paleviolet;
+  color: green;
 `;
 
 const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
