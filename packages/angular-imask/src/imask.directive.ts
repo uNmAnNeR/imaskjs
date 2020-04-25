@@ -4,15 +4,9 @@ import {
   Optional, Inject, SimpleChanges,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
-import { ɵgetDOM as getDOM } from '@angular/platform-browser';
+
 // TODO import only types when ts 3.8 released or when move IMask to ts
 import IMask from 'imask';
-
-
-function _isAndroid(): boolean {
-  const userAgent = getDOM() ? getDOM().getUserAgent() : '';
-  return /android (\d+)/.test(userAgent.toLowerCase());
-}
 
 
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
@@ -61,7 +55,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     this._writing = false;
 
     if (this._compositionMode == null) {
-      this._compositionMode = !_isAndroid();
+      this._compositionMode = !this._isAndroid();
     }
   }
 
@@ -191,5 +185,9 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   _compositionEnd(value: any): void {
     this._composing = false;
     this._compositionMode && this._handleInput(value);
+  }
+
+  private _isAndroid(): boolean {
+    return /android (\d+)/.test(navigator.userAgent.toLowerCase());
   }
 }
