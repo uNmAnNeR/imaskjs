@@ -5,7 +5,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import polyfill from 'rollup-plugin-polyfill';
 import multiInput from 'rollup-plugin-multi-input';
-
+import copy from 'rollup-plugin-copy'
 
 const commonPlugins = [
   resolve(),
@@ -41,6 +41,11 @@ export default [
     plugins: [
       multiInput(),
       ...commonPlugins,
+      copy({
+        targets: [
+          { src: 'index.d.ts', dest: 'esm', rename: 'imask.d.ts' },
+        ]
+      })
     ]
   }
 ];
