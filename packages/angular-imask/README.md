@@ -46,3 +46,24 @@ More options see in a [guide](https://imask.js.org/guide.html).
 
 ## Support Development
 [Paypal](https://www.paypal.me/alexeykryazhev/3)
+
+## Development
+As to make changes to this package follow the steps:
+
+1. Build imask
+```
+  npm run make
+```
+2. Go to angular-imask directory
+```
+  cd packages/angular-imask
+```
+3. Launch dev command
+```
+  npm run dev
+```
+
+4. (Optional) Launch example app
+```
+  npm run example
+```
