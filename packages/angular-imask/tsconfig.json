@@ -12,7 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "strict": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@angular/*": ["node_modules/@angular/*"],
       "rxjs/*": ["node_modules/rxjs/*"],
