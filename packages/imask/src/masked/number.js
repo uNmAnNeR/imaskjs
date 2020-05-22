@@ -162,6 +162,7 @@ class MaskedNumber extends Masked<Class<Number>> {
     const beforeTailSeparatorsCount = this._separatorsCountFromSlice(beforeTailValue);
 
     appendDetails.tailShift += (beforeTailSeparatorsCount - prevBeforeTailSeparatorsCount) * this.thousandsSeparator.length;
+    appendDetails.skip = !appendDetails.rawInserted && ch === this.thousandsSeparator;
     return appendDetails;
   }
 
