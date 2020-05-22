@@ -1120,6 +1120,34 @@
               
                 
                 <li><a
+                  href='#maskedregexp'
+                  class=" toggle-sibling">
+                  MaskedRegExp
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#maskedregexp_update'
+                        class='regular pre-open'>
+                        #_update
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
                   href='#maskedrange'
                   class=" toggle-sibling">
                   MaskedRange
@@ -1936,7 +1964,7 @@
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_fireEvent(ev)</span>
+            <span class='code strong strong truncate'>_fireEvent(ev, args)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -1946,7 +1974,7 @@
 
   <p>Fires custom event</p>
 
-    <div class='pre p1 fill-light mt0'>_fireEvent(ev: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>_fireEvent(ev: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, args: ...any)</div>
   
   
 
@@ -1964,6 +1992,14 @@
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>ev</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>args</span> <code class='quiet'>(...any)</code>
 	    
           </div>
           
@@ -2648,7 +2684,7 @@
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_onInput()</span>
+            <span class='code strong strong truncate'>_onInput(e)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -2658,7 +2694,7 @@
 
   <p>Handles view input event</p>
 
-    <div class='pre p1 fill-light mt0'>_onInput()</div>
+    <div class='pre p1 fill-light mt0'>_onInput(e: <a href="https://developer.mozilla.org/docs/Web/API/InputEvent">InputEvent</a>)</div>
   
   
 
@@ -2669,6 +2705,19 @@
   
   
 
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>e</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/API/InputEvent">InputEvent</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
   
 
   
@@ -10385,6 +10434,126 @@
   
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='maskedregexp'>
+      MaskedRegExp
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Masking by RegExp</p>
+
+    <div class='pre p1 fill-light mt0'>new MaskedRegExp()</div>
+  
+  
+    <p>
+      Extends
+      
+        <a href="#masked">Masked</a>
+      
+    </p>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='maskedregexp_update'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_update(opts)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>_update(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
   
 
   
