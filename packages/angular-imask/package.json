@@ -2,7 +2,7 @@
   "name": "angular-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "6.0.3",
+  "version": "6.0.5",
   "description": "Angular IMask Plugin",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
   "scripts": {
@@ -43,7 +43,7 @@
     "zone.js": "^0.10.2"
   },
   "dependencies": {
-    "imask": "^6.0.3"
+    "imask": "^6.0.5"
   },
   "publishConfig": {
     "directory": "dist"
