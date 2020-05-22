@@ -54,8 +54,8 @@ import {IMaskNativeMixin} from 'react-native-imask';
 // use `inputRef` to get reference for our custom text input component
 const InputComponent = ({inputRef, ...props}) => (
   <TextInput
-    ...props
-    ref: inputRef
+    ref={inputRef}
+    {...props}
   />
 );
 
