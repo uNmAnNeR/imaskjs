@@ -10,6 +10,7 @@ import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import {type PatternBlock} from './pattern/block.js';
 import createMask from './factory.js';
 import IMask from '../core/holder.js';
+import './regexp.js';  // support for default definitions which are regexp's
 
 
 type MaskedPatternOptions = {

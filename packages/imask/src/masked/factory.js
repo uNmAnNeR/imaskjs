@@ -26,6 +26,8 @@ function maskedClass (mask: Mask): Class<Masked<*>> {
   if (IMask.Masked && mask.prototype instanceof IMask.Masked) return mask;
   // $FlowFixMe
   if (mask instanceof Function) return IMask.MaskedFunction;
+  // $FlowFixMe
+  if (mask instanceof IMask.Masked) return mask.constructor;
 
   console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
   // $FlowFixMe
@@ -36,13 +38,13 @@ function maskedClass (mask: Mask): Class<Masked<*>> {
 export default
 function createMask (opts: {mask: Mask} | Masked<*>): Masked<*> {
   // $FlowFixMe
-  if (IMask.Masked && opts instanceof IMask.Masked) return opts;
+  if (IMask.Masked && (opts instanceof IMask.Masked)) return opts;
 
   opts = {...opts};
   const mask = opts.mask;
 
   // $FlowFixMe
-  if (IMask.Masked && mask instanceof IMask.Masked) return mask;
+  if (IMask.Masked && (mask instanceof IMask.Masked)) return mask;
 
   const MaskedClass = maskedClass(mask);
   if (!MaskedClass) throw new Error('Masked class is not found for provided mask, appropriate module needs to be import manually before creating mask.');

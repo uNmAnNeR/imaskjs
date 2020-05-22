@@ -7,6 +7,7 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from
 
 import {IMaskFactory} from "./imask-factory";
 
+
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => IMaskDirective),

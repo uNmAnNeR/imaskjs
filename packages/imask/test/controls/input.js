@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 
-import IMask, { InputMask } from '../../src';
+import IMask, { InputMask, createMask } from '../../src';
 import MaskElementStub from './mask-element-stub';
 
 
@@ -37,7 +37,7 @@ describe('InputMask', function () {
     });
 
     it('should set new mask', function () {
-      [Date, Number, 'string', /regexp/, function () {}, Date].forEach(mask => {
+      [Date, Number, 'string', /regexp/, function () {}, Date, createMask({mask: Number})].forEach(mask => {
         let oldMask = imask.mask;
         let oldMasked = imask.masked;
 
