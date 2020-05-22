@@ -8,7 +8,8 @@
   "scripts": {
     "build": "ng-packagr --config tsconfig.json",
     "dev": "ng build angular-imask --watch",
-    "example": "ng serve --aot"
+    "example": "ng serve --aot",
+    "prepublishOnly": "node scripts/prepublish.js"
   },
   "keywords": [
     "angular",
