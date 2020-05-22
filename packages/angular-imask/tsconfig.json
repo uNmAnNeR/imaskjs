@@ -16,7 +16,13 @@
     "paths": {
       "@angular/*": ["node_modules/@angular/*"],
       "rxjs/*": ["node_modules/rxjs/*"],
-      "imask": ["../imask"]
+      "imask": ["node_modules/imask"],
+      "angular-imask": [
+        "dist"
+      ],
+      "angular-imask/*": [
+        "dist/*"
+      ]
     },
     "types": [],
     "lib": ["dom", "es2018"]

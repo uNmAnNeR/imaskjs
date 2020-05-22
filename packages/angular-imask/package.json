@@ -6,7 +6,9 @@
   "description": "Angular IMask Plugin",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
   "scripts": {
-    "build": "ng-packagr --config tsconfig.json"
+    "build": "ng-packagr --config tsconfig.json",
+    "dev": "ng build angular-imask --watch",
+    "example": "ng serve"
   },
   "keywords": [
     "angular",
@@ -22,12 +24,17 @@
     "@angular/platform-browser": ">=6.0.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~0.803.25",
+    "@angular-devkit/build-ng-packagr": "^0.803.25",
+    "@angular/cli": "^8.3.26",
     "@angular/common": "^8.2.14",
     "@angular/compiler": "^8.2.14",
     "@angular/compiler-cli": "^8.2.14",
     "@angular/core": "^8.2.14",
     "@angular/forms": "^8.2.14",
+    "@angular/language-service": "^8.2.14",
     "@angular/platform-browser": "^8.2.14",
+    "@angular/platform-browser-dynamic": "^8.2.14",
     "ng-packagr": "^5.7.1",
     "rxjs": "^6.5.2",
     "tsickle": "^0.36.0",
