@@ -6,8 +6,8 @@ import { Component } from '@angular/core';
     <input
       [imask]="{mask: '+{7}(000)000-00-00'}"
       [unmask]="true"
-      (accept)="onAccept($event)"
-      (complete)="onAccept($event)"
+      (accept)="onAccept()"
+      (complete)="onAccept()"
     />
   `,
   styles: []

@@ -5,8 +5,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 
-// TODO import only types when ts 3.8 released or when move IMask to ts
-import IMask from 'imask';
+import {IMaskFactory} from "./imask-factory";
 
 
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
@@ -26,7 +25,7 @@ const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
   },
   providers: [MASKEDINPUT_VALUE_ACCESSOR]
 })
-export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
+export class IMaskDirective<Opts extends import('imask').default.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
   maskRef?: IMask.InputMask<Opts>;
   onTouched: any;
   onChange: any;
@@ -43,6 +42,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
 
   constructor(private _elementRef: ElementRef,
               private _renderer: Renderer2,
+              private _factory: IMaskFactory,
               @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
     // init here to support AOT (TODO may be will work with ng-packgr - need to check)
     this.onTouched = () => {};
@@ -159,7 +159,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   }
 
   private initMask () {
-    this.maskRef = IMask(this.element, this.imask as Opts)
+    this.maskRef = this._factory.create(this.element, this.imask as Opts)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
   }

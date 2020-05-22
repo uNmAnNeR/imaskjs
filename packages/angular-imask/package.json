@@ -8,7 +8,7 @@
   "scripts": {
     "build": "ng-packagr --config tsconfig.json",
     "dev": "ng build angular-imask --watch",
-    "example": "ng serve"
+    "example": "ng serve --aot"
   },
   "keywords": [
     "angular",

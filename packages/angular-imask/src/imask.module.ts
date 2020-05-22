@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { IMaskDirective } from './imask.directive';
 import { IMaskPipe } from './imask.pipe';
-
+import { IMaskDirectiveModule } from './directive.module';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [IMaskDirective, IMaskPipe],
-  exports: [IMaskDirective, IMaskPipe]
+  imports: [CommonModule, IMaskDirectiveModule],
+  declarations: [IMaskPipe],
+  exports: [IMaskPipe, IMaskDirectiveModule]
 })
 export class IMaskModule {}

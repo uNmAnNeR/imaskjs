@@ -2,7 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { IMaskModule } from 'angular-imask';
+import { IMaskDirectiveModule, IMaskFactory } from 'angular-imask';
+import { NumberIMaskFactory } from './number-imask-factory';
 
 @NgModule({
   declarations: [
@@ -10,9 +11,11 @@ import { IMaskModule } from 'angular-imask';
   ],
   imports: [
     BrowserModule,
-    IMaskModule
+    IMaskDirectiveModule,
   ],
-  providers: [],
+  providers: [
+    {provide: IMaskFactory, useClass: NumberIMaskFactory} // it's optional
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
