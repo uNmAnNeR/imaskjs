@@ -87,7 +87,7 @@ class InputMask {
   set mask (mask: Mask) {
     if (this.maskEquals(mask)) return;
 
-    if (this.masked.constructor === maskedClass(mask)) {
+    if (!(mask instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask)) {
       this.masked.updateOptions({mask});
       return;
     }
