@@ -287,7 +287,7 @@ class Masked<MaskType> {
 
     this.rawInputValue = rawInput;
     // append lost trailing chars at end
-    if (this.value !== value && value.indexOf(this.value) === 0) {
+    if (this.value && this.value !== value && value.indexOf(this.value) === 0) {
       this.append(value.slice(this.value.length), {}, '');
     }
 
