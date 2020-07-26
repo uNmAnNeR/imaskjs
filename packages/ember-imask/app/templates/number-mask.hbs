@@ -1,0 +1,16 @@
+<table>
+  <thead>
+    <tr>
+      <th>non masked input number</th>
+      <th>masked input number</th>
+      <th>number</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th><Input @value={{this.number}} /></th>
+      <th><Input {{imask-number this.number onChange=(fn (mut this.number))}} /></th>
+      <th>{{this.number}}</th>
+    </tr>
+  </tbody>
+</table>
