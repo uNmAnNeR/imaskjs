@@ -94,14 +94,14 @@ class MaskedNumber extends Masked<Class<Number>> {
   }
 
   /** */
-  _removeThousandsSeparators (value: string): string {
-    return value.replace(this._thousandsSeparatorRegExp, '');
+  _removeThousandsSeparators (value: string | number): string {
+    return value.toString().replace(this._thousandsSeparatorRegExp, '');
   }
 
   /** */
-  _insertThousandsSeparators (value: string): string {
+  _insertThousandsSeparators(value: string | number): string {
     // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-    const parts = value.split(this.radix);
+    const parts = value.toString().split(this.radix);
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, this.thousandsSeparator);
     return parts.join(this.radix);
   }
@@ -109,8 +109,8 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doPrepare (str: string, ...args: *) {
-    return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
+  doPrepare (str: string | number, ...args: *) {
+    return super.doPrepare(this._removeThousandsSeparators(str.toString().replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
   /** */
@@ -286,7 +286,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   }
 
   /** */
-  _normalizeZeros (value: string): string {
+  _normalizeZeros (value: string | number): string {
     const parts = this._removeThousandsSeparators(value).split(this.radix);
 
     // remove leading zeros
@@ -322,8 +322,8 @@ class MaskedNumber extends Masked<Class<Number>> {
       .replace(this.radix, '.');
   }
 
-  set unmaskedValue (unmaskedValue: string) {
-    super.unmaskedValue = unmaskedValue.replace('.', this.radix);
+  set unmaskedValue (unmaskedValue: string | number) {
+    super.unmaskedValue = unmaskedValue.toString().replace('.', this.radix);
   }
 
   /**
