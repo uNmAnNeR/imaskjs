@@ -34,6 +34,10 @@ import {IMaskInput} from 'react-imask';
 
   // input props also available
   placeholder='Enter number here'
+
+  // mask instance available in blur/focus event handlers
+  onBlur={(event, mask) => console.log(event)}
+  onFocus={(event, mask) => console.log(event)}
 />
 ```
 

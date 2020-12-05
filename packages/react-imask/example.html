@@ -37,6 +37,8 @@
             onComplete: (value, mask) => console.log('complete!', value, mask),
 
             placeholder: 'Enter here',
+            onBlur: (...args) => console.log('blur!', ...args),
+            onFocus: (...args) => console.log('focus!', ...args),
           }),
           React.createElement('p', {}, this.state.value),
           React.createElement('button', {

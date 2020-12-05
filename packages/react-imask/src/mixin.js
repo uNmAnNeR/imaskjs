@@ -75,6 +75,8 @@ function IMaskMixin(ComposedComponent) {
     constructor (...args) {
       super(...args);
       this._inputRef = this._inputRef.bind(this);
+      this._onBlur = this._onBlur.bind(this);
+      this._onFocus = this._onFocus.bind(this);
     }
 
     componentDidMount () {
@@ -122,6 +124,8 @@ function IMaskMixin(ComposedComponent) {
         ...this._extractNonMaskProps(this.props),
         defaultValue: this.props.value,
         inputRef: this._inputRef,
+        onBlur: this._onBlur,
+        onFocus: this._onFocus,
       });
     }
 
@@ -182,6 +186,14 @@ function IMaskMixin(ComposedComponent) {
 
     _onComplete (...args) {
       if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef, ...args);
+    }
+
+    _onBlur (...args) {
+      if (this.props.onBlur) this.props.onBlur(...args.concat(this.maskRef));
+    }
+
+    _onFocus (...args) {
+      if (this.props.onFocus) this.props.onFocus(...args.concat(this.maskRef));
     }
   };
 
