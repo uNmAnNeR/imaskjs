@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import { eslint } from 'rollup-plugin-eslint';
 import multiInput from 'rollup-plugin-multi-input';
+import replace from '@rollup/plugin-replace';
 import pkg from './package.json';
 
 
@@ -37,6 +38,12 @@ export default [
       dir: 'esm',
     },
     plugins: [
+      replace({
+        "import 'imask'": "import 'imask/esm'",
+        "import IMaskMixin from 'react-imask'": "import IMaskMixin from 'react-imask/esm/mixin'",
+        "import MaskElement from 'imask'": "import MaskElement from 'imask/esm/controls/mask-element'",
+        delimiters: ['', ''],
+      }),
       multiInput(),
       babel({
         rootMode: 'upward',

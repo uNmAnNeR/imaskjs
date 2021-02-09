@@ -1,7 +1,7 @@
 import babel from 'rollup-plugin-babel';
-// import svelte from 'rollup-plugin-svelte';
 import { eslint } from 'rollup-plugin-eslint';
 import multiInput from 'rollup-plugin-multi-input';
+import replace from '@rollup/plugin-replace';
 import pkg from './package.json';
 
 
@@ -35,8 +35,12 @@ export default [
       dir: 'esm',
     },
     plugins: [
+      replace({
+        "import IMask from 'imask'": "import IMask from 'imask/esm/imask'",
+        "import 'imask'": "import 'imask/esm'",
+        delimiters: ['', ''],
+      }),
       multiInput(),
-      // svelte(),
       babel({
         rootMode: 'upward',
       }),

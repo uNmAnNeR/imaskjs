@@ -1,4 +1,4 @@
-import MaskElement from 'imask/esm/controls/mask-element';
+import MaskElement from 'imask';
 
 
 export default

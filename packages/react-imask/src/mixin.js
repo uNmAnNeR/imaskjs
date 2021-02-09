@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import IMask from 'imask/esm/imask';
+import IMask from 'imask';
 
 
 const MASK_PROPS = {

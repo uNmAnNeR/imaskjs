@@ -1,4 +1,4 @@
-import IMask from 'imask/esm/imask';
+import IMask from 'imask';
 
 
 const IMaskComponent = {

@@ -87,9 +87,11 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
         // if mask changed reapply input
         this.currentMask.reset();
 
-        // $FlowFixMe - it's ok, we don't change current mask above
-        const d = this.currentMask.append(insertValue, {raw: true});
-        details.tailShift = d.inserted.length - prevValueBeforeTail.length;
+        if (insertValue) {
+          // $FlowFixMe - it's ok, we don't change current mask above
+          const d = this.currentMask.append(insertValue, {raw: true});
+          details.tailShift = d.inserted.length - prevValueBeforeTail.length;
+        }
 
         if (tailValue) {
           // $FlowFixMe - it's ok, we don't change current mask above

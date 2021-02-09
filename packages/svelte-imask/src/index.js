@@ -1,2 +1,2 @@
-import 'imask/esm';
+import 'imask';
 export { default as imask } from './action';
