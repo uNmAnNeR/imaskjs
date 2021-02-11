@@ -44,7 +44,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap --hoist --no-ci && opencollective-postinstall",
+    "postinstall": "lerna bootstrap --hoist && opencollective-postinstall",
     "doc": "node ./node_modules/documentation/bin/documentation.js build packages/imask/src/imask.js -f html -o docs/api",
     "lerna": "lerna",
     "flow": "lerna run flow -- check",

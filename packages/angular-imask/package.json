@@ -40,7 +40,7 @@
     "rxjs": "^6.5.2",
     "tsickle": "^0.36.0",
     "typescript": "<3.6.0",
-    "zone.js": "^0.10.2"
+    "zone.js": "~0.9.1"
   },
   "dependencies": {
     "imask": "^6.0.5"
