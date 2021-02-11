@@ -109,7 +109,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doPrepare (str: string, ...args: *) {
+  doPrepare (str: string, ...args: *): string {
     return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 
@@ -241,7 +241,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doValidate (flags: AppendFlags) {
+  doValidate (flags: AppendFlags): boolean {
     const regexp = flags.input ? this._numberRegExpInput : this._numberRegExp;
 
     // validate as string

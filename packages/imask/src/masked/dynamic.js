@@ -63,7 +63,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
-  _applyDispatch (appended: string='', flags: AppendFlags={}) {
+  _applyDispatch (appended: string='', flags: AppendFlags={}): ChangeDetails {
     const prevValueBeforeTail = flags.tail && flags._beforeTailState != null ?
       flags._beforeTailState._value :
       this.value;
@@ -107,7 +107,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
-  _appendPlaceholder (...args: *) {
+  _appendPlaceholder (...args: *): ChangeDetails {
     const details = this._applyDispatch(...args);
 
     if (this.currentMask) {
@@ -120,7 +120,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  doDispatch(appended: string, flags: AppendFlags={}) {
+  doDispatch(appended: string, flags: AppendFlags={}): ?Masked<*> {
     return this.dispatch(appended, this, flags);
   }
 
@@ -260,7 +260,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
       super.nearestInputPos(...args);
   }
 
-  get overwrite () {
+  get overwrite (): ?boolean {
     return this.currentMask ?
       this.currentMask.overwrite :
       super.overwrite;

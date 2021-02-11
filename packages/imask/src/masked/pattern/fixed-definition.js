@@ -69,7 +69,7 @@ class PatternFixedDefinition implements PatternBlock {
     }
   }
 
-  extractInput (fromPos?: number=0, toPos?: number=this._value.length, flags?: ExtractFlags={}) {
+  extractInput (fromPos?: number=0, toPos?: number=this._value.length, flags?: ExtractFlags={}): string {
     return flags.raw && this._isRawInput && this._value.slice(fromPos, toPos) || '';
   }
 
@@ -77,7 +77,7 @@ class PatternFixedDefinition implements PatternBlock {
     return true;
   }
 
-  _appendChar (str: string, flags?: AppendFlags={}) {
+  _appendChar (str: string, flags?: AppendFlags={}): ChangeDetails {
     const details = new ChangeDetails();
 
     if (this._value) return details;
@@ -104,7 +104,7 @@ class PatternFixedDefinition implements PatternBlock {
   }
 
   // $FlowFixMe no ideas
-  appendTail (tail: string | TailDetails): ChangeDetails {
+  appendTail (tail: string | String | TailDetails): ChangeDetails {
     if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
 
     return tail.appendTo(this);

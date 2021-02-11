@@ -99,12 +99,12 @@ class MaskedPattern extends Masked<string> {
         // use block name with max length
         const bName = bNames[0];
         if (bName) {
+          // $FlowFixMe no ideas
           const maskedBlock = createMask({
             parent: this,
             lazy: this.lazy,
             placeholderChar: this.placeholderChar,
             overwrite: this.overwrite,
-            // $FlowFixMe
             ...this.blocks[bName],
           });
 
@@ -228,7 +228,7 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  appendTail (tail: string | TailDetails): ChangeDetails {
+  appendTail (tail: string | String | TailDetails): ChangeDetails {
     return super.appendTail(tail).aggregate(this._appendPlaceholder());
   }
 

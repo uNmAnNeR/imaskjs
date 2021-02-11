@@ -188,7 +188,7 @@ class Masked<MaskType> {
 
   /** Appends tail */
   // $FlowFixMe no ideas
-  appendTail (tail: string | TailDetails): ChangeDetails {
+  appendTail (tail: string | String | TailDetails): ChangeDetails {
     if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
 
     return tail.appendTo(this);
@@ -248,11 +248,11 @@ class Masked<MaskType> {
 
   /** Appends symbols considering flags */
   // $FlowFixMe no ideas
-  append (str: string, flags?: AppendFlags, tail?: string | TailDetails): ChangeDetails {
+  append (str: string, flags?: AppendFlags, tail?: string | String | TailDetails): ChangeDetails {
     if (!isString(str)) throw new Error('value should be string');
     const details = new ChangeDetails();
     const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail;
-    if (flags.tail) flags._beforeTailState = this.state;
+    if (flags && flags.tail) flags._beforeTailState = this.state;
 
     for (let ci=0; ci<str.length; ++ci) {
       details.aggregate(this._appendChar(str[ci], flags, checkTail));
@@ -337,12 +337,12 @@ class Masked<MaskType> {
   }
 
   /** */
-  doFormat (value: any) {
+  doFormat (value: any): string {
     return this.format ? this.format(value, this) : value;
   }
 
   /** */
-  doParse (str: string) {
+  doParse (str: string): string {
     return this.parse ? this.parse(str, this) : str;
   }
 

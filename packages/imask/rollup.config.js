@@ -1,17 +1,19 @@
-import babel from 'rollup-plugin-babel';
+import { babel } from '@rollup/plugin-babel';
 import { terser } from 'rollup-plugin-terser';
-import { eslint } from 'rollup-plugin-eslint';
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import eslint from '@rollup/plugin-eslint';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import polyfill from 'rollup-plugin-polyfill';
-import multiInput from 'rollup-plugin-multi-input';
-import copy from 'rollup-plugin-copy'
+import multi from '@rollup/plugin-multi-entry';
+import copy from 'rollup-plugin-copy';
+
 
 const commonPlugins = [
-  resolve(),
+  nodeResolve(),
   babel({
     extends: './.babelrc',
     rootMode: 'upward',
+    babelHelpers: 'bundled',
   }),
 ];
 
@@ -39,7 +41,7 @@ export default [
       dir: 'esm',
     },
     plugins: [
-      multiInput(),
+      multi(),
       ...commonPlugins,
       copy({
         targets: [

@@ -1,6 +1,6 @@
-import babel from 'rollup-plugin-babel';
-import { eslint } from 'rollup-plugin-eslint';
-import multiInput from 'rollup-plugin-multi-input';
+import { babel } from '@rollup/plugin-babel';
+import eslint from '@rollup/plugin-eslint';
+import multi from '@rollup/plugin-multi-entry';
 import replace from '@rollup/plugin-replace';
 import pkg from './package.json';
 
@@ -40,7 +40,7 @@ export default [
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
       }),
-      multiInput(),
+      multi(),
       babel({
         rootMode: 'upward',
       }),

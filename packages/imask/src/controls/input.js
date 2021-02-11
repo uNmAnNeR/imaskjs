@@ -78,7 +78,7 @@ class InputMask {
     return this.masked.mask;
   }
 
-  maskEquals (mask: Mask) {
+  maskEquals (mask: Mask): boolean {
     return mask == null ||
       mask === this.masked.mask ||
       mask === Date && this.masked instanceof MaskedDate;
@@ -291,14 +291,14 @@ class InputMask {
   }
 
   /** Adds listener on custom event */
-  on (ev: string, handler: Function) {
+  on (ev: string, handler: Function): this {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
     return this;
   }
 
   /** Removes custom event listener */
-  off (ev: string, handler: Function) {
+  off (ev: string, handler: Function): this {
     if (!this._listeners[ev]) return this;
     if (!handler) {
       delete this._listeners[ev];
@@ -310,7 +310,7 @@ class InputMask {
   }
 
   /** Handles view input event */
-  _onInput (e: InputEvent) {
+  _onInput (e: InputEvent): void {
     this._inputEvent = e;
     this._abortUpdateCursor();
 

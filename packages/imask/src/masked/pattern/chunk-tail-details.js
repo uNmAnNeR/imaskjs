@@ -31,7 +31,7 @@ class ChunksTailDetails implements TailDetails {
   }
 
   // $FlowFixMe no ideas
-  extend (tailChunk: string | TailDetails): void {
+  extend (tailChunk: string | String | TailDetails): void {
     if (!String(tailChunk)) return;
     if (isString(tailChunk)) tailChunk = new ContinuousTailDetails(String(tailChunk));
 
