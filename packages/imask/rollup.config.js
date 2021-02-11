@@ -4,7 +4,7 @@ import eslint from '@rollup/plugin-eslint';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import polyfill from 'rollup-plugin-polyfill';
-import multi from '@rollup/plugin-multi-entry';
+import multi from 'rollup-plugin-multi-input';
 import copy from 'rollup-plugin-copy';
 
 

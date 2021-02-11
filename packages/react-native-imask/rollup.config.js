@@ -1,6 +1,6 @@
 import { babel } from '@rollup/plugin-babel';
 import eslint from '@rollup/plugin-eslint';
-import multi from '@rollup/plugin-multi-entry';
+import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
 import pkg from './package.json';
 
