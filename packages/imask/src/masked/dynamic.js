@@ -53,11 +53,11 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  _appendCharRaw (...args: *): ChangeDetails {
-    const details = this._applyDispatch(...args);
+  _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
+    const details = this._applyDispatch(ch, flags);
 
     if (this.currentMask) {
-      details.aggregate(this.currentMask._appendChar(...args));
+      details.aggregate(this.currentMask._appendChar(ch, flags));
     }
 
     return details;

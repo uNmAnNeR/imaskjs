@@ -236,7 +236,6 @@ class MaskedPattern extends Masked<string> {
     @override
   */
   _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
-    ch = this.doPrepare(ch, flags);
     const blockIter = this._mapPosToBlock(this.value.length);
     const details = new ChangeDetails();
     if (!blockIter) return details;

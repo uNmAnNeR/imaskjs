@@ -196,7 +196,6 @@ class Masked<MaskType> {
 
   /** Appends char */
   _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
-    ch = this.doPrepare(ch, flags);
     if (!ch) return new ChangeDetails();
 
     this._value += ch;
@@ -209,7 +208,7 @@ class Masked<MaskType> {
   /** Appends char */
   _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
     const consistentState: MaskedState = this.state;
-    let details: ChangeDetails = this._appendCharRaw(ch, flags);
+    let details: ChangeDetails = this._appendCharRaw(this.doPrepare(ch, flags), flags);
 
     if (details.inserted) {
       let consistentTail;
