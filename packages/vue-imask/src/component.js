@@ -9,6 +9,9 @@ const IMaskComponent = {
       domProps: {
         value: this.maskRef ? this.maskRef.value : this.value
       },
+			attrs: {
+				maxlength: this.maxLength,
+			},
       on: {...this.$listeners},
     };
 
@@ -184,7 +187,10 @@ const IMaskComponent = {
     max: [Number, Date],
 
     // dynamic
-    dispatch: Function
+    dispatch: Function,
+		maxLength: {
+			default: 255,
+		}
   },
 }
 
