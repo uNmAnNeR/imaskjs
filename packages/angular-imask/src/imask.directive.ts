@@ -25,7 +25,7 @@ const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
   },
   providers: [MASKEDINPUT_VALUE_ACCESSOR]
 })
-export class IMaskDirective<Opts extends import('imask').default.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
+export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
   maskRef?: IMask.InputMask<Opts>;
   onTouched: any;
   onChange: any;
