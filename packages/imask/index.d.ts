@@ -464,3 +464,4 @@ export import HTMLContenteditableMaskElement = IMask.HTMLContenteditableMaskElem
 export import pipe = IMask.pipe;
 export import createPipe = IMask.createPipe;
 export import PIPE_TYPE = IMask.PIPE_TYPE;
+export import AnyMaskedOptions = IMask.AnyMaskedOptions;
