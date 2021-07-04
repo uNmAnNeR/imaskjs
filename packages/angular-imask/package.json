@@ -2,7 +2,7 @@
   "name": "angular-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "6.0.7",
+  "version": "6.1.0",
   "description": "Angular IMask Plugin",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
   "scripts": {
@@ -18,7 +18,6 @@
     "input",
     "mask"
   ],
-  "peerDependencies": {},
   "devDependencies": {
     "@angular-devkit/build-angular": "~12.1.1",
     "@angular/cli": "^12.1.1",
@@ -36,7 +35,7 @@
     "zone.js": "~0.11.4"
   },
   "dependencies": {
-    "imask": "^6.0.7",
+    "imask": "^6.1.0",
     "tslib": "^2.0.0"
   },
   "publishConfig": {
