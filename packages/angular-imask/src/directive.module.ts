@@ -5,6 +5,7 @@ import { IMaskDirective } from './imask.directive';
 import { IMaskFactory } from './imask-factory';
 import { DefaultImaskFactory } from './default-imask-factory';
 
+
 @NgModule({
   imports: [CommonModule],
   declarations: [IMaskDirective],

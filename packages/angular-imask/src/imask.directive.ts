@@ -5,7 +5,8 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 
-import {IMaskFactory} from "./imask-factory";
+import { IMaskFactory } from './imask-factory';
+import IMask from 'imask';
 
 
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {

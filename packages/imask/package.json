@@ -19,6 +19,7 @@
     "watch": "rollup -c -w",
     "build": "rollup -c",
     "flow": "flow",
+    "lint": "eslint src/",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [

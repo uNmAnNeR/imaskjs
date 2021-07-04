@@ -443,8 +443,8 @@ declare namespace IMask {
   };
 
   type PIPE_TYPE_VALUES = typeof PIPE_TYPE[keyof typeof PIPE_TYPE];
-  export function createPipe(masked: AnyMasked | AnyMask, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
-  export function pipe(value: any, masked: AnyMasked | AnyMask, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
+  export function createPipe(masked: AnyMasked | AnyMaskedOptions, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
+  export function pipe(value: any, masked: AnyMasked | AnyMaskedOptions, from?: PIPE_TYPE_VALUES, to?: PIPE_TYPE_VALUES): any;
 }
 
 export import InputMask = IMask.InputMask;
