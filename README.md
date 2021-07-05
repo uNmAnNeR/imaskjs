@@ -51,13 +51,11 @@ or use CDN:
 ## Compatibility
 Supports all major browsers and IE11+ [need to support older?](https://imask.js.org/guide.html#support-older)
 
-## Docs, Examples, Demo
-[https://imask.js.org/](https://imask.js.org/)
-
-## Many Thanks to
-[@Viktor Yakovlev](https://github.com/vcrazyV)
-
-[@Alexander Kiselev](https://github.com/MaaKut)
+## Getting help
+- [Documentation and examples](https://imask.js.org/)
+- check answers on [stackoverflow.com](https://stackoverflow.com)
+- ask question in [discussions](https://github.com/uNmAnNeR/imaskjs/discussions)
+- [Телега если быстро и коротко](https://t.me/imaskjs)
 
 ## Support Development
 [Paypal](https://www.paypal.me/alexeykryazhev/3)
