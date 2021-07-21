@@ -18,13 +18,14 @@ export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
 const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
 @Directive({
   selector: '[imask]',
+  exportAs: 'imask',
   host: {
     '(input)': '_handleInput($event.target.value)',
     '(blur)': 'onTouched()',
     '(compositionstart)': '_compositionStart()',
     '(compositionend)': '_compositionEnd($event.target.value)'
   },
-  providers: [MASKEDINPUT_VALUE_ACCESSOR]
+  providers: [MASKEDINPUT_VALUE_ACCESSOR],
 })
 export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
   maskRef?: IMask.InputMask<Opts>;
