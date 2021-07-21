@@ -1,4 +1,4 @@
-import MaskElement from 'imask';
+import { MaskElement } from 'imask';
 
 
 export default
