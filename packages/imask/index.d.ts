@@ -431,7 +431,7 @@ declare namespace IMask {
     updateOptions(opts: Partial<AnyMaskedOptions>): void;
     updateCursor(cursorPos: number): void;
     on(ev: string, handler: Function): this;
-    off(ev: string, handler: Function): this;
+    off(ev: string, handler?: Function): this;
     destroy(): void;
   }
 
