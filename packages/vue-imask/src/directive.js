@@ -1,16 +1,17 @@
 import IMask from 'imask';
+import { isVue3 } from 'vue-demi';
 
 
-const IMaskDirective = {
+export default {
   name: 'imask',
 
-  bind (el, {value: options}) {
+  [isVue3 ? 'beforeMount' : 'bind']: (el, {value: options}) => {
     if (!options) return;
 
     initMask(el, options);
   },
 
-  update (el, {value: options}) {
+  [isVue3 ? 'updated' : 'update']: (el, {value: options}) => {
     if (options) {
       if (el.maskRef) {
         el.maskRef.updateOptions(options);
@@ -22,7 +23,7 @@ const IMaskDirective = {
     }
   },
 
-  unbind (el) {
+  [isVue3 ? 'unmounted' : 'unbind']: (el) => {
     destroyMask(el);
   }
 };
@@ -45,6 +46,3 @@ function destroyMask (el) {
     delete el.maskRef;
   }
 }
-
-
-export default IMaskDirective;

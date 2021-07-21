@@ -13,7 +13,8 @@
     "cangku"
   ],
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
   },
   "keywords": [
     "vue",
@@ -23,10 +24,20 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^6.1.0"
+    "imask": "^6.1.0",
+    "vue-demi": "^0.11.2"
   },
   "peerDependencies": {
+    "@vue/composition-api": "^1.0.0-beta.1",
     "vue": ">=2.2.0"
   },
-  "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6"
+  "peerDependenciesMeta": {
+    "@vue/composition-api": {
+      "optional": true
+    }
+  },
+  "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6",
+  "devDependencies": {
+    "vue": "^2.6.14"
+  }
 }
