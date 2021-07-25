@@ -39,42 +39,17 @@ function useIMask (props, { emit, onAccept, onComplete }={}) {
     if (onComplete) onComplete();
   }
 
-  function _updateValue () {
-    const [cref, mprop] = _getMaskProps();
-
-    console.log(mprop, mask.value[mprop], cref.value);
-    mask.value[mprop] = cref.value == null ? '' : cref.value;
-    if (cref.value !== mask.value[mprop]) _onAccept();
-  }
-
   function _initMask () {
     $el = el.value;
     const $props = props.value;
 
-    if (!$el || !$props || !$props.mask) return;
+    if (!$el || !$props?.mask) return;
 
     mask.value = IMask($el, $props)
       .on('accept', _onAccept)
       .on('complete', _onComplete);
 
-    _updateValue();
-  }
-
-  function _getComponentMaskProp () {
-    return [typed, unmasked, masked].find(ref => ref.value != null) || masked;
-  }
-
-  function _getMaskPropFromComponent (cref) {
-    switch (cref) {
-      case unmasked: return 'unmaskedValue';
-      case typed: return 'typedValue';
-      default: return 'value';
-    }
-  }
-
-  function _getMaskProps () {
-    const cref = _getComponentMaskProp();
-    return [cref, _getMaskPropFromComponent(cref)];
+    _onAccept();
   }
 
   function _destroyMask () {
@@ -86,10 +61,6 @@ function useIMask (props, { emit, onAccept, onComplete }={}) {
 
   onMounted(_initMask);
   onUnmounted(_destroyMask);
-
-  function log (tag) {
-    console.log(tag, { el: el.value, value: masked.value, props: props.value });
-  }
 
   watch(unmasked, () => {
     if (mask.value && $unmasked !== unmasked.value) {
@@ -104,33 +75,19 @@ function useIMask (props, { emit, onAccept, onComplete }={}) {
   });
 
   watch(typed, () => {
-    if (mask.value && $typed !== typed.value) {
-      $typed = mask.value.typedValue = typed.value;
-    }
+    if (mask.value) $typed = mask.value.typedValue = typed.value;
   });
 
   watch([el, props], () => {
     const $newEl = el.value;
     const $props = props.value;
 
-    if (!$props || !$props.mask || $newEl !== $el) _destroyMask();
+    if (!$props?.mask || $newEl !== $el) _destroyMask();
     if ($newEl) {
-      const $mask = mask.value;
-      if (!$mask) {
+      if (!mask.value) {
         _initMask();
       } else {
         $mask.updateOptions($props);
-
-        const [cref, mprop] = _getMaskProps();
-        const $cval = cref.value;
-
-        if ($cval !== $mask[mprop] ||
-          // handle cases like Number('') === 0,
-          // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
-          typeof $cval !== 'string' && $mask.value === '' && !$mask.el.isActive
-        ) {
-          _updateValue();
-        }
       }
     }
   });

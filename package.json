@@ -56,7 +56,9 @@
     "test": "lerna run test --parallel",
     "make": "npm run test && npm run build",
     "release": "npm run doc && npm run make && lerna publish",
-    "coverage": "lerna run coveralls --scope imask"
+    "coverage": "lerna run coveralls --scope imask",
+    "watch:vue": "lerna run watch --scope vue-imask --stream",
+    "watch:react": "lerna run watch --scope react-imask --stream"
   },
   "collective": {
     "type": "opencollective",

@@ -37,7 +37,7 @@ export default [
     },
     plugins: [
       replace({
-        "import IMask from 'imask'": "import IMask from 'imask/esm/imask'",
+        "from 'imask'": "from 'imask/esm/imask'",
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
       }),

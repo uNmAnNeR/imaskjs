@@ -9,7 +9,8 @@
   "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
   },
   "keywords": [
     "react",

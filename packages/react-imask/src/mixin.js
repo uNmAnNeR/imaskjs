@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import IMask from 'imask';
 
@@ -71,7 +71,7 @@ const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
 
 export default
 function IMaskMixin(ComposedComponent) {
-  const MaskedComponent = class extends React.Component {
+  const MaskedComponent = class extends Component {
     constructor (...args) {
       super(...args);
       this._inputRef = this._inputRef.bind(this);

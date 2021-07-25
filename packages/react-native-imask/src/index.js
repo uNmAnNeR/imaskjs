@@ -3,3 +3,4 @@ export { default as IMask } from 'imask';
 export { default as IMaskNativeMixin } from './mixin';
 export { default as IMaskTextInput } from './textinput';
 export { default as NativeMaskElement } from './native-mask-element';
+import { IMaskMixin, IMaskInput, useIMask } from 'react-imask';

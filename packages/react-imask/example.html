@@ -13,6 +13,28 @@
   <script src="dist/react-imask.js"></script>
   <script type="text/babel">
     const mask = Number;
+
+    function IMaskHook () {
+      const [ opts, setOpts ] = React.useState({ mask: Number });
+
+      const { ref, value, setValue } = ReactIMask.useIMask(opts);
+
+      React.useEffect(() => {
+        if (value) return;
+
+        setTimeout(() => {
+          setValue('123')
+          console.log('set value from hook');
+        }, 1000);
+      });
+
+      React.useEffect(() => {
+        console.log('masked value changed', value);
+      }, [value]);
+
+      return React.createElement('input', { ref });
+    }
+
     class App extends React.Component {
       constructor (...args) {
         super(...args);
@@ -38,11 +60,12 @@
 
             placeholder: 'Enter here',
           }),
-          React.createElement('p', {}, this.state.value),
+          React.createElement('p', { key: 'state' }, this.state.value),
           React.createElement('button', {
             key: 'toggler',
             onClick: (event) => this.setState({mask: this.state.mask ? null : mask})
-          }, (this.state.mask ? 'Disable' : 'Enable') + ' mask')
+          }, (this.state.mask ? 'Disable' : 'Enable') + ' mask'),
+          React.createElement(IMaskHook, { key: 'hook' }),
         ];
       }
     }
