@@ -100,7 +100,6 @@ function IMaskMixin(ComposedComponent) {
           }
         } else {
           this.initMask(maskOptions);
-          if (props.value !== this.maskValue) this._onAccept();
         }
       } else {
         this.destroyMask();
@@ -120,7 +119,6 @@ function IMaskMixin(ComposedComponent) {
     render () {
       return React.createElement(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
-        defaultValue: this.props.value,
         inputRef: this._inputRef,
       });
     }
@@ -130,7 +128,7 @@ function IMaskMixin(ComposedComponent) {
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
 
-      this.maskValue = this.props.value;
+      if ('value' in this.props) this.maskValue = this.props.value;
     }
 
     destroyMask () {

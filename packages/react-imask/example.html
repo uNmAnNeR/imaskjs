@@ -38,7 +38,7 @@
     class App extends React.Component {
       constructor (...args) {
         super(...args);
-        this.state = {mask, value: 0};
+        this.state = {mask, value: 5};
       }
 
       render () {
@@ -46,6 +46,7 @@
           React.createElement(ReactIMask.IMaskInput, {
             key: 'maskedinput',
             mask: this.state.mask,
+            defaultValue: '50',
             value: this.state.value,
             unmask: 'typed',
             lazy: false,
