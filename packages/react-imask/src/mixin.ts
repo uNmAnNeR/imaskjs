@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import IMask from 'imask';
 
@@ -69,11 +69,29 @@ const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
 );
 
+export type IMaskInputProps<Opts extends IMask.AnyMaskedOptions, V> = {
+  value?: V;
+  unmask?: 'typed' | boolean;
+
+  // events
+  onAccept?: (value: V, maskRef: IMask.InputMask<Opts>, ...args: unknown[]) => void;
+  onComplete?: (value: V, maskRef: IMask.InputMask<Opts>, ...args: unknown[]) => void;
+} & Opts;
+
+export type IMaskComponent<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, V> = React.ComponentType<NonMaskProps & IMaskInputProps<MaskProps, V>>;
+export type IMaskTarget<NonMaskProps, E> = { inputRef?: React.Ref<E> } & NonMaskProps;
+
+
 export default
-function IMaskMixin(ComposedComponent) {
-  const MaskedComponent = class extends Component {
-    constructor (...args) {
-      super(...args);
+function IMaskMixin<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, E, V>(
+  ComposedComponent: React.ComponentType<IMaskTarget<NonMaskProps, E>>
+): IMaskComponent<NonMaskProps, MaskProps, V> {
+  const MaskedComponent = class extends React.Component<NonMaskProps & IMaskInputProps<MaskProps, V>> {
+    element: IMask.MaskElement | IMask.HTMLMaskingElement;
+    maskRef: IMask.InputMask<MaskProps>;
+
+    constructor (props: IMaskInputProps<MaskProps, V> & IMaskTarget<NonMaskProps, E>) {
+      super(props);
       this._inputRef = this._inputRef.bind(this);
     }
 
@@ -111,7 +129,7 @@ function IMaskMixin(ComposedComponent) {
       this.destroyMask();
     }
 
-    _inputRef (el) {
+    _inputRef (el: IMask.MaskElement | IMask.HTMLMaskingElement): void {
       this.element = el;
       if (this.props.inputRef) this.props.inputRef(el);
     }
@@ -138,7 +156,7 @@ function IMaskMixin(ComposedComponent) {
       }
     }
 
-    _extractMaskOptionsFromProps (props) {
+    _extractMaskOptionsFromProps (props: NonMaskProps & IMaskInputProps<V>): IMaskInputProps<V> {
       props = {...props};
 
       // keep only mask options props
@@ -151,7 +169,7 @@ function IMaskMixin(ComposedComponent) {
       return props;
     }
 
-    _extractNonMaskProps (props) {
+    _extractNonMaskProps (props: NonMaskProps & IMaskInputProps<V>): NonMaskProps {
       props = {...props};
 
       MASK_PROPS_NAMES.forEach(maskProp => {

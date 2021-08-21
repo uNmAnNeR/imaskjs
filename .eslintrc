@@ -3,6 +3,8 @@
     "plugin:flowtype/recommended"
   ],
 
+  "ignorePatterns": ["**/*.ts"],
+
   "plugins": [
     "flowtype"
   ],

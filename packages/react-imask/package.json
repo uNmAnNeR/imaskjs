@@ -9,7 +9,7 @@
   "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
     "watch": "rollup -c -w"
   },
   "keywords": [
@@ -28,5 +28,11 @@
   "engines": {
     "npm": ">=4.0.0"
   },
-  "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6"
+  "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6",
+  "devDependencies": {
+    "@types/react": "^17.0.15",
+    "@types/react-dom": "^17.0.9",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
 }
