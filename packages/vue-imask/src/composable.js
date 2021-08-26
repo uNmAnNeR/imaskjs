@@ -87,7 +87,7 @@ function useIMask (props, { emit, onAccept, onComplete }={}) {
       if (!mask.value) {
         _initMask();
       } else {
-        $mask.updateOptions($props);
+        mask.value.updateOptions($props);
       }
     }
   });
