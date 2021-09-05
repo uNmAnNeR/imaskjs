@@ -131,6 +131,8 @@ declare namespace IMask {
       inserted: string,
       removeDirection: Direction
     ): ChangeDetails;
+
+    runIsolated<Result>(fn: (masked: Masked<MaskType>) => Result): Result;
   }
   interface AnyMasked extends Masked<AnyMask> {}
 
