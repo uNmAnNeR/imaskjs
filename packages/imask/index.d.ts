@@ -393,28 +393,31 @@ declare namespace IMask {
   interface AnyMaskedOptionsArray extends Array<AnyMaskedOptions> {}
   interface AnyMaskedOptionsMasked extends Masked<AnyMaskedOptions> {}
 
-  type DeduceMasked<
-    Opts extends AnyMaskedOptions
-  > = Opts extends MaskedPatternOptions
-    ? MaskedPattern
-    : Opts extends MaskedDateOptions
-    ? MaskedDate
-    : Opts extends MaskedNumberOptions
-    ? MaskedNumber
-    : Opts extends MaskedOptions<RegExp>
-    ? MaskedRegExp
-    : Opts extends MaskedOptions<Function>
-    ? MaskedFunction
-    : Opts extends MaskedOptions<AnyMaskedOptionsArray>
-    ? MaskedDynamic
-    : Masked<Opts['mask']>;
+  type DeduceMasked<Opts> =
+    Opts extends AnyMasked
+      ? Opts
+      : Opts extends AnyMaskedOptions
+        ? Opts extends MaskedPatternOptions
+          ? MaskedPattern
+          : Opts extends MaskedDateOptions
+          ? MaskedDate
+          : Opts extends MaskedNumberOptions
+          ? MaskedNumber
+          : Opts extends MaskedOptions<RegExp>
+          ? MaskedRegExp
+          : Opts extends MaskedOptions<Function>
+          ? MaskedFunction
+          : Opts extends MaskedOptions<AnyMaskedOptionsArray>
+          ? MaskedDynamic
+          : Masked<Opts['mask']>
+        : never;
   export function createMask<Opts extends AnyMaskedOptions>(
     opts: Opts
   ): DeduceMasked<Opts>;
   export function createMask<T extends AnyMasked>(masked: T): T;
 
   export type AnyMask = AnyMaskedOptions['mask'];
-  export class InputMask<Opts extends AnyMaskedOptions> {
+  export class InputMask<Opts extends (AnyMasked | AnyMaskedOptions)> {
     el: MaskElement;
     masked: DeduceMasked<Opts>;
     mask: Opts['mask'];
