@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import IMask from 'imask';
 
-
 const MASK_PROPS = {
   // common
   mask: PropTypes.oneOfType([
@@ -69,28 +68,59 @@ const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
 );
 
-export type IMaskInputProps<Opts extends IMask.AnyMaskedOptions, V> = {
-  value?: V;
+// const MASK_PROPS_NAMES: Array<keyof typeof MASK_PROPS> = Object.keys(MASK_PROPS) as Array<keyof typeof MASK_PROPS>;
+// const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'];
+// const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
+//   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
+// );
+
+export interface IMaskProps {
+  mask: IMask.AnyMaskedOptions['mask'];
+  value?: string;
   unmask?: 'typed' | boolean;
+  prepare?: <T>(value: string, masked: IMask.Masked<T>, flags: IMask.AppendFlags) => string;
+  validate?: <T>(value: string, masked: IMask.Masked<T>, flags: IMask.AppendFlags) => boolean;
+  commit?: <T>(value: string, masked: IMask.Masked<T>) => void;
+  overwrite?: boolean;
 
-  // events
-  onAccept?: (value: V, maskRef: IMask.InputMask<Opts>, ...args: unknown[]) => void;
-  onComplete?: (value: V, maskRef: IMask.InputMask<Opts>, ...args: unknown[]) => void;
-} & Opts;
+  onAccept: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => any;
+  onComplete: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => any;
 
-export type IMaskComponent<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, V> = React.ComponentType<NonMaskProps & IMaskInputProps<MaskProps, V>>;
-export type IMaskTarget<NonMaskProps, E> = { inputRef?: React.Ref<E> } & NonMaskProps;
+  placeholderChar?: string;
+  lazy?: boolean;
+  definitions?: { [key: string]: IMask.AnyMaskedOptions['mask'] };
+  blocks?: { [key: string]: IMask.AnyMaskedOptions };
 
+  pattern?: string;
+  format?: (value: Date) => string;
+  parse?: (value: string) => Date;
+  autofix?: boolean;
 
-export default
-function IMaskMixin<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, E, V>(
-  ComposedComponent: React.ComponentType<IMaskTarget<NonMaskProps, E>>
-): IMaskComponent<NonMaskProps, MaskProps, V> {
-  const MaskedComponent = class extends React.Component<NonMaskProps & IMaskInputProps<MaskProps, V>> {
-    element: IMask.MaskElement | IMask.HTMLMaskingElement;
-    maskRef: IMask.InputMask<MaskProps>;
+  radix?: string;
+  thousandsSeparator?: string;
+  mapToRadix?: string[];
+  scale?: number;
+  signed?: boolean;
+  normalizeZeros?: boolean;
+  padFractionalZeros?: boolean
+  min?: number | Date;
+  max?: number | Date;
 
-    constructor (props: IMaskInputProps<MaskProps, V> & IMaskTarget<NonMaskProps, E>) {
+  dispatch?: (value: string, masked: IMask.Masked<IMask.AnyMaskedOptions['mask']>, flags: IMask.AppendFlags) => IMask.Masked<IMask.AnyMaskedOptions['mask']>;
+
+  inputRef?: React.RefCallback<HTMLInputElement>;
+}
+
+export type IMaskInputProps = HTMLInputElement & IMaskProps & { inputRef: (el: HTMLInputElement) => void };
+
+export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskProps & { inputRef: (el: HTMLInputElement) => void }>): React.ComponentType {
+  const MaskedComponent = class extends React.Component<IMaskInputProps> {
+    static displayName: string;
+    
+    element: HTMLInputElement;
+    maskRef: IMask.InputMask<IMask.AnyMaskedOptions>;
+    
+    constructor (props: IMaskInputProps) {
       super(props);
       this._inputRef = this._inputRef.bind(this);
     }
@@ -106,7 +136,7 @@ function IMaskMixin<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, E, V
       const maskOptions = this._extractMaskOptionsFromProps(props);
       if (maskOptions.mask) {
         if (this.maskRef) {
-          this.maskRef.updateOptions(maskOptions);
+          this.maskRef.updateOptions(maskOptions as Partial<IMask.AnyMaskedOptions>); // TODO
           if ('value' in props &&
             (props.value !== this.maskValue ||
               // handle cases like Number('') === 0,
@@ -117,7 +147,7 @@ function IMaskMixin<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, E, V
             this.maskValue = props.value;
           }
         } else {
-          this.initMask(maskOptions);
+          this.initMask(maskOptions as IMask.AnyMaskedOptions); // TODO
         }
       } else {
         this.destroyMask();
@@ -129,19 +159,12 @@ function IMaskMixin<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, E, V
       this.destroyMask();
     }
 
-    _inputRef (el: IMask.MaskElement | IMask.HTMLMaskingElement): void {
+    _inputRef (el: HTMLInputElement){
       this.element = el;
       if (this.props.inputRef) this.props.inputRef(el);
     }
 
-    render () {
-      return React.createElement(ComposedComponent, {
-        ...this._extractNonMaskProps(this.props),
-        inputRef: this._inputRef,
-      });
-    }
-
-    initMask (maskOptions=this._extractMaskOptionsFromProps({...this.props})) {
+    initMask (maskOptions: IMask.AnyMaskedOptions = this._extractMaskOptionsFromProps(this.props) as IMask.AnyMaskedOptions) { // ???
       this.maskRef = IMask(this.element, maskOptions)
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
@@ -156,24 +179,24 @@ function IMaskMixin<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, E, V
       }
     }
 
-    _extractMaskOptionsFromProps (props: NonMaskProps & IMaskInputProps<V>): IMaskInputProps<V> {
-      props = {...props};
+    _extractMaskOptionsFromProps (props: IMaskInputProps): IMaskProps {
+      const { ...cloneProps } = props;
 
       // keep only mask options props
-      Object.keys(props)
+      (Object.keys(cloneProps) as Array<keyof IMaskInputProps>)
         .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop) < 0)
         .forEach(nonMaskProp => {
-          delete props[nonMaskProp];
+          delete cloneProps[nonMaskProp];
         });
 
-      return props;
+      return cloneProps;
     }
 
-    _extractNonMaskProps (props: NonMaskProps & IMaskInputProps<V>): NonMaskProps {
-      props = {...props};
+    _extractNonMaskProps (props: IMaskInputProps) {
+      const { ...cloneProps } = props;
 
-      MASK_PROPS_NAMES.forEach(maskProp => {
-        delete props[maskProp];
+      (MASK_PROPS_NAMES as Array<keyof IMaskInputProps>).forEach(maskProp => {
+        delete cloneProps[maskProp];
       });
 
       return props;
@@ -192,16 +215,21 @@ function IMaskMixin<NonMaskProps, MaskProps extends IMask.AnyMaskedOptions, E, V
       else this.maskRef.value = value;
     }
 
-    _onAccept (...args) {
-      if (this.props.onAccept) this.props.onAccept(this.maskValue, this.maskRef, ...args);
+    _onAccept (e?: InputEvent) {
+      if (this.props.onAccept) this.props.onAccept(this.maskValue, this.maskRef, e);
     }
 
-    _onComplete (...args) {
-      if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef, ...args);
+    _onComplete (e?: InputEvent) {
+      if (this.props.onComplete) this.props.onComplete(this.maskValue, this.maskRef, e);
+    }
+
+    render () {
+      return React.createElement<{ inputRef: (el: HTMLInputElement) => void }>(ComposedComponent, {
+        ...this._extractNonMaskProps(this.props),
+        inputRef: this._inputRef,
+      });
     }
   };
-
-  MaskedComponent.propTypes = MASK_PROPS;
 
   const nestedComponentName = ComposedComponent.displayName || ComposedComponent.name || 'Component';
   MaskedComponent.displayName = `IMask(${nestedComponentName})`;
