@@ -46,7 +46,7 @@ class InputMask {
     @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
     @param {Object} opts
   */
-  constructor (el: MaskElement | HTMLTextAreaElement | HTMLInputElement, opts: {[string]: any}) {
+  constructor (el: MaskElement | HTMLTextAreaElement | HTMLInputElement, opts: {[string]: any} | Masked<*>) {
     this.el =
       (el instanceof MaskElement) ? el :
       (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
