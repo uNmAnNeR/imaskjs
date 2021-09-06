@@ -68,47 +68,10 @@ const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
 );
 
-// const MASK_PROPS_NAMES: Array<keyof typeof MASK_PROPS> = Object.keys(MASK_PROPS) as Array<keyof typeof MASK_PROPS>;
-// const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'];
-// const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
-//   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
-// );
-
-export interface IMaskProps {
-  mask: IMask.AnyMaskedOptions['mask'];
-  value?: string;
-  unmask?: 'typed' | boolean;
-  prepare?: <T>(value: string, masked: IMask.Masked<T>, flags: IMask.AppendFlags) => string;
-  validate?: <T>(value: string, masked: IMask.Masked<T>, flags: IMask.AppendFlags) => boolean;
-  commit?: <T>(value: string, masked: IMask.Masked<T>) => void;
-  overwrite?: boolean;
-
+export type IMaskProps = IMask.AnyMaskedOptions & {
   onAccept: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => any;
   onComplete: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => any;
-
-  placeholderChar?: string;
-  lazy?: boolean;
-  definitions?: { [key: string]: IMask.AnyMaskedOptions['mask'] };
-  blocks?: { [key: string]: IMask.AnyMaskedOptions };
-
-  pattern?: string;
-  format?: (value: Date) => string;
-  parse?: (value: string) => Date;
-  autofix?: boolean;
-
-  radix?: string;
-  thousandsSeparator?: string;
-  mapToRadix?: string[];
-  scale?: number;
-  signed?: boolean;
-  normalizeZeros?: boolean;
-  padFractionalZeros?: boolean
-  min?: number | Date;
-  max?: number | Date;
-
-  dispatch?: (value: string, masked: IMask.Masked<IMask.AnyMaskedOptions['mask']>, flags: IMask.AppendFlags) => IMask.Masked<IMask.AnyMaskedOptions['mask']>;
-
-  inputRef?: React.RefCallback<HTMLInputElement>;
+  unmask?: 'typed' | boolean;
 }
 
 export type IMaskInputProps = HTMLInputElement & IMaskProps & { inputRef: (el: HTMLInputElement) => void };
@@ -179,7 +142,7 @@ export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskP
       }
     }
 
-    _extractMaskOptionsFromProps (props: IMaskInputProps): IMaskProps {
+    _extractMaskOptionsFromProps (props: IMaskInputProps): IMask.AnyMaskedOptions {
       const { ...cloneProps } = props;
 
       // keep only mask options props
