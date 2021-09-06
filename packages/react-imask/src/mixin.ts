@@ -74,13 +74,15 @@ export type IMaskProps = IMask.AnyMaskedOptions & {
   unmask?: 'typed' | boolean;
 }
 
-export type IMaskInputProps = HTMLInputElement & IMaskProps & { inputRef: (el: HTMLInputElement) => void };
+type MaskedElement = HTMLInputElement | HTMLTextAreaElement;
 
-export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskProps & { inputRef: (el: HTMLInputElement) => void }>): React.ComponentType {
+export type IMaskInputProps = MaskedElement & IMaskProps & { inputRef: (el: MaskedElement) => void };
+
+export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskProps & { inputRef: (el: MaskedElement) => void }>): React.ComponentType {
   const MaskedComponent = class extends React.Component<IMaskInputProps> {
     static displayName: string;
     
-    element: HTMLInputElement;
+    element: MaskedElement;
     maskRef: IMask.InputMask<IMask.AnyMaskedOptions>;
     
     constructor (props: IMaskInputProps) {
@@ -122,7 +124,7 @@ export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskP
       this.destroyMask();
     }
 
-    _inputRef (el: HTMLInputElement){
+    _inputRef (el: MaskedElement){
       this.element = el;
       if (this.props.inputRef) this.props.inputRef(el);
     }
@@ -187,7 +189,7 @@ export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskP
     }
 
     render () {
-      return React.createElement<{ inputRef: (el: HTMLInputElement) => void }>(ComposedComponent, {
+      return React.createElement<{ inputRef: (el: MaskedElement) => void }>(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
         inputRef: this._inputRef,
       });
