@@ -1,8 +1,8 @@
 import React from 'react';
-import IMaskMixin from './mixin';
+import IMaskMixin, { IMaskInputProps } from './mixin';
 
 
-const InputComponent = ({inputRef, ...props}) =>
+const InputComponent = ({ inputRef, ...props }: IMaskInputProps) =>
   React.createElement('input', {
     ...props,
     ref: inputRef

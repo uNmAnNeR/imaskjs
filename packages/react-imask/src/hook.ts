@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 
 export default
-function useIMask (opts, { onAccept, onComplete } = {}) {
+function useIMask (opts: IMask.AnyMaskedOptions, { onAccept, onComplete }: { onAccept?: () => void, onComplete?: () => void } = {}) {
   const ref = useRef(null);
   const maskRef = useRef(null);
 
