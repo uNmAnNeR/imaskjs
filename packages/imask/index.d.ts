@@ -73,7 +73,7 @@ declare namespace IMask {
     aggregate(details: ChangeDetails): ChangeDetails;
   }
 
-  type MaskedOptions<MaskType> = {
+  type BaseMaskedOptions<MaskType> = {
     mask: MaskType;
   } & Partial<
     Pick<
@@ -109,8 +109,8 @@ declare namespace IMask {
     overwrite?: boolean;
     isInitialized: boolean;
 
-    constructor(opts: MaskedOptions<MaskType>);
-    updateOptions(opts: Partial<MaskedOptions<MaskType>>): void;
+    constructor(opts: BaseMaskedOptions<MaskType>);
+    updateOptions(opts: Partial<BaseMaskedOptions<MaskType>>): void;
     reset(): void;
     resolve(value: string): string;
     nearestInputPos(cursorPos: number, direction?: Direction): number;
@@ -136,7 +136,7 @@ declare namespace IMask {
   }
   interface AnyMasked extends Masked<AnyMask> {}
 
-  type MaskedPatternOptions<MaskType=string> = MaskedOptions<MaskType> &
+  type MaskedPatternOptions<MaskType=string> = BaseMaskedOptions<MaskType> &
     Partial<
       Pick<MaskedPattern<MaskType>, 'blocks' | 'definitions' | 'placeholderChar' | 'lazy'>
     >;
@@ -275,7 +275,7 @@ declare namespace IMask {
     updateOptions(opts: Partial<MaskedRangeOptions>): void;
   }
 
-  type MaskedNumberOptions = MaskedOptions<typeof Number> &
+  type MaskedNumberOptions = BaseMaskedOptions<typeof Number> &
     Partial<
       Pick<
         MaskedNumber,
@@ -362,6 +362,13 @@ declare namespace IMask {
   export class MaskedRegExp extends Masked<RegExp> {}
   export class MaskedFunction extends Masked<Function> {}
 
+  type MaskedDynamicOptions = BaseMaskedOptions<AnyMaskedOptionsArray> &
+    Partial<
+      Pick<
+        MaskedDynamic,
+        | 'dispatch'
+      >
+    >;
   export class MaskedDynamic extends Masked<AnyMaskedOptionsArray> {
     static DEFAULTS: Pick<MaskedDynamic, 'dispatch'>;
     readonly currentMask?: AnyMasked;
@@ -371,25 +378,25 @@ declare namespace IMask {
       masked: AnyMasked,
       flags: AppendFlags
     ) => AnyMasked;
+    
+    constructor(opts: MaskedDynamicOptions);
+    updateOptions(opts: Partial<MaskedDynamicOptions>): void;
   }
 
   export type AnyMaskedOptions =
-    | MaskedDateOptions
-    | MaskedNumberOptions
-    | MaskedPatternOptions
-    | MaskedOptions<RegExp>
-    | MaskedOptions<Function>
-    | MaskedOptions<AnyMaskedOptionsArray>
-    | MaskedOptions<AnyMaskedOptionsMasked>
-    | MaskedOptions<MaskedPattern>
-    | MaskedOptions<MaskedNumber>
-    | MaskedOptions<MaskedFunction>
-    | MaskedOptions<MaskedRegExp>
-    | MaskedOptions<MaskedDynamic>
-    | MaskedOptions<MaskedDate>
-    | MaskedOptions<MaskedEnum>
-    | MaskedOptions<MaskedRange>
-    | MaskedOptions<typeof Masked>;
+    & MaskedDateOptions
+    & MaskedNumberOptions
+    & MaskedPatternOptions
+    & MaskedDynamicOptions
+    & BaseMaskedOptions<RegExp>
+    & BaseMaskedOptions<Function>
+    & BaseMaskedOptions<AnyMaskedOptionsArray>
+    & BaseMaskedOptions<AnyMaskedOptionsMasked>
+    & BaseMaskedOptions<MaskedFunction>
+    & BaseMaskedOptions<MaskedRegExp>
+    & BaseMaskedOptions<MaskedEnum>
+    & BaseMaskedOptions<MaskedRange>
+    & BaseMaskedOptions<typeof Masked>;
   interface AnyMaskedOptionsArray extends Array<AnyMaskedOptions> {}
   interface AnyMaskedOptionsMasked extends Masked<AnyMaskedOptions> {}
 
@@ -403,11 +410,11 @@ declare namespace IMask {
           ? MaskedDate
           : Opts extends MaskedNumberOptions
           ? MaskedNumber
-          : Opts extends MaskedOptions<RegExp>
+          : Opts extends BaseMaskedOptions<RegExp>
           ? MaskedRegExp
-          : Opts extends MaskedOptions<Function>
+          : Opts extends BaseMaskedOptions<Function>
           ? MaskedFunction
-          : Opts extends MaskedOptions<AnyMaskedOptionsArray>
+          : Opts extends BaseMaskedOptions<AnyMaskedOptionsArray>
           ? MaskedDynamic
           : Masked<Opts['mask']>
         : never;

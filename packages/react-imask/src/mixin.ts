@@ -2,7 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import IMask from 'imask';
 
-const MASK_PROPS = {
+
+type ReactMaskProps = {
+  onAccept?: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
+  onComplete?: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
+  unmask?: 'typed' | boolean;
+  value?: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'];
+  inputRef?: { inputRef: (el: MaskedElement) => void }
+}
+
+const MASK_PROPS: { [key in keyof (IMask.AnyMaskedOptions & ReactMaskProps)]: unknown } = {
   // common
   mask: PropTypes.oneOfType([
     PropTypes.array,
@@ -69,8 +78,8 @@ const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
 );
 
 export type IMaskProps = IMask.AnyMaskedOptions & {
-  onAccept: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => any;
-  onComplete: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => any;
+  onAccept: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
+  onComplete: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
   unmask?: 'typed' | boolean;
 }
 
@@ -167,17 +176,17 @@ export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskP
       return props;
     }
 
-    get maskValue () {
+    get maskValue (): string | IMask.MaskedTypedValue<IMask.AnyMaskedOptions['mask']> {
       if (this.props.unmask === 'typed') return this.maskRef.typedValue;
       if (this.props.unmask) return this.maskRef.unmaskedValue;
       return this.maskRef.value;
     }
 
-    set maskValue (value) {
+    set maskValue (value: string | IMask.MaskedTypedValue<IMask.AnyMaskedOptions['mask']>) {
       value = value == null ? '' : value;
-      if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
-      else if (this.props.unmask) this.maskRef.unmaskedValue = value;
-      else this.maskRef.value = value;
+      if (this.props.unmask === 'typed') this.maskRef.typedValue = value as IMask.MaskedTypedValue<IMask.AnyMaskedOptions['mask']>;
+      else if (this.props.unmask) this.maskRef.unmaskedValue = value as string;
+      else this.maskRef.value = value as string;
     }
 
     _onAccept (e?: InputEvent) {

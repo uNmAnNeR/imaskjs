@@ -5,6 +5,7 @@
     "target": "es2015",
     "noImplicitAny": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "lib": ["dom", "es2015.promise", "es2015"]
   },
