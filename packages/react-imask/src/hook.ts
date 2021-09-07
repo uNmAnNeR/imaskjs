@@ -1,15 +1,11 @@
 import IMask from 'imask';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 
 export default
-function useIMask (opts, { onAccept, onComplete } = {}) {
+function useIMask (opts: IMask.AnyMaskedOptions, { onAccept, onComplete }: { onAccept?: () => void, onComplete?: () => void } = {}) {
   const ref = useRef(null);
   const maskRef = useRef(null);
-  const [value, setValue] = useState('');
-  const [unmaskedValue, setUnmaskedValue] = useState('');
-  const [typedValue, setTypedValue] = useState('');
-
 
   // methods
   function _initMask () {
@@ -21,7 +17,9 @@ function useIMask (opts, { onAccept, onComplete } = {}) {
       .on('accept', _onAccept)
       .on('complete', _onComplete);
 
-    _onAccept();
+    if (el.defaultValue !== maskRef.current.value) {
+      _onAccept();
+    }
   }
 
   function _destroyMask () {
@@ -32,10 +30,6 @@ function useIMask (opts, { onAccept, onComplete } = {}) {
   }
 
   function _onAccept () {
-    setTypedValue(maskRef.current.typedValue);
-    setUnmaskedValue(maskRef.current.unmaskedValue);
-    setValue(maskRef.current.value);
-
     if (onAccept) onAccept();
   }
 
@@ -57,32 +51,10 @@ function useIMask (opts, { onAccept, onComplete } = {}) {
     }
   }, [opts]);
 
-  useEffect(() => {
-    const mask = maskRef.current;
-    if (mask && mask.value !== value) {
-      mask.value = value;
-    }
-  }, [value]);
-
-  useEffect(() => {
-    const mask = maskRef.current;
-    if (mask && mask.unmaskedValue !== unmaskedValue) {
-      mask.unmaskedValue = unmaskedValue;
-    }
-  }, [unmaskedValue]);
-
-  useEffect(() => {
-    const mask = maskRef.current;
-    if (mask) mask.typedValue = typedValue;
-  }, [typedValue]);
-
   useEffect(() => _destroyMask, []);
 
 
   return {
     ref, maskRef,
-    value, setValue,
-    unmaskedValue, setUnmaskedValue,
-    typedValue, setTypedValue,
   };
 }
