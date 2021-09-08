@@ -62,12 +62,9 @@ export default {
     return () => {
       const data = {
         ...attrs,
-        modelValue: mask.value ? mask.value.value : props.modelValue,
+        value: props.value ? props.value : props.modelValue,
         ref: el,
       };
-
-      // TODO should this somehow work at all?
-      delete data.value;
 
       if (!props.mask) {
         data.onInput = event => {
