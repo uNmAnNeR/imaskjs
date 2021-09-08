@@ -13,7 +13,7 @@ react-imask
 
 ## Mask Input Example
 ```javascript
-import {IMaskInput} from 'react-imask';
+import { IMaskInput } from 'react-imask';
 
 <IMaskInput
   mask={Number}
@@ -39,7 +39,7 @@ import {IMaskInput} from 'react-imask';
 
 ## Extend Existing Components
 ```javascript
-import {IMaskMixin} from 'react-imask';
+import { IMaskMixin } from 'react-imask';
 
 // extend style component
 const StyledInput = styled.input`
@@ -63,6 +63,21 @@ const MaskedStyledInput = IMaskMixin(({inputRef, ...props}) => (
 />
 ```
 More options see in a [guide](https://imask.js.org/guide.html).
+
+## Using hook
+```javascript
+import { useState } from 'react';
+import { useIMask } from 'react-imask';
+
+function IMaskWithHook () {
+  const [ opts, setOpts ] = useState({ mask: Number });
+  const { ref, maskRef } = useIMask(opts);
+  
+  return (
+    <input ref={ref} />
+  );
+}
+```
 
 ## Many Thanks to
 [@Yordis Prieto](https://github.com/yordis)
