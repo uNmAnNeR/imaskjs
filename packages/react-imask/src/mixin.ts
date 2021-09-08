@@ -3,8 +3,13 @@ import PropTypes from 'prop-types';
 import IMask from 'imask';
 
 
+export
 type Falsy = false | 0 | "" | null | undefined;
+
+export
 type MaskedElement = HTMLInputElement | HTMLTextAreaElement;
+
+export
 type ReactMaskProps<
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
   Unmask extends ('typed' | boolean) = false,
