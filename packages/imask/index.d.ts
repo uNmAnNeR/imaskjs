@@ -264,7 +264,7 @@ declare namespace IMask {
   }
 
   type MaskedRangeOptions = MaskedPatternOptions &
-    Partial<Pick<MaskedRange, 'from' | 'to' | 'autofix'>>;
+    Partial<Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>>;
   export class MaskedRange extends MaskedPattern {
     readonly maxLength: number;
     readonly from: number;
@@ -387,6 +387,7 @@ declare namespace IMask {
     | MaskedDateOptions
     | MaskedNumberOptions
     | MaskedPatternOptions
+    | MaskedRangeOptions
     | MaskedDynamicOptions
     | BaseMaskedOptions<RegExp>
     | BaseMaskedOptions<Function>
