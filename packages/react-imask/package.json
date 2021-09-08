@@ -9,7 +9,7 @@
   "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "scripts": {
-    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "build": "tsc --emitDeclarationOnly && rollup -c",
     "watch": "rollup -c -w"
   },
   "keywords": [

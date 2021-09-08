@@ -5,6 +5,7 @@ import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json';
+import copy from 'rollup-plugin-copy';
 
 
 const globals = {
@@ -55,6 +56,12 @@ export default [
       nodeResolve({ extensions }),
       commonjs(),
       babel(babelConfig),
+      copy({
+        targets: [
+          { src: 'dist/*.d.ts', dest: 'esm' },
+          { src: 'dist/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
+        ]
+      })
     ]
   }
 ]
