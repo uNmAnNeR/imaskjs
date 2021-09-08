@@ -2,7 +2,10 @@ import { babel } from '@rollup/plugin-babel';
 import eslint from '@rollup/plugin-eslint';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json';
+import copy from 'rollup-plugin-copy';
 
 
 const globals = {
@@ -11,9 +14,17 @@ const globals = {
   'prop-types': 'PropTypes',
 };
 
+const extensions = ['.js', '.ts'];
+
+const babelConfig = {
+  extensions,
+  babelHelpers: 'bundled',
+  rootMode: 'upward',
+};
+
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
       name: 'ReactIMask',
@@ -23,14 +34,14 @@ export default [
       sourcemap: true,
     },
     plugins: [
-      eslint({configFile: '../../.eslintrc'}),
-      babel({
-        rootMode: 'upward',
-      }),
+      eslint(),
+      nodeResolve({ extensions }),
+      commonjs(),
+      babel(babelConfig),
     ],
   },
   {
-    input: ['src/**/*.js'],
+    input: ['src/**/*.ts'],
     output: {
       format: 'esm',
       dir: 'esm',
@@ -42,9 +53,15 @@ export default [
         delimiters: ['', ''],
       }),
       multi(),
-      babel({
-        rootMode: 'upward',
-      }),
+      nodeResolve({ extensions }),
+      commonjs(),
+      babel(babelConfig),
+      copy({
+        targets: [
+          { src: 'dist/*.d.ts', dest: 'esm' },
+          { src: 'dist/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
+        ]
+      })
     ]
   }
 ]
