@@ -384,6 +384,21 @@ declare namespace IMask {
   }
 
   export type AnyMaskedOptions =
+    | MaskedDateOptions
+    | MaskedNumberOptions
+    | MaskedPatternOptions
+    | MaskedDynamicOptions
+    | BaseMaskedOptions<RegExp>
+    | BaseMaskedOptions<Function>
+    | BaseMaskedOptions<AnyMaskedOptionsArray>
+    | BaseMaskedOptions<AnyMaskedOptionsMasked>
+    | BaseMaskedOptions<MaskedFunction>
+    | BaseMaskedOptions<MaskedRegExp>
+    | BaseMaskedOptions<MaskedEnum>
+    | BaseMaskedOptions<MaskedRange>
+    | BaseMaskedOptions<typeof Masked>;
+
+  export type AllMaskedOptions =
     & MaskedDateOptions
     & MaskedNumberOptions
     & MaskedPatternOptions

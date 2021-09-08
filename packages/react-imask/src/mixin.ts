@@ -3,15 +3,16 @@ import PropTypes from 'prop-types';
 import IMask from 'imask';
 
 
+type MaskedElement = HTMLInputElement | HTMLTextAreaElement;
 type ReactMaskProps = {
   onAccept?: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
   onComplete?: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
   unmask?: 'typed' | boolean;
   value?: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'];
-  inputRef?: { inputRef: (el: MaskedElement) => void }
+  inputRef: (el: MaskedElement) => void;
 }
 
-const MASK_PROPS: { [key in keyof (IMask.AnyMaskedOptions & ReactMaskProps)]: unknown } = {
+const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: unknown } = {
   // common
   mask: PropTypes.oneOfType([
     PropTypes.array,
@@ -77,19 +78,13 @@ const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
 );
 
-export type IMaskProps = IMask.AnyMaskedOptions & {
-  onAccept: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
-  onComplete: (value: IMask.InputMask<IMask.AnyMaskedOptions>['value' | 'typedValue' | 'unmaskedValue'], maskRef: IMask.InputMask<IMask.AnyMaskedOptions>, e?: InputEvent) => void;
-  unmask?: 'typed' | boolean;
-}
+export type IMaskMixinProps = IMask.AllMaskedOptions & ReactMaskProps;
+export type IMaskInputProps = MaskedElement & IMaskMixinProps;
 
-type MaskedElement = HTMLInputElement | HTMLTextAreaElement;
-
-export type IMaskInputProps = MaskedElement & IMaskProps & { inputRef: (el: MaskedElement) => void };
-
-export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskProps & { inputRef: (el: MaskedElement) => void }>): React.ComponentType {
+export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskMixinProps>): React.ComponentType {
   const MaskedComponent = class extends React.Component<IMaskInputProps> {
     static displayName: string;
+    static propTypes: typeof MASK_PROPS;
     
     element: MaskedElement;
     maskRef: IMask.InputMask<IMask.AnyMaskedOptions>;
@@ -198,7 +193,7 @@ export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskP
     }
 
     render () {
-      return React.createElement<{ inputRef: (el: MaskedElement) => void }>(ComposedComponent, {
+      return React.createElement(ComposedComponent, {
         ...this._extractNonMaskProps(this.props),
         inputRef: this._inputRef,
       });
@@ -207,6 +202,7 @@ export default function IMaskMixin(ComposedComponent: React.ComponentType<IMaskP
 
   const nestedComponentName = ComposedComponent.displayName || ComposedComponent.name || 'Component';
   MaskedComponent.displayName = `IMask(${nestedComponentName})`;
+  MaskedComponent.propTypes = MASK_PROPS;
 
   return MaskedComponent;
 }
