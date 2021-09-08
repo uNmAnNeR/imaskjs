@@ -198,7 +198,7 @@ export default function IMaskMixin<
         delete cloneProps[maskProp];
       });
 
-      return props;
+      return cloneProps;
     }
 
     get maskValue (): Value {
