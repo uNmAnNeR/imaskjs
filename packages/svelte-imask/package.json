@@ -2,7 +2,7 @@
   "name": "@imask/svelte",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "6.2.0",
+  "version": "6.2.2",
   "description": "Svelte input mask",
   "main": "dist/svelte-imask.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask",
