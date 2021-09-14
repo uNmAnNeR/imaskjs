@@ -42,6 +42,7 @@ export default [
   },
   {
     input: ['src/**/*.ts'],
+    external: [...Object.keys(globals), 'imask/esm', 'imask/esm/imask'],
     output: {
       format: 'esm',
       dir: 'esm',

@@ -31,6 +31,7 @@ export default [
   },
   {
     input: ['src/**/*.js'],
+    external: [...Object.keys(globals), 'imask/esm', 'imask/esm/imask'],
     output: {
       format: 'esm',
       dir: 'esm',
