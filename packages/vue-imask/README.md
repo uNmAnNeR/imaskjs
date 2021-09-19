@@ -9,9 +9,19 @@ vue-imask
 </a>
 
 ## Install
-`npm install vue-imask`
+`npm i vue-imask`
 
-## Mask Component Example
+for Vue 2 also do:
+
+`npm i -D @vue/composition-api`
+
+If you are using NuxtJS with Vue 2 you also need to install:
+
+`npm i -D @nuxtjs/composition-api`
+
+And then add `@nuxtjs/composition-api/module` in the buildModules option in your `nuxt.config.js`.
+
+## Mask Component Example (Vue 2)
 ```html
 <template>
   <imask-input
@@ -19,20 +29,21 @@ vue-imask
     :mask="Number"
     radix="."
     :unmask="true"
-    // depending on prop above first argument is
-    // `value` if `unmask=false`,
-    // `unmaskedValue` if `unmask=true`,
-    // `typedValue` if `unmask='typed'`
+    <!-- depending on prop above first argument of 'accept' callback is
+    `value` if `unmask=false`,
+    `unmaskedValue` if `unmask=true`,
+    `typedValue` if `unmask='typed'` -->
     @accept="onAccept"
-    // ...and more mask props in a guide
 
-    // other input props
+    <!-- ...see more mask props in a guide -->
+
+    <!-- other input props -->
     placeholder='Enter number here'
   />
 </template>
 
 <script>
-  import {IMaskComponent} from 'vue-imask';
+  import { IMaskComponent } from 'vue-imask';
 
   export default {
     data () {
@@ -40,6 +51,51 @@ vue-imask
         numberModel: '',
         onAccept (value) {
           console.log(value);
+        }
+      }
+    },
+    components: {
+      'imask-input': IMaskComponent
+    }
+  }
+</script>
+```
+
+
+## Mask Component Example (Vue 3)
+```html
+<template>
+  <imask-input
+    <!-- possible to use 'v-model' = 'v-model:value' = 'v-model:masked' and 'v-model:unmasked' -->
+    v-model:typed="numberModel"
+    :mask="Number"
+    radix="."
+    @accept:masked="onAccept" <!-- accept value (same as '@accept:value' or just '@accept') -->
+    @accept:unmasked="onAcceptUnmasked"
+    <!--
+      @accept:typed="onAccepttyped"
+      @complete:typed="onCompleteTyped"
+    -->
+
+    <!-- ...see more mask props in a guide -->
+
+    <!-- other input props -->
+    placeholder='Enter number here'
+  />
+</template>
+
+<script>
+  import { IMaskComponent } from 'vue-imask';
+
+  export default {
+    data () {
+      return {
+        numberModel: '',
+        onAccept (value) {
+          console.log({ value });
+        },
+        onAcceptUnmasked (unmaskedValue) {
+          console.log({ unmaskedValue });
         }
       }
     },
@@ -62,7 +118,7 @@ In some cases value bindings (`v-model`) might not work for directive, you can u
 </template>
 
 <script>
-  import {IMaskDirective} from 'vue-imask';
+  import { IMaskDirective } from 'vue-imask';
 
   export default {
     data () {
@@ -93,14 +149,27 @@ In some cases value bindings (`v-model`) might not work for directive, you can u
 ```
 More options see in a [guide](https://imask.js.org/guide.html).
 
-## Many Thanks to
-[@Yegor Loginov](https://github.com/naprimer)
+## Mask Composable (Vue 3)
+```html
+<template>
+  <input ref="el">
+</template>
 
-[@Stanislav Eremenko](https://github.com/c01nd01r)
+<script>
+  import { useIMask } from 'vue-imask';
 
-[@Yacine Hmito](https://github.com/yacinehmito)
-
-[@unofficial](https://github.com/cangku)
+  export default {
+    setup (props) {
+      const { el, masked } = useIMask({
+        mask: Number,
+        radix: '.',
+      });
+  
+      return { el };
+    }
+  }
+</script>
+```
 
 ## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/3)
+[Paypal](https://www.paypal.me/alexeykryazhev/5)
