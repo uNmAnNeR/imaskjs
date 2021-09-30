@@ -44,8 +44,8 @@ function useIMask<
     }
   }
 
-  function _onAccept () {
-    if (onAccept) onAccept(maskRef.current.value, maskRef.current);
+  function _onAccept (event?: InputEvent) {
+    if (onAccept) onAccept(maskRef.current.value, maskRef.current, event);
   }
 
   function _onComplete () {
