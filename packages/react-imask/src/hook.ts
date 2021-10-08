@@ -1,75 +1,77 @@
 import IMask from 'imask';
-import { useEffect, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import type { MutableRefObject } from 'react';
 import type { ReactMaskProps, MaskedElement, Falsy } from './mixin';
 
 
 export default
-function useIMask<
-  Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
-  Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
+  function useIMask<
+    Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
+    Unmask extends ('typed' | boolean) = false,
+    Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
     Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
     IMask.InputMask<Opts>['unmaskedValue']
->(
-  opts: Opts,
-  { onAccept, onComplete }: Pick<ReactMaskProps<Opts, Unmask, Value>, 'onAccept' | 'onComplete'> = {}
-): {
-  ref: MutableRefObject<MaskedElement>,
-  maskRef: MutableRefObject<IMask.InputMask<Opts>>,
-} {
+  >(
+    opts: Opts,
+    { onAccept, onComplete }: Pick<ReactMaskProps<Opts, Unmask, Value>, 'onAccept' | 'onComplete'> = {}
+  ): {
+    ref: MutableRefObject<MaskedElement>,
+    maskRef: MutableRefObject<IMask.InputMask<Opts>>,
+  } {
   const ref = useRef(null);
   const maskRef = useRef(null);
 
+  const deleteMask = useCallback(() => {
+    maskRef.current?.destroy();
+    maskRef.current = null;
+  }, []);
 
-  // methods
-  function _initMask () {
-    const el = ref.current;
+  const handleOnAccept = useCallback(
+    (event?: InputEvent) => maskRef.current && onAccept?.(maskRef.current.value, maskRef.current, event),
+    [onAccept],
+  );
 
-    if (!el || !opts?.mask) return;
+  const handleOnComplete = useCallback(
+    () => maskRef.current && onComplete?.(maskRef.current.value, maskRef.current),
+    [onComplete],
+  );
 
-    maskRef.current = IMask(el, opts)
-      .on('accept', _onAccept)
-      .on('complete', _onComplete);
-
-    if (el.defaultValue !== maskRef.current.value) {
-      _onAccept();
-    }
-  }
-
-  function _destroyMask () {
-    if (maskRef.current) {
-      maskRef.current.destroy();
-      maskRef.current = null;
-    }
-  }
-
-  function _onAccept (event?: InputEvent) {
-    if (onAccept) onAccept(maskRef.current.value, maskRef.current, event);
-  }
-
-  function _onComplete () {
-    if (onComplete) onComplete(maskRef.current.value, maskRef.current);
-  }
-
-
-  // lifecycle
   useEffect(() => {
     const el = ref.current;
-    if (!el || !opts?.mask) return _destroyMask();
+
+    if (!el || !opts?.mask) return deleteMask();
 
     const mask = maskRef.current;
-    if (!mask) {
-      _initMask();
+
+    if (!mask && el && opts?.mask) {
+      maskRef.current = IMask(el, opts);
+
+      if (el.defaultValue !== maskRef.current.value) {
+        handleOnAccept();
+      }
     } else {
-      mask.updateOptions(opts);
+      mask?.updateOptions(opts);
     }
-  }, [opts]);
+  }, [opts, deleteMask, handleOnAccept]);
 
-  useEffect(() => _destroyMask, []);
+  useEffect(() => {
+    if (!maskRef.current) return;
 
+    const mask = maskRef.current;
+
+    mask.on('accept', handleOnAccept);
+    mask.on('complete', handleOnComplete);
+
+    return () => {
+      mask.off('accept', handleOnAccept);
+      mask.off('complete', handleOnComplete);
+    };
+  }, [handleOnAccept, handleOnComplete]);
+
+  useEffect(() => deleteMask, [deleteMask]);
 
   return {
-    ref, maskRef,
+    ref,
+    maskRef,
   };
 }
