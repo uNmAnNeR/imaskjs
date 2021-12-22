@@ -54,6 +54,15 @@ describe('Insert', function () {
     assert.equal(masked.unmaskedValue, '79998887766');
   });
 
+  it('should not set masked value as actual value when unmask is typed', function () {
+    masked.updateOptions({mask: '0000-00-0000', unmask: 'typed'});
+    masked.value = '1234121234';
+
+    assert.equal(masked.value, '1234-12-1234');
+    assert.equal(masked.unmaskedValue, '1234121234');
+    assert.equal(masked.unmaskedValue, masked.typedValue);
+  });
+
   it('should prepare value before insert', function () {
     const prepareStub = sinon.stub().returnsArg(0);
     masked.updateOptions({
