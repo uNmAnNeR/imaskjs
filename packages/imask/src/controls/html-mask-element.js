@@ -94,12 +94,24 @@ class HTMLMaskElement extends MaskElement {
   /** */
   _toggleEventHandler (event: string, handler?: Function): void {
     if (this._handlers[event]) {
-      this.input.removeEventListener(event, this._handlers[event]);
+      if (event === 'input' && this.input.parentElement) {
+        // remove input event from parent instead
+        this.input.parentElement.removeEventListener(event, this._handlers[event], true);
+      } else {
+        // default behaviour
+        this.input.removeEventListener(event, this._handlers[event]);
+      }
       delete this._handlers[event];
     }
 
     if (handler) {
-      this.input.addEventListener(event, handler);
+      if (event === 'input' && this.input.parentElement) {
+        // add input event to parent instead to fix mask behaviour in firefox when input is inside a wrapper
+        this.input.parentElement.addEventListener(event, handler, true);
+      } else {
+        // default behaviour
+        this.input.addEventListener(event, handler);
+      }
       this._handlers[event] = handler;
     }
   }
