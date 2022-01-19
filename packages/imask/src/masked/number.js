@@ -109,7 +109,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doPrepare (str: string, ...args: *): string {
+  doPrepare (str: string, ...args: *): string | [string, ChangeDetails] {
     return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
   }
 

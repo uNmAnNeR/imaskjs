@@ -321,7 +321,8 @@ class InputMask {
       // new state
       this.el.value, this.cursorPos,
       // old state
-      this.value, this._selection);
+      this.value, this._selection,
+    );
 
     const oldRawValue = this.masked.rawInputValue;
 
@@ -329,7 +330,8 @@ class InputMask {
       details.startChangePos,
       details.removed.length,
       details.inserted,
-      details.removeDirection).offset;
+      details.removeDirection,
+    ).offset;
 
     // force align in remove direction only if no input chars were removed
     // otherwise we still need to align with NONE (to get out from fixed symbols for instance)

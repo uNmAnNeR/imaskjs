@@ -1,5 +1,7 @@
 // @flow
 import MaskedPattern from './pattern.js';
+import ChangeDetails from '../core/change-details.js';
+import { normalizePrepare } from '../core/utils.js';
 import { type AppendFlags } from './base.js';
 import IMask from '../core/holder.js';
 
@@ -68,28 +70,34 @@ class MaskedRange extends MaskedPattern {
     return [minstr, maxstr];
   }
 
+  // TODO str is a single char everytime
   /**
     @override
-  */
-  doPrepare (str: string, flags: AppendFlags={}): string {
-    str = super.doPrepare(str, flags).replace(/\D/g, '');
-    if (!this.autofix) return str;
+  */ 
+  doPrepare (ch: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
+    let details: ChangeDetails;
+    [ch, details] = normalizePrepare(super.doPrepare(ch.replace(/\D/g, ''), flags));
+
+    if (!this.autofix || !ch) return ch;
 
     const fromStr = String(this.from).padStart(this.maxLength, '0');
     const toStr = String(this.to).padStart(this.maxLength, '0');
 
-    const val = this.value;
-    let prepStr = '';
-    for (let ci=0; ci<str.length; ++ci) {
-      const nextVal = val + prepStr + str[ci];
-      const [minstr, maxstr] = this.boundaries(nextVal);
+    let nextVal = this.value + ch;
+    if (nextVal.length > this.maxLength) return '';
 
-      if (Number(maxstr) < this.from) prepStr += fromStr[nextVal.length - 1];
-      else if (Number(minstr) > this.to) prepStr += toStr[nextVal.length - 1];
-      else prepStr += str[ci];
+    const [minstr, maxstr] = this.boundaries(nextVal);
+
+    if (Number(maxstr) < this.from) return fromStr[nextVal.length - 1];
+
+    if (Number(minstr) > this.to) {
+      if (this.autofix === 'pad' && nextVal.length < this.maxLength) {
+        return ['', details.aggregate(this.append(fromStr[nextVal.length - 1]+ch, flags))];
+      }
+      return toStr[nextVal.length - 1];
     }
 
-    return prepStr;
+    return ch;
   }
 
   /**

@@ -8,30 +8,15 @@
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
-    class MaskedCurrency extends IMask.MaskedPattern {
-      get typedValue () {
-        return this.maskedBlock('d').typedValue;
-      }
-      set typedValue (num) {
-        this.maskedBlock('d').typedValue = num;
-      }
-    }
-    const currencyMask = new MaskedCurrency({
-      mask: '000$d',
-      lazy: false,
-      blocks: {
-        d: {
-          mask: Number,
-          thousandsSeparator: '.',
-          radix: ',',
-          scale: 2,
-          signed: false,
-          mapToRadix: ['.']
-        },
-      },
-    })
-    var imask = new IMask(document.getElementById('ce'), {
-      mask: currencyMask,
+    const mask = new IMask.MaskedRange({
+      from: 0,
+      to: 5,
+      maxLength: 3,
+      autofix: 'pad',
+    });
+
+    var imask = IMask(document.getElementById('input'), {
+      mask,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });

@@ -1,7 +1,7 @@
 // @flow
 import ChangeDetails from '../core/change-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
-import { type Direction, DIRECTION, isString } from '../core/utils.js';
+import { type Direction, DIRECTION, isString, normalizePrepare } from '../core/utils.js';
 import { type TailDetails } from '../core/tail-details.js';
 import IMask from '../core/holder.js';
 
@@ -62,7 +62,7 @@ class Masked<MaskType> {
   /** */ // $FlowFixMe no ideas
   parent: ?Masked<*>;
   /** Transforms value before mask processing */
-  prepare: (string, Masked<MaskType>, AppendFlags) => string;
+  prepare: (string, Masked<MaskType>, AppendFlags) => string | [string, ChangeDetails];
   /** Validates if value is acceptable */
   validate: (string, Masked<MaskType>, AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
@@ -208,7 +208,10 @@ class Masked<MaskType> {
   /** Appends char */
   _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
     const consistentState: MaskedState = this.state;
-    let details: ChangeDetails = this._appendCharRaw(this.doPrepare(ch, flags), flags);
+    let details: ChangeDetails;
+    [ch, details] = normalizePrepare(this.doPrepare(ch, flags));
+
+    details = details.aggregate(this._appendCharRaw(ch, flags));
 
     if (details.inserted) {
       let consistentTail;
@@ -312,7 +315,7 @@ class Masked<MaskType> {
     Prepares string before mask processing
     @protected
   */
-  doPrepare (str: string, flags: AppendFlags={}): string {
+  doPrepare (str: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
     return this.prepare ?
       this.prepare(str, this, flags) :
       str;

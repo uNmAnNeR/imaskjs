@@ -1,4 +1,5 @@
 // @flow
+import ChangeDetails from './change-details.js';
 
 
 /** Checks if value is string */
@@ -71,6 +72,13 @@ function escapeRegExp (str: string): string {
   return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
 }
 
+export
+function normalizePrepare (prep: string | [string, ChangeDetails]): [string, ChangeDetails] {
+  return Array.isArray(prep) ? prep : [
+    prep,
+    new ChangeDetails(),
+  ];
+}
 
 // cloned from https://github.com/epoberezkin/fast-deep-equal with small changes
 export
