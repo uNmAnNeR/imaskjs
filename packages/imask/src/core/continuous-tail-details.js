@@ -48,8 +48,8 @@ class ContinuousTailDetails implements TailDetails {
     Object.assign(this, state);
   }
 
-  shiftBefore (pos: number): string {
-    if (this.from >= pos || !this.value.length) return '';
+  unshift (beforePos?: number): string {
+    if (!this.value.length || (beforePos != null && this.from >= beforePos)) return '';
 
     const shiftChar = this.value[0];
     this.value = this.value.slice(1);

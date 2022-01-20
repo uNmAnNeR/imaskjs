@@ -8,15 +8,10 @@
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
-    const mask = new IMask.MaskedRange({
-      from: 0,
-      to: 5,
-      maxLength: 3,
-      autofix: 'pad',
-    });
-
     var imask = IMask(document.getElementById('input'), {
-      mask,
+      mask: Date,
+      autofix: 'pad',
+      eager: true,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });

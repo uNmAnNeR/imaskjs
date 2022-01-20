@@ -103,6 +103,7 @@ class MaskedPattern extends Masked<string> {
           const maskedBlock = createMask({
             parent: this,
             lazy: this.lazy,
+            eager: this.eager,
             placeholderChar: this.placeholderChar,
             overwrite: this.overwrite,
             ...this.blocks[bName],
@@ -150,6 +151,7 @@ class MaskedPattern extends Masked<string> {
         new PatternInputDefinition({
           parent: this,
           lazy: this.lazy,
+          eager: this.eager,
           placeholderChar: this.placeholderChar,
           mask: defs[char],
           isOptional: optionalBlock,
@@ -197,6 +199,13 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
+  get isFilled (): boolean {
+    return this._blocks.every(b => b.isFilled);
+  }
+
+  /**
+    @override
+  */
   doCommit () {
     this._blocks.forEach(b => b.doCommit());
     super.doCommit();
@@ -230,6 +239,28 @@ class MaskedPattern extends Masked<string> {
   */
   appendTail (tail: string | String | TailDetails): ChangeDetails {
     return super.appendTail(tail).aggregate(this._appendPlaceholder());
+  }
+
+  /**
+    @override
+  */
+  _appendEager (): ChangeDetails {
+    const details = new ChangeDetails();
+
+    let startBlockIndex = this._mapPosToBlock(this.value.length)?.index;
+    if (startBlockIndex == null) return details;
+
+    // TODO test if it works for nested pattern masks
+    if (this._blocks[startBlockIndex].isFilled) ++startBlockIndex;
+
+    for (let bi=startBlockIndex; bi<this._blocks.length; ++bi) {
+      const d = this._blocks[bi]._appendEager();
+      if (!d.inserted) break;
+
+      details.aggregate(d);
+    }
+
+    return details;
   }
 
   /**

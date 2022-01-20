@@ -65,7 +65,8 @@ class PatternFixedDefinition implements PatternBlock {
       case DIRECTION.NONE:
       case DIRECTION.RIGHT:
       case DIRECTION.FORCE_RIGHT:
-      default: return maxPos;
+      default:
+        return maxPos;
     }
   }
 
@@ -77,18 +78,26 @@ class PatternFixedDefinition implements PatternBlock {
     return true;
   }
 
-  _appendChar (str: string, flags?: AppendFlags={}): ChangeDetails {
+  get isFilled (): boolean {
+    return true;
+  }
+
+  _appendChar (ch: string, flags?: AppendFlags={}): ChangeDetails {
     const details = new ChangeDetails();
 
     if (this._value) return details;
 
-    const appended = this.char === str[0];
+    const appended = this.char === ch;
     const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
     if (isResolved) details.rawInserted = this.char;
     this._value = details.inserted = this.char;
     this._isRawInput = isResolved && (flags.raw || flags.input);
 
     return details;
+  }
+
+  _appendEager (): ChangeDetails {
+    return this._appendChar(this.char);
   }
 
   _appendPlaceholder (): ChangeDetails {
@@ -111,7 +120,7 @@ class PatternFixedDefinition implements PatternBlock {
   }
 
   append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails {
-    const details = this._appendChar(str, flags);
+    const details = this._appendChar(str[0], flags);
 
     if (tail != null) {
       details.tailShift += this.appendTail(tail).tailShift;

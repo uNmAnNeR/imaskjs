@@ -18,12 +18,13 @@ type PatternInputDefinitionOptions = {
   mask: Mask,
   isOptional: $PropertyType<PatternInputDefinition, 'isOptional'>,
   lazy: $PropertyType<PatternInputDefinition, 'lazy'>,
+  eager: $PropertyType<PatternInputDefinition, 'eager'>,
   placeholderChar: $PropertyType<PatternInputDefinition, 'placeholderChar'>,
 };
 
 type PatternInputDefinitionState = {
   masked: *,
-  _isFilled: boolean,
+  isFilled: boolean,
 };
 
 export
@@ -44,9 +45,11 @@ class PatternInputDefinition implements PatternBlock {
   /** */
   isOptional: boolean;
   /** */
-  _isFilled: boolean;
+  isFilled: boolean;
   /** */
   lazy: $PropertyType<MaskedPattern, 'lazy'>;
+  /** */
+  eager: $PropertyType<Masked<string>, 'eager'>;
   /** */
   placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>;
 
@@ -59,13 +62,13 @@ class PatternInputDefinition implements PatternBlock {
   }
 
   reset () {
-    this._isFilled = false;
+    this.isFilled = false;
     this.masked.reset();
   }
 
   remove (fromPos?: number=0, toPos?: number=this.value.length): ChangeDetails {
     if (fromPos === 0 && toPos >= 1) {
-      this._isFilled = false;
+      this.isFilled = false;
       return this.masked.remove(fromPos, toPos);
     }
 
@@ -74,7 +77,7 @@ class PatternInputDefinition implements PatternBlock {
 
   get value (): string {
     return this.masked.value ||
-      (this._isFilled && !this.isOptional ?
+      (this.isFilled && !this.isOptional ?
         this.placeholderChar :
         '');
   }
@@ -87,12 +90,12 @@ class PatternInputDefinition implements PatternBlock {
     return Boolean(this.masked.value) || this.isOptional;
   }
 
-  _appendChar (str: string, flags: AppendFlags={}): ChangeDetails {
-    if (this._isFilled) return new ChangeDetails();
+  _appendChar (ch: string, flags: AppendFlags={}): ChangeDetails {
+    if (this.isFilled) return new ChangeDetails();
 
     const state = this.masked.state;
     // simulate input
-    const details = this.masked._appendChar(str, flags);
+    const details = this.masked._appendChar(ch, flags);
 
     if (details.inserted && this.doValidate(flags) === false) {
       details.inserted = details.rawInserted = '';
@@ -103,23 +106,28 @@ class PatternInputDefinition implements PatternBlock {
       details.inserted = this.placeholderChar;
     }
     details.skip = !details.inserted && !this.isOptional;
-    this._isFilled = Boolean(details.inserted);
+    this.isFilled = Boolean(details.inserted);
 
     return details;
   }
 
   append (...args: *): ChangeDetails {
+    // TODO probably should be done via _appendChar
     return this.masked.append(...args);
   }
 
   _appendPlaceholder (): ChangeDetails {
     const details = new ChangeDetails();
 
-    if (this._isFilled || this.isOptional) return details;
+    if (this.isFilled || this.isOptional) return details;
 
-    this._isFilled = true;
+    this.isFilled = true;
     details.inserted = this.placeholderChar;
     return details;
+  }
+
+  _appendEager (): ChangeDetails {
+    return new ChangeDetails();
   }
 
   extractTail (...args: *): TailDetails {
@@ -163,12 +171,12 @@ class PatternInputDefinition implements PatternBlock {
   get state (): PatternInputDefinitionState {
     return {
       masked: this.masked.state,
-      _isFilled: this._isFilled,
+      isFilled: this.isFilled,
     };
   }
 
   set state (state: PatternInputDefinitionState) {
     this.masked.state = state.masked;
-    this._isFilled = state._isFilled;
+    this.isFilled = state.isFilled;
   }
 }

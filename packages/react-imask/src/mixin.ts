@@ -43,6 +43,7 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: un
   validate: PropTypes.func,
   commit: PropTypes.func,
   overwrite: PropTypes.bool,
+  eager: PropTypes.bool,
 
   // events
   onAccept: PropTypes.func,

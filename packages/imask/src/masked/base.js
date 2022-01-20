@@ -1,7 +1,7 @@
 // @flow
 import ChangeDetails from '../core/change-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
-import { type Direction, DIRECTION, isString, normalizePrepare } from '../core/utils.js';
+import { type Direction, DIRECTION, isString, normalizePrepare, forceDirection } from '../core/utils.js';
 import { type TailDetails } from '../core/tail-details.js';
 import IMask from '../core/holder.js';
 
@@ -47,6 +47,7 @@ type MaskedOptions<MaskType> = {
   validate?: $PropertyType<Masked<MaskType>, 'validate'>,
   commit?: $PropertyType<Masked<MaskType>, 'commit'>,
   overwrite?: $PropertyType<Masked<MaskType>, 'overwrite'>,
+  eager?: $PropertyType<Masked<MaskType>, 'eager'>,
   format?: $PropertyType<Masked<MaskType>, 'format'>,
   parse?: $PropertyType<Masked<MaskType>, 'parse'>,
 };
@@ -73,6 +74,8 @@ class Masked<MaskType> {
   parse: (string, Masked<MaskType>) => any;
   /** Enable characters overwriting */
   overwrite: ?boolean;
+  /** */
+  eager: boolean;
   /** */
   isInitialized: boolean;
   _value: string;
@@ -171,6 +174,11 @@ class Masked<MaskType> {
     return true;
   }
 
+  /** */
+  get isFilled (): boolean {
+    return this.isComplete;
+  }
+
   /** Finds nearest input position in direction */
   nearestInputPos (cursorPos: number, direction?: Direction): number {
     return cursorPos;
@@ -222,7 +230,7 @@ class Masked<MaskType> {
         const beforeTailState = this.state;
         if (this.overwrite) {
           consistentTail = checkTail.state;
-          checkTail.shiftBefore(this.value.length);
+          checkTail.unshift(this.value.length);
         }
 
         const tailDetails = this.appendTail(checkTail);
@@ -248,6 +256,11 @@ class Masked<MaskType> {
     return new ChangeDetails();
   }
 
+  /** Appends optional eager placeholder at end */
+  _appendEager (): ChangeDetails {
+    return new ChangeDetails();
+  }
+
   /** Appends symbols considering flags */
   // $FlowFixMe no ideas
   append (str: string, flags?: AppendFlags, tail?: string | String | TailDetails): ChangeDetails {
@@ -266,6 +279,10 @@ class Masked<MaskType> {
       // TODO it's a good idea to clear state after appending ends
       // but it causes bugs when one append calls another (when dynamic dispatch set rawInputValue)
       // this._resetBeforeTailState();
+    }
+
+    if (this.eager && flags?.input) {
+      details.aggregate(this._appendEager());
     }
 
     return details;
@@ -353,13 +370,31 @@ class Masked<MaskType> {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);
 
-    let startChangePos: number = this.nearestInputPos(start, removeDirection);
-    const changeDetails: ChangeDetails = new ChangeDetails({
-      tailShift: startChangePos - start  // adjust tailShift if start was aligned
-    }).aggregate(this.remove(startChangePos))
-      .aggregate(this.append(inserted, {input: true}, tail));
+    let oldRawValue;
+    if (this.eager)  {
+      removeDirection = forceDirection(removeDirection);
+      oldRawValue = this.extractInput(0, tailPos, {raw: true});
+    }
 
-    return changeDetails;
+    let startChangePos: number = this.nearestInputPos(start, removeDirection);
+    const details: ChangeDetails = new ChangeDetails({
+      tailShift: startChangePos - start  // adjust tailShift if start was aligned
+    }).aggregate(this.remove(startChangePos));
+
+    if (this.eager && removeDirection !== DIRECTION.NONE && oldRawValue === this.rawInputValue) {
+      if (removeDirection === DIRECTION.FORCE_LEFT) {
+        let valLength;
+        while (oldRawValue === this.rawInputValue && (valLength = this.value.length)) {
+          details
+            .aggregate(new ChangeDetails({ tailShift: -1 }))
+            .aggregate(this.remove(valLength-1));
+        }
+      } else if (removeDirection === DIRECTION.FORCE_RIGHT) {
+        tail.unshift();
+      }
+    }
+
+    return details.aggregate(this.append(inserted, {input: true}, tail));
   }
 }
 Masked.DEFAULTS = {

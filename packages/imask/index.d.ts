@@ -78,7 +78,7 @@ declare namespace IMask {
   } & Partial<
     Pick<
       Masked<MaskType>,
-      'parent' | 'prepare' | 'validate' | 'commit' | 'overwrite'
+      'parent' | 'prepare' | 'validate' | 'commit' | 'overwrite' | 'eager'
     >
   >;
   type MaskedTypedValue<MaskType> = MaskType extends (typeof Number)
@@ -107,6 +107,7 @@ declare namespace IMask {
     ) => boolean;
     commit: (value: string, masked: Masked<MaskType>) => void;
     overwrite?: boolean;
+    eager?: boolean;
     isInitialized: boolean;
 
     constructor(opts: BaseMaskedOptions<MaskType>);

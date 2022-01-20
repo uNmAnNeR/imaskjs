@@ -139,14 +139,14 @@ class ChunksTailDetails implements TailDetails {
     });
   }
 
-  shiftBefore (pos: number): string {
-    if (this.from >= pos || !this.chunks.length) return '';
+  unshift (beforePos?: number): string {
+    if (!this.chunks.length || (beforePos != null && this.from >= beforePos)) return '';
 
-    const chunkShiftPos = pos - this.from;
+    const chunkShiftPos = beforePos != null ? beforePos - this.from : beforePos;
     let ci=0;
     while (ci < this.chunks.length) {
       const chunk = this.chunks[ci];
-      const shiftChar = chunk.shiftBefore(chunkShiftPos);
+      const shiftChar = chunk.unshift(chunkShiftPos);
 
       if (chunk.toString()) {
         // chunk still contains value
