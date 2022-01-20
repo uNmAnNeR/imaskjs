@@ -24,6 +24,23 @@ describe('Masked', function () {
     assert.equal(masked.value, '1.');
   });
 
+  describe('#eager with fixed', function () {
+    const masked = new MaskedPattern({
+      eager: true,
+      lazy: true,
+      mask: '{12}-0',
+    });
+
+    assert.equal(masked.value, '');
+    masked.append('1', { input: true });
+    assert.equal(masked.value, '12-1');
+
+    masked.updateOptions({ eager: false });
+    masked.value = '';
+    masked.append('1', { input: true });
+    assert.equal(masked.value, '1');
+  });
+
   describe('#eager is false', function () {
     const masked = new MaskedPattern({
       mask: '0.0',

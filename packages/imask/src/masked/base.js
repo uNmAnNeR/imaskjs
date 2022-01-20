@@ -281,7 +281,7 @@ class Masked<MaskType> {
       // this._resetBeforeTailState();
     }
 
-    if (this.eager && flags?.input) {
+    if (this.eager && flags?.input && str) {
       details.aggregate(this._appendEager());
     }
 

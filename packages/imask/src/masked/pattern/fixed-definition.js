@@ -27,6 +27,8 @@ class PatternFixedDefinition implements PatternBlock {
   /** */
   isUnmasking: ?boolean;
   /** */
+  eager: boolean;
+  /** */
   _isRawInput: ?boolean;
 
   constructor(opts: PatternFixedDefinitionOptions) {
@@ -79,7 +81,7 @@ class PatternFixedDefinition implements PatternBlock {
   }
 
   get isFilled (): boolean {
-    return true;
+    return Boolean(this._value);
   }
 
   _appendChar (ch: string, flags?: AppendFlags={}): ChangeDetails {
@@ -88,7 +90,7 @@ class PatternFixedDefinition implements PatternBlock {
     if (this._value) return details;
 
     const appended = this.char === ch;
-    const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
+    const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !this.eager && !flags.tail;
     if (isResolved) details.rawInserted = this.char;
     this._value = details.inserted = this.char;
     this._isRawInput = isResolved && (flags.raw || flags.input);

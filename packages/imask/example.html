@@ -9,8 +9,8 @@
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: Date,
-      autofix: 'pad',
+      mask: '{12}-0',
+      lazy: true,
       eager: true,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);

@@ -158,6 +158,7 @@ class MaskedPattern extends Masked<string> {
         }) :
         new PatternFixedDefinition({
           char,
+          eager: this.eager,
           isUnmasking: unmaskingBlock,
         });
 
