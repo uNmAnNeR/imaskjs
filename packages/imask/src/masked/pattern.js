@@ -501,20 +501,22 @@ class MaskedPattern extends Masked<string> {
       // ->
       //  any|not-len-aligned or end
 
-      // check if first block at right is filled input
-      let firstFilledBlockIndexAtRight;
-      for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
-        if (this._blocks[bi].value) {
-          firstFilledBlockIndexAtRight = bi;
-          break;
+      if (direction === DIRECTION.LEFT) {
+        // check if first block at right is filled input
+        let firstFilledBlockIndexAtRight;
+        for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
+          if (this._blocks[bi].value) {
+            firstFilledBlockIndexAtRight = bi;
+            break;
+          }
         }
-      }
-      if (firstFilledBlockIndexAtRight != null) {
-        const filledBlock = this._blocks[firstFilledBlockIndexAtRight];
-        const blockInputPos = filledBlock.nearestInputPos(0, DIRECTION.RIGHT);
-        if (blockInputPos === 0 && filledBlock.unmaskedValue.length) {
-          // filled block is input
-          return this._blockStartPos(firstFilledBlockIndexAtRight) + blockInputPos;
+        if (firstFilledBlockIndexAtRight != null) {
+          const filledBlock = this._blocks[firstFilledBlockIndexAtRight];
+          const blockInputPos = filledBlock.nearestInputPos(0, DIRECTION.RIGHT);
+          if (blockInputPos === 0 && filledBlock.unmaskedValue.length) {
+            // filled block is input
+            return this._blockStartPos(firstFilledBlockIndexAtRight) + blockInputPos;
+          }
         }
       }
 

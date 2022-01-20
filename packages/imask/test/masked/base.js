@@ -39,6 +39,14 @@ describe('Masked', function () {
     masked.value = '';
     masked.append('1', { input: true });
     assert.equal(masked.value, '1');
+
+    masked.updateOptions({ mask: '0-12-0', eager: true });
+    masked.value = '';
+    masked.append('11', { input: true });
+    assert.equal(masked.value, '1-12-1');
+
+    masked.splice(5, 1, '', DIRECTION.FORCE_LEFT);
+    assert.equal(masked.value, '1');
   });
 
   describe('#eager is false', function () {
