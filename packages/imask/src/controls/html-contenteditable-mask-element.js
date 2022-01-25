@@ -12,7 +12,12 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
   get _unsafeSelectionStart (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
-    return selection && selection.anchorOffset;
+    const anchorOffset = selection && selection.anchorOffset;
+    const focusOffset = selection && selection.focusOffset;
+    if (focusOffset == null || anchorOffset == null || anchorOffset < focusOffset) {
+      return anchorOffset;
+    }
+    return focusOffset;
   }
 
   /**
@@ -22,7 +27,12 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
   get _unsafeSelectionEnd (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
-    return selection && (this._unsafeSelectionStart + String(selection).length);
+    const anchorOffset = selection && selection.anchorOffset;
+    const focusOffset = selection && selection.focusOffset;
+    if (focusOffset == null || anchorOffset == null || anchorOffset > focusOffset) {
+      return anchorOffset;
+    }
+    return focusOffset;
   }
 
   /**
