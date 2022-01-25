@@ -17,20 +17,20 @@
     function IMaskHook () {
       const [ opts, setOpts ] = React.useState({ mask: Number });
 
-      const { ref, maskRef } = ReactIMask.useIMask(opts);
+      const { ref, value, setValue } = ReactIMask.useIMask(opts);
 
       React.useEffect(() => {
-        if (!maskRef.current || maskRef.current.value) return;
+        if (value) return;
 
         setTimeout(() => {
-          maskRef.current.value = '123';
+          setValue('123')
           console.log('set value from hook');
         }, 1000);
       });
 
       React.useEffect(() => {
-        console.log('masked value changed', maskRef.current && maskRef.current.value);
-      }, [maskRef]);
+        console.log('masked value changed', value);
+      }, [value]);
 
       return React.createElement('input', { ref });
     }
