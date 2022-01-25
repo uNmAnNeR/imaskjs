@@ -5,23 +5,23 @@ import type { ReactMaskProps, MaskedElement, Falsy } from './mixin';
 
 
 export default
-  function useIMask<
-    Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
-    Unmask extends ('typed' | boolean) = false,
-    Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
-    IMask.InputMask<Opts>['unmaskedValue']
-  >(
-    opts: Opts,
-    { onAccept, onComplete }: Pick<ReactMaskProps<Opts, Unmask, Value>, 'onAccept' | 'onComplete'> = {}
-  ): {
-    ref: MutableRefObject<MaskedElement>,
-    maskRef: MutableRefObject<IMask.InputMask<Opts>>,
-  } {
+function useIMask<
+  Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
+  Unmask extends ('typed' | boolean) = false,
+  Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
+  Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
+  IMask.InputMask<Opts>['unmaskedValue']
+>(
+  opts: Opts,
+  { onAccept, onComplete }: Pick<ReactMaskProps<Opts, Unmask, Value>, 'onAccept' | 'onComplete'> = {}
+): {
+  ref: MutableRefObject<MaskedElement>,
+  maskRef: MutableRefObject<IMask.InputMask<Opts>>,
+} {
   const ref = useRef(null);
   const maskRef = useRef(null);
 
-  const deleteMask = useCallback(() => {
+  const destroyMask = useCallback(() => {
     maskRef.current?.destroy();
     maskRef.current = null;
   }, []);
@@ -39,7 +39,7 @@ export default
   useEffect(() => {
     const el = ref.current;
 
-    if (!el || !opts?.mask) return deleteMask();
+    if (!el || !opts?.mask) return destroyMask();
 
     const mask = maskRef.current;
 
@@ -52,7 +52,7 @@ export default
     } else {
       mask?.updateOptions(opts);
     }
-  }, [opts, deleteMask, handleOnAccept]);
+  }, [opts, destroyMask, handleOnAccept]);
 
   useEffect(() => {
     if (!maskRef.current) return;
@@ -68,7 +68,7 @@ export default
     };
   }, [handleOnAccept, handleOnComplete]);
 
-  useEffect(() => deleteMask, [deleteMask]);
+  useEffect(() => destroyMask, [destroyMask]);
 
   return {
     ref,
