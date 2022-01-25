@@ -1,7 +1,8 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
   EventEmitter, OnDestroy, OnChanges, AfterViewInit,
-  Optional, Inject, SimpleChanges,
+  Optional, Inject, SimpleChanges, PLATFORM_ID
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 
@@ -45,6 +46,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   constructor(private _elementRef: ElementRef,
               private _renderer: Renderer2,
               private _factory: IMaskFactory,
+              @Inject(PLATFORM_ID) private _platformId: string,
               @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
     // init here to support AOT (TODO may be will work with ng-packgr - need to check)
     this.onTouched = () => {};
@@ -190,6 +192,6 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   }
 
   private _isAndroid(): boolean {
-    return /android (\d+)/.test(navigator.userAgent.toLowerCase());
+    return isPlatformBrowser(this._platformId) && /android (\d+)/.test(navigator.userAgent.toLowerCase());
   }
 }
