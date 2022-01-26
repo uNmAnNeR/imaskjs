@@ -376,7 +376,7 @@ declare namespace IMask {
     readonly compiledMasks: Array<AnyMasked>;
     dispatch: (
       value: string,
-      masked: AnyMasked,
+      masked: MaskedDynamic,
       flags: AppendFlags
     ) => AnyMasked;
     
