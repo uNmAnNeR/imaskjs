@@ -25,9 +25,9 @@ function maskedClass (mask: Mask): Class<Masked<*>> {
   // $FlowFixMe
   if (IMask.Masked && mask.prototype instanceof IMask.Masked) return mask;
   // $FlowFixMe
-  if (mask instanceof Function) return IMask.MaskedFunction;
-  // $FlowFixMe
   if (mask instanceof IMask.Masked) return mask.constructor;
+  // $FlowFixMe
+  if (mask instanceof Function) return IMask.MaskedFunction;
 
   console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
   // $FlowFixMe
