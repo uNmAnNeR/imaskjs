@@ -293,6 +293,64 @@
               
                 
                 <li><a
+                  href='#changedetails'
+                  class=" toggle-sibling">
+                  ChangeDetails
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#changedetailsinserted'
+                        class='regular pre-open'>
+                        #inserted
+                      </a></li>
+                      
+                      <li><a
+                        href='#changedetailsskip'
+                        class='regular pre-open'>
+                        #skip
+                      </a></li>
+                      
+                      <li><a
+                        href='#changedetailstailshift'
+                        class='regular pre-open'>
+                        #tailShift
+                      </a></li>
+                      
+                      <li><a
+                        href='#changedetailsrawinserted'
+                        class='regular pre-open'>
+                        #rawInserted
+                      </a></li>
+                      
+                      <li><a
+                        href='#changedetailsaggregate'
+                        class='regular pre-open'>
+                        #aggregate
+                      </a></li>
+                      
+                      <li><a
+                        href='#changedetailsoffset'
+                        class='regular pre-open'>
+                        #offset
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
                   href='#actiondetails'
                   class=" toggle-sibling">
                   ActionDetails
@@ -530,6 +588,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskedpatternisfilled'
+                        class='regular pre-open'>
+                        #isFilled
+                      </a></li>
+                      
+                      <li><a
                         href='#maskedpatterndocommit'
                         class='regular pre-open'>
                         #doCommit
@@ -551,6 +615,12 @@
                         href='#maskedpatternappendtail'
                         class='regular pre-open'>
                         #appendTail
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskedpattern_appendeager'
+                        class='regular pre-open'>
+                        #_appendEager
                       </a></li>
                       
                       <li><a
@@ -617,64 +687,6 @@
                         href='#maskedpatternmaskedblocks'
                         class='regular pre-open'>
                         #maskedBlocks
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#changedetails'
-                  class=" toggle-sibling">
-                  ChangeDetails
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#changedetailsinserted'
-                        class='regular pre-open'>
-                        #inserted
-                      </a></li>
-                      
-                      <li><a
-                        href='#changedetailsskip'
-                        class='regular pre-open'>
-                        #skip
-                      </a></li>
-                      
-                      <li><a
-                        href='#changedetailstailshift'
-                        class='regular pre-open'>
-                        #tailShift
-                      </a></li>
-                      
-                      <li><a
-                        href='#changedetailsrawinserted'
-                        class='regular pre-open'>
-                        #rawInserted
-                      </a></li>
-                      
-                      <li><a
-                        href='#changedetailsaggregate'
-                        class='regular pre-open'>
-                        #aggregate
-                      </a></li>
-                      
-                      <li><a
-                        href='#changedetailsoffset'
-                        class='regular pre-open'>
-                        #offset
                       </a></li>
                       
                     </ul>
@@ -778,6 +790,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskedeager'
+                        class='regular pre-open'>
+                        #eager
+                      </a></li>
+                      
+                      <li><a
                         href='#maskedisinitialized'
                         class='regular pre-open'>
                         #isInitialized
@@ -844,6 +862,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#maskedisfilled'
+                        class='regular pre-open'>
+                        #isFilled
+                      </a></li>
+                      
+                      <li><a
                         href='#maskednearestinputpos'
                         class='regular pre-open'>
                         #nearestInputPos
@@ -883,6 +907,12 @@
                         href='#masked_appendplaceholder'
                         class='regular pre-open'>
                         #_appendPlaceholder
+                      </a></li>
+                      
+                      <li><a
+                        href='#masked_appendeager'
+                        class='regular pre-open'>
+                        #_appendEager
                       </a></li>
                       
                       <li><a
@@ -996,15 +1026,21 @@
                       </a></li>
                       
                       <li><a
-                        href='#patterninputdefinition_isfilled'
+                        href='#patterninputdefinitionisfilled'
                         class='regular pre-open'>
-                        #_isFilled
+                        #isFilled
                       </a></li>
                       
                       <li><a
                         href='#patterninputdefinitionlazy'
                         class='regular pre-open'>
                         #lazy
+                      </a></li>
+                      
+                      <li><a
+                        href='#patterninputdefinitioneager'
+                        class='regular pre-open'>
+                        #eager
                       </a></li>
                       
                       <li><a
@@ -1056,6 +1092,16 @@
                   href='#isunmasking'
                   class="">
                   isUnmasking
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#eager'
+                  class="">
+                  eager
                   
                 </a>
                 
@@ -3672,6 +3718,472 @@
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='changedetails'>
+      ChangeDetails
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Provides details of changing model value</p>
+
+    <div class='pre p1 fill-light mt0'>new ChangeDetails(details: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>details</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
+	    
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>details.inserted</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?</code>
+  </td>
+  <td class='break-word'><span>Inserted symbols
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>details.skip</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?</code>
+  </td>
+  <td class='break-word'><span>Can skip chars
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>details.removeCount</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?</code>
+  </td>
+  <td class='break-word'><span>Removed symbols count
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>details.tailShift</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?</code>
+  </td>
+  <td class='break-word'><span>Additional offset if any changes occurred before tail
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='changedetailsinserted'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>inserted</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Inserted symbols</p>
+
+    <div class='pre p1 fill-light mt0'>inserted</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='changedetailsskip'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>skip</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Can skip chars</p>
+
+    <div class='pre p1 fill-light mt0'>skip</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='changedetailstailshift'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>tailShift</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Additional offset if any changes occurred before tail</p>
+
+    <div class='pre p1 fill-light mt0'>tailShift</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='changedetailsrawinserted'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>rawInserted</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Raw inserted is used by dynamic mask</p>
+
+    <div class='pre p1 fill-light mt0'>rawInserted</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='changedetailsaggregate'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>aggregate(details)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Aggregate changes</p>
+
+    <div class='pre p1 fill-light mt0'>aggregate(details: <a href="#changedetails">ChangeDetails</a>): <a href="#changedetails">ChangeDetails</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>details</span> <code class='quiet'>(<a href="#changedetails">ChangeDetails</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>:
+        <code>this</code>
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='changedetailsoffset'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>offset</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Total offset considering all changes</p>
+
+    <div class='pre p1 fill-light mt0'>offset</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='actiondetails'>
       ActionDetails
     </h3>
@@ -5651,6 +6163,64 @@
       </div>
     </div>
   
+    <div class='border-bottom' id='maskedpatternisfilled'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isFilled</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>isFilled</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='maskedpatterndocommit'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -5852,6 +6422,59 @@
         </div>
       
     </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskedpattern_appendeager'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_appendEager()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>_appendEager(): <a href="#changedetails">ChangeDetails</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
   
 
   
@@ -6697,472 +7320,6 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='changedetails'>
-      ChangeDetails
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Provides details of changing model value</p>
-
-    <div class='pre p1 fill-light mt0'>new ChangeDetails(details: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>details</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	    
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>details.inserted</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?</code>
-  </td>
-  <td class='break-word'><span>Inserted symbols
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>details.skip</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?</code>
-  </td>
-  <td class='break-word'><span>Can skip chars
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>details.removeCount</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?</code>
-  </td>
-  <td class='break-word'><span>Removed symbols count
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>details.tailShift</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?</code>
-  </td>
-  <td class='break-word'><span>Additional offset if any changes occurred before tail
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='changedetailsinserted'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>inserted</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Inserted symbols</p>
-
-    <div class='pre p1 fill-light mt0'>inserted</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='changedetailsskip'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>skip</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Can skip chars</p>
-
-    <div class='pre p1 fill-light mt0'>skip</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='changedetailstailshift'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tailShift</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Additional offset if any changes occurred before tail</p>
-
-    <div class='pre p1 fill-light mt0'>tailShift</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='changedetailsrawinserted'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>rawInserted</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Raw inserted is used by dynamic mask</p>
-
-    <div class='pre p1 fill-light mt0'>rawInserted</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='changedetailsaggregate'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>aggregate(details)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Aggregate changes</p>
-
-    <div class='pre p1 fill-light mt0'>aggregate(details: <a href="#changedetails">ChangeDetails</a>): <a href="#changedetails">ChangeDetails</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>details</span> <code class='quiet'>(<a href="#changedetails">ChangeDetails</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="#changedetails">ChangeDetails</a></code>:
-        <code>this</code>
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='changedetailsoffset'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>offset</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Total offset considering all changes</p>
-
-    <div class='pre p1 fill-light mt0'>offset</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='mask'>
       Mask
     </h3>
@@ -7544,7 +7701,7 @@
   
     <p>
       Type:
-      function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#masked">Masked</a>&#x3C;MaskType>, <a href="#appendflags">AppendFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+      function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#masked">Masked</a>&#x3C;MaskType>, <a href="#appendflags">AppendFlags</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | [<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#changedetails">ChangeDetails</a>])
     </p>
   
   
@@ -7815,6 +7972,59 @@
     <p>
       Type:
       <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskedeager'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>eager</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>eager</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
     </p>
   
   
@@ -8493,6 +8703,64 @@
       </div>
     </div>
   
+    <div class='border-bottom' id='maskedisfilled'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>isFilled</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>isFilled</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='maskednearestinputpos'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -9011,6 +9279,60 @@
       </div>
     </div>
   
+    <div class='border-bottom' id='masked_appendeager'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_appendEager()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Appends optional eager placeholder at end</p>
+
+    <div class='pre p1 fill-light mt0'>_appendEager(): <a href="#changedetails">ChangeDetails</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#changedetails">ChangeDetails</a></code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='maskedappend'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -9317,7 +9639,7 @@
 
   <p>Prepares string before mask processing</p>
 
-    <div class='pre p1 fill-light mt0'>doPrepare(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+    <div class='pre p1 fill-light mt0'>doPrepare(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | [<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#changedetails">ChangeDetails</a>])</div>
   
   
 
@@ -9357,7 +9679,7 @@
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | [<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#changedetails">ChangeDetails</a>])</code>
     
   
 
@@ -9747,7 +10069,7 @@
   
     <p>
       Type:
-      {parent: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"parent"</code>>, mask: <a href="#mask">Mask</a>, isOptional: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"isOptional"</code>>, lazy: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"lazy"</code>>, placeholderChar: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"placeholderChar"</code>>}
+      {parent: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"parent"</code>>, mask: <a href="#mask">Mask</a>, isOptional: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"isOptional"</code>>, lazy: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"lazy"</code>>, eager: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"eager"</code>>, placeholderChar: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"placeholderChar"</code>>}
     </p>
   
   
@@ -9785,6 +10107,12 @@
       
         <div class='space-bottom0'>
           <span class='code bold'>lazy</span> <code class='quiet'>($PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"lazy"</code>>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>eager</span> <code class='quiet'>($PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"eager"</code>>)</code>
           
           
         </div>
@@ -10033,11 +10361,11 @@
       </div>
     </div>
   
-    <div class='border-bottom' id='patterninputdefinition_isfilled'>
+    <div class='border-bottom' id='patterninputdefinitionisfilled'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>_isFilled</span>
+            <span class='code strong strong truncate'>isFilled</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -10046,7 +10374,7 @@
   
 
   
-    <div class='pre p1 fill-light mt0'>_isFilled</div>
+    <div class='pre p1 fill-light mt0'>isFilled</div>
   
     <p>
       Type:
@@ -10104,6 +10432,59 @@
     <p>
       Type:
       $PropertyType&#x3C;<a href="#maskedpattern">MaskedPattern</a>, <code>"lazy"</code>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='patterninputdefinitioneager'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>eager</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>eager</div>
+  
+    <p>
+      Type:
+      $PropertyType&#x3C;<a href="#masked">Masked</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>, <code>"eager"</code>>
     </p>
   
   
@@ -10402,6 +10783,60 @@
     <p>
       Type:
       <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='eager'>
+      eager
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>eager</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
     </p>
   
   
@@ -11308,7 +11743,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>doPrepare(str, flags)</span>
+            <span class='code strong strong truncate'>doPrepare(ch, flags)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -11317,7 +11752,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
 
   
-    <div class='pre p1 fill-light mt0'>doPrepare(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+    <div class='pre p1 fill-light mt0'>doPrepare(ch: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, flags: <a href="#appendflags">AppendFlags</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | [<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#changedetails">ChangeDetails</a>])</div>
   
   
 
@@ -11334,7 +11769,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>str</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+            <span class='code bold'>ch</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
 	    
           </div>
           
@@ -11357,7 +11792,7 @@ Used when pattern length is longer then <code>to</code> param length. Pads zeros
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | [<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="#changedetails">ChangeDetails</a>])</code>
     
   
 
