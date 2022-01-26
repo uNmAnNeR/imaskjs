@@ -24,9 +24,7 @@ class HTMLMaskElement extends MaskElement {
   /** */
   // $FlowFixMe https://github.com/facebook/flow/issues/2839
   get rootElement (): HTMLDocument {
-    return this.input.getRootNode
-      ? this.input.getRootNode()
-      : document;
+    return this.input.getRootNode?.() ?? document;
   }
 
   /**

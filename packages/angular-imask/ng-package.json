@@ -3,9 +3,6 @@
   "dest": "dist",
   "lib": {
     "entryFile": "src/index.ts",
-    "umdModuleIds": {
-      "imask": "IMask"
-    }
   },
-  "whitelistedNonPeerDependencies": ["imask"]
+  "allowedNonPeerDependencies": ["imask"]
 }

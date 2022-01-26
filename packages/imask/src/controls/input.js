@@ -87,6 +87,7 @@ class InputMask {
   set mask (mask: Mask) {
     if (this.maskEquals(mask)) return;
 
+    // $FlowFixMe No ideas ... after update
     if (!(mask instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask)) {
       this.masked.updateOptions({mask});
       return;
