@@ -32,6 +32,7 @@ class MaskedRange extends MaskedPattern {
     opts = {
       to: this.to || 0,
       from: this.from || 0,
+      maxLength: this.maxLength || 0,
       ...opts,
     };
 

@@ -244,8 +244,8 @@ console.log(masked.typedValue);</code></pre>
   }
 });</code></pre>
 
-  <h3 id="overwrite" class="section-h"><a href="#overwrite">Overwrite Mode</a></h3>
-  <p>There is <code>overwrite</code> flag available for all masks from v5.0.0. It enables characters overwriting instead of inserting:</p>
+  <h4 id="overwrite" class="section-h"><a href="#overwrite">Overwrite Mode <kbd>since 5.0</kbd></a></h4>
+  <p>Enables characters overwriting instead of inserting:</p>
   <div class="form-item">
     <label><code>Date</code> mask in overwrite and autofix modes</label>
     <input id="date-overwrite-mask" type="text" value="">
@@ -550,6 +550,35 @@ var masked = IMask.PatternMasked({
 });</code></pre>
   <p>Unlike <a href="#masked-number">Number</a> mask Range mask is fixed in size, accepts only integer values but can use placeholder.</p>
 
+  <h4 id="autofix" class="section-h"><a href="#autofix">Autofix Mode</a></h4>
+  <div class="form-item">
+    <label>Input accepts numbers from 0 to 15. Try to type (e.g. <code>6</code>) with different autofix modes</label>
+    <div class="input-select">
+      <input id="range-autofix-mask" type="text" value="">
+      <select id="select-autofix">
+        <option value="false">Autofix: false</option>
+        <option value="true">Autofix: true</option>
+        <option value="pad">Autofix: pad</option>
+      </select>
+    </div>
+
+    <div class="toggle-panel">
+      <label for="range-autofix-mask-source" class="muted">source</label>
+      <input id="range-autofix-mask-source" type="checkbox">
+      <div class="toggle-panel-content">
+        <pre><code>var autofixMask = IMask(
+  document.getElementById('range-autofix-mask'),
+  {
+    mask: IMask.MaskedRange,
+    from: 0,
+    to: 15,
+    autofix: &lt;SELECT&gt;,
+  }
+);</code></pre>
+      </div>
+    </div>
+  </div>
+
 
   <h3 id="masked-enum" class="section-h"><a href="#enum">Enum Mask</a></h3>
   <p>Enum mask extends <a href="#masked-pattern">Pattern</a> mask and can be used to restrict input within characters enum.</p>
@@ -642,7 +671,7 @@ var masked = IMask.PatternMasked({
   min: new Date(2000, 0, 1),  // defaults to `1900-01-01`
   max: new Date(2020, 0, 1),  // defaults to `9999-01-01`
 
-  autofix: true,  // defaults to `false`
+  autofix: true,  // defaults to `false`, see <a href="#autofix">details</a>
 
   // also Pattern options can be set
   lazy: false,
@@ -1208,6 +1237,27 @@ var numberMask = IMask(element, { mask: Number });
       }
     ).on('accept', function() {
       document.getElementById('dispatch-value').innerHTML = dispatchMask.masked.currentMask.country;
+    });
+
+    var autofixMask = IMask(
+      document.getElementById('range-autofix-mask'),
+      {
+        mask: IMask.MaskedRange,
+        from: 0,
+        to: 15,
+        autofix: false
+      }
+    );
+
+    var selectAutofix = document.getElementById('select-autofix');
+    selectAutofix.addEventListener('change', function (e) {
+      var val = e.target.value;
+      autofixMask.updateOptions({
+        autofix: val === 'false' ? false :
+          val === 'true' ? true :
+          'pad',
+        maxLength: 2,
+      });
     });
   });
 </script>

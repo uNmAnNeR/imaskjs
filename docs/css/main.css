@@ -164,3 +164,11 @@ fieldset p {
 fieldset *:last-child {
   margin-bottom: 0;
 }
+
+.input-select {
+  display: flex;
+}
+
+.input-select select {
+  width: 150px;
+}
