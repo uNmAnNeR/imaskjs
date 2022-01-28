@@ -395,6 +395,7 @@ console.log(masked.typedValue);</code></pre>
               <div class="form-item pattern-options-checkboxes">
                 <label class="checkbox"><input type="checkbox" name="ph-show">lazy placeholder</label>
                 <label class="checkbox"><input type="checkbox" name="overwrite">overwrite mode</label>
+                <label class="checkbox"><input type="checkbox" name="eager">eager mode</label>
               </div>
             </div>
           </div>
@@ -520,6 +521,32 @@ var masked = IMask.PatternMasked({
     }
   }
 });</code></pre>
+
+  <h4 id="eager" class="section-h"><a href="#eager">Eager Mode <kbd>since 6.3.0</kbd></a></h4>
+  <div class="form-item">
+    <label></label>
+    <div class="input-checkbox">
+      <input id="pattern-eager-mask" type="text" value="">
+      <label>
+        <input type="checkbox" name="eager" id="toggle-pattern-eager-mask" checked>
+        eager
+      </label>
+    </div>
+
+    <div class="toggle-panel">
+      <label for="pattern-eager-mask-source" class="muted">source</label>
+      <input id="pattern-eager-mask-source" type="checkbox">
+      <div class="toggle-panel-content">
+        <pre><code>var eagerMask = IMask(
+  document.getElementById('pattern-eager-mask'),
+  {
+    mask: '00##00##',
+    eager: &lt;CHECK&gt;,
+  }
+);</code></pre>
+      </div>
+    </div>
+  </div>
 
 
   <h3 id="masked-range" class="section-h"><a href="#range">Range Mask</a></h3>
@@ -945,6 +972,7 @@ var numberMask = IMask(element, { mask: Number });
 
       var lazy = customEl.querySelector('[name=ph-show]').checked;
       var overwrite = customEl.querySelector('[name=overwrite]').checked;
+      var eager = customEl.querySelector('[name=eager]').checked;
       var placeholderChar = customEl.querySelector('[name=ph-char]').value || '_';
 
       var value = customEl.querySelector('[name=raw]').value;
@@ -957,6 +985,7 @@ var numberMask = IMask(element, { mask: Number });
         mask: mask,
         lazy: lazy,
         overwrite: overwrite,
+        eager: eager,
         placeholderChar: placeholderChar
       });
       if (value) customMask.value = value;
@@ -1256,7 +1285,21 @@ var numberMask = IMask(element, { mask: Number });
         autofix: val === 'false' ? false :
           val === 'true' ? true :
           'pad',
-        maxLength: 2,
+      });
+    });
+
+    var eagerMask = IMask(
+      document.getElementById('pattern-eager-mask'),
+      {
+        mask: '00##00##',
+        eager: true,
+      }
+    );
+
+    var toggleEager = document.getElementById('toggle-pattern-eager-mask');
+    toggleEager.addEventListener('change', function (e) {
+      eagerMask.updateOptions({
+        eager: e.target.checked,
       });
     });
   });

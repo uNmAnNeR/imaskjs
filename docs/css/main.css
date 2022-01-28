@@ -148,10 +148,6 @@ footer {
   background-color: #ff0;
 }
 
-.pattern-options-checkboxes {
-  margin-top: 23px;
-}
-
 kbd {
   font-size: 14px;
   font-weight: normal;
@@ -171,4 +167,18 @@ fieldset *:last-child {
 
 .input-select select {
   width: 150px;
+}
+
+.input-checkbox {
+  display: flex;
+}
+
+.input-checkbox label input {
+  transform: translateY(2px);
+}
+.input-checkbox label {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  margin: 0;
 }
