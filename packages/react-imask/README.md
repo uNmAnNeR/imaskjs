@@ -71,7 +71,16 @@ import { useIMask } from 'react-imask';
 
 function IMaskWithHook () {
   const [ opts, setOpts ] = useState({ mask: Number });
-  const { ref, maskRef } = useIMask(opts);
+  const {
+    ref,
+    maskRef,
+    value,
+    setValue,
+    unmaskedValue,
+    setUnmaskedValue,
+    typedValue,
+    setTypedValue,
+  } = useIMask(opts);
   
   return (
     <input ref={ref} />
