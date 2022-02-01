@@ -430,88 +430,21 @@ class MaskedPattern extends Masked<string> {
     @override
   */
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
-    // TODO refactor - extract alignblock
-
-    const beginBlockData = this._mapPosToBlock(cursorPos) || {index: 0, offset: 0};
-    const {
-      offset: beginBlockOffset,
-      index: beginBlockIndex,
-    } = beginBlockData;
-    const beginBlock = this._blocks[beginBlockIndex];
-
-    if (!beginBlock) return cursorPos;
-
-    let beginBlockCursorPos = beginBlockOffset;
-    // if position inside block - try to adjust it
-    if (beginBlockCursorPos !== 0 && beginBlockCursorPos < beginBlock.value.length) {
-      beginBlockCursorPos = beginBlock.nearestInputPos(beginBlockOffset, forceDirection(direction));
-    }
-
-    const cursorAtRight = beginBlockCursorPos === beginBlock.value.length;
-    const cursorAtLeft = beginBlockCursorPos === 0;
-
-    //  cursor is INSIDE first block (not at bounds)
-    if (!cursorAtLeft && !cursorAtRight) return this._blockStartPos(beginBlockIndex) + beginBlockCursorPos;
-
-    const searchBlockIndex = cursorAtRight ? beginBlockIndex + 1 : beginBlockIndex;
+    if (!this._blocks.length) return 0;
+    const caret = new BlockCaret(this, cursorPos);
 
     if (direction === DIRECTION.NONE) {
-      // NONE direction used to calculate start input position if no chars were removed
-      // FOR NONE:
-      // -
-      // input|any
-      // ->
-      //  any|input
-      // <-
-      //  filled-input|any
-
-      const caret = new BlockCaret(this, cursorPos);
-
-      if (caret.pushRightBeforeInput() && caret.pos === cursorPos) return caret.pos;
-      const s = caret.popState();
-
+      // -------------------------------------------------
+      // NONE should only go out from fixed to the right!
+      // -------------------------------------------------
+      if (caret.pushRightBeforeInput()) return caret.pos;
+      caret.popState();
       if (caret.pushLeftBeforeInput()) return caret.pos;
-      caret.state = s;
-      if (caret.ok) return caret.pos;
-
-      // // check if first block at left is input
-      // if (searchBlockIndex > 0) {
-      //   const blockIndexAtLeft = searchBlockIndex-1;
-      //   const blockAtLeft = this._blocks[blockIndexAtLeft];
-      //   const blockInputPos = blockAtLeft.nearestInputPos(0, DIRECTION.NONE);
-      //   // is input
-      //   if (!blockAtLeft.value.length || blockInputPos !== blockAtLeft.value.length) {
-      //     return this._blockStartPos(searchBlockIndex);
-      //   }
-      // }
-
-      // // ->
-      // let firstInputAtRight = searchBlockIndex;
-      // for (let bi=firstInputAtRight; bi < this._blocks.length; ++bi) {
-      //   const blockAtRight = this._blocks[bi];
-      //   const blockInputPos = blockAtRight.nearestInputPos(0, DIRECTION.NONE);
-      //   if (!blockAtRight.value.length || blockInputPos !== blockAtRight.value.length) {
-      //     return this._blockStartPos(bi) + blockInputPos;
-      //   }
-      // }
-
-      // // <-
-      // // find first non-fixed symbol
-      // for (let bi=searchBlockIndex-1; bi >= 0; --bi) {
-      //   const block = this._blocks[bi];
-      //   const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-      //   // is input
-      //   if (!block.value.length || blockInputPos !== block.value.length) {
-      //     return this._blockStartPos(bi) + block.value.length;
-      //   }
-      // }
-
-      return cursorPos;
+      return this.value.length;
     }
 
+    // FORCE is only about a|* otherwise is 0
     if (direction === DIRECTION.LEFT || direction === DIRECTION.FORCE_LEFT) {
-      const caret = new BlockCaret(this, cursorPos);
-
       // try to break fast when *|a
       if (direction === DIRECTION.LEFT) {
         caret.pushRightBeforeFilled();
@@ -545,7 +478,7 @@ class MaskedPattern extends Masked<string> {
       caret.popState();
       if (
         caret.pushRightBeforeInput() &&
-        // HACK for lazy if has aligned left inside fixed and has came to the start - use start position
+        // TODO HACK for lazy if has aligned left inside fixed and has came to the start - use start position
         (!this.lazy || this.extractInput())
       ) return caret.pos;
 
@@ -553,45 +486,21 @@ class MaskedPattern extends Masked<string> {
     }
 
     if (direction === DIRECTION.RIGHT || direction === DIRECTION.FORCE_RIGHT) {
-      // ->
-      //  any|not-len-aligned and filled
-      //  any|not-len-aligned
-      // <-
-      //  not-0-aligned or start|any
-      let firstInputBlockAlignedIndex: ?number;
-      let firstInputBlockAlignedPos: ?number;
-      for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-        if (blockInputPos !== block.value.length) {
-          firstInputBlockAlignedPos = this._blockStartPos(bi) + blockInputPos;
-          firstInputBlockAlignedIndex = bi;
-          break;
-        }
-      }
+      // forward flow
+      caret.pushRightBeforeInput();
+      caret.pushRightBeforeRequired();
 
-      if (firstInputBlockAlignedIndex != null && firstInputBlockAlignedPos != null) {
-        for (let bi=firstInputBlockAlignedIndex; bi < this._blocks.length; ++bi) {
-          const block = this._blocks[bi];
-          const blockInputPos = block.nearestInputPos(0, DIRECTION.FORCE_RIGHT);
-          if (blockInputPos !== block.value.length) {
-            return this._blockStartPos(bi) + blockInputPos;
-          }
-        }
-        return direction === DIRECTION.FORCE_RIGHT ?
-          this.value.length :
-          firstInputBlockAlignedPos;
-      }
+      if (caret.pushRightBeforeFilled()) return caret.pos;
+      if (direction === DIRECTION.FORCE_RIGHT) return this.value.length;
 
-      for (let bi=Math.min(searchBlockIndex, this._blocks.length-1); bi >= 0; --bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.LEFT);
-        if (blockInputPos !== 0) {
-          const alignedPos = this._blockStartPos(bi) + blockInputPos;
-          if (alignedPos >= cursorPos) return alignedPos;
-          break;
-        }
-      }
+      // backward flow
+      caret.popState();
+      if (caret.ok) return caret.pos;
+
+      caret.popState();
+      if (caret.ok) return caret.pos;
+
+      return this.nearestInputPos(cursorPos, DIRECTION.LEFT);
     }
 
     return cursorPos;
@@ -618,13 +527,6 @@ MaskedPattern.ESCAPE_CHAR = '\\';
 MaskedPattern.InputDefinition = PatternInputDefinition;
 MaskedPattern.FixedDefinition = PatternFixedDefinition;
 
-function isInput (block: PatternBlock): boolean {
-  if (!block) return false;
-
-  const value = block.value;
-  return !value || block.nearestInputPos(0, DIRECTION.NONE) !== value.length;
-}
-
 
 type BlockCaretState = { offset: number, index: number, ok: boolean };
 class BlockCaret {
@@ -641,7 +543,7 @@ class BlockCaret {
     const { offset, index } = masked._mapPosToBlock(pos) || {index: 0, offset: 0};
     this.offset = offset;
     this.index = index;
-    this.ok = true;
+    this.ok = false;
   }
 
   get block (): PatternBlock {
@@ -670,23 +572,43 @@ class BlockCaret {
     return s;
   }
 
-  boundBlock () {
+  bindBlock () {
     if (this.block) return;
-    this.index = Math.max(0, Math.min(this.index, this.masked._blocks.length-1));
-    this.offset = 0;
+    if (this.index < 0) {
+      this.index = 0;
+      this.offset = 0;
+    }
+    if (this.index >= this.masked._blocks.length) {
+      this.index = this.masked._blocks.length - 1;
+      this.offset = this.block.value.length;
+    }
   }
 
-  pushLeftBeforeFilled (): boolean {
+  _pushLeft(fn: () => ?boolean): boolean {
     this.pushState();
-    this.boundBlock();
-    for (; 0<=this.index; --this.index, this.offset=this.block?.value.length || 0) {
-      if (this.block.isFixed || !this.block.value) continue;
-
-      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.FORCE_LEFT);
-      if (this.offset !== 0) return this.ok = true;
+    for (this.bindBlock(); 0<=this.index; --this.index, this.offset=this.block?.value.length || 0) {
+      if (fn()) return this.ok = true;
     }
 
     return this.ok = false;
+  }
+
+  _pushRight (fn: () => ?boolean): boolean {
+    this.pushState();
+    for (this.bindBlock(); this.index<this.masked._blocks.length; ++this.index, this.offset=0) {
+      if (fn()) return this.ok = true;
+    }
+
+    return this.ok = false;
+  }
+
+  pushLeftBeforeFilled (): boolean {
+    return this._pushLeft(() => {
+      if (this.block.isFixed || !this.block.value) return;
+
+      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.FORCE_LEFT);
+      if (this.offset !== 0) return true;
+    });
   }
 
   pushLeftBeforeInput (): boolean {
@@ -694,76 +616,35 @@ class BlockCaret {
     // filled input: 00|
     // optional empty input: 00[]|
     // nested block: XX<[]>|
-    this.pushState();
-    this.boundBlock();
-    for (; 0<=this.index; --this.index, this.offset=0) {
-      if (this.block.isFixed) continue;
+    return this._pushLeft(() => {
+      if (this.block.isFixed) return;
 
-      this.offset = this.block.nearestInputPos(this.block.value.length, DIRECTION.LEFT);
-      return this.ok = true;
-    }
-
-    return this.ok = false;
-
-    // // cases:
-    // // filled input: 00|
-    // // optional empty input: 00[]|
-    // // nested block: XX<[]>|
-    // this.pushState();
-    // this.boundBlock();
-    // for (; 0<=this.index; --this.index, this.offset=this.block?.value.length || 0) {
-    //   if (!this.block.value) return this.ok = true;
-
-    //   this.offset = this.block.nearestInputPos(this.offset, DIRECTION.LEFT);
-    //   if (
-    //     this.offset !== 0 ||
-    //     // TODO find better way to find possible inputs
-    //     !this.block.value
-    //   ) return this.ok = true;
-
-    //   // TODO find better way to find possible inputs
-    //   const pos = this.block.nearestInputPos(0, DIRECTION.NONE);
-    //   if (pos !== this.block.value.length) {
-    //     this.offset = pos;
-    //     return this.ok = true;
-    //   }
-    // }
-
-    // return this.ok = false;
+      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.LEFT);
+      return true;
+    });
   }
 
   pushLeftBeforeRequired (): boolean {
-    this.pushState();
-    this.boundBlock();
-    for (; 0<=this.index; --this.index, this.offset=0) {
-      if (this.block.isFixed || this.block.isOptional) continue;
+    return this._pushLeft(() => {
+      if (this.block.isFixed || this.block.isOptional) return;
 
-      this.offset = this.block.nearestInputPos(this.block.value.length, DIRECTION.LEFT);
-      return this.ok = true;
-    }
-
-    return this.ok = false;
+      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.LEFT);
+      return true;
+    });
   }
 
   pushRightBeforeFilled (): boolean {
-    this.pushState();
-    this.boundBlock();
-    for (; this.index<this.masked._blocks.length; ++this.index, this.offset=0) {
-      if (this.block.isFixed || !this.block.value) continue;
+    return this._pushRight(() => {
+      if (this.block.isFixed || !this.block.value) return;
 
       this.offset = this.block.nearestInputPos(this.offset, DIRECTION.FORCE_RIGHT);
-      if (this.offset !== this.block.value.length) return this.ok = true;
-    }
-
-    return this.ok = false;
+      if (this.offset !== this.block.value.length) return true;
+    });
   }
 
   pushRightBeforeInput (): boolean {
-    this.pushState();
-    this.boundBlock();
-
-    for (; this.index<this.masked._blocks.length; ++this.index, this.offset=0) {
-      if (this.block.isFixed) continue;
+    return this._pushRight(() => {
+      if (this.block.isFixed) return;
 
       // const o = this.offset;
       this.offset = this.block.nearestInputPos(this.offset, DIRECTION.NONE);
@@ -771,37 +652,18 @@ class BlockCaret {
       // aa|X
       // aa<X|[]>X_    - this will not work
       // if (o && o === this.offset && this.block instanceof PatternInputDefinition) continue;
-      return this.ok = true;
-    }
-
-    return this.ok = false;
+      return true;
+    });
   }
 
   pushRightBeforeRequired (): boolean {
-    this.pushState();
-    this.boundBlock();
+    return this._pushRight(() => {
+      if (this.block.isFixed || this.block.isOptional) return;
 
-    for (; this.index<this.masked._blocks.length; ++this.index, this.offset=0) {
-      if (this.block.isFixed || this.block.isOptional) continue;
-
-      // this.offset = this.block.nearestInputPos(this.offset, DIRECTION.RIGHT);
       // TODO check |[*]XX_
       this.offset = this.block.nearestInputPos(this.offset, DIRECTION.NONE);
-      return this.ok = true;
-    }
-
-    return this.ok = false;
-  }
-
-  pushRight (): boolean {
-    this.pushState();
-    for (this.boundBlock(); this.index<this.masked._blocks.length; ++this.index, this.offset=0) {
-      if (this.block.value && this.offset < this.block.value.length) {
-        this.offset += 1;
-        return this.ok = true;
-      }
-    }
-    return this.ok = false;
+      return true;
+    });
   }
 }
 
