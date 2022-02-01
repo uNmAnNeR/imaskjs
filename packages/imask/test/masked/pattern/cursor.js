@@ -58,8 +58,8 @@ describe('Align LEFT', function () {
     assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 1);
 
     masked.unmaskedValue = 'aa';
-    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 3);
-    assert.equal(masked.nearestInputPos(masked.value.length-1, DIRECTION.LEFT), 3);
+    assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 2);
+    assert.equal(masked.nearestInputPos(masked.value.length-1, DIRECTION.LEFT), 2);
   });
 
   it('should align after filled and fixed with lazy', function () {
@@ -70,6 +70,16 @@ describe('Align LEFT', function () {
 
     masked.value = '1X';
     assert.equal(masked.nearestInputPos(masked.value.length, DIRECTION.LEFT), 1);
+  });
+
+  it('should align at 0', function () {
+    masked.updateOptions({
+      mask: 'XX0',
+      lazy: true,
+    });
+
+    masked.value = 'XX';
+    assert.equal(masked.nearestInputPos(1, DIRECTION.LEFT), 0);
   });
 });
 

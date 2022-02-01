@@ -19,6 +19,8 @@ interface PatternBlock {
   +lazy?: boolean;
   +eager?: boolean;
   +isFilled: boolean;
+  +isOptional?: boolean;
+  +isFixed?: boolean;
   state: any;
 
   reset (): void;
