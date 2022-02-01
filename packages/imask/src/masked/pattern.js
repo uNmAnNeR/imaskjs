@@ -8,6 +8,7 @@ import { type TailDetails } from '../core/tail-details.js';
 import ChunksTailDetails from './pattern/chunk-tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import {type PatternBlock} from './pattern/block.js';
+import PatternCursor from './pattern/cursor.js';
 import createMask from './factory.js';
 import IMask from '../core/holder.js';
 import './regexp.js';  // support for default definitions which are regexp's
@@ -431,15 +432,15 @@ class MaskedPattern extends Masked<string> {
   */
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
     if (!this._blocks.length) return 0;
-    const caret = new BlockCaret(this, cursorPos);
+    const cursor = new PatternCursor(this, cursorPos);
 
     if (direction === DIRECTION.NONE) {
       // -------------------------------------------------
       // NONE should only go out from fixed to the right!
       // -------------------------------------------------
-      if (caret.pushRightBeforeInput()) return caret.pos;
-      caret.popState();
-      if (caret.pushLeftBeforeInput()) return caret.pos;
+      if (cursor.pushRightBeforeInput()) return cursor.pos;
+      cursor.popState();
+      if (cursor.pushLeftBeforeInput()) return cursor.pos;
       return this.value.length;
     }
 
@@ -447,58 +448,58 @@ class MaskedPattern extends Masked<string> {
     if (direction === DIRECTION.LEFT || direction === DIRECTION.FORCE_LEFT) {
       // try to break fast when *|a
       if (direction === DIRECTION.LEFT) {
-        caret.pushRightBeforeFilled();
-        if (caret.ok && caret.pos === cursorPos) return cursorPos;
-        caret.popState();
+        cursor.pushRightBeforeFilled();
+        if (cursor.ok && cursor.pos === cursorPos) return cursorPos;
+        cursor.popState();
       }
 
       // forward flow
-      caret.pushLeftBeforeInput();
-      caret.pushLeftBeforeRequired();
-      caret.pushLeftBeforeFilled();
+      cursor.pushLeftBeforeInput();
+      cursor.pushLeftBeforeRequired();
+      cursor.pushLeftBeforeFilled();
 
       // backward flow
       if (direction === DIRECTION.LEFT) {
-        caret.pushRightBeforeInput();
-        caret.pushRightBeforeRequired();
-        if (caret.ok && caret.pos <= cursorPos) return caret.pos;
-        caret.popState();
-        if (caret.ok && caret.pos <= cursorPos) return caret.pos;
-        caret.popState();
+        cursor.pushRightBeforeInput();
+        cursor.pushRightBeforeRequired();
+        if (cursor.ok && cursor.pos <= cursorPos) return cursor.pos;
+        cursor.popState();
+        if (cursor.ok && cursor.pos <= cursorPos) return cursor.pos;
+        cursor.popState();
       }
-      if (caret.ok) return caret.pos;
+      if (cursor.ok) return cursor.pos;
       if (direction === DIRECTION.FORCE_LEFT) return 0;
 
-      caret.popState();
-      if (caret.ok) return caret.pos;
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
 
-      caret.popState();
-      if (caret.ok) return caret.pos;
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
 
-      // caret.popState();
+      // cursor.popState();
       // if (
-      //   caret.pushRightBeforeInput() &&
+      //   cursor.pushRightBeforeInput() &&
       //   // TODO HACK for lazy if has aligned left inside fixed and has came to the start - use start position
       //   (!this.lazy || this.extractInput())
-      // ) return caret.pos;
+      // ) return cursor.pos;
 
       return 0;
     }
 
     if (direction === DIRECTION.RIGHT || direction === DIRECTION.FORCE_RIGHT) {
       // forward flow
-      caret.pushRightBeforeInput();
-      caret.pushRightBeforeRequired();
+      cursor.pushRightBeforeInput();
+      cursor.pushRightBeforeRequired();
 
-      if (caret.pushRightBeforeFilled()) return caret.pos;
+      if (cursor.pushRightBeforeFilled()) return cursor.pos;
       if (direction === DIRECTION.FORCE_RIGHT) return this.value.length;
 
       // backward flow
-      caret.popState();
-      if (caret.ok) return caret.pos;
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
 
-      caret.popState();
-      if (caret.ok) return caret.pos;
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
 
       return this.nearestInputPos(cursorPos, DIRECTION.LEFT);
     }
@@ -526,152 +527,6 @@ MaskedPattern.STOP_CHAR = '`';
 MaskedPattern.ESCAPE_CHAR = '\\';
 MaskedPattern.InputDefinition = PatternInputDefinition;
 MaskedPattern.FixedDefinition = PatternFixedDefinition;
-
-
-type BlockCaretState = { offset: number, index: number, ok: boolean };
-class BlockCaret {
-  masked: MaskedPattern;
-  offset: number;
-  index: number;
-  ok: boolean;
-  _log: BlockCaretState[];
-
-  constructor (masked: MaskedPattern, pos: number) {
-    this.masked = masked;
-    this._log = [];
-
-    const { offset, index } = masked._mapPosToBlock(pos) || (
-      pos < 0 ?
-        // first
-        { index: 0, offset: 0 } :
-        // last
-        { index: this.masked._blocks.length, offset: 0 }
-    );
-    this.offset = offset;
-    this.index = index;
-    this.ok = false;
-  }
-
-  get block (): PatternBlock {
-    return this.masked._blocks[this.index];
-  }
-
-  get pos (): number {
-    return this.masked._blockStartPos(this.index) + this.offset;
-  }
-
-  get state (): BlockCaretState {
-    return { index: this.index, offset: this.offset, ok: this.ok };
-  }
-
-  set state (s: BlockCaretState) {
-    Object.assign(this, s);
-  }
-
-  pushState () {
-    this._log.push(this.state);
-  }
-
-  popState (): BlockCaretState {
-    const s = this._log.pop();
-    this.state = s;
-    return s;
-  }
-
-  bindBlock () {
-    if (this.block) return;
-    if (this.index < 0) {
-      this.index = 0;
-      this.offset = 0;
-    }
-    if (this.index >= this.masked._blocks.length) {
-      this.index = this.masked._blocks.length - 1;
-      this.offset = this.block.value.length;
-    }
-  }
-
-  _pushLeft(fn: () => ?boolean): boolean {
-    this.pushState();
-    for (this.bindBlock(); 0<=this.index; --this.index, this.offset=this.block?.value.length || 0) {
-      if (fn()) return this.ok = true;
-    }
-
-    return this.ok = false;
-  }
-
-  _pushRight (fn: () => ?boolean): boolean {
-    this.pushState();
-    for (this.bindBlock(); this.index<this.masked._blocks.length; ++this.index, this.offset=0) {
-      if (fn()) return this.ok = true;
-    }
-
-    return this.ok = false;
-  }
-
-  pushLeftBeforeFilled (): boolean {
-    return this._pushLeft(() => {
-      if (this.block.isFixed || !this.block.value) return;
-
-      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.FORCE_LEFT);
-      if (this.offset !== 0) return true;
-    });
-  }
-
-  pushLeftBeforeInput (): boolean {
-    // cases:
-    // filled input: 00|
-    // optional empty input: 00[]|
-    // nested block: XX<[]>|
-    return this._pushLeft(() => {
-      if (this.block.isFixed) return;
-
-      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.LEFT);
-      return true;
-    });
-  }
-
-  pushLeftBeforeRequired (): boolean {
-    return this._pushLeft(() => {
-      if (this.block.isFixed || this.block.isOptional && !this.block.value) return;
-
-      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.LEFT);
-      return true;
-    });
-  }
-
-  pushRightBeforeFilled (): boolean {
-    return this._pushRight(() => {
-      if (this.block.isFixed || !this.block.value) return;
-
-      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.FORCE_RIGHT);
-      if (this.offset !== this.block.value.length) return true;
-    });
-  }
-
-  pushRightBeforeInput (): boolean {
-    return this._pushRight(() => {
-      if (this.block.isFixed) return;
-
-      // const o = this.offset;
-      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.NONE);
-      // HACK cases like (STILL DOES NOT WORK FOR NESTED)
-      // aa|X
-      // aa<X|[]>X_    - this will not work
-      // if (o && o === this.offset && this.block instanceof PatternInputDefinition) continue;
-      return true;
-    });
-  }
-
-  pushRightBeforeRequired (): boolean {
-    return this._pushRight(() => {
-      if (this.block.isFixed || this.block.isOptional && !this.block.value) return;
-
-      // TODO check |[*]XX_
-      this.offset = this.block.nearestInputPos(this.offset, DIRECTION.NONE);
-      return true;
-    });
-  }
-}
 
 
 IMask.MaskedPattern = MaskedPattern;
