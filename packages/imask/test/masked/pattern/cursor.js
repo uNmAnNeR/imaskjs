@@ -18,6 +18,7 @@ describe('Align LEFT', function () {
   it('should align after XX', function () {
     ['XX*', 'XX[*]'].forEach(mask => {
       masked.updateOptions({mask});
+      masked.value = '';
 
       assert.equal(masked.nearestInputPos(0), 2);
       assert.equal(masked.nearestInputPos(0, DIRECTION.LEFT), 0);
@@ -28,7 +29,6 @@ describe('Align LEFT', function () {
       assert.equal(masked.nearestInputPos(2), 2);
       assert.equal(masked.nearestInputPos(2, DIRECTION.LEFT), 2);
 
-      assert.equal(masked.nearestInputPos(3), 3);
       assert.equal(masked.nearestInputPos(3, DIRECTION.LEFT), 2);
     });
   });
@@ -88,6 +88,15 @@ describe('Align LEFT', function () {
 
     masked.value = 'XX';
     assert.equal(masked.nearestInputPos(1, DIRECTION.LEFT), 0);
+  });
+
+  it('should align after filled optional', function () {
+    masked.updateOptions({
+      mask: '[000]',
+    });
+
+    masked.value = '111';
+    assert.equal(masked.nearestInputPos(3, DIRECTION.LEFT), 3);
   });
 });
 

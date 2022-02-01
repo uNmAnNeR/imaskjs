@@ -626,7 +626,7 @@ class BlockCaret {
 
   pushLeftBeforeRequired (): boolean {
     return this._pushLeft(() => {
-      if (this.block.isFixed || this.block.isOptional) return;
+      if (this.block.isFixed || this.block.isOptional && !this.block.value) return;
 
       this.offset = this.block.nearestInputPos(this.offset, DIRECTION.LEFT);
       return true;
@@ -658,7 +658,7 @@ class BlockCaret {
 
   pushRightBeforeRequired (): boolean {
     return this._pushRight(() => {
-      if (this.block.isFixed || this.block.isOptional) return;
+      if (this.block.isFixed || this.block.isOptional && !this.block.value) return;
 
       // TODO check |[*]XX_
       this.offset = this.block.nearestInputPos(this.offset, DIRECTION.NONE);
