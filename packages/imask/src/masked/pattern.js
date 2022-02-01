@@ -475,12 +475,12 @@ class MaskedPattern extends Masked<string> {
       caret.popState();
       if (caret.ok) return caret.pos;
 
-      caret.popState();
-      if (
-        caret.pushRightBeforeInput() &&
-        // TODO HACK for lazy if has aligned left inside fixed and has came to the start - use start position
-        (!this.lazy || this.extractInput())
-      ) return caret.pos;
+      // caret.popState();
+      // if (
+      //   caret.pushRightBeforeInput() &&
+      //   // TODO HACK for lazy if has aligned left inside fixed and has came to the start - use start position
+      //   (!this.lazy || this.extractInput())
+      // ) return caret.pos;
 
       return 0;
     }

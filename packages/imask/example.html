@@ -9,14 +9,8 @@
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: '{+7} NUM',
-      lazy: false,
-      blocks: {
-        NUM: {
-          mask: '(000) 000-0000',
-          lazy: true
-        }
-      }
+      mask: '+7 (000)000-00-00',
+      // lazy: false,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });

@@ -377,7 +377,7 @@ class Masked<MaskType> {
       oldRawValue = this.extractInput(0, tailPos, {raw: true});
     }
 
-    let startChangePos: number = this.nearestInputPos(start, removeDirection);
+    let startChangePos: number = this.nearestInputPos(start, deleteCount > 1 && start !== 0 && !this.eager ? DIRECTION.NONE : removeDirection);
     const details: ChangeDetails = new ChangeDetails({
       tailShift: startChangePos - start  // adjust tailShift if start was aligned
     }).aggregate(this.remove(startChangePos));

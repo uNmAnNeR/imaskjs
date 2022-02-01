@@ -282,7 +282,7 @@ class InputMask {
 
   /** Aligns cursor to nearest available position */
   alignCursor () {
-    this.cursorPos = this.masked.nearestInputPos(this.cursorPos, DIRECTION.LEFT);
+    this.cursorPos = this.masked.nearestInputPos(this.masked.nearestInputPos(this.cursorPos, DIRECTION.LEFT));
   }
 
   /** Aligns cursor only if selection is empty */
@@ -340,10 +340,11 @@ class InputMask {
       details.removeDirection :
       DIRECTION.NONE;
 
-    const cursorPos = this.masked.nearestInputPos(
+    let cursorPos = this.masked.nearestInputPos(
       details.startChangePos + offset,
       removeDirection,
     );
+    if (removeDirection !== DIRECTION.NONE) cursorPos = this.masked.nearestInputPos(cursorPos, DIRECTION.NONE);
 
     this.updateControl();
     this.updateCursor(cursorPos);
