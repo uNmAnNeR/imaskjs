@@ -540,7 +540,13 @@ class BlockCaret {
     this.masked = masked;
     this._log = [];
 
-    const { offset, index } = masked._mapPosToBlock(pos) || {index: 0, offset: 0};
+    const { offset, index } = masked._mapPosToBlock(pos) || (
+      pos < 0 ?
+        // first
+        { index: 0, offset: 0 } :
+        // last
+        { index: this.masked._blocks.length, offset: 0 }
+    );
     this.offset = offset;
     this.index = index;
     this.ok = false;
