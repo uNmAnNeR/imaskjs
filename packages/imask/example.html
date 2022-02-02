@@ -9,12 +9,22 @@
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: Number,
-      scale: 0,
-      padFractionalZeros: true
+      mask: Date,
+      lazy: false,
+      // overwrite: true,
+      // autofix: true,
+
+      blocks: {
+        d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
+        m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
+        Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2020, maxLength: 4}
+      }
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
+
+    document.getElementById('input').addEventListener('blur', () => imask.updateOptions({lazy: true}));
+    document.getElementById('input').addEventListener('focus', () => imask.updateOptions({lazy: false}));
   </script>
 </body>
 </html>

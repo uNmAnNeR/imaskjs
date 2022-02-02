@@ -51,12 +51,12 @@ class MaskedDate extends MaskedPattern {
         opts.blocks.d.to = opts.max.getDate();
       }
     }
-    Object.assign(opts.blocks, blocks);
+    Object.assign(opts.blocks, this.blocks, blocks);
 
     // add autofix
     Object.keys(opts.blocks).forEach(bk => {
       const b = opts.blocks[bk];
-      if (!('autofix' in b)) b.autofix = opts.autofix;
+      if (!('autofix' in b) && 'autofix' in opts) b.autofix = opts.autofix;
     });
 
     super._update(opts);
