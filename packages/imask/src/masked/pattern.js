@@ -285,7 +285,7 @@ class MaskedPattern extends Masked<string> {
       const block = this._blocks[bi];
       if (!block) break;
 
-      const blockDetails = block._appendChar(ch, flags);
+      const blockDetails = block._appendChar(ch, { ...flags, _beforeTailState: flags._beforeTailState?._blocks[bi] });
 
       const skip = blockDetails.skip;
       details.aggregate(blockDetails);

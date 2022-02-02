@@ -9,17 +9,13 @@
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: `num ₽`,
-      lazy: false,
+      mask: '$ NUM',
       blocks: {
-        num: {
+        NUM: {
           mask: Number,
-          scale: 2,
-          radix: ",",
-          mapToRadix: ["."],
-          thousandsSeparator: " ",
+          thousandsSeparator: ','
         }
-      },
+      }
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
