@@ -3,28 +3,23 @@
 
 <body>
   <h1>IMask Core Demo</h1>
-  <input type="text" id="input" value="10.10.2020">
+  <input type="text" id="input">
   <div contenteditable="true" id="ce"></div>
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: Date,
+      mask: `num ₽`,
       lazy: false,
-      overwrite: true,
-      autofix: true,
-      min: new Date(),
-      max: new Date(2020,12,31),
-
-  parse: function (str) {
-  console.log(str);
-    },
-
       blocks: {
-        d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
-        m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
-        Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 2020, to: 2020, maxLength: 4}
-      }
+        num: {
+          mask: Number,
+          scale: 2,
+          radix: ",",
+          mapToRadix: ["."],
+          thousandsSeparator: " ",
+        }
+      },
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });

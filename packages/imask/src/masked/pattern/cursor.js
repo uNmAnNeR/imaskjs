@@ -1,6 +1,6 @@
 // @flow
 import { DIRECTION } from '../../core/utils.js';
-import MaskedPattern from '../pattern.js';
+import type MaskedPattern from '../pattern.js';
 import { type PatternBlock } from './block.js';
 
 

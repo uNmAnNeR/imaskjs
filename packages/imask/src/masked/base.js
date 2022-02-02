@@ -220,7 +220,8 @@ class Masked<MaskType> {
     let details: ChangeDetails;
     [ch, details] = normalizePrepare(this.doPrepare(ch, flags));
 
-    details = details.aggregate(this._appendCharRaw(ch, flags));
+    if (!ch) details.skip = true;
+    else details = details.aggregate(this._appendCharRaw(ch, flags));
 
     if (details.inserted) {
       let consistentTail;
