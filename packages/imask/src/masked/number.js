@@ -1,5 +1,5 @@
 // @flow
-import {escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION} from '../core/utils.js';
+import {escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION, normalizePrepare} from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 
 import Masked, {type MaskedOptions, type ExtractFlags, type AppendFlags} from './base.js';
@@ -109,8 +109,12 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doPrepare (str: string, ...args: *): string | [string, ChangeDetails] {
-    return super.doPrepare(this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix)), ...args);
+  doPrepare (ch: string, ...args: *): string | [string, ChangeDetails] {
+    ch = ch.replace(this._mapToRadixRegExp, this.radix);
+    const noSepCh = this._removeThousandsSeparators(ch);
+    const [prepCh, details] = normalizePrepare(super.doPrepare(noSepCh, ...args));
+    if (ch && !noSepCh) details.skip = true;
+    return [prepCh, details];
   }
 
   /** */
