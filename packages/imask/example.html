@@ -3,44 +3,28 @@
 
 <body>
   <h1>IMask Core Demo</h1>
-  <input type="text" id="input">
+  <input type="text" id="input" value="10.10.2020">
   <div contenteditable="true" id="ce"></div>
 
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: [
-      {
-        mask: '+00 {21} 0 000 0000',
-        startsWith: '30',
-        lazy: false,
-        country: 'Greece'
-      },
-      {
-        mask: '+0 000 000-00-00',
-        startsWith: '7',
-        lazy: false,
-        country: 'Russia'
-      },
-      {
-        mask: '+00-0000-000000',
-        startsWith: '91',
-        lazy: false,
-        country: 'India'
-      },
-      {
-        mask: '0000000000000',
-        startsWith: '',
-        country: 'unknown'
-      }
-    ],
-    dispatch: function (appended, dynamicMasked) {
-      var number = (dynamicMasked.value + appended).replace(/\D/g,'');
+      mask: Date,
+      lazy: false,
+      overwrite: true,
+      autofix: true,
+      min: new Date(),
+      max: new Date(2020,12,31),
 
-      return dynamicMasked.compiledMasks.find(function (m) {
-        return number.indexOf(m.startsWith) === 0;
-      });
-    }
+  parse: function (str) {
+  console.log(str);
+    },
+
+      blocks: {
+        d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
+        m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
+        Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 2020, to: 2020, maxLength: 4}
+      }
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
