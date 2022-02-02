@@ -8,6 +8,7 @@ import { type TailDetails } from '../core/tail-details.js';
 import ChunksTailDetails from './pattern/chunk-tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import {type PatternBlock} from './pattern/block.js';
+import PatternCursor from './pattern/cursor.js';
 import createMask from './factory.js';
 import IMask from '../core/holder.js';
 import './regexp.js';  // support for default definitions which are regexp's
@@ -202,6 +203,14 @@ class MaskedPattern extends Masked<string> {
   */
   get isFilled (): boolean {
     return this._blocks.every(b => b.isFilled);
+  }
+
+  get isFixed (): boolean {
+    return this._blocks.every(b => b.isFixed);
+  }
+
+  get isOptional (): boolean {
+    return this._blocks.every(b => b.isOptional);
   }
 
   /**
@@ -422,207 +431,77 @@ class MaskedPattern extends Masked<string> {
     @override
   */
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
-    // TODO refactor - extract alignblock
-
-    const beginBlockData = this._mapPosToBlock(cursorPos) || {index: 0, offset: 0};
-    const {
-      offset: beginBlockOffset,
-      index: beginBlockIndex,
-    } = beginBlockData;
-    const beginBlock = this._blocks[beginBlockIndex];
-
-    if (!beginBlock) return cursorPos;
-
-    let beginBlockCursorPos = beginBlockOffset;
-    // if position inside block - try to adjust it
-    if (beginBlockCursorPos !== 0 && beginBlockCursorPos < beginBlock.value.length) {
-      beginBlockCursorPos = beginBlock.nearestInputPos(beginBlockOffset, forceDirection(direction));
-    }
-
-    const cursorAtRight = beginBlockCursorPos === beginBlock.value.length;
-    const cursorAtLeft = beginBlockCursorPos === 0;
-
-    //  cursor is INSIDE first block (not at bounds)
-    if (!cursorAtLeft && !cursorAtRight) return this._blockStartPos(beginBlockIndex) + beginBlockCursorPos;
-
-    const searchBlockIndex = cursorAtRight ? beginBlockIndex + 1 : beginBlockIndex;
+    if (!this._blocks.length) return 0;
+    const cursor = new PatternCursor(this, cursorPos);
 
     if (direction === DIRECTION.NONE) {
-      // NONE direction used to calculate start input position if no chars were removed
-      // FOR NONE:
-      // -
-      // input|any
-      // ->
-      //  any|input
-      // <-
-      //  filled-input|any
-
-      // check if first block at left is input
-      if (searchBlockIndex > 0) {
-        const blockIndexAtLeft = searchBlockIndex-1;
-        const blockAtLeft = this._blocks[blockIndexAtLeft];
-        const blockInputPos = blockAtLeft.nearestInputPos(0, DIRECTION.NONE);
-        // is input
-        if (!blockAtLeft.value.length || blockInputPos !== blockAtLeft.value.length) {
-          return this._blockStartPos(searchBlockIndex);
-        }
-      }
-
-      // ->
-      let firstInputAtRight = searchBlockIndex;
-      for (let bi=firstInputAtRight; bi < this._blocks.length; ++bi) {
-        const blockAtRight = this._blocks[bi];
-        const blockInputPos = blockAtRight.nearestInputPos(0, DIRECTION.NONE);
-        if (!blockAtRight.value.length || blockInputPos !== blockAtRight.value.length) {
-          return this._blockStartPos(bi) + blockInputPos;
-        }
-      }
-
-      // <-
-      // find first non-fixed symbol
-      for (let bi=searchBlockIndex-1; bi >= 0; --bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-        // is input
-        if (!block.value.length || blockInputPos !== block.value.length) {
-          return this._blockStartPos(bi) + block.value.length;
-        }
-      }
-
-      return cursorPos;
+      // -------------------------------------------------
+      // NONE should only go out from fixed to the right!
+      // -------------------------------------------------
+      if (cursor.pushRightBeforeInput()) return cursor.pos;
+      cursor.popState();
+      if (cursor.pushLeftBeforeInput()) return cursor.pos;
+      return this.value.length;
     }
 
+    // FORCE is only about a|* otherwise is 0
     if (direction === DIRECTION.LEFT || direction === DIRECTION.FORCE_LEFT) {
-      // -
-      //  any|filled-input
-      // <-
-      //  any|first not empty is not-len-aligned
-      //  not-0-aligned|any
-      // ->
-      //  any|not-len-aligned or end
-
+      // try to break fast when *|a
       if (direction === DIRECTION.LEFT) {
-        // check if first block at right is filled input
-        let firstFilledBlockIndexAtRight;
-        for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
-          if (this._blocks[bi].value) {
-            firstFilledBlockIndexAtRight = bi;
-            break;
-          }
-        }
-        if (firstFilledBlockIndexAtRight != null) {
-          const filledBlock = this._blocks[firstFilledBlockIndexAtRight];
-          const blockInputPos = filledBlock.nearestInputPos(0, DIRECTION.RIGHT);
-          if (blockInputPos === 0 && filledBlock.unmaskedValue.length) {
-            // filled block is input
-            return this._blockStartPos(firstFilledBlockIndexAtRight) + blockInputPos;
-          }
-        }
+        cursor.pushRightBeforeFilled();
+        if (cursor.ok && cursor.pos === cursorPos) return cursorPos;
+        cursor.popState();
       }
 
-      // <-
-      // find this vars
-      let firstFilledInputBlockIndex = -1;
-      let firstEmptyInputBlockIndex;  // TODO consider nested empty inputs
-      for (let bi=searchBlockIndex-1; bi >= 0; --bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.FORCE_LEFT);
-        if (!block.value || blockInputPos !== 0) firstEmptyInputBlockIndex = bi;
-        if (blockInputPos !== 0) {
-          if (blockInputPos !== block.value.length) {
-            // aligned inside block - return immediately
-            return this._blockStartPos(bi) + blockInputPos;
-          } else {
-            // found filled
-            firstFilledInputBlockIndex = bi;
-            break;
-          }
-        }
-      }
+      // forward flow
+      cursor.pushLeftBeforeInput();
+      cursor.pushLeftBeforeRequired();
+      cursor.pushLeftBeforeFilled();
 
+      // backward flow
       if (direction === DIRECTION.LEFT) {
-        // try find first empty input before start searching position only when not forced
-        for (let bi=firstFilledInputBlockIndex+1; bi <= Math.min(searchBlockIndex, this._blocks.length-1); ++bi) {
-          const block = this._blocks[bi];
-          const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-          const blockAlignedPos = this._blockStartPos(bi) + blockInputPos;
-
-          if (blockAlignedPos > cursorPos) break;
-          // if block is not lazy input
-          if (blockInputPos !== block.value.length) return blockAlignedPos;
-        }
+        cursor.pushRightBeforeInput();
+        cursor.pushRightBeforeRequired();
+        if (cursor.ok && cursor.pos <= cursorPos) return cursor.pos;
+        cursor.popState();
+        if (cursor.ok && cursor.pos <= cursorPos) return cursor.pos;
+        cursor.popState();
       }
+      if (cursor.ok) return cursor.pos;
+      if (direction === DIRECTION.FORCE_LEFT) return 0;
 
-      // process overflow
-      if (firstFilledInputBlockIndex >= 0) {
-        return this._blockStartPos(firstFilledInputBlockIndex) + this._blocks[firstFilledInputBlockIndex].value.length;
-      }
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
 
-      // for lazy if has aligned left inside fixed and has came to the start - use start position
-      if (
-        direction === DIRECTION.FORCE_LEFT ||
-        this.lazy && !this.extractInput() && !isInput(this._blocks[searchBlockIndex])
-      ) {
-        return 0;
-      }
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
 
-      if (firstEmptyInputBlockIndex != null) {
-        return this._blockStartPos(firstEmptyInputBlockIndex);
-      }
-
-      // find first input
-      for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-        // is input
-        if (!block.value.length || blockInputPos !== block.value.length) {
-          return this._blockStartPos(bi) + blockInputPos;
-        }
-      }
+      // cursor.popState();
+      // if (
+      //   cursor.pushRightBeforeInput() &&
+      //   // TODO HACK for lazy if has aligned left inside fixed and has came to the start - use start position
+      //   (!this.lazy || this.extractInput())
+      // ) return cursor.pos;
 
       return 0;
     }
 
     if (direction === DIRECTION.RIGHT || direction === DIRECTION.FORCE_RIGHT) {
-      // ->
-      //  any|not-len-aligned and filled
-      //  any|not-len-aligned
-      // <-
-      //  not-0-aligned or start|any
-      let firstInputBlockAlignedIndex: ?number;
-      let firstInputBlockAlignedPos: ?number;
-      for (let bi=searchBlockIndex; bi < this._blocks.length; ++bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(0, DIRECTION.NONE);
-        if (blockInputPos !== block.value.length) {
-          firstInputBlockAlignedPos = this._blockStartPos(bi) + blockInputPos;
-          firstInputBlockAlignedIndex = bi;
-          break;
-        }
-      }
+      // forward flow
+      cursor.pushRightBeforeInput();
+      cursor.pushRightBeforeRequired();
 
-      if (firstInputBlockAlignedIndex != null && firstInputBlockAlignedPos != null) {
-        for (let bi=firstInputBlockAlignedIndex; bi < this._blocks.length; ++bi) {
-          const block = this._blocks[bi];
-          const blockInputPos = block.nearestInputPos(0, DIRECTION.FORCE_RIGHT);
-          if (blockInputPos !== block.value.length) {
-            return this._blockStartPos(bi) + blockInputPos;
-          }
-        }
-        return direction === DIRECTION.FORCE_RIGHT ?
-          this.value.length :
-          firstInputBlockAlignedPos;
-      }
+      if (cursor.pushRightBeforeFilled()) return cursor.pos;
+      if (direction === DIRECTION.FORCE_RIGHT) return this.value.length;
 
-      for (let bi=Math.min(searchBlockIndex, this._blocks.length-1); bi >= 0; --bi) {
-        const block = this._blocks[bi];
-        const blockInputPos = block.nearestInputPos(block.value.length, DIRECTION.LEFT);
-        if (blockInputPos !== 0) {
-          const alignedPos = this._blockStartPos(bi) + blockInputPos;
-          if (alignedPos >= cursorPos) return alignedPos;
-          break;
-        }
-      }
+      // backward flow
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
+
+      cursor.popState();
+      if (cursor.ok) return cursor.pos;
+
+      return this.nearestInputPos(cursorPos, DIRECTION.LEFT);
     }
 
     return cursorPos;
@@ -648,13 +527,6 @@ MaskedPattern.STOP_CHAR = '`';
 MaskedPattern.ESCAPE_CHAR = '\\';
 MaskedPattern.InputDefinition = PatternInputDefinition;
 MaskedPattern.FixedDefinition = PatternFixedDefinition;
-
-function isInput (block: PatternBlock): boolean {
-  if (!block) return false;
-
-  const value = block.value;
-  return !value || block.nearestInputPos(0, DIRECTION.NONE) !== value.length;
-}
 
 
 IMask.MaskedPattern = MaskedPattern;

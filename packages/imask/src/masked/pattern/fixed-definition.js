@@ -30,10 +30,13 @@ class PatternFixedDefinition implements PatternBlock {
   eager: boolean;
   /** */
   _isRawInput: ?boolean;
+  /** */
+  isFixed: boolean;
 
   constructor(opts: PatternFixedDefinitionOptions) {
     Object.assign(this, opts);
     this._value = '';
+    this.isFixed = true;
   }
 
   get value (): string {
