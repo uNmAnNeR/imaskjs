@@ -277,7 +277,7 @@ class MaskedNumber extends Masked<Class<Number>> {
       let formatted = this.value;
 
       if (this.normalizeZeros) formatted = this._normalizeZeros(formatted);
-      if (this.padFractionalZeros) formatted = this._padFractionalZeros(formatted);
+      if (this.padFractionalZeros && this.scale > 0) formatted = this._padFractionalZeros(formatted);
 
       this._value = formatted;
     }

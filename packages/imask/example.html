@@ -9,13 +9,9 @@
   <script src="dist/imask.js"></script>
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: '$ NUM',
-      blocks: {
-        NUM: {
-          mask: Number,
-          thousandsSeparator: ','
-        }
-      }
+      mask: Number,
+      scale: 0,
+      padFractionalZeros: true
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
