@@ -17,7 +17,7 @@ class MaskedDate extends MaskedPattern {
   /** End date */
   max: ?Date;
   /** */
-  autofix: boolean;
+  autofix: boolean | 'pad';
 
   /**
     @param {Object} opts

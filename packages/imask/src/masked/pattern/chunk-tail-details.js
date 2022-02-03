@@ -163,4 +163,28 @@ class ChunksTailDetails implements TailDetails {
 
     return '';
   }
+
+  shift (): string {
+    if (!this.chunks.length) return '';
+
+    let ci=this.chunks.length-1;
+    while (0 <= ci) {
+      const chunk = this.chunks[ci];
+      const shiftChar = chunk.shift();
+
+      if (chunk.toString()) {
+        // chunk still contains value
+        // but not shifted - means no more available chars to shift
+        if (!shiftChar) break;
+        --ci;
+      } else {
+        // clean if chunk has no value
+        this.chunks.splice(ci, 1);
+      }
+
+      if (shiftChar) return shiftChar;
+    }
+
+    return '';
+  }
 }

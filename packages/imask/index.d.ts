@@ -106,7 +106,7 @@ declare namespace IMask {
       flags: AppendFlags,
     ) => boolean;
     commit: (value: string, masked: Masked<MaskType>) => void;
-    overwrite?: boolean;
+    overwrite?: boolean | 'shift';
     eager?: boolean;
     isInitialized: boolean;
 
@@ -270,7 +270,7 @@ declare namespace IMask {
     readonly maxLength: number;
     readonly from: number;
     readonly to: number;
-    readonly autofix?: boolean;
+    readonly autofix?: boolean | 'pad';
 
     constructor(opts: MaskedRangeOptions);
     updateOptions(opts: Partial<MaskedRangeOptions>): void;
@@ -352,7 +352,7 @@ declare namespace IMask {
     readonly pattern: string;
     readonly min?: Date;
     readonly max?: Date;
-    readonly autofix?: boolean;
+    readonly autofix?: boolean | 'pad';
     date: Date;
 
     constructor(opts: MaskedDateOptions);

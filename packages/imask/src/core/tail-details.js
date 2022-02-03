@@ -23,4 +23,5 @@ interface TailDetails {
   extend (value: string | TailDetails): void;
   appendTo (masked: AppendTail): ChangeDetails;
   unshift (beforePos?: number): string;
+  shift (): string;
 }

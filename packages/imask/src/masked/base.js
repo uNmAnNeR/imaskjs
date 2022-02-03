@@ -73,7 +73,7 @@ class Masked<MaskType> {
   /** Parse strgin to get typed value */
   parse: (string, Masked<MaskType>) => any;
   /** Enable characters overwriting */
-  overwrite: ?boolean;
+  overwrite: ?boolean | 'shift';
   /** */
   eager: boolean;
   /** */
@@ -229,14 +229,23 @@ class Masked<MaskType> {
       if (appended && checkTail != null) {
         // validation ok, check tail
         const beforeTailState = this.state;
-        if (this.overwrite) {
+        if (this.overwrite === true) {
           consistentTail = checkTail.state;
           checkTail.unshift(this.value.length);
         }
 
-        const tailDetails = this.appendTail(checkTail);
-
+        let tailDetails = this.appendTail(checkTail);
         appended = tailDetails.rawInserted === checkTail.toString();
+
+        // not ok, try shift
+        if (!(appended && tailDetails.inserted) && this.overwrite === 'shift') {
+          this.state = beforeTailState;
+          consistentTail = checkTail.state;
+          checkTail.shift();
+
+          tailDetails = this.appendTail(checkTail);
+          appended = tailDetails.rawInserted === checkTail.toString();
+        }
 
         // if ok, rollback state after tail
         if (appended && tailDetails.inserted) this.state = beforeTailState;

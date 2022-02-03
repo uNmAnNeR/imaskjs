@@ -19,7 +19,7 @@ class MaskedRange extends MaskedPattern {
   /** Max bound */
   to: number;
   /** */
-  autofix: boolean;
+  autofix: boolean | 'pad';
 
   get _matchFrom (): number {
     return this.maxLength - String(this.from).length;

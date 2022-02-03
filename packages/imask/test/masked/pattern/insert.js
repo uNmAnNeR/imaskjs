@@ -110,4 +110,24 @@ describe('Insert', function () {
       assert.equal(masked.value, '1+');
     });
   });
+
+  describe('overwrite flag', function () {
+    it('should shift value', function () {
+      masked.updateOptions({ mask: '000', overwrite: 'shift' });
+      masked.value = '123';
+      assert.equal(masked.value, '123');
+
+      masked.splice(0, 0, '0', DIRECTION.NONE);
+      assert.equal(masked.value, '012');
+    });
+
+    it('should not shift if accepted', function () {
+      masked.updateOptions({ mask: '00[aa]00', overwrite: 'shift' });
+      masked.value = '1234';
+      assert.equal(masked.value, '1234');
+
+      masked.splice(2, 0, 'ab', DIRECTION.NONE);
+      assert.equal(masked.value, '12ab34');
+    });
+  })
 });

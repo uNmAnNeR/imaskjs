@@ -45,7 +45,10 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: un
   prepare: PropTypes.func,
   validate: PropTypes.func,
   commit: PropTypes.func,
-  overwrite: PropTypes.bool,
+  overwrite: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf(['shift']),
+  ]),
   eager: PropTypes.bool,
 
   // events
@@ -62,7 +65,10 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: un
   pattern: PropTypes.string,
   format: PropTypes.func,
   parse: PropTypes.func,
-  autofix: PropTypes.bool,
+  autofix: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf(['pad']),
+  ]),
 
   // number
   radix: PropTypes.string,

@@ -260,7 +260,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
       super.nearestInputPos(...args);
   }
 
-  get overwrite (): ?boolean {
+  get overwrite (): ?boolean | 'shift' {
     return this.currentMask ?
       this.currentMask.overwrite :
       super.overwrite;

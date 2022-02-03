@@ -55,4 +55,12 @@ class ContinuousTailDetails implements TailDetails {
     this.value = this.value.slice(1);
     return shiftChar;
   }
+
+  shift (): string {
+    if (!this.value.length) return '';
+
+    const shiftChar = this.value[this.value.length-1];
+    this.value = this.value.slice(0, -1);
+    return shiftChar;
+  }
 }

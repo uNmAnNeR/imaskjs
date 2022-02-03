@@ -10,24 +10,8 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: [
-        { mask: '' },
-        {
-          mask: 'num%',
-          lazy: false,
-          blocks: {
-            num: {
-              mask: Number,
-              thousandsSeparator: ",",
-              inputMode: "decimal",
-              radix: ".", // decimal delimiter entered by user
-              mapToRadix: ["."], // symbols to process as radix
-              scale: 2,
-              signed: false // disallow negative
-            }
-          },
-        }
-      ]
+      mask: '{#}000[aaa]/NIC-`*[**]',
+      overwrite: 'shift',
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
