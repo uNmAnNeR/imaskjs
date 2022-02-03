@@ -245,27 +245,27 @@ console.log(masked.typedValue);</code></pre>
 });</code></pre>
 
   <h4 id="overwrite" class="section-h"><a href="#overwrite">Overwrite Mode <kbd>since 5.0</kbd></a></h4>
-  <p>Enables characters overwriting instead of inserting:</p>
+  <p>Enables characters overwriting (replace or shift) instead of inserting.</p>
   <div class="form-item">
-    <label><code>Date</code> mask in overwrite and autofix modes</label>
-    <input id="date-overwrite-mask" type="text" value="">
+    <label>Simple <code>6-digits</code> mask in overwrite mode</label>
+    <div class="input-select">
+      <input id="overwrite-mask" type="text" value="">
+      <select id="select-overwrite">
+        <option value="false">Overwrite: false</option>
+        <option value="true">Overwrite: true</option>
+        <option value="shift">Overwrite: shift (new in v6.4.0)</option>
+      </select>
+    </div>
 
     <div class="toggle-panel">
-      <label for="date-overwrite-mask-source" class="muted">source</label>
-      <input id="date-overwrite-mask-source" type="checkbox">
+      <label for="overwrite-mask-source" class="muted">source</label>
+      <input id="overwrite-mask-source" type="checkbox">
       <div class="toggle-panel-content">
         <pre><code>var overwriteMask = IMask(
-  document.getElementById('date-overwrite-mask'),
+  document.getElementById('overwrite-mask'),
   {
-    mask: Date,
+    mask: '000000',
     lazy: false,
-    overwrite: true,
-    autofix: true,
-    blocks: {
-      d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
-      m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
-      Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2999, maxLength: 4}
-    }
   }
 );</code></pre>
       </div>
@@ -521,6 +521,38 @@ var masked = IMask.PatternMasked({
     }
   }
 });</code></pre>
+
+  <h4 id="lazy" class="section-h"><a href="#lazy">Lazy Mode</a></h4>
+  <div class="form-item">
+    <label></label>
+    <div class="input-checkbox">
+      <input id="pattern-lazy-mask" type="text" value="">
+      <label>
+        <input type="checkbox" name="lazy" id="toggle-pattern-lazy-mask">
+        lazy
+      </label>
+    </div>
+
+    <div class="toggle-panel">
+      <label for="pattern-lazy-mask-source" class="muted">source</label>
+      <input id="pattern-lazy-mask-source" type="checkbox">
+      <div class="toggle-panel-content">
+        <pre><code>var lazyMask = IMask(
+  document.getElementById('pattern-lazy-mask'),
+  {
+    mask: Date,
+    lazy: &lt;CHECK&gt;,
+    autofix: true,
+    blocks: {
+      d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
+      m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
+      Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2999, maxLength: 4}
+    }
+  }
+);</code></pre>
+      </div>
+    </div>
+  </div>
 
   <h4 id="eager" class="section-h"><a href="#eager">Eager Mode <kbd>since 6.3.0</kbd></a></h4>
   <div class="form-item">
@@ -1074,19 +1106,21 @@ var numberMask = IMask(element, { mask: Number });
     });
 
     var overwriteMask = IMask(
-      document.getElementById('date-overwrite-mask'),
+      document.getElementById('overwrite-mask'),
       {
-        mask: Date,
+        mask: '000000',
         lazy: false,
-        overwrite: true,
-        autofix: true,
-        blocks: {
-          d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
-          m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
-          Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2999, maxLength: 4}
-        }
       }
     );
+    var selectOverwrite = document.getElementById('select-overwrite');
+    selectOverwrite.addEventListener('change', function (e) {
+      var val = e.target.value;
+      overwriteMask.updateOptions({
+        overwrite: val === 'false' ? false :
+          val === 'true' ? true :
+          'shift',
+      });
+    });
 
     var numberMask = IMask(document.getElementById('numbers-mask'), {
       mask: Number,
@@ -1285,6 +1319,27 @@ var numberMask = IMask(element, { mask: Number });
         autofix: val === 'false' ? false :
           val === 'true' ? true :
           'pad',
+      });
+    });
+
+    var lazyMask = IMask(
+      document.getElementById('pattern-lazy-mask'),
+      {
+        mask: Date,
+        lazy: false,
+        autofix: true,
+        blocks: {
+          d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
+          m: {mask: IMask.MaskedRange, placeholderChar: 'm', from: 1, to: 12, maxLength: 2},
+          Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2999, maxLength: 4}
+        }
+      }
+    );
+
+    var togglelazy = document.getElementById('toggle-pattern-lazy-mask');
+    togglelazy.addEventListener('change', function (e) {
+      lazyMask.updateOptions({
+        lazy: e.target.checked,
       });
     });
 

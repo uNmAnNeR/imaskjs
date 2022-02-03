@@ -66,7 +66,8 @@
     "coverage": "lerna run coveralls --scope imask",
     "watch:core": "lerna run watch --scope imask --stream",
     "watch:vue": "lerna run watch --scope vue-imask --stream",
-    "watch:react": "lerna run watch --scope react-imask --stream"
+    "watch:react": "lerna run watch --scope react-imask --stream",
+    "watch:docs": "bundle exec jekyll serve --livereload --source docs --destination docs/_site"
   },
   "collective": {
     "type": "opencollective",
