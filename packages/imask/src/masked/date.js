@@ -97,6 +97,13 @@ class MaskedDate extends MaskedPattern {
   set typedValue (value: Date) {
     super.typedValue = value;
   }
+
+  /**
+    @override
+  */
+  maskEquals (mask: any): boolean {
+    return mask === Date || super.maskEquals(mask);
+  }
 }
 MaskedDate.DEFAULTS = {
   pattern: 'd{.}`m{.}`Y',

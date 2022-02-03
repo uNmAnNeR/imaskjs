@@ -79,9 +79,7 @@ class InputMask {
   }
 
   maskEquals (mask: Mask): boolean {
-    return mask == null ||
-      mask === this.masked.mask ||
-      mask === Date && this.masked instanceof MaskedDate;
+    return mask == null || this.masked?.maskEquals(mask);
   }
 
   set mask (mask: Mask) {

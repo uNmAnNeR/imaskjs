@@ -269,6 +269,14 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   set overwrite (overwrite: *) {
     console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
   }
+
+  /**
+    @override
+  */
+  maskEquals (mask: any): boolean {
+    return Array.isArray(mask) &&
+      this.compiledMasks.every((m, mi) => m.maskEquals(mask[mi]?.mask));
+  }
 }
 
 MaskedDynamic.DEFAULTS = {

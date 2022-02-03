@@ -397,6 +397,10 @@ class Masked<MaskType> {
 
     return details.aggregate(this.append(inserted, {input: true}, tail));
   }
+
+  maskEquals (mask: any): boolean {
+    return this.mask === mask;
+  }
 }
 Masked.DEFAULTS = {
   format: v => v,
