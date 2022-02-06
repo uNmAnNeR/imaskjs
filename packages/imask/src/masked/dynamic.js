@@ -117,6 +117,19 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
+   /**
+    @override
+  */
+  _appendEager (...args: *): ChangeDetails {
+    const details = this._applyDispatch(...args);
+
+    if (this.currentMask) {
+      details.aggregate(this.currentMask._appendEager());
+    }
+
+    return details;
+  }
+
   /**
     @override
   */
@@ -136,7 +149,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     @override
   */
   reset () {
-    if (this.currentMask) this.currentMask.reset();
+    this.currentMask?.reset();
     this.compiledMasks.forEach(m => m.reset());
   }
 
@@ -185,7 +198,14 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     @override
   */
   get isComplete (): boolean {
-    return !!this.currentMask && this.currentMask.isComplete;
+    return Boolean(this.currentMask?.isComplete);
+  }
+
+  /**
+    @override
+  */
+  get isFilled (): boolean {
+    return Boolean(this.currentMask?.isFilled);
   }
 
   /**
@@ -268,6 +288,16 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
 
   set overwrite (overwrite: *) {
     console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
+  }
+
+  get eager (): boolean {
+    return this.currentMask ?
+      this.currentMask.eager :
+      super.eager;
+  }
+
+  set eager (eager: *) {
+    console.warn('"eager" option is not available in dynamic mask, use this option in siblings');
   }
 
   /**

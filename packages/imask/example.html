@@ -10,8 +10,10 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: '{#}000[aaa]/NIC-`*[**]',
-      overwrite: 'shift',
+      mask: [
+        { mask: '0"', eager: true },
+        { mask: '0[0]"', eager: true },
+      ],
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
