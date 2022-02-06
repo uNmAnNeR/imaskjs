@@ -1,7 +1,7 @@
 import IMask from 'imask';
 import { useEffect, useCallback, useState, useRef, Dispatch } from 'react';
 import type { MutableRefObject } from 'react';
-import type { ReactMaskProps, MaskedElement, Falsy } from './mixin';
+import type { ReactMaskProps, Falsy, ReactElement } from './mixin';
 
 
 export default
@@ -10,12 +10,13 @@ function useIMask<
   Unmask extends ('typed' | boolean) = false,
   Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
     Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
-    IMask.InputMask<Opts>['unmaskedValue']
+    IMask.InputMask<Opts>['unmaskedValue'],
+  MaskElement extends ReactElement=ReactElement
 >(
   opts: Opts,
-  { onAccept, onComplete }: Pick<ReactMaskProps<Opts, Unmask, Value>, 'onAccept' | 'onComplete'> = {}
+  { onAccept, onComplete }: Pick<ReactMaskProps<Opts, Unmask, Value, MaskElement>, 'onAccept' | 'onComplete'> = {}
 ): {
-  ref: MutableRefObject<MaskedElement>,
+  ref: MutableRefObject<MaskElement>,
   maskRef: MutableRefObject<IMask.InputMask<Opts>>,
   value: IMask.InputMask<Opts>['value'],
   setValue: Dispatch<IMask.InputMask<Opts>['value']>,
