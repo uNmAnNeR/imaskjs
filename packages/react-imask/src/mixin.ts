@@ -27,6 +27,7 @@ type ReactMaskProps<
   unmask?: Unmask;
   value?: Value;
   inputRef?: React.RefCallback<MaskElement>;
+  ref?: React.Ref<React.ComponentType<IMaskInputProps<Opts, Unmask, Value, MaskElement>>>;
 }
 
 export
@@ -96,7 +97,7 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: un
   dispatch: PropTypes.func,
 
   // ref
-  inputRef: PropTypes.func
+  inputRef: PropTypes.func,
 };
 
 const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
