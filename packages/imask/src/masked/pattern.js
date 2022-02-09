@@ -1,13 +1,13 @@
 // @flow
 import {DIRECTION, type Direction, forceDirection} from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
-import Masked, {type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState} from './base.js';
-import PatternInputDefinition, {DEFAULT_INPUT_DEFINITIONS, type Definitions} from './pattern/input-definition.js';
+import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base.js';
+import PatternInputDefinition, { DEFAULT_INPUT_DEFINITIONS, type Definitions } from './pattern/input-definition.js';
 import PatternFixedDefinition from './pattern/fixed-definition.js';
 import { type TailDetails } from '../core/tail-details.js';
 import ChunksTailDetails from './pattern/chunk-tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
-import {type PatternBlock} from './pattern/block.js';
+import { type PatternBlock } from './pattern/block.js';
 import PatternCursor from './pattern/cursor.js';
 import createMask from './factory.js';
 import IMask from '../core/holder.js';

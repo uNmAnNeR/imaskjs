@@ -25,10 +25,10 @@
   ],
   "dependencies": {
     "imask": "^6.4.1-alpha.0",
-    "vue-demi": "^0.11.2"
+    "vue-demi": "^0.12.1"
   },
   "peerDependencies": {
-    "@vue/composition-api": "^1.0.0-beta.1",
+    "@vue/composition-api": ">=1.0.0",
     "vue": ">=2.2.0"
   },
   "peerDependenciesMeta": {

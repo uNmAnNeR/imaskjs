@@ -1,8 +1,8 @@
 // @flow
-import {escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION, normalizePrepare} from '../core/utils.js';
+import { escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION, normalizePrepare } from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 
-import Masked, {type MaskedOptions, type ExtractFlags, type AppendFlags} from './base.js';
+import Masked, { type MaskedOptions, type ExtractFlags, type AppendFlags } from './base.js';
 import IMask from '../core/holder.js';
 
 

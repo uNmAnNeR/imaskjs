@@ -3,8 +3,8 @@ import type Masked from '../base.js';
 import type MaskedPattern from '../pattern.js';
 import type ChangeDetails from '../../core/change-details.js';
 import { type TailDetails } from '../../core/tail-details.js';
-import {type ExtractFlags, type AppendFlags} from '../base.js';
-import {type Direction} from '../../core/utils.js';
+import { type ExtractFlags, type AppendFlags } from '../base.js';
+import { type Direction } from '../../core/utils.js';
 
 
 /**

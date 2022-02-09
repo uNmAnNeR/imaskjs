@@ -1,5 +1,5 @@
 // @flow
-import Masked, {type MaskedOptions} from './base.js';
+import Masked, { type MaskedOptions } from './base.js';
 import IMask from '../core/holder.js';
 
 

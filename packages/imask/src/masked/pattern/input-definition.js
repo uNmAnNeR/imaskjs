@@ -2,11 +2,11 @@
 import createMask from '../factory.js';
 import type Masked from '../base.js';
 import type MaskedPattern from '../pattern.js';
-import {type TailDetails} from '../../core/tail-details.js';
-import {type Mask, type ExtractFlags, type AppendFlags} from '../base.js';
+import { type TailDetails } from '../../core/tail-details.js';
+import { type Mask, type ExtractFlags, type AppendFlags } from '../base.js';
 import ChangeDetails from '../../core/change-details.js';
-import {DIRECTION, type Direction} from '../../core/utils.js';
-import {type PatternBlock} from './block.js';
+import { DIRECTION, type Direction } from '../../core/utils.js';
+import { type PatternBlock } from './block.js';
 
 
 export
