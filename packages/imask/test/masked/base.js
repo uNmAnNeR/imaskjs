@@ -1,6 +1,8 @@
 import { assert } from 'chai';
 
 import MaskedPattern from '../../src/masked/pattern';
+import MaskedDate from '../../src/masked/date';
+import MaskedNumber from '../../src/masked/number';
 import { DIRECTION } from '../../src/core/utils';
 
 
@@ -65,5 +67,30 @@ describe('Masked', function () {
 
     masked.splice(1, 1, '', DIRECTION.RIGHT);
     assert.equal(masked.value, '1.2');
+  });
+
+  describe('#typedValueEquals', function () {
+    it('should be true', function () {
+      let masked = new MaskedDate();
+
+      assert(masked.typedValueEquals(''));
+      assert(masked.typedValueEquals(undefined));
+      assert(masked.typedValueEquals(null));
+
+      const d = new Date();
+      masked.typedValue = d;
+      assert(masked.typedValueEquals(new Date(d)));
+    });
+
+    it('should be false', function () {
+      let masked = new MaskedNumber();
+
+      assert(masked.typedValueEquals(''));
+      console.log(masked.typedValue === 0);
+      assert(!masked.typedValueEquals(0));
+
+      masked.value = '0';
+      assert(masked.typedValueEquals(0));
+    });
   });
 });

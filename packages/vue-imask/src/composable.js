@@ -63,15 +63,11 @@ function useIMask (props, { emit, onAccept, onComplete }={}) {
   onUnmounted(_destroyMask);
 
   watch(unmasked, () => {
-    if (mask.value && $unmasked !== unmasked.value) {
-      $unmasked = mask.value.unmaskedValue = unmasked.value;
-    }
+    if (mask.value) $unmasked = mask.value.unmaskedValue = unmasked.value;
   });
 
   watch(masked, () => {
-    if (mask.value && $masked !== masked.value) {
-      $masked = mask.value.value = masked.value;
-    }
+    if (mask.value) $masked = mask.value.value = masked.value;
   });
 
   watch(typed, () => {

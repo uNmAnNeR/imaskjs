@@ -359,6 +359,18 @@ class MaskedNumber extends Masked<Class<Number>> {
       (this.min != null && this.min < 0) ||
       (this.max != null && this.max < 0);
   }
+
+  /**
+    @override
+  */
+  typedValueEquals (value: any): boolean {
+    // handle  0 -> '' case (typed = 0 even if value = '')
+    // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
+    return (
+      super.typedValueEquals(value) ||
+      MaskedNumber.EMPTY_VALUES.includes(value) && MaskedNumber.EMPTY_VALUES.includes(this.typedValue)
+    ) && !(value === 0 && this.value === '');
+  }
 }
 MaskedNumber.DEFAULTS = {
   radix: ',',
@@ -369,6 +381,6 @@ MaskedNumber.DEFAULTS = {
   normalizeZeros: true,
   padFractionalZeros: false,
 };
-
+MaskedNumber.EMPTY_VALUES = [...Masked.EMPTY_VALUES, 0];
 
 IMask.MaskedNumber = MaskedNumber;

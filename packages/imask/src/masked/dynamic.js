@@ -307,6 +307,13 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return Array.isArray(mask) &&
       this.compiledMasks.every((m, mi) => m.maskEquals(mask[mi]?.mask));
   }
+
+  /**
+    @override
+  */
+  typedValueEquals (value: any): boolean {
+    return Boolean(this.currentMask?.typedValueEquals(value));
+  }
 }
 
 MaskedDynamic.DEFAULTS = {

@@ -102,6 +102,8 @@ class InputMask {
   }
 
   set value (str: string) {
+    if (this.value === str) return;
+
     this.masked.value = str;
     this.updateControl();
     this.alignCursor();
@@ -113,6 +115,8 @@ class InputMask {
   }
 
   set unmaskedValue (str: string) {
+    if (this.unmaskedValue === str) return;
+
     this.masked.unmaskedValue = str;
     this.updateControl();
     this.alignCursor();
@@ -124,6 +128,8 @@ class InputMask {
   }
 
   set typedValue (val: any) {
+    if (this.masked.typedValueEquals(val)) return;
+
     this.masked.typedValue = val;
     this.updateControl();
     this.alignCursor();

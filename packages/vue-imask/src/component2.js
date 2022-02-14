@@ -46,15 +46,7 @@ export default {
         if (maskOptions.mask) {
           if (this.maskRef) {
             this.maskRef.updateOptions(maskOptions);
-            if ('value' in props &&
-              (props.value !== this._maskValue() ||
-                // handle cases like Number('') === 0,
-                // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
-                (typeof props.value !== 'string' && this.maskRef.value === '') &&
-                  !this.maskRef.el.isActive)
-            ) {
-              this._updateValue();
-            }
+            if ('value' in props) this._updateValue();
           } else {
             this._initMask(maskOptions);
             if (props.value !== this._maskValue()) this._onAccept();
@@ -92,7 +84,7 @@ export default {
     },
 
     _updateValue () {
-      const value = this.value == null ? '' : this.value;
+      const value = this.value == null && this.unmask !== 'typed' ? '' : this.value;
       if (this.unmask === 'typed') this.maskRef.typedValue = value;
       else if (this.unmask) this.maskRef.unmaskedValue = value;
       else this.maskRef.value = value;

@@ -156,15 +156,7 @@ export default function IMaskMixin<
       if (maskOptions.mask) {
         if (this.maskRef) {
           this.maskRef.updateOptions(maskOptions as Partial<Opts>); // TODO
-          if ('value' in props &&
-            (props.value !== this.maskValue ||
-              // handle cases like Number('') === 0,
-              // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
-              (typeof props.value !== 'string' && this.maskRef.value === '') &&
-                !this.maskRef.el.isActive)
-          ) {
-            this.maskValue = props.value;
-          }
+          if ('value' in props) this.maskValue = props.value;
         } else {
           this.initMask(maskOptions as Opts); // TODO
         }

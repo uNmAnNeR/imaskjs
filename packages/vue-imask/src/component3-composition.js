@@ -62,7 +62,7 @@ export default {
     return () => {
       const data = {
         ...attrs,
-        value: props.value ? props.value : props.modelValue,
+        value: props.value != null ? props.value : props.modelValue,
         ref: el,
       };
 

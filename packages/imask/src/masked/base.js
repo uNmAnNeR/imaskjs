@@ -57,6 +57,7 @@ type MaskedOptions<MaskType> = {
 export default
 class Masked<MaskType> {
   static DEFAULTS: any; // $Shape<MaskedOptions>; TODO after fix https://github.com/facebook/flow/issues/4773
+  static EMPTY_VALUES: any;
 
   /** @type {Mask} */
   mask: MaskType;
@@ -410,11 +411,20 @@ class Masked<MaskType> {
   maskEquals (mask: any): boolean {
     return this.mask === mask;
   }
+
+  typedValueEquals (value: any): boolean {
+    const tval = this.typedValue;
+
+    return value === tval ||
+      Masked.EMPTY_VALUES.includes(value) && Masked.EMPTY_VALUES.includes(tval) ||
+      this.doFormat(value) === this.doFormat(this.typedValue);
+  }
 }
 Masked.DEFAULTS = {
   format: v => v,
   parse: v => v,
 };
+Masked.EMPTY_VALUES = [undefined, null, ''];
 
 
 IMask.Masked = Masked;

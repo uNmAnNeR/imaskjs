@@ -131,19 +131,12 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   }
 
   writeValue(value: any) {
-    value = value == null ? '' : value;
+    value = value == null && this.unmask !== 'typed' ? '' : value;
 
     if (this.maskRef) {
       this.beginWrite(value);
-
-      if (this.maskValue !== value ||
-        // handle cases like Number('') === 0,
-        // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
-        (typeof value !== 'string' && this.maskRef.value === '') &&
-          !this.maskRef.el.isActive
-      ) {
-        this.maskValue = value;
-      }
+      this.maskValue = value;
+      this.endWrite();
     } else {
       this._renderer.setProperty(this.element, 'value', value);
     }
