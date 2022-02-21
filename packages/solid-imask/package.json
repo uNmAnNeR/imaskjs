@@ -1,0 +1,28 @@
+{
+  "name": "solid-imask",
+  "version": "0.0.1",
+  "author": "Alexey Kryazhev",
+  "license": "MIT",
+  "description": "Solid input mask",
+  "main": "dist/solid-imask.js",
+  "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "svelte",
+    "imask",
+    "javascript",
+    "input",
+    "mask"
+  ],
+  "dependencies": {
+    "imask": "^6.4.2"
+  },
+  "peerDependencies": {
+    "svelte": ">=1.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
