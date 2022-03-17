@@ -70,9 +70,3 @@ const IMaskTextInput = IMaskNativeMixin(InputComponent);
 ```
 
 More options see in a [guide](https://imask.js.org/guide.html).
-
-## Many Thanks to
-[@Yordis Prieto](https://github.com/yordis)
-
-## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/5)

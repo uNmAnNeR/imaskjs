@@ -44,9 +44,6 @@ import {IMaskModule} from 'angular-imask';
 ```
 More options see in a [guide](https://imask.js.org/guide.html).
 
-## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/3)
-
 ## Development
 As to make changes to this package follow the steps:
 

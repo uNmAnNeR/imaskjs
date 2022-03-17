@@ -91,6 +91,3 @@ function IMaskWithHook () {
   );
 }
 ```
-
-## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/3)

@@ -57,9 +57,6 @@ Supports all major browsers and IE11+ [need to support older?](https://imask.js.
 - ask question in [discussions](https://github.com/uNmAnNeR/imaskjs/discussions)
 - [Телега если быстро и коротко](https://t.me/imaskjs)
 
-## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/3)
-
 ## Contributors
 
 ### Code Contributors

@@ -22,6 +22,3 @@ or use CDN:
 
 ## Build & Test
 `npm run make`
-
-## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/3)

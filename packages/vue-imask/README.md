@@ -170,6 +170,3 @@ More options see in a [guide](https://imask.js.org/guide.html).
   }
 </script>
 ```
-
-## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/5)

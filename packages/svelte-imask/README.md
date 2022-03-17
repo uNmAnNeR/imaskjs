@@ -47,7 +47,3 @@ Currently plugin does not have component for input with 2-way binding support be
 
 Workaround is here:
 https://svelte.dev/repl/b590cddb69f4452b8f7704bd1e721e76?version=3.16.7
-
-
-## Support Development
-[Paypal](https://www.paypal.me/alexeykryazhev/5)
