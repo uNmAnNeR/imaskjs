@@ -422,7 +422,7 @@ class Masked<MaskType> {
 }
 Masked.DEFAULTS = {
   format: v => v,
-  parse: v => v,
+  parse: (v, masked) => masked.unmaskedValue,
 };
 Masked.EMPTY_VALUES = [undefined, null, ''];
 
