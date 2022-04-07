@@ -51,7 +51,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /** Flag to remove leading and trailing zeros in the end of editing */
   normalizeZeros: boolean;
   /** Flag to pad trailing zeros after point in the end of editing */
-  padFractionalZeros: boolean;
+  padFractionalZeros: boolean | number;
 
   _numberRegExp: RegExp;
   _numberRegExpInput: RegExp;
@@ -312,7 +312,7 @@ class MaskedNumber extends Masked<Class<Number>> {
 
     const parts = value.split(this.radix);
     if (parts.length < 2) parts.push('');
-    parts[1] = parts[1].padEnd(this.scale, '0');
+    parts[1] = parts[1].padEnd(typeof this.padFractionalZeros === 'number' ? this.padFractionalZeros : this.scale, '0');
     return parts.join(this.radix);
   }
 
