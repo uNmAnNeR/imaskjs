@@ -26,7 +26,7 @@ type ReactMaskProps<
   onComplete?: (value: Value, maskRef: IMask.InputMask<Opts>, e?: InputEvent) => void;
   unmask?: Unmask;
   value?: Value;
-  inputRef?: React.RefCallback<MaskElement>;
+  inputRef?: React.RefCallback<MaskElement> | React.ForwardedRef<MaskElement>;
   ref?: React.Ref<React.ComponentType<IMaskInputProps<Opts, Unmask, Value, MaskElement>>>;
 }
 
