@@ -1,5 +1,5 @@
 // @flow
-import { escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION, normalizePrepare } from '../core/utils.js';
+import { escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION, normalizePrepare, eToNumber } from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 
 import Masked, { type MaskedOptions, type ExtractFlags, type AppendFlags } from './base.js';
@@ -338,7 +338,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   }
 
   set typedValue (n: number) {
-    super.unmaskedValue = String(n);
+    super.unmaskedValue = eToNumber(n);
   }
 
   /** Parsed Number */
