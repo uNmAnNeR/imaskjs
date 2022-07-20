@@ -71,7 +71,7 @@ function useIMask (props, { emit, onAccept, onComplete }={}) {
   });
 
   watch(typed, () => {
-    if (mask.value) $typed = mask.value.typedValue = typed.value;
+    if (mask.value) $typed = typed.value;
   });
 
   watch([el, props], () => {
