@@ -138,12 +138,12 @@ function objectIncludes (b: any, a: any): boolean {
  * @return  {string}  a decimal number string.
  * @author  Mohsen Alyafei
  * @date    17 Jan 2020
- * Note: No check is made for NaN or undefined input numbers.
  *****************************************************************
  * Used from StackOverflow under the MIT License.
  * See https://stackoverflow.com/a/66072001/12893851
  *****************************************************************/
-export function eToNumber(num: number): string {
+export function eToNumber(num: number | undefined | null): string {
+  if (Number.isNaN(num) || num === undefined || num === null) return "";
   let sign = "";
   (num += "").charAt(0) == "-" && (num = num.substring(1), sign = "-");
   let arr = num.split(/[e]/ig);
