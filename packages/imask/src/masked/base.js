@@ -278,7 +278,7 @@ class Masked<MaskType> {
     if (!isString(str)) throw new Error('value should be string');
     const details = new ChangeDetails();
     const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail;
-    if (flags && flags.tail) flags._beforeTailState = this.state;
+    if (flags?.tail) flags._beforeTailState = this.state;
 
     for (let ci=0; ci<str.length; ++ci) {
       details.aggregate(this._appendChar(str[ci], flags, checkTail));

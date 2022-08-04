@@ -11,7 +11,7 @@ describe('MaskedDynamic', function () {
     masked.unmaskedValue = '';
   });
 
-  describe('dispatch pattern with fixed at end', function () {
+  it('should dispatch pattern with fixed at end', function () {
     masked.updateOptions({
       mask: [
         {
@@ -37,7 +37,7 @@ describe('MaskedDynamic', function () {
     assert.equal(masked.value, '');
   });
 
-  describe('handle eager option', function () {
+  it('should handle eager option', function () {
     masked.updateOptions({
       mask: [
         {
@@ -55,5 +55,42 @@ describe('MaskedDynamic', function () {
 
     masked.value = '12';
     assert.equal(masked.value, '12"');
+  });
+
+  it('should handle flags correctly', function () {
+    masked.updateOptions({
+      mask: [
+        {
+          mask: '+00 {21} 0 000 0000',
+          startsWith: '30',
+          lazy: false,
+          country: 'Greece'
+        },
+        {
+          mask: '+0 000 000-00-00',
+          startsWith: '7',
+          lazy: false,
+          country: 'Russia'
+        },
+        {
+          mask: '0000000000000',
+          startsWith: '',
+          country: 'unknown'
+        }
+      ],
+      dispatch: function (appended, dynamicMasked) {
+        var number = (dynamicMasked.value + appended).replace(/\D/g,'');
+
+        return dynamicMasked.compiledMasks.find(function (m) {
+          return number.indexOf(m.startsWith) === 0;
+        });
+      }
+    });
+    masked.value = '70001234567';
+    assert.equal(masked.currentMask.country, 'Russia');
+
+    masked.splice(7, 1, '9');
+    assert.equal(masked.unmaskedValue, '70009234567');
+    assert.equal(masked.currentMask.country, 'Russia');
   });
 });

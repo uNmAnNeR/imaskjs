@@ -2,6 +2,7 @@
 import ChangeDetails from '../core/change-details.js';
 import createMask from './factory.js';
 import Masked, { type AppendFlags, type MaskedState } from './base.js';
+import { normalizePrepare } from '../core/utils.js';
 import { type TailDetails } from '../core/tail-details.js';
 import IMask from '../core/holder.js';
 
@@ -57,7 +58,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     const details = this._applyDispatch(ch, flags);
 
     if (this.currentMask) {
-      details.aggregate(this.currentMask._appendChar(ch, flags));
+      details.aggregate(this.currentMask._appendChar(ch, this.currentMaskFlags(flags)));
     }
 
     return details;
@@ -76,7 +77,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     const prevMask = this.currentMask;
     const details = new ChangeDetails();
 
-    const prevMaskState = prevMask && prevMask.state;
+    const prevMaskState = prevMask?.state;
 
     // clone flags to prevent overwriting `_beforeTailState`
     this.currentMask = this.doDispatch(appended, { ...flags });
@@ -130,6 +131,14 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
+  currentMaskFlags (flags: AppendFlags): AppendFlags {
+    return {
+      ...flags,
+      _beforeTailState: flags._beforeTailState?.currentMaskRef === this.currentMask && flags._beforeTailState?.currentMask ||
+        flags._beforeTailState,
+    };
+  }
+
   /**
     @override
   */
@@ -140,9 +149,25 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  doValidate (...args: *): boolean {
-    return super.doValidate(...args) && (
-      !this.currentMask || this.currentMask.doValidate(...args));
+  doValidate (flags: AppendFlags): boolean {
+    return super.doValidate(flags) && (
+      !this.currentMask || this.currentMask.doValidate(this.currentMaskFlags(flags))
+    );
+  }
+
+  /**
+    @override
+  */
+  doPrepare (str: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
+    let [s, details] = normalizePrepare(super.doPrepare(str, flags));
+
+    if (this.currentMask) {
+      let currentDetails;
+      ([s, currentDetails] = normalizePrepare(super.doPrepare(s, this.currentMaskFlags(flags))));
+      details = details.aggregate(currentDetails);
+    }
+
+    return [s, details];
   }
 
   /**
@@ -231,7 +256,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
       _rawInputValue: this.rawInputValue,
       compiledMasks: this.compiledMasks.map(m => m.state),
       currentMaskRef: this.currentMask,
-      currentMask: this.currentMask && this.currentMask.state,
+      currentMask: this.currentMask?.state,
     };
   }
 
@@ -326,7 +351,7 @@ MaskedDynamic.DEFAULTS = {
     const inputs = masked.compiledMasks.map((m, index) => {
       m.reset();
       m.append(inputValue, { raw: true });
-      m.append(appended, flags);
+      m.append(appended, masked.currentMaskFlags(flags));
       const weight = m.rawInputValue.length;
 
       return {weight, index};

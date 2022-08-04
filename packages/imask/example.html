@@ -11,9 +11,37 @@
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
       mask: [
-        { mask: '0"', eager: true },
-        { mask: '0[0]"', eager: true },
+        {
+          mask: '+00 {21} 0 000 0000',
+          startsWith: '30',
+          lazy: false,
+          country: 'Greece'
+        },
+        {
+          mask: '+0 000 000-00-00',
+          startsWith: '7',
+          lazy: false,
+          country: 'Russia'
+        },
+        {
+          mask: '+00-0000-000000',
+          startsWith: '91',
+          lazy: false,
+          country: 'India'
+        },
+        {
+          mask: '0000000000000',
+          startsWith: '',
+          country: 'unknown'
+        }
       ],
+      dispatch: function (appended, dynamicMasked) {
+        var number = (dynamicMasked.value + appended).replace(/\D/g,'');
+
+        return dynamicMasked.compiledMasks.find(function (m) {
+          return number.indexOf(m.startsWith) === 0;
+        });
+      }
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
