@@ -24,8 +24,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^6.4.2",
-    "vue-demi": "^0.12.1"
+    "vue-demi": "^0.13.11"
   },
   "peerDependencies": {
     "@vue/composition-api": ">=1.0.0",
