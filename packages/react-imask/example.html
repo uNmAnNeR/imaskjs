@@ -17,7 +17,7 @@
     function IMaskHook () {
       const [ opts, setOpts ] = React.useState({ mask: Number });
 
-      const { ref, value, setValue } = ReactIMask.useIMask(opts);
+      const { ref, value, setValue } = ReactIMask.useIMask(opts, /* { onAccept, onComplete } */);
 
       React.useEffect(() => {
         if (value) return;

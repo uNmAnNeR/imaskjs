@@ -84,7 +84,7 @@ function IMaskWithHook () {
     setUnmaskedValue,
     typedValue,
     setTypedValue,
-  } = useIMask(opts);
+  } = useIMask(opts, /* { onAccept, onComplete } */);
   
   return (
     <input ref={ref} />
