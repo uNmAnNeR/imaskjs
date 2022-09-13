@@ -377,7 +377,7 @@ class Masked<MaskType> {
   }
 
   /** */
-  splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction): ChangeDetails {
+  splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction, flags: AppendFlags = { input: true }): ChangeDetails {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);
 
@@ -405,7 +405,7 @@ class Masked<MaskType> {
       }
     }
 
-    return details.aggregate(this.append(inserted, {input: true}, tail));
+    return details.aggregate(this.append(inserted, flags, tail));
   }
 
   maskEquals (mask: any): boolean {

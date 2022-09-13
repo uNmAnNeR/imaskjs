@@ -12,7 +12,7 @@ describe('Insert', function () {
   });
 
   beforeEach(function () {
-    masked.updateOptions({mask: '', lazy: false});
+    masked.updateOptions({ mask: '', lazy: false, eager: false });
     masked.unmaskedValue = '';
   });
 
@@ -129,5 +129,17 @@ describe('Insert', function () {
       masked.splice(2, 0, 'ab', DIRECTION.NONE);
       assert.equal(masked.value, '12ab34');
     });
-  })
+  });
+
+  describe('eager flag', function () {
+    it('should correctly update value', function () {
+      masked.updateOptions({
+        mask: "+{3} 000",
+        lazy: false,
+        eager: true,
+      });
+      masked.value = masked.value;
+      assert.equal(masked.value, '+3 ___');
+    });
+  });
 });

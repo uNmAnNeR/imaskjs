@@ -336,6 +336,7 @@ class InputMask {
       details.removed.length,
       details.inserted,
       details.removeDirection,
+      { input: true, raw: true },
     ).offset;
 
     // force align in remove direction only if no input chars were removed

@@ -93,7 +93,7 @@ class PatternFixedDefinition implements PatternBlock {
     if (this._value) return details;
 
     const appended = this.char === ch;
-    const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !this.eager && !flags.tail;
+    const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && (!flags.raw || !this.eager) && !flags.tail;
     if (isResolved) details.rawInserted = this.char;
     this._value = details.inserted = this.char;
     this._isRawInput = isResolved && (flags.raw || flags.input);
@@ -102,7 +102,7 @@ class PatternFixedDefinition implements PatternBlock {
   }
 
   _appendEager (): ChangeDetails {
-    return this._appendChar(this.char);
+    return this._appendChar(this.char, { tail: true });
   }
 
   _appendPlaceholder (): ChangeDetails {
