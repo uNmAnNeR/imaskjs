@@ -22,17 +22,17 @@
       React.useEffect(() => {
         if (value) return;
 
-        setTimeout(() => {
+        /*setTimeout(() => {
           setValue('123')
           console.log('set value from hook');
-        }, 1000);
+        }, 1000); */
       });
 
       React.useEffect(() => {
         console.log('masked value changed', value);
       }, [value]);
 
-      return React.createElement('input', { ref });
+      return React.createElement('input', { ref, defaultValue: 10 });
     }
 
     class App extends React.Component {

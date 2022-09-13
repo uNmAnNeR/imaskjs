@@ -1,23 +1,19 @@
 import IMask from 'imask';
 import { useEffect, useCallback, useState, useRef, Dispatch } from 'react';
-import type { MutableRefObject } from 'react';
-import type { ReactMaskProps, Falsy, ReactElement } from './mixin';
+import type { RefObject } from 'react';
+import type { ReactMaskProps, ReactElement } from './mixin';
 
 
 export default
 function useIMask<
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
-  Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
-    IMask.InputMask<Opts>['unmaskedValue'],
-  MaskElement extends ReactElement=ReactElement
+  MaskElement extends ReactElement=HTMLInputElement,
 >(
   opts: Opts,
-  { onAccept, onComplete }: Pick<ReactMaskProps<Opts, Unmask, Value, MaskElement>, 'onAccept' | 'onComplete'> = {}
+  { onAccept, onComplete }: Pick<ReactMaskProps<Opts, true, IMask.InputMask<Opts>['value'], MaskElement>, 'onAccept' | 'onComplete'> = {}
 ): {
-  ref: MutableRefObject<MaskElement>,
-  maskRef: MutableRefObject<IMask.InputMask<Opts>>,
+  ref: RefObject<MaskElement>,
+  maskRef: RefObject<IMask.InputMask<Opts>>,
   value: IMask.InputMask<Opts>['value'],
   setValue: Dispatch<IMask.InputMask<Opts>['value']>,
   unmaskedValue: IMask.InputMask<Opts>['unmaskedValue'],
@@ -25,8 +21,9 @@ function useIMask<
   typedValue: IMask.InputMask<Opts>['typedValue'],
   setTypedValue: Dispatch<IMask.InputMask<Opts>['typedValue']>,
 } {
-  const ref = useRef(null);
-  const maskRef = useRef(null);
+  const ref = useRef<MaskElement>(null);
+  const maskRef = useRef<IMask.InputMask<Opts>>(null);
+  const [initialized, setInitialized] = useState<boolean>(false);
   const [value, setValue] = useState<IMask.InputMask<Opts>['value']>('');
   const [unmaskedValue, setUnmaskedValue] = useState<IMask.InputMask<Opts>['unmaskedValue']>('');
   const [typedValue, setTypedValue] = useState<IMask.InputMask<Opts>['typedValue']>();
@@ -63,12 +60,12 @@ function useIMask<
     if (!mask) {
       if (el && opts?.mask) {
         maskRef.current = IMask(el, opts);
-
-        if (el.defaultValue !== maskRef.current.value) _onAccept();
+        _onAccept();
       }
     } else {
       mask?.updateOptions(opts);
     }
+    setInitialized(Boolean(mask));
   }, [opts, _destroyMask, _onAccept]);
 
   useEffect(() => {
@@ -87,17 +84,17 @@ function useIMask<
 
   useEffect(() => {
     const mask = maskRef.current;
-    if (mask) mask.value = value;
+    if (mask && initialized) mask.value = value;
   }, [value]);
 
   useEffect(() => {
     const mask = maskRef.current;
-    if (mask) mask.unmaskedValue = unmaskedValue;
+    if (mask && initialized) mask.unmaskedValue = unmaskedValue;
   }, [unmaskedValue]);
 
   useEffect(() => {
     const mask = maskRef.current;
-    if (mask) mask.typedValue = typedValue;
+    if (mask && initialized) mask.typedValue = typedValue;
   }, [typedValue]);
 
   useEffect(() => _destroyMask, [_destroyMask]);
