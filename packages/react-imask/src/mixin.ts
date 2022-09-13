@@ -26,12 +26,12 @@ type ReactMaskProps<
   onComplete?: (value: Value, maskRef: IMask.InputMask<Opts>, e?: InputEvent) => void;
   unmask?: Unmask;
   value?: Value;
-  inputRef?: React.RefCallback<MaskElement>;
+  inputRef?: React.Ref<MaskElement>;
   ref?: React.Ref<React.ComponentType<IMaskInputProps<Opts, Unmask, Value, MaskElement>>>;
 }
 
 export
-type ReactMixinComponent<MaskElement extends ReactElement=ReactElement> = React.ComponentType<ReactElementProps<MaskElement> & { inputRef: React.RefCallback<MaskElement>; }>;
+type ReactMixinComponent<MaskElement extends ReactElement=ReactElement> = React.ComponentType<ReactElementProps<MaskElement> & { inputRef: React.Ref<MaskElement>; }>;
 
 const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: unknown } = {
   // common
@@ -97,7 +97,10 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: un
   dispatch: PropTypes.func,
 
   // ref
-  inputRef: PropTypes.func,
+  inputRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.object }),
+  ]),
 };
 
 const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
@@ -172,7 +175,12 @@ export default function IMaskMixin<
 
     _inputRef (el: MaskElement){
       this.element = el;
-      if (this.props.inputRef) this.props.inputRef(el);
+      if (this.props.inputRef) {
+        if (Object.prototype.hasOwnProperty.call(this.props.inputRef, 'current'))
+          (this.props.inputRef as React.MutableRefObject<MaskElement>).current = el;
+        else
+          (this.props.inputRef as React.RefCallback<MaskElement>)(el);
+      }
     }
 
     initMask (maskOptions: Opts = this._extractMaskOptionsFromProps(this.props) as Opts) {
