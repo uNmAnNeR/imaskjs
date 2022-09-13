@@ -33,6 +33,12 @@ var mask = IMask(element, maskOptions);</code></pre>
   
   <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEAI6KQE&placement=imaskjsorg" id="_carbonads_js"></script>
       <link rel="stylesheet" href="css/carbon-guide.css">
+
+  <fieldset>
+    <strong>Please note</strong>
+    <p>If you apply mask to <code>input</code> element you have to use <code>type="text"</code> Other types are not supported due to lack of supporting events on browser side.</p>
+  </fieldset>
+
   <p>IMask consists of two independent layers: model and view.<br>
   Model layer contains all masking facilities which can be used independently without UI.</p>
   <p id="support-older">View layer is a glue between UI element and model, it connects listeners and controls changes in both directions.</p>
