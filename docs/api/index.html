@@ -10035,7 +10035,7 @@
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>splice(start, deleteCount, inserted, removeDirection)</span>
+            <span class='code strong strong truncate'>splice(start, deleteCount, inserted, removeDirection, flags)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -10044,7 +10044,7 @@
   
 
   
-    <div class='pre p1 fill-light mt0'>splice(start: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, deleteCount: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, inserted: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, removeDirection: <a href="#direction">Direction</a>): <a href="#changedetails">ChangeDetails</a></div>
+    <div class='pre p1 fill-light mt0'>splice(start: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, deleteCount: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, inserted: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, removeDirection: <a href="#direction">Direction</a>, flags: <a href="#appendflags">AppendFlags</a>): <a href="#changedetails">ChangeDetails</a></div>
   
   
 
@@ -10086,6 +10086,15 @@
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>removeDirection</span> <code class='quiet'>(<a href="#direction">Direction</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>flags</span> <code class='quiet'>(<a href="#appendflags">AppendFlags</a>
+            = <code>{input:true}</code>)</code>
 	    
           </div>
           
