@@ -7,7 +7,7 @@
   "main": "dist/solid-imask.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
   "scripts": {
-    "build": "rollup -c"
+    "build": "echo 'rollup -c'"
   },
   "keywords": [
     "solid",

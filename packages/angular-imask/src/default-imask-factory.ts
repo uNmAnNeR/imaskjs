@@ -1,7 +1,6 @@
-import { IMaskFactory } from "./imask-factory";
-import { Injectable } from "@angular/core";
-
 import IMask from 'imask';
+import { Injectable } from '@angular/core';
+import { IMaskFactory } from './imask-factory';
 
 
 @Injectable({ providedIn: 'root' })

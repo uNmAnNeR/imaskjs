@@ -131,6 +131,10 @@ export type IMaskInputProps<
   MaskElementProps=ReactElementProps<MaskElement>,
 > = MaskElementProps & IMaskMixinProps<Opts, Unmask, Value, MaskElement>;
 
+
+// TODO
+// 1. seems like it's wrong to have Opts as only mask options. Other component/input props should also be there. Where is "unmask" prop for instance?
+// 2. Unmask should be infered from Opts (see https://github.com/uNmAnNeR/imaskjs/issues/554#issuecomment-1114014010)
 export default function IMaskMixin<
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
   Unmask extends ('typed' | boolean) = false,
