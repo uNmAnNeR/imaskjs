@@ -18,13 +18,14 @@ import { IMaskInput } from 'react-imask';
 
 // use ref to get access to internal "masked = ref.current.maskRef"
 const ref = useRef(null);
+const inputRef = useRef(null);
 <IMaskInput
   mask={Number}
   radix="."
   value="123"
   unmask={true} // true|false|'typed'
   ref={ref}
-  inputRef={el => this.input = el}  // access to nested input
+  inputRef={inputRef}  // access to nested input
   // DO NOT USE onChange TO HANDLE CHANGES!
   // USE onAccept INSTEAD
   onAccept={
