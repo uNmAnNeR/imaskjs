@@ -2,7 +2,7 @@
   "name": "react-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "6.4.3-alpha.1",
+  "version": "6.4.3",
   "homepage": "https://imask.js.org/",
   "description": "React input mask",
   "main": "dist/react-imask.js",
@@ -20,7 +20,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^6.4.3-alpha.0",
+    "imask": "^6.4.3",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
