@@ -54,7 +54,6 @@ class MaskedNumber extends Masked<Class<Number>> {
   padFractionalZeros: boolean;
 
   _numberRegExp: RegExp;
-  _numberRegExpInput: RegExp;
   _thousandsSeparatorRegExp: RegExp;
   _mapToRadixRegExp: RegExp;
   _separatorsProcessed: boolean;
@@ -76,16 +75,12 @@ class MaskedNumber extends Masked<Class<Number>> {
 
   /** */
   _updateRegExps () {
-    // use different regexp to process user input (more strict, input suffix) and tail shifting
     let start = '^' + (this.allowNegative ? '[+|\\-]?' : '');
-    let midInput = '(0|([1-9]+\\d*))?';
     let mid = '\\d*';
-
     let end = (this.scale ?
       '(' + escapeRegExp(this.radix) + '\\d{0,' + this.scale + '})?' :
       '') + '$';
 
-    this._numberRegExpInput = new RegExp(start + midInput + end);
     this._numberRegExp = new RegExp(start + mid + end);
     this._mapToRadixRegExp = new RegExp('[' +
       this.mapToRadix.map(escapeRegExp).join('') +
@@ -246,10 +241,8 @@ class MaskedNumber extends Masked<Class<Number>> {
     @override
   */
   doValidate (flags: AppendFlags): boolean {
-    const regexp = flags.input ? this._numberRegExpInput : this._numberRegExp;
-
     // validate as string
-    let valid = regexp.test(this._removeThousandsSeparators(this.value));
+    let valid = this._numberRegExp.test(this._removeThousandsSeparators(this.value));
 
     if (valid) {
       // validate as number

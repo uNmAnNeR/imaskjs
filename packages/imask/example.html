@@ -10,9 +10,8 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: '{12}-0',
-      eager: true,
-      lazy: true,
+      mask: Number,
+      normalizeZeros: false,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
