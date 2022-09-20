@@ -1,6 +1,7 @@
 import { assert } from 'chai';
 
 import MaskedNumber from '../../src/masked/number';
+import { DIRECTION } from '../../src/core/utils';
 
 
 describe('MaskedNumber', function () {
@@ -61,5 +62,27 @@ describe('MaskedNumber', function () {
     masked.unmaskedValue = '9999.88';
     assert.isNumber(masked.typedValue);
     assert.strictEqual(masked.typedValue, 9999.88);
+  });
+
+  describe('#mapToRadix', function () {
+    masked.updateOptions({
+      scale: 2,
+      thousandsSeparator: '.',
+      padFractionalZeros: true,
+      radix: ',',
+      mapToRadix: ['.'],
+    });
+
+    it('should map for raw input', function () {
+      masked.splice(0, 0, '12345.67', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.unmaskedValue, '12345.67');
+      assert.strictEqual(masked.value, '12345,67');
+    });
+
+    it('should NOT map for setting value', function () {
+      masked.value = '12.345,67';
+      assert.strictEqual(masked.unmaskedValue, '12345.67');
+      assert.strictEqual(masked.value, '12345,67');
+    });
   });
 });

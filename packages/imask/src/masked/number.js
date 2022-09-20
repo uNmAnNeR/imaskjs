@@ -102,11 +102,11 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doPrepare (ch: string, ...args: *): string | [string, ChangeDetails] {
+  doPrepare (ch: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
     ch = this._removeThousandsSeparators(
-      this.scale && this.mapToRadix.length ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
+      this.scale && this.mapToRadix.length && flags.raw ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
     );
-    const [prepCh, details] = normalizePrepare(super.doPrepare(ch, ...args));
+    const [prepCh, details] = normalizePrepare(super.doPrepare(ch, flags));
     if (ch && !prepCh) details.skip = true;
     return [prepCh, details];
   }
@@ -330,7 +330,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   }
 
   set typedValue (n: number) {
-    super.unmaskedValue = String(n);
+    this.rawInputValue = String(n).replace('.', this.radix);
   }
 
   /** Parsed Number */
