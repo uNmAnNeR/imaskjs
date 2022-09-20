@@ -93,4 +93,30 @@ describe('Masked', function () {
       assert(masked.typedValueEquals(0));
     });
   });
+
+  describe('#overwrite', function () {
+    it('should work with tail shift', function () {
+      let masked = new MaskedPattern({
+        mask: '$num{.}cents',
+        blocks: {
+          num: {
+            mask: Number,
+            thousandsSeparator: ',',
+            scale: 0,
+          },
+          cents: {
+            mask: '`0`0',
+            signed: false,
+          }
+        },
+        overwrite: true,
+      });
+
+      masked.value = '123.45';
+      assert.strictEqual(masked.value, '$123.45');
+
+      masked.splice(4, 0, '0', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.value, '$1,230.45');
+    });
+  });
 });

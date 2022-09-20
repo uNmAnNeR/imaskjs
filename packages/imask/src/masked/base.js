@@ -232,7 +232,7 @@ class Masked<MaskType> {
         const beforeTailState = this.state;
         if (this.overwrite === true) {
           consistentTail = checkTail.state;
-          checkTail.unshift(this.value.length);
+          checkTail.unshift(this.value.length - details.tailShift);
         }
 
         let tailDetails = this.appendTail(checkTail);

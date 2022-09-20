@@ -10,8 +10,20 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: Number,
-      normalizeZeros: false,
+      mask: '$num{.}cents',
+      blocks: {
+        num: {
+          mask: Number,
+          thousandsSeparator: ',',
+          scale: 0,
+          mapToRadix: [],
+        },
+        cents: {
+          mask: '`0`0',
+          signed: false,
+        }
+      },
+      overwrite: true,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });

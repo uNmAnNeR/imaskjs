@@ -78,13 +78,11 @@ class MaskedNumber extends Masked<Class<Number>> {
     let start = '^' + (this.allowNegative ? '[+|\\-]?' : '');
     let mid = '\\d*';
     let end = (this.scale ?
-      '(' + escapeRegExp(this.radix) + '\\d{0,' + this.scale + '})?' :
+      `(${escapeRegExp(this.radix)}\\d{0,${this.scale}})?` :
       '') + '$';
 
     this._numberRegExp = new RegExp(start + mid + end);
-    this._mapToRadixRegExp = new RegExp('[' +
-      this.mapToRadix.map(escapeRegExp).join('') +
-    ']', 'g');
+    this._mapToRadixRegExp = new RegExp(`[${this.mapToRadix.map(escapeRegExp).join('')}]`, 'g');
     this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   }
 
@@ -105,10 +103,11 @@ class MaskedNumber extends Masked<Class<Number>> {
     @override
   */
   doPrepare (ch: string, ...args: *): string | [string, ChangeDetails] {
-    ch = ch.replace(this._mapToRadixRegExp, this.radix);
-    const noSepCh = this._removeThousandsSeparators(ch);
-    const [prepCh, details] = normalizePrepare(super.doPrepare(noSepCh, ...args));
-    if (ch && !noSepCh) details.skip = true;
+    ch = this._removeThousandsSeparators(
+      this.scale && this.mapToRadix.length ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
+    );
+    const [prepCh, details] = normalizePrepare(super.doPrepare(ch, ...args));
+    if (ch && !prepCh) details.skip = true;
     return [prepCh, details];
   }
 
@@ -242,7 +241,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   */
   doValidate (flags: AppendFlags): boolean {
     // validate as string
-    let valid = this._numberRegExp.test(this._removeThousandsSeparators(this.value));
+    let valid = Boolean(this._removeThousandsSeparators(this.value).match(this._numberRegExp));
 
     if (valid) {
       // validate as number
