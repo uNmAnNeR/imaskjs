@@ -2,7 +2,7 @@ import IMask from 'imask';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
-  EventEmitter, OnDestroy, OnChanges, AfterViewInit,
+  EventEmitter, OnDestroy, OnChanges,
   Optional, Inject, SimpleChanges, PLATFORM_ID
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
@@ -28,11 +28,10 @@ const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
   },
   providers: [MASKEDINPUT_VALUE_ACCESSOR],
 })
-export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
+export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, OnDestroy, OnChanges {
   maskRef?: IMask.InputMask<Opts>;
   onTouched: any;
   onChange: any;
-  private _viewInitialized: boolean;
   private _composing: boolean;
   private _writingValue: any;
   private _writing: boolean;
@@ -54,7 +53,6 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     this.imaskElement = DEFAULT_IMASK_ELEMENT;
     this.accept = new EventEmitter();
     this.complete = new EventEmitter();
-    this._viewInitialized = false;
     this._composing = false;
     this._writing = false;
 
@@ -85,16 +83,10 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     }
   }
 
-  ngAfterViewInit() {
-    if (this.imask) this.initMask();
-
-    this._viewInitialized = true;
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes.elementRef && !this.imaskElement) this.imaskElement = DEFAULT_IMASK_ELEMENT;
 
-    if (!changes.imask || !this._viewInitialized) return;
+    if (!changes.imask) return;
 
     if (this.imask) {
       if (this.maskRef) this.maskRef.updateOptions(this.imask);
