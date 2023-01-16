@@ -5,7 +5,7 @@ import { IMaskFactory } from "angular-imask";
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class NumberIMaskFactory extends IMaskFactory{
+export class NumberIMaskFactory implements IMaskFactory{
     create<Opts extends IMask.AnyMaskedOptions>(
         el: IMask.HTMLMaskingElement | IMask.MaskElement, opts: Opts): IMask.InputMask<Opts> {
         return IMask(el, opts);

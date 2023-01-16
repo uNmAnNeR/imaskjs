@@ -16,54 +16,51 @@
             "outputPath": "dist/example",
             "index": "example/index.html",
             "main": "example/main.ts",
-            "polyfills": "example/polyfills.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.example.json",
             "assets": [],
             "styles": [],
             "scripts": [],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
+            "preserveSymlinks": true
           },
           "configurations": {
             "production": {
-              "fileReplacements": [],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
                 }
-              ]
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "example:build"
-          },
           "configurations": {
             "production": {
               "browserTarget": "example:build:production"
+            },
+            "development": {
+              "browserTarget": "example:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -71,7 +68,7 @@
             "browserTarget": "example:build"
           }
         }
-      },
+      }
     },
     "angular-imask": {
       "projectType": "library",
@@ -84,14 +81,17 @@
           "options": {
             "tsConfig": "tsconfig.json",
             "project": "ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "tsconfig.lib.prod.json"
             }
           }
-},
+        }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

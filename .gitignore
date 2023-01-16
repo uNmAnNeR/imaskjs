@@ -6,3 +6,4 @@ docs/_site/
 *.log
 .nyc_output
 .DS_Store
+**/.angular/

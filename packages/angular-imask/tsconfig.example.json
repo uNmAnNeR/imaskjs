@@ -2,17 +2,19 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],
   },
   "files": [
-    "example/main.ts",
-    "example/polyfills.ts"
+    "example/main.ts"
   ],
   "include": [
     "src/**/*.d.ts"
   ],
   "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true,
+    "strictInjectionParameters": true,
+    "enableResourceInlining": true,
+    "compilationMode": "full",
   }
 }

@@ -13,11 +13,11 @@ angular-imask
 
 ## Setup
 ```javascript
-import {IMaskModule} from 'angular-imask';
+import {IMaskDirective} from 'angular-imask';
 
 @NgModule({
   imports: [
-    IMaskModule,
+    IMaskDirective,
     ...
   ],
   ...
