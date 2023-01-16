@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
       [imask]="{mask: '+{7}(000)000-00-00'}"
       [unmask]="true"
       (accept)="onAccept()"
-      (complete)="onAccept()"
+      (complete)="onComplete()"
     />
   `,
   styles: []
