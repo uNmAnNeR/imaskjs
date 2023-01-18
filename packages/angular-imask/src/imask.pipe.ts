@@ -12,7 +12,7 @@ export { PIPE_TYPE, pipe } from 'imask';
  * Example:
  *   {{ 2 | imask:mask }}
 */
-@Pipe({name: 'imask'})
+@Pipe({name: 'imask', standalone: true})
 export class IMaskPipe implements PipeTransform {
   transform (...args: Parameters<typeof pipe>): ReturnType<typeof pipe> {
     return pipe(...args);

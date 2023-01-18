@@ -3,22 +3,21 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
   EventEmitter, OnDestroy, OnChanges, AfterViewInit,
-  Optional, Inject, SimpleChanges, PLATFORM_ID
+  SimpleChanges, PLATFORM_ID, inject, InjectionToken
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
-
-import { IMaskFactory } from './imask-factory';
-
+import { IMASK_FACTORY } from './imask-factory-token';
 
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => IMaskDirective),
-  multi: true
+  multi: true,
 };
 
-const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
+export const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
 @Directive({
   selector: '[imask]',
+  standalone: true,
   exportAs: 'imask',
   host: {
     '(input)': '_handleInput($event.target.value)',
@@ -30,38 +29,24 @@ const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
 })
 export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
   maskRef?: IMask.InputMask<Opts>;
-  onTouched: any;
-  onChange: any;
-  private _viewInitialized: boolean;
-  private _composing: boolean;
+  onTouched: any = () => {};
+  onChange: any = () => {};
+  private _viewInitialized = false;
+  private _composing = false;
   private _writingValue: any;
-  private _writing: boolean;
+  private _writing = false;
+
+  private _elementRef = inject(ElementRef);
+  private _renderer = inject(Renderer2);
+  private _factory = inject(IMASK_FACTORY);
+  private _platformId = inject(PLATFORM_ID);
+  private _compositionMode = inject(COMPOSITION_BUFFER_MODE, {optional: true}) ?? !this._isAndroid();
 
   @Input() imask?: Opts;
   @Input() unmask?: boolean|'typed';
-  @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => IMask.MaskElement;
-  @Output() accept: EventEmitter<any>;
-  @Output() complete: EventEmitter<any>;
-
-  constructor(private _elementRef: ElementRef,
-              private _renderer: Renderer2,
-              private _factory: IMaskFactory,
-              @Inject(PLATFORM_ID) private _platformId: string,
-              @Optional() @Inject(COMPOSITION_BUFFER_MODE) private _compositionMode: boolean) {
-    // init here to support AOT (TODO may be will work with ng-packgr - need to check)
-    this.onTouched = () => {};
-    this.onChange = () => {};
-    this.imaskElement = DEFAULT_IMASK_ELEMENT;
-    this.accept = new EventEmitter();
-    this.complete = new EventEmitter();
-    this._viewInitialized = false;
-    this._composing = false;
-    this._writing = false;
-
-    if (this._compositionMode == null) {
-      this._compositionMode = !this._isAndroid();
-    }
-  }
+  @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => IMask.MaskElement = DEFAULT_IMASK_ELEMENT;
+  @Output() accept = new EventEmitter<void>();
+  @Output() complete = new EventEmitter<void>();
 
   get element () {
     return this.imaskElement(this._elementRef, this);
@@ -92,9 +77,9 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.elementRef && !this.imaskElement) this.imaskElement = DEFAULT_IMASK_ELEMENT;
+    if (changes['elementRef'] && !this.imaskElement) this.imaskElement = DEFAULT_IMASK_ELEMENT;
 
-    if (!changes.imask || !this._viewInitialized) return;
+    if (!changes['imask'] || !this._viewInitialized) return;
 
     if (this.imask) {
       if (this.maskRef) this.maskRef.updateOptions(this.imask);
