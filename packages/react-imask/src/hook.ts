@@ -10,7 +10,7 @@ function useIMask<
   MaskElement extends ReactElement=HTMLInputElement,
 >(
   opts: Opts,
-  { onAccept, onComplete }: Pick<ReactMaskProps<Opts, true, IMask.InputMask<Opts>['value'], MaskElement>, 'onAccept' | 'onComplete'> = {}
+  { onAccept, onComplete }: Partial<Pick<ReactMaskProps<Opts, true, IMask.InputMask<Opts>['value'], MaskElement>, 'onAccept' | 'onComplete'>> = {}
 ): {
   ref: RefObject<MaskElement>,
   maskRef: RefObject<IMask.InputMask<Opts>>,
@@ -24,6 +24,11 @@ function useIMask<
   const ref = useRef<MaskElement>(null);
   const maskRef = useRef<IMask.InputMask<Opts>>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
+  const [lastAcceptState, setLastAcceptState] = useState<{
+    value?: IMask.InputMask<Opts>['value'],
+    unmaskedValue?: IMask.InputMask<Opts>['unmaskedValue'],
+    typedValue?: IMask.InputMask<Opts>['typedValue'],
+  }>({});
   const [value, setValue] = useState<IMask.InputMask<Opts>['value']>('');
   const [unmaskedValue, setUnmaskedValue] = useState<IMask.InputMask<Opts>['unmaskedValue']>('');
   const [typedValue, setTypedValue] = useState<IMask.InputMask<Opts>['typedValue']>();
@@ -35,12 +40,18 @@ function useIMask<
 
   const _onAccept = useCallback(
     (event?: InputEvent) => {
-      if (!maskRef.current) return;
+      const m = maskRef.current;
+      if (!m) return;
 
-      setTypedValue(maskRef.current.typedValue);
-      setUnmaskedValue(maskRef.current.unmaskedValue);
-      setValue(maskRef.current.value);
-      onAccept?.(maskRef.current.value, maskRef.current, event);
+      setLastAcceptState({
+        value: m.value,
+        unmaskedValue: m.unmaskedValue,
+        typedValue: m.typedValue,
+      });
+      setTypedValue(m.typedValue);
+      setUnmaskedValue(m.unmaskedValue);
+      setValue(m.value);
+      onAccept?.(m.value, m, event);
     },
     [onAccept],
   );
@@ -83,18 +94,24 @@ function useIMask<
   }, [_onAccept, _onComplete]);
 
   useEffect(() => {
+    const { value: lastAcceptValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized) mask.value = value;
+    if (mask && initialized && lastAcceptValue !== value) mask.value = value;
+    setLastAcceptState(state);
   }, [value]);
 
   useEffect(() => {
+    const { unmaskedValue: lastAcceptUnmaskedValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized) mask.unmaskedValue = unmaskedValue;
+    if (mask && initialized && lastAcceptUnmaskedValue !== unmaskedValue) mask.unmaskedValue = unmaskedValue;
+    setLastAcceptState(state);
   }, [unmaskedValue]);
 
   useEffect(() => {
+    const { typedValue: lastAcceptTypedValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized) mask.typedValue = typedValue;
+    if (mask && initialized && lastAcceptTypedValue !== typedValue) mask.typedValue = typedValue;
+    setLastAcceptState(state);
   }, [typedValue]);
 
   useEffect(() => _destroyMask, [_destroyMask]);
