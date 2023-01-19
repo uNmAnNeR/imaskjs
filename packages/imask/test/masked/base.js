@@ -119,4 +119,19 @@ describe('Masked', function () {
       assert.strictEqual(masked.value, '$1,230.45');
     });
   });
+
+  describe('#splice', function () {
+    let masked = new MaskedPattern({
+      mask: '+{7}(000)000-00-00',
+    });
+
+    it('should start insert from selection', function () {
+      const v = '+7(111)222-33-44'
+      masked.value = v;
+      assert.strictEqual(masked.value, v);
+
+      masked.splice(0, masked.value.length, v, DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.value, v);
+    });
+  });
 });

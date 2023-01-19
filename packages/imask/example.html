@@ -10,23 +10,7 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: [
-        { mask: '' },
-        {
-            mask: 'num',
-            lazy: true,
-            blocks: {
-                num: {
-                    mask: Number,
-                    scale: 2,
-                    thousandsSeparator: '.',
-                    padFractionalZeros: true,
-                    radix: ',',
-                    mapToRadix: ['.'],
-                }
-            }
-        }
-      ],
+      mask: '+{7}(000)000-00-00',
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
