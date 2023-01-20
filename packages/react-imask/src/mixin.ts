@@ -106,7 +106,7 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: an
   ]),
 };
 
-const MASK_PROPS_NAMES = Object.keys(MASK_PROPS);
+const MASK_PROPS_NAMES = Object.keys(MASK_PROPS).filter(p => p !== 'value');
 const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'];
 const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName) < 0
