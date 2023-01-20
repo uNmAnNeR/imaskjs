@@ -36,7 +36,7 @@ type ReactMixinComponent<
   MaskElementProps=ReactElementProps<MaskElement>
 > = React.ComponentType<MaskElementProps & { inputRef: React.Ref<MaskElement>; }>;
 
-const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: unknown } = {
+const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: any } = {
   // common
   mask: PropTypes.oneOfType([
     PropTypes.array,
@@ -264,5 +264,8 @@ export default function IMaskMixin<
   MaskedComponent.displayName = `IMask(${nestedComponentName})`;
   MaskedComponent.propTypes = MASK_PROPS;
 
-  return MaskedComponent as React.ComponentType<IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps>>;
+  return React.forwardRef<
+    React.ComponentType<IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps>>,
+    IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps>
+  >((props, ref) => React.createElement(MaskedComponent, { ...props, ref }));
 }
