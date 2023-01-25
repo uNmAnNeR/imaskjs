@@ -18,7 +18,7 @@ const commonPlugins = [
 ];
 
 export default [
-  ...[false, true].map(min => ({
+  ...[false, true].flatMap(min => ([{
     input: 'src/index.js',
     output: {
       file: `dist/imask${min ? '.min' : ''}.js`,
@@ -33,7 +33,18 @@ export default [
       polyfill(['./polyfills.js']),
       min && terser(),
     ],
-  })),
+  }, {
+    input: 'src/index.js',
+    output: {
+      format: 'esm',
+      file: `dist/imask.esm${min ? '.min' : ''}.js`,
+      sourcemap: true,
+    },
+    plugins: [
+      ...commonPlugins,
+      min && terser(),
+    ]
+  }])),
   {
     input: ['src/**/*.js'],
     output: {
