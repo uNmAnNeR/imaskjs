@@ -16,6 +16,9 @@ export { default as HTMLMaskElement } from './controls/html-mask-element.js';
 export { default as HTMLContenteditableMaskElement } from './controls/html-contenteditable-mask-element.js';
 export { createPipe, pipe, PIPE_TYPE } from './masked/pipe.js';
 
+export { default as ChangeDetails } from './core/change-details.js';
+
+
 try {
   globalThis.IMask = IMask;
 } catch(e) {}

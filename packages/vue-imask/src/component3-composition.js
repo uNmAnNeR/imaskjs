@@ -1,5 +1,5 @@
 import IMask from 'imask';
-import { h, beforeUpdate, watch, toRef } from 'vue-demi';
+import { h, watch, toRef } from 'vue-demi';
 import props from './props';
 import useIMask from './composable';
 

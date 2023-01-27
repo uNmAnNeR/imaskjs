@@ -8,6 +8,7 @@ import pkg from './package.json';
 const globals = {
   imask: 'IMask',
   vue: 'Vue',
+  'vue-demi': 'VueDemi',
 };
 
 
