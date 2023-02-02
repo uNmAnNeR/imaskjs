@@ -4,9 +4,9 @@
   "author": "Alexey Kryazhev",
   "license": "MIT",
   "description": "Solid input mask",
-  "main": "dist/esm/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "main": "dist/index/index.module.js",
+  "module": "dist/index/index.module.js",
+  "types": "dist/index/index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
   "scripts": {
     "build": "tsc --emitDeclarationOnly && rollup -c"
