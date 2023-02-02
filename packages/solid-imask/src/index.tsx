@@ -1,6 +1,53 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { JSX } from "solid-js/jsx-runtime";
 import { createEffect, onCleanup, splitProps } from "solid-js";
 import IMask from "imask";
+
+declare module "solid-js" {
+  namespace JSX {
+    interface Directives {
+      masked: [
+        () => any,
+        <
+          Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
+          Value = {
+            typedValue: IMask.InputMask<Opts>["typedValue"];
+            value: IMask.InputMask<Opts>["value"];
+            unmaskedValue: IMask.InputMask<Opts>["unmaskedValue"];
+          }
+        >(v: {
+          mask: Opts;
+          onAccept?: (
+            value: Value,
+            maskRef: IMask.InputMask<Opts>,
+            e?: InputEvent
+          ) => void;
+          onComplete?: (
+            value: Value,
+            maskRef: IMask.InputMask<Opts>,
+            e?: InputEvent
+          ) => void;
+          value?: IMask.InputMask<Opts>["value"];
+          unmaskedValue?: IMask.InputMask<Opts>["unmaskedValue"];
+        }) => {
+          mask: Opts;
+          onAccept?: (
+            value: Value,
+            maskRef: IMask.InputMask<Opts>,
+            e?: InputEvent
+          ) => void;
+          onComplete?: (
+            value: Value,
+            maskRef: IMask.InputMask<Opts>,
+            e?: InputEvent
+          ) => void;
+          value?: IMask.InputMask<Opts>["value"];
+          unmaskedValue?: IMask.InputMask<Opts>["unmaskedValue"];
+        }
+      ];
+    }
+  }
+}
 
 export const masked = <
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
