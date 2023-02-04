@@ -55,8 +55,8 @@ export const masked = <
       maskRef: IMask.InputMask<Opts>,
       e?: InputEvent
     ) => void;
-    value?: IMask.InputMask<Opts>["value"];
-    unmaskedValue?: IMask.InputMask<Opts>["unmaskedValue"];
+    value?: () => IMask.InputMask<Opts>["value"];
+    unmaskedValue?: () => IMask.InputMask<Opts>["unmaskedValue"];
   }
 ) => {
   const { mask, onAccept, onComplete, value, unmaskedValue } = props();
@@ -64,13 +64,13 @@ export const masked = <
 
   createEffect(() => {
     if (m && unmaskedValue) {
-      m.unmaskedValue = unmaskedValue;
+      m.unmaskedValue = unmaskedValue();
     }
   });
 
   createEffect(() => {
     if (m && value) {
-      m.value = value;
+      m.value = value();
     }
   });
 
