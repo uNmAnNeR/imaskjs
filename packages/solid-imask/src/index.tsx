@@ -22,8 +22,8 @@ Value = {
     maskRef: IMask.InputMask<Opts>,
     e?: InputEvent
   ) => void;
-  value?: IMask.InputMask<Opts>["value"];
-  unmaskedValue?: IMask.InputMask<Opts>["unmaskedValue"];
+  value?: () => IMask.InputMask<Opts>["value"];
+  unmaskedValue?: () => IMask.InputMask<Opts>["unmaskedValue"];
   }
 
 declare module "solid-js" {
