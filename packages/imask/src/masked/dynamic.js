@@ -325,6 +325,16 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     console.warn('"eager" option is not available in dynamic mask, use this option in siblings');
   }
 
+  get skipInvalid (): boolean {
+    return this.currentMask ?
+      this.currentMask.skipInvalid :
+      super.skipInvalid;
+  }
+
+  set skipInvalid (skipInvalid: *) {
+    console.warn('"skipInvalid" option is not available in dynamic mask, use this option in siblings');
+  }
+
   /**
     @override
   */

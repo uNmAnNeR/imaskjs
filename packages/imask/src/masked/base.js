@@ -50,6 +50,7 @@ type MaskedOptions<MaskType> = {
   eager?: $PropertyType<Masked<MaskType>, 'eager'>,
   format?: $PropertyType<Masked<MaskType>, 'format'>,
   parse?: $PropertyType<Masked<MaskType>, 'parse'>,
+  skipInvalid?: $PropertyType<Masked<MaskType>, 'skipInvalid'>,
 };
 
 
@@ -77,6 +78,8 @@ class Masked<MaskType> {
   overwrite: ?boolean | 'shift';
   /** */
   eager: boolean;
+  /** */
+  skipInvalid: boolean;
   /** */
   isInitialized: boolean;
   _value: string;
@@ -281,7 +284,9 @@ class Masked<MaskType> {
     if (flags?.tail) flags._beforeTailState = this.state;
 
     for (let ci=0; ci<str.length; ++ci) {
-      details.aggregate(this._appendChar(str[ci], flags, checkTail));
+      const d = this._appendChar(str[ci], flags, checkTail);
+      if (!this.skipInvalid && !d.rawInserted) break;
+      details.aggregate(d);
     }
 
     // append tail but aggregate only tailShift
@@ -431,6 +436,7 @@ class Masked<MaskType> {
 Masked.DEFAULTS = {
   format: v => v,
   parse: v => v,
+  skipInvalid: true,
 };
 Masked.EMPTY_VALUES = [undefined, null, ''];
 

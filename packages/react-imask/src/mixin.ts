@@ -59,6 +59,7 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: an
     PropTypes.oneOf(['shift']),
   ]),
   eager: PropTypes.bool,
+  skipInvalid: PropTypes.bool,
 
   // events
   onAccept: PropTypes.func,

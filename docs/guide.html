@@ -279,6 +279,33 @@ console.log(masked.typedValue);</code></pre>
     </div>
   </div>
 
+  <h4 id="skipInvalid" class="section-h"><a href="#skipInvalid">Skip Invalid Mode <kbd>since 6.5.0</kbd></a></h4>
+  <p>Enables skipping invalid characters (default is <i>true</i>).</p>
+  <div class="form-item">
+    <label>Try to insert value <code>0a1.2 3</code> to the simple digits mask</label>
+    <div class="input-checkbox">
+      <input id="skipInvalid-mask" type="text" value="">
+      <label>
+        <input type="checkbox" name="skipInvalid" id="toggle-skipInvalid-mask" checked>
+        skipInvalid
+      </label>
+    </div>
+
+    <div class="toggle-panel">
+      <label for="skipInvalid-mask-source" class="muted">source</label>
+      <input id="skipInvalid-mask-source" type="checkbox">
+      <div class="toggle-panel-content">
+        <pre><code>var skipInvalidMask = IMask(
+  document.getElementById('skipInvalid-mask'),
+  {
+    mask: '000000',
+    skipInvalid: &lt;CHECK&gt;,
+  }
+);</code></pre>
+      </div>
+    </div>
+  </div>
+
   <h3 id="masked-number" class="section-h"><a href="#masked-number">Number Mask</a></h3>
   <p>Number mask restricts input to integer or decimal numbers in many ways:</p>
   <div class="toggle-panel">
@@ -1362,6 +1389,21 @@ var numberMask = IMask(element, { mask: Number });
     toggleEager.addEventListener('change', function (e) {
       eagerMask.updateOptions({
         eager: e.target.checked,
+      });
+    });
+
+    var skipInvalidMask = IMask(
+      document.getElementById('skipInvalid-mask'),
+      {
+        mask: '000000',
+        eager: true,
+      }
+    );
+
+    var toggleSkipInvalid = document.getElementById('toggle-skipInvalid-mask');
+    toggleSkipInvalid.addEventListener('change', function (e) {
+      skipInvalidMask.updateOptions({
+        skipInvalid: e.target.checked,
       });
     });
   });

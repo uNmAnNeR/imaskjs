@@ -11,6 +11,7 @@
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
       mask: '+{7}(000)000-00-00',
+      skipInvalid: false,
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });

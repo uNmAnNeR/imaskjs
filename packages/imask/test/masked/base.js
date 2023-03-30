@@ -133,5 +133,30 @@ describe('Masked', function () {
       masked.splice(0, masked.value.length, v, DIRECTION.NONE, { input: true, raw: true });
       assert.strictEqual(masked.value, v);
     });
+
+    it('should start insert from selection', function () {
+      const v = '+7(111)222-33-44'
+      masked.value = v;
+      assert.strictEqual(masked.value, v);
+
+      masked.splice(0, masked.value.length, v, DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.value, v);
+    });
+  });
+
+  describe('#skipInvalid', function () {
+    it('should skip invalid', function () {
+      let masked = new MaskedPattern({ mask: '0000' });
+
+      masked.value = '0a1.2 3';
+      assert.strictEqual(masked.value, '0123');
+    });
+
+    it('should not skip invalid', function () {
+      let masked = new MaskedPattern({ mask: '0000', skipInvalid: false });
+
+      masked.value = '0a1.2 3';
+      assert.strictEqual(masked.value, '0');
+    });
   });
 });
