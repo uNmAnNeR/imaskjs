@@ -268,7 +268,7 @@ class MaskedNumber extends Masked<Class<Number>> {
       if (this.min != null) validnum = Math.max(validnum, this.min);
       if (this.max != null) validnum = Math.min(validnum, this.max);
 
-      if (validnum !== number) this.unmaskedValue = String(validnum);
+      if (validnum !== number) this.unmaskedValue = this.doFormat(validnum);
 
       let formatted = this.value;
 
@@ -326,11 +326,11 @@ class MaskedNumber extends Masked<Class<Number>> {
     @override
   */
   get typedValue (): number {
-    return Number(this.unmaskedValue);
+    return this.doParse(this.unmaskedValue);
   }
 
   set typedValue (n: number) {
-    this.rawInputValue = String(n).replace('.', this.radix);
+    this.rawInputValue = this.doFormat(n).replace('.', this.radix);
   }
 
   /** Parsed Number */
@@ -372,6 +372,8 @@ MaskedNumber.DEFAULTS = {
   signed: false,
   normalizeZeros: true,
   padFractionalZeros: false,
+  parse: Number,
+  format: n => n.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }),
 };
 MaskedNumber.EMPTY_VALUES = [...Masked.EMPTY_VALUES, 0];
 

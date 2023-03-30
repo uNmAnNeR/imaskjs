@@ -85,4 +85,16 @@ describe('MaskedNumber', function () {
       assert.strictEqual(masked.value, '12345,67');
     });
   });
+
+  it('should format exponentials numbers correctly', function () {
+    masked.updateOptions({
+      thousandsSeparator: '',
+      radix: ',',
+      padFractionalZeros: false,
+      scale: 10,
+    });
+    masked.typedValue = 0.0000001;
+    assert.strictEqual(masked.unmaskedValue, '0.0000001');
+    assert.strictEqual(masked.value, '0,0000001');
+  });
 });

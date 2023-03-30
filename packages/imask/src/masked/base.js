@@ -377,7 +377,7 @@ class Masked<MaskType> {
   }
 
   /** */
-  doParse (str: string): string {
+  doParse (str: string): any {
     return this.parse ? this.parse(str, this) : str;
   }
 
@@ -434,7 +434,7 @@ class Masked<MaskType> {
   }
 }
 Masked.DEFAULTS = {
-  format: v => v,
+  format: String,
   parse: v => v,
   skipInvalid: true,
 };
