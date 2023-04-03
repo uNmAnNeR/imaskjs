@@ -1,6 +1,7 @@
 // @flow
 import { escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION, normalizePrepare } from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
+import { type TailDetails } from '../core/tail-details.js';
 
 import Masked, { type MaskedOptions, type ExtractFlags, type AppendFlags } from './base.js';
 import IMask from '../core/holder.js';
@@ -33,6 +34,7 @@ type MaskedNumberOptions = {
 export default
 class MaskedNumber extends Masked<Class<Number>> {
   static DEFAULTS: $Shape<MaskedNumberOptions>;
+  static UNMASKED_RADIX: string;
 
   /** Single char */
   radix: string;
@@ -308,6 +310,16 @@ class MaskedNumber extends Masked<Class<Number>> {
     return parts.join(this.radix);
   }
 
+  /** */
+  doSkipInvalid (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): boolean {
+    const dropFractional = this.scale === 0 && ch !== this.thousandsSeparator && (
+      ch === this.radix ||
+      ch === MaskedNumber.UNMASKED_RADIX ||
+      this.mapToRadix.includes(ch)
+    )
+    return super.doSkipInvalid(ch, flags, checkTail) && !dropFractional;
+  }
+
   /**
     @override
   */
@@ -315,11 +327,11 @@ class MaskedNumber extends Masked<Class<Number>> {
     return this._removeThousandsSeparators(
       this._normalizeZeros(
         this.value))
-      .replace(this.radix, '.');
+      .replace(this.radix, MaskedNumber.UNMASKED_RADIX);
   }
 
   set unmaskedValue (unmaskedValue: string) {
-    super.unmaskedValue = unmaskedValue.replace('.', this.radix);
+    super.unmaskedValue = unmaskedValue.replace(MaskedNumber.UNMASKED_RADIX, this.radix);
   }
 
   /**
@@ -330,7 +342,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   }
 
   set typedValue (n: number) {
-    this.rawInputValue = this.doFormat(n).replace('.', this.radix);
+    this.rawInputValue = this.doFormat(n).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
   }
 
   /** Parsed Number */
@@ -364,10 +376,12 @@ class MaskedNumber extends Masked<Class<Number>> {
     ) && !(value === 0 && this.value === '');
   }
 }
+
+MaskedNumber.UNMASKED_RADIX = '.';
 MaskedNumber.DEFAULTS = {
   radix: ',',
   thousandsSeparator: '',
-  mapToRadix: ['.'],
+  mapToRadix: [MaskedNumber.UNMASKED_RADIX],
   scale: 2,
   signed: false,
   normalizeZeros: true,

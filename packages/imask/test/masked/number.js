@@ -97,4 +97,18 @@ describe('MaskedNumber', function () {
     assert.strictEqual(masked.unmaskedValue, '0.0000001');
     assert.strictEqual(masked.value, '0,0000001');
   });
+
+  it('should drop fractional part if scale is 0', function () {
+    masked.updateOptions({
+      thousandsSeparator: '',
+      radix: ',',
+      padFractionalZeros: false,
+      scale: 2,
+    });
+    masked.typedValue = 99.99;
+    assert.strictEqual(masked.value, '99,99');
+
+    masked.updateOptions({ scale: 0 });
+    assert.strictEqual(masked.value, '99');
+  });
 });

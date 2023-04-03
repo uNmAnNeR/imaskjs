@@ -285,7 +285,7 @@ class Masked<MaskType> {
 
     for (let ci=0; ci<str.length; ++ci) {
       const d = this._appendChar(str[ci], flags, checkTail);
-      if (!this.skipInvalid && !d.rawInserted) break;
+      if (!d.rawInserted && !this.doSkipInvalid(str[ci], flags, checkTail)) break;
       details.aggregate(d);
     }
 
@@ -342,6 +342,11 @@ class Masked<MaskType> {
     delete this._isolated;
 
     return ret;
+  }
+
+  /** */
+  doSkipInvalid (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): boolean {
+    return this.skipInvalid;
   }
 
   /**
