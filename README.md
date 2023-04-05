@@ -37,6 +37,7 @@ vanilla javascript input mask
 * [React plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask)
 * [React Native plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask)
 * [Svelte plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask)
+* [Solid plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask)
 
 ## Install
 `npm install imask` and `import IMask from 'imask';`
