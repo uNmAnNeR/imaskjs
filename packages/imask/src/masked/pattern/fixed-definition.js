@@ -27,7 +27,7 @@ class PatternFixedDefinition implements PatternBlock {
   /** */
   isUnmasking: ?boolean;
   /** */
-  eager: boolean;
+  eager: boolean | 'remove' | 'append';
   /** */
   _isRawInput: ?boolean;
   /** */
@@ -91,9 +91,10 @@ class PatternFixedDefinition implements PatternBlock {
     const details = new ChangeDetails();
 
     if (this._value) return details;
+    const appendEager = this.eager === true || this.eager === 'append';
 
     const appended = this.char === ch;
-    const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && (!flags.raw || !this.eager) && !flags.tail;
+    const isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && (!flags.raw || !appendEager) && !flags.tail;
     if (isResolved) details.rawInserted = this.char;
     this._value = details.inserted = this.char;
     this._isRawInput = isResolved && (flags.raw || flags.input);

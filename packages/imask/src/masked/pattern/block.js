@@ -17,7 +17,7 @@ interface PatternBlock {
   +unmaskedValue: string;
   +isComplete: boolean;
   +lazy?: boolean;
-  +eager?: boolean;
+  +eager?: boolean | 'remove' | 'append';
   +isFilled: boolean;
   +isOptional?: boolean;
   +isFixed?: boolean;

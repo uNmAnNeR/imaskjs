@@ -69,6 +69,35 @@ describe('Masked', function () {
     assert.equal(masked.value, '1.2');
   });
 
+  describe('#eager is "append"', function () {
+    const masked = new MaskedPattern({
+      eager: 'append',
+      mask: '0.0',
+    });
+
+    masked.append('1', { input: true });
+    assert.equal(masked.value, '1.');
+
+    masked.splice(1, 1, '', DIRECTION.LEFT);
+    assert.equal(masked.value, '1');
+  });
+
+  describe('#eager is "remove"', function () {
+    const masked = new MaskedPattern({
+      eager: 'remove',
+      mask: '0.0',
+    });
+
+    masked.append('1', { input: true });
+    assert.equal(masked.value, '1');
+
+    masked.append('2', { input: true });
+    assert.equal(masked.value, '1.2');
+
+    masked.splice(2, 1, '', DIRECTION.LEFT);
+    assert.equal(masked.value, '1');
+  });
+
   describe('#typedValueEquals', function () {
     it('should be true', function () {
       let masked = new MaskedDate();

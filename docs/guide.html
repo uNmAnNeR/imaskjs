@@ -287,7 +287,7 @@ console.log(masked.typedValue);</code></pre>
       <input id="skipInvalid-mask" type="text" value="">
       <label>
         <input type="checkbox" name="skipInvalid" id="toggle-skipInvalid-mask" checked>
-        skipInvalid
+        Skip invalid
       </label>
     </div>
 
@@ -591,12 +591,14 @@ var masked = IMask.PatternMasked({
   <h4 id="eager" class="section-h"><a href="#eager">Eager Mode <kbd>since 6.3.0</kbd></a></h4>
   <div class="form-item">
     <label></label>
-    <div class="input-checkbox">
+    <div class="input-select">
       <input id="pattern-eager-mask" type="text" value="">
-      <label>
-        <input type="checkbox" name="eager" id="toggle-pattern-eager-mask" checked>
-        eager
-      </label>
+      <select id="select-pattern-eager-mask">
+        <option value="true">true</option>
+        <option value="false">false</option>
+        <option value="append">"append" (since 6.5.0)</option>
+        <option value="remove">"remove" (since 6.5.0)</option>
+      </select>
     </div>
 
     <div class="toggle-panel">
@@ -607,7 +609,7 @@ var masked = IMask.PatternMasked({
   document.getElementById('pattern-eager-mask'),
   {
     mask: '00##00##',
-    eager: &lt;CHECK&gt;,
+    eager: &lt;SELECT&gt;,
   }
 );</code></pre>
       </div>
@@ -1385,10 +1387,14 @@ var numberMask = IMask(element, { mask: Number });
       }
     );
 
-    var toggleEager = document.getElementById('toggle-pattern-eager-mask');
-    toggleEager.addEventListener('change', function (e) {
+    var selectEager = document.getElementById('select-pattern-eager-mask');
+    selectEager.addEventListener('change', function (e) {
+      var val = e.target.value;
       eagerMask.updateOptions({
-        eager: e.target.checked,
+        eager:
+          val === 'false' ? false :
+          val === 'true' ? true :
+          val,
       });
     });
 

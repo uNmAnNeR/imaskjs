@@ -107,7 +107,7 @@ declare namespace IMask {
     ) => boolean;
     commit: (value: string, masked: Masked<MaskType>) => void;
     overwrite?: boolean | 'shift';
-    eager?: boolean;
+    eager?: boolean | 'remove' | 'append';
     skipInvalid?: boolean;
     isInitialized: boolean;
 

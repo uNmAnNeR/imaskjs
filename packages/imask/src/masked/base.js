@@ -77,7 +77,7 @@ class Masked<MaskType> {
   /** Enable characters overwriting */
   overwrite: ?boolean | 'shift';
   /** */
-  eager: boolean;
+  eager: boolean | 'remove' | 'append';
   /** */
   skipInvalid: boolean;
   /** */
@@ -297,7 +297,7 @@ class Masked<MaskType> {
       // this._resetBeforeTailState();
     }
 
-    if (this.eager && flags?.input && str) {
+    if ((this.eager === true || this.eager === 'append') && flags?.input && str) {
       details.aggregate(this._appendEager());
     }
 
@@ -391,8 +391,10 @@ class Masked<MaskType> {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);
 
+    const eagerRemove = this.eager === true || this.eager === 'remove';
+
     let oldRawValue;
-    if (this.eager)  {
+    if (eagerRemove)  {
       removeDirection = forceDirection(removeDirection);
       oldRawValue = this.extractInput(0, tailPos, {raw: true});
     }
@@ -402,7 +404,11 @@ class Masked<MaskType> {
 
     // if it is just deletion without insertion
     if (removeDirection !== DIRECTION.NONE) {
-      startChangePos = this.nearestInputPos(start, deleteCount > 1 && start !== 0 && !this.eager ? DIRECTION.NONE : removeDirection);
+      startChangePos = this.nearestInputPos(start,
+        deleteCount > 1 && start !== 0 && !eagerRemove ?
+        DIRECTION.NONE :
+        removeDirection
+      );
 
       // adjust tailShift if start was aligned
       details.tailShift = startChangePos - start;
@@ -410,7 +416,7 @@ class Masked<MaskType> {
 
     details.aggregate(this.remove(startChangePos));
 
-    if (this.eager && removeDirection !== DIRECTION.NONE && oldRawValue === this.rawInputValue) {
+    if (eagerRemove && removeDirection !== DIRECTION.NONE && oldRawValue === this.rawInputValue) {
       if (removeDirection === DIRECTION.FORCE_LEFT) {
         let valLength;
         while (oldRawValue === this.rawInputValue && (valLength = this.value.length)) {

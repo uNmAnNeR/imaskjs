@@ -315,7 +315,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
   }
 
-  get eager (): boolean {
+  get eager (): boolean | 'remove' | 'append' {
     return this.currentMask ?
       this.currentMask.eager :
       super.eager;
