@@ -10,11 +10,25 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     var imask = IMask(document.getElementById('input'), {
-      mask: Number,
-      scale: 2,
+      mask: '€ num',
+      lazy: false,
+      blocks: {
+          num: {
+              mask: Number,
+              thousandsSeparator: '.',
+              radix: ',',
+              mapToRadix: ['.'],
+              scale: 2,
+              min: 0,
+              max: 999999.99,
+              placeholderChar: '0',
+          },
+      },
     }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
+
+    imask.unmaskedValue = '123.45';
 
     // document.getElementById('input').addEventListener('blur', () => imask.updateOptions({lazy: true}));
     // document.getElementById('input').addEventListener('focus', () => imask.updateOptions({lazy: false}));

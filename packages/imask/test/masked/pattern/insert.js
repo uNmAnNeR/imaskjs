@@ -142,4 +142,27 @@ describe('Insert', function () {
       assert.equal(masked.value, '+3 ___');
     });
   });
+
+  it('should set nested unmasked value', function () {
+    masked.updateOptions({
+      mask: '€ num',
+      lazy: false,
+      blocks: {
+        num: {
+          mask: Number,
+          thousandsSeparator: ' ',
+          radix: ',',
+          mapToRadix: ['.'],
+        },
+      },
+    });
+    masked.unmaskedValue = '123.45';
+    assert.equal(masked.value, '€ 123,45');
+
+    masked.maskedBlock('num').updateOptions({ thousandsSeparator: '.' });
+    assert.equal(masked.value, '€ 123,45');
+
+    masked.unmaskedValue = '123.45';
+    assert.equal(masked.value, '€ 123,45');
+  });
 });

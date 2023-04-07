@@ -106,7 +106,18 @@ class MaskedNumber extends Masked<Class<Number>> {
   */
   doPrepare (ch: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
     ch = this._removeThousandsSeparators(
-      this.scale && this.mapToRadix.length && flags.raw ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
+      this.scale && this.mapToRadix.length && (
+        /*
+          radix should be mapped when
+          1) input is done from keyboard = flags.input && flags.raw
+          2) unmasked value is set = !flags.input && !flags.raw
+          and should not be mapped when
+          1) value is set = flags.input && !flags.raw
+          2) raw value is set = !flags.input && flags.raw
+        */
+        flags.input && flags.raw ||
+        !flags.input && !flags.raw
+      ) ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
     );
     const [prepCh, details] = normalizePrepare(super.doPrepare(ch, flags));
     if (ch && !prepCh) details.skip = true;
@@ -331,7 +342,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   }
 
   set unmaskedValue (unmaskedValue: string) {
-    super.unmaskedValue = unmaskedValue.replace(MaskedNumber.UNMASKED_RADIX, this.radix);
+    super.unmaskedValue = unmaskedValue;
   }
 
   /**

@@ -115,7 +115,6 @@ describe('Masked', function () {
       let masked = new MaskedNumber();
 
       assert(masked.typedValueEquals(''));
-      console.log(masked.typedValue === 0);
       assert(!masked.typedValueEquals(0));
 
       masked.value = '0';
