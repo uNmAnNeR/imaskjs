@@ -9,26 +9,48 @@
   <script src="dist/imask.js"></script>
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
-    var imask = IMask(document.getElementById('input'), {
-      mask: '€ num',
-      lazy: false,
-      blocks: {
-          num: {
-              mask: Number,
-              thousandsSeparator: '.',
-              radix: ',',
-              mapToRadix: ['.'],
-              scale: 2,
-              min: 0,
-              max: 999999.99,
-              placeholderChar: '0',
-          },
+    const mask = [
+      {
+        mask: '0',
+        lazy: true,
       },
-    }).on('accept', () => {
+    ];
+
+    var imask = IMask(document.getElementById('input'), { mask }).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
     });
 
-    imask.unmaskedValue = '123.45';
+    imask.masked.updateOptions({
+      mask: mask.map((m) => ({
+        ...m,
+        lazy: false,
+      })),
+    });
+
+
+    const masked = new IMask.MaskedDynamic({ mask });
+    masked.updateOptions({ mask: mask.map(m => ({ ...m, lazy: false })) });
+
+    console.log('maskedvalue', masked.value);
+
+
+    document.getElementById('input').addEventListener('focus', () => {
+      imask.updateOptions({
+        mask: mask.map((m) => ({
+          ...m,
+          lazy: false,
+        })),
+      });
+    });
+
+    document.getElementById('input').addEventListener('blur', () => {
+      imask.updateOptions({
+        mask: mask.map((m) => ({
+          ...m,
+          lazy: true,
+        })),
+      });
+    });
 
     // document.getElementById('input').addEventListener('blur', () => imask.updateOptions({lazy: true}));
     // document.getElementById('input').addEventListener('focus', () => imask.updateOptions({lazy: false}));

@@ -7,7 +7,7 @@ describe('MaskedDynamic', function () {
   const masked = new MaskedDynamic();
 
   beforeEach(function () {
-    masked.updateOptions({ mask: [] });
+    masked.updateOptions({ mask: [], dispatch: MaskedDynamic.DEFAULTS.dispatch });
     masked.unmaskedValue = '';
   });
 
@@ -92,5 +92,21 @@ describe('MaskedDynamic', function () {
     masked.splice(7, 1, '9');
     assert.equal(masked.unmaskedValue, '70009234567');
     assert.equal(masked.currentMask.country, 'Russia');
+  });
+
+  it('should update nested options', function () {
+    const mask = [
+      {
+        mask: '0',
+        lazy: true,
+      },
+    ];
+
+    masked.updateOptions({ mask });
+    masked.value = '';
+    assert.equal(masked.value, '');
+
+    masked.updateOptions({ mask: mask.map(m => ({ ...m, lazy: false })) });
+    assert.equal(masked.value, '_');
   });
 });

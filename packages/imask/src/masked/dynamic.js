@@ -1,4 +1,5 @@
 // @flow
+import { objectIncludes } from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 import createMask from './factory.js';
 import Masked, { type AppendFlags, type MaskedState } from './base.js';
@@ -48,6 +49,8 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
       this.compiledMasks = Array.isArray(opts.mask) ?
         opts.mask.map(m => createMask(m)) :
         [];
+
+      // this.currentMask = this.doDispatch(''); // probably not needed but lets see
     }
   }
 
@@ -340,7 +343,12 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   */
   maskEquals (mask: any): boolean {
     return Array.isArray(mask) &&
-      this.compiledMasks.every((m, mi) => m.maskEquals(mask[mi]?.mask));
+      this.compiledMasks.every((m, mi) => {
+        if (!mask[mi]) return;
+
+        const { mask: oldMask, ...restOpts } = mask[mi];
+        return objectIncludes(m, restOpts) && m.maskEquals(oldMask);
+      });
   }
 
   /**
