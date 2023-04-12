@@ -47,6 +47,10 @@ class PatternFixedDefinition implements PatternBlock {
     return this.isUnmasking ? this.value : '';
   }
 
+  get displayValue (): string {
+    return this.value;
+  }
+
   reset () {
     this._isRawInput = false;
     this._value = '';

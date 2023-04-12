@@ -135,6 +135,11 @@ class InputMask {
     this.alignCursor();
   }
 
+  /** Display value */
+  get displayValue (): string {
+    return this.masked.displayValue;
+  }
+
   /**
     Starts listening to element events
     @protected
@@ -199,7 +204,7 @@ class InputMask {
     @protected
   */
   _saveSelection (/* ev */) {
-    if (this.value !== this.el.value) {
+    if (this.displayValue !== this.el.value) {
       console.warn('Element value was changed outside of mask. Syncronize mask using `mask.updateValue()` to work properly.'); // eslint-disable-line no-console
     }
     this._selection = {
@@ -218,13 +223,14 @@ class InputMask {
   updateControl () {
     const newUnmaskedValue = this.masked.unmaskedValue;
     const newValue = this.masked.value;
+    const newDisplayValue = this.displayValue;
     const isChanged = (this.unmaskedValue !== newUnmaskedValue ||
       this.value !== newValue);
 
     this._unmaskedValue = newUnmaskedValue;
     this._value = newValue;
 
-    if (this.el.value !== newValue) this.el.value = newValue;
+    if (this.el.value !== newDisplayValue) this.el.value = newDisplayValue;
     if (isChanged) this._fireChangeEvents();
   }
 
@@ -326,7 +332,7 @@ class InputMask {
       // new state
       this.el.value, this.cursorPos,
       // old state
-      this.value, this._selection,
+      this.displayValue, this._selection,
     );
 
     const oldRawValue = this.masked.rawInputValue;
@@ -358,7 +364,7 @@ class InputMask {
 
   /** Handles view change event and commits model value */
   _onChange () {
-    if (this.value !== this.el.value) {
+    if (this.displayValue !== this.el.value) {
       this.updateValue();
     }
     this.masked.doCommit();

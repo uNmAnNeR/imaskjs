@@ -520,6 +520,28 @@ var masked = IMask.PatternMasked({
   lazy: false,  // make placeholder always visible
   placeholderChar: '#'     // defaults to '_'
 });</code></pre>
+  
+  <p>Secure text entry <kbd>since 6.6.0</kbd>:</p>
+  <div class="toggle-panel">
+    <label for="secure-text-mask-demo" class="muted">demo</label>
+    <input id="secure-text-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type secure 6-digits code</label>
+          <input id="secure-text-mask" type="text" value="">
+          <div class="desc">value: <span id="secure-text-value"></span><span id="secure-text-complete" class="example__complete"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var secureCodeMask = IMask(element, {
+  mask: '000000',
+  displayChar: '#',
+  lazy: false,
+  overwrite: 'shift',
+});</code></pre>
+
   <p>For complex nested masks there is <code>blocks</code> option available:</p>
   <div class="toggle-panel">
     <label for="pattern-blocks-mask-demo" class="muted">demo</label>
@@ -1087,6 +1109,17 @@ var numberMask = IMask(element, { mask: Number });
       document.getElementById('pattern-phone-complete').style.display = 'inline-block';
     });
 
+    var secureTextMask = IMask(document.getElementById('secure-text-mask'), {
+      mask: '000000',
+      displayChar: '#',
+      lazy: false,
+      overwrite: 'shift',
+    }).on('accept', function() {
+      document.getElementById('secure-text-complete').style.display = '';
+      document.getElementById('secure-text-value').innerHTML = secureTextMask.value;
+    }).on('complete', function() {
+      document.getElementById('secure-text-complete').style.display = 'inline-block';
+    });
 
     var patternGroupsMask = IMask(document.getElementById('pattern-blocks-mask'), {
       mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',

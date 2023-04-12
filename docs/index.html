@@ -27,6 +27,7 @@ title: Javascript Input Mask
           <li>optional input parts</li>
           <li>custom definitions</li>
           <li>reusable blocks</li>
+          <li>secure text entry</li>
           <li><a href="guide.html#masked-enum"><strong>Enum</strong></a> and <a href="guide.html#masked-range"><strong>Range</strong></a> masks</li>
         </ul>
         <li>convert and format values with <a href="guide.html#pipe"><strong>pipe</strong></a></li>
@@ -75,6 +76,32 @@ title: Javascript Input Mask
               <pre><code>var phoneMask = IMask(
   document.getElementById('phone-mask'), {
     mask: '+{7}(000)000-00-00'
+  });
+<a href="guide.html#masked-pattern" class="learn-more">learn more</a></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-item">
+          <label>Pattern (Secure) <span class="desc">XXX-XX-0000</span> <kbd>since 6.6.0</kbd></label>
+          <input id="ssn-mask" type="text" value="">
+          <div class="unmasked-value desc">value: <span id="ssn-value"></span><span id="ssn-complete" class="example__complete"></span></div>
+          <div class="toggle-panel">
+            <label for="ssn-mask-source" class="muted">source</label>
+            <input id="ssn-mask-source" type="checkbox">
+            <div class="toggle-panel-content">
+              <pre><code>var ssnMask = IMask(
+  document.getElementById('ssn-mask'), {
+    mask: 'XXX-XX-0000',
+    definitions: {
+      X: {
+        mask: '0',
+        displayChar: 'X',
+        placeholderChar: '#',
+      },
+    },
+    lazy: false,
+    overwrite: 'shift',
   });
 <a href="guide.html#masked-pattern" class="learn-more">learn more</a></code></pre>
             </div>
@@ -205,6 +232,24 @@ title: Javascript Input Mask
       document.getElementById('phone-unmasked').innerHTML = phoneMask.unmaskedValue;
     }).on('complete', function() {
       document.getElementById('phone-complete').style.display = 'inline-block';
+    });
+
+    var ssnMask = IMask(document.getElementById('ssn-mask'), {
+      mask: 'XXX-XX-0000',
+      definitions: {
+        X: {
+          mask: '0',
+          displayChar: 'X',
+          placeholderChar: '#',
+        },
+      },
+      lazy: false,
+      overwrite: 'shift',
+    }).on('accept', function() {
+      document.getElementById('ssn-complete').style.display = '';
+      document.getElementById('ssn-value').innerHTML = ssnMask.value;
+    }).on('complete', function() {
+      document.getElementById('ssn-complete').style.display = 'inline-block';
     });
 
     var regExpMask = IMask(document.getElementById('regexp-mask'), {

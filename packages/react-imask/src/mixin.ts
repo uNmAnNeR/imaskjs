@@ -70,6 +70,7 @@ const MASK_PROPS: { [key in keyof (IMask.AllMaskedOptions & ReactMaskProps)]: an
 
   // pattern
   placeholderChar: PropTypes.string,
+  displayChar: PropTypes.string,
   lazy: PropTypes.bool,
   definitions: PropTypes.object,
   blocks: PropTypes.object,

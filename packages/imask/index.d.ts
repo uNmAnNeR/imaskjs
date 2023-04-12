@@ -140,7 +140,7 @@ declare namespace IMask {
 
   type MaskedPatternOptions<MaskType=string> = BaseMaskedOptions<MaskType> &
     Partial<
-      Pick<MaskedPattern<MaskType>, 'blocks' | 'definitions' | 'placeholderChar' | 'lazy'>
+      Pick<MaskedPattern<MaskType>, 'blocks' | 'definitions' | 'placeholderChar' | 'displayChar' | 'lazy'>
     >;
   type MaskedPatternOptionsDefaults<MaskType=string> = Pick<
     MaskedPattern<MaskType>,
@@ -151,8 +151,9 @@ declare namespace IMask {
     static STOP_CHAR: string;
     static ESCAPE_CHAR: string;
     blocks: { [key: string]: AnyMaskedOptions; };
-    definitions: MaskedPattern.Definitions;
+    definitions: { [key: string]: MaskedPattern.PatternDefinition };
     placeholderChar: string;
+    displayChar?: string;
     lazy: boolean;
 
     constructor(opts: MaskedPatternOptions<MaskType>);
@@ -186,14 +187,14 @@ declare namespace IMask {
       doCommit(): void;
       nearestInputPos(cursorPos: number, direction: Direction): number;
     }
-    type Definitions = { [key: string]: AnyMask };
-    type PatternInputDefinitionOptions = {
-      mask: AnyMask;
-    } & Pick<
-      InputDefinition,
-      'parent' | 'isOptional' | 'lazy' | 'placeholderChar'
+    type PatternDefinition = AnyMasked | AnyMaskedOptions & Pick<
+      PatternInputDefinition,
+      'lazy' | 'placeholderChar' | 'displayChar'
     >;
-    class InputDefinition implements PatternBlock {
+    type PatternInputDefinitionOptions = AnyMasked | AnyMaskedOptions &
+      Pick<PatternInputDefinition, 'parent' | 'isOptional' | 'lazy' | 'placeholderChar' | 'displayChar'
+    >;
+    class PatternInputDefinition implements PatternBlock {
       readonly masked: AnyMasked;
       readonly value: string;
       readonly unmaskedValue: string;
@@ -203,6 +204,7 @@ declare namespace IMask {
       isOptional: boolean;
       lazy: boolean;
       placeholderChar: string;
+      displayChar?: string;
 
       constructor(opts: PatternInputDefinitionOptions);
       reset(): void;
@@ -225,10 +227,10 @@ declare namespace IMask {
       doCommit(): void;
     }
     type PatternFixedDefinitionOptions = Pick<
-      FixedDefinition,
+      PatternFixedDefinition,
       'char' | 'isUnmasking'
     >;
-    class FixedDefinition implements PatternBlock {
+    class PatternFixedDefinition implements PatternBlock {
       readonly value: string;
       readonly unmaskedValue: string;
       readonly isComplete: boolean;

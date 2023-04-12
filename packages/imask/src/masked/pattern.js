@@ -19,6 +19,7 @@ type MaskedPatternOptions = {
   definitions?: $PropertyType<MaskedPattern, 'definitions'>,
   blocks?: $PropertyType<MaskedPattern, 'blocks'>,
   placeholderChar?: $PropertyType<MaskedPattern, 'placeholderChar'>,
+  displayChar?: $PropertyType<MaskedPattern, 'displayChar'>,
   lazy?: $PropertyType<MaskedPattern, 'lazy'>,
 };
 
@@ -38,6 +39,7 @@ type BlockPosData = {
   @param {Object} opts.blocks
   @param {Object} opts.definitions
   @param {string} opts.placeholderChar
+  @param {string} opts.displayChar
   @param {boolean} opts.lazy
 */
 export default
@@ -54,6 +56,8 @@ class MaskedPattern extends Masked<string> {
   definitions: Definitions;
   /** Single char for empty input */
   placeholderChar: string;
+  /** Single char for filled input */
+  displayChar: string;
   /** Show placeholder only when needed */
   lazy: boolean;
   _blocks: Array<PatternBlock>;
@@ -106,6 +110,7 @@ class MaskedPattern extends Masked<string> {
             lazy: this.lazy,
             eager: this.eager,
             placeholderChar: this.placeholderChar,
+            displayChar: this.displayChar,
             overwrite: this.overwrite,
             ...this.blocks[bName],
           });
@@ -148,14 +153,16 @@ class MaskedPattern extends Masked<string> {
         isInput = false;
       }
 
+      const maskOpts = defs[char]?.mask && !(defs[char]?.mask.prototype instanceof IMask.Masked) ? defs[char] : { mask: defs[char] };
       const def = isInput ?
         new PatternInputDefinition({
           parent: this,
+          isOptional: optionalBlock,
           lazy: this.lazy,
           eager: this.eager,
           placeholderChar: this.placeholderChar,
-          mask: defs[char],
-          isOptional: optionalBlock,
+          displayChar: this.displayChar,
+          ...maskOpts,
         }) :
         new PatternFixedDefinition({
           char,
@@ -242,6 +249,10 @@ class MaskedPattern extends Masked<string> {
 
   set value (value: string) {
     super.value = value;
+  }
+
+  get displayValue (): string {
+    return this._blocks.reduce((str, b) => str += b.displayValue, '');
   }
 
   /**

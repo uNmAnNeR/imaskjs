@@ -10,16 +10,20 @@ import { type PatternBlock } from './block.js';
 
 
 export
-type Definitions = {[string]: Mask};
+type Definitions = {
+  [string]: any, // TODO
+};
 
 /** */
 type PatternInputDefinitionOptions = {
   parent: $PropertyType<PatternInputDefinition, 'parent'>,
-  mask: Mask,
   isOptional: $PropertyType<PatternInputDefinition, 'isOptional'>,
   lazy: $PropertyType<PatternInputDefinition, 'lazy'>,
   eager: $PropertyType<PatternInputDefinition, 'eager'>,
   placeholderChar: $PropertyType<PatternInputDefinition, 'placeholderChar'>,
+  displayChar: $PropertyType<PatternInputDefinition, 'displayChar'>,
+  mask: Mask,
+  [string]: any, // TODO
 };
 
 type PatternInputDefinitionState = {
@@ -52,13 +56,15 @@ class PatternInputDefinition implements PatternBlock {
   eager: $PropertyType<Masked<string>, 'eager'>;
   /** */
   placeholderChar: $PropertyType<MaskedPattern, 'placeholderChar'>;
+  /** */
+  displayChar: $PropertyType<MaskedPattern, 'displayChar'>;
 
 
   constructor(opts: PatternInputDefinitionOptions) {
-    const {mask, ...blockOpts} = opts;
+    const { parent, isOptional, placeholderChar, displayChar, lazy, eager, ...maskOpts } = opts;
 
-    this.masked = createMask({mask});
-    Object.assign(this, blockOpts);
+    this.masked = createMask(maskOpts);
+    Object.assign(this, { parent, isOptional, placeholderChar, displayChar, lazy, eager });
   }
 
   reset () {
@@ -84,6 +90,10 @@ class PatternInputDefinition implements PatternBlock {
 
   get unmaskedValue (): string {
     return this.masked.unmaskedValue;
+  }
+
+  get displayValue (): string {
+    return this.masked.value && this.displayChar || this.value;
   }
 
   get isComplete (): boolean {

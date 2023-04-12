@@ -165,4 +165,23 @@ describe('Insert', function () {
     masked.unmaskedValue = '123.45';
     assert.equal(masked.value, '€ 123,45');
   });
+
+  describe('secure text entry', function () {
+    it('should hide value', function () {
+      masked.updateOptions({
+        mask: 'XXX-XX-0000',
+        definitions: {
+          X: {
+            mask: '0',
+            displayChar: 'X',
+            placeholderChar: '#',
+          },
+        },
+      });
+      masked.unmaskedValue = '123456789';
+
+      assert.equal(masked.value, '123-45-6789');
+      assert.equal(masked.displayValue, 'XXX-XX-6789');
+    });
+  });
 });

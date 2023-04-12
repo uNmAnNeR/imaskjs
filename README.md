@@ -28,6 +28,7 @@ vanilla javascript input mask
   - optional input parts (greedy)
   - custom definitions
   - reusable blocks
+  - secure text entry
   - **[Enum](https://imask.js.org/guide.html#masked-enum)** and **[Range](https://imask.js.org/guide.html#masked-range)** masks
 * convert and format values with **[pipe](https://imask.js.org/guide.html#pipe)**
 

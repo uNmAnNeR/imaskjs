@@ -222,6 +222,10 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     this.unmaskedValue = unmaskedValue;
   }
 
+  get displayValue (): string {
+    return this.currentMask ? this.currentMask.displayValue : '';
+  }
+
   /**
     @override
   */

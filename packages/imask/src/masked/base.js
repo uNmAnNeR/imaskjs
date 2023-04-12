@@ -174,6 +174,10 @@ class Masked<MaskType> {
     this.doCommit();
   }
 
+  get displayValue (): string {
+    return this.value;
+  }
+
   /** */
   get isComplete (): boolean {
     return true;

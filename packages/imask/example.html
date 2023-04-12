@@ -4,53 +4,52 @@
 <body>
   <h1>IMask Core Demo</h1>
   <input type="text" id="input">
+  <div>value: <span id="value"></span></div>
+  <div>unmasked: <span id="unmasked"></span></div>
   <div contenteditable="true" id="ce"></div>
 
   <script src="dist/imask.js"></script>
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
-    const mask = [
-      {
-        mask: '0',
-        lazy: true,
+    const mask = {
+      mask: 'XXX-XX-0000',
+      definitions: {
+        X: {
+          mask: '0',
+          displayChar: 'X',
+          placeholderChar: '#',
+        },
       },
-    ];
+      lazy: false,
+      overwrite: 'shift',
+    };
 
-    var imask = IMask(document.getElementById('input'), { mask }).on('accept', () => {
+    var result = document.getElementById('value');
+    var unmasked = document.getElementById('unmasked');
+    var imask = IMask(document.getElementById('input'), mask).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
-    });
-
-    imask.masked.updateOptions({
-      mask: mask.map((m) => ({
-        ...m,
-        lazy: false,
-      })),
+      result.innerHTML = imask.value;
+      unmasked.innerHTML = imask.unmaskedValue;
     });
 
 
-    const masked = new IMask.MaskedDynamic({ mask });
-    masked.updateOptions({ mask: mask.map(m => ({ ...m, lazy: false })) });
+    // document.getElementById('input').addEventListener('focus', () => {
+    //   imask.updateOptions({
+    //     mask: mask.map((m) => ({
+    //       ...m,
+    //       lazy: false,
+    //     })),
+    //   });
+    // });
 
-    console.log('maskedvalue', masked.value);
-
-
-    document.getElementById('input').addEventListener('focus', () => {
-      imask.updateOptions({
-        mask: mask.map((m) => ({
-          ...m,
-          lazy: false,
-        })),
-      });
-    });
-
-    document.getElementById('input').addEventListener('blur', () => {
-      imask.updateOptions({
-        mask: mask.map((m) => ({
-          ...m,
-          lazy: true,
-        })),
-      });
-    });
+    // document.getElementById('input').addEventListener('blur', () => {
+    //   imask.updateOptions({
+    //     mask: mask.map((m) => ({
+    //       ...m,
+    //       lazy: true,
+    //     })),
+    //   });
+    // });
 
     // document.getElementById('input').addEventListener('blur', () => imask.updateOptions({lazy: true}));
     // document.getElementById('input').addEventListener('focus', () => imask.updateOptions({lazy: false}));

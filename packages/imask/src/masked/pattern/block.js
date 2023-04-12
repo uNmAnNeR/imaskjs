@@ -15,6 +15,7 @@ export
 interface PatternBlock {
   +value: string;
   +unmaskedValue: string;
+  +displayValue: string;
   +isComplete: boolean;
   +lazy?: boolean;
   +eager?: boolean | 'remove' | 'append';
