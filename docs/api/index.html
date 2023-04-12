@@ -78,6 +78,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#inputmaskdisplayvalue'
+                        class='regular pre-open'>
+                        #displayValue
+                      </a></li>
+                      
+                      <li><a
                         href='#inputmask_bindevents'
                         class='regular pre-open'>
                         #_bindEvents
@@ -555,6 +561,12 @@
                         href='#maskedpatternplaceholderchar'
                         class='regular pre-open'>
                         #placeholderChar
+                      </a></li>
+                      
+                      <li><a
+                        href='#maskedpatterndisplaychar'
+                        class='regular pre-open'>
+                        #displayChar
                       </a></li>
                       
                       <li><a
@@ -1065,6 +1077,12 @@
                         href='#patterninputdefinitionplaceholderchar'
                         class='regular pre-open'>
                         #placeholderChar
+                      </a></li>
+                      
+                      <li><a
+                        href='#patterninputdefinitiondisplaychar'
+                        class='regular pre-open'>
+                        #displayChar
                       </a></li>
                       
                     </ul>
@@ -1936,6 +1954,65 @@
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code>any</code>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inputmaskdisplayvalue'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>displayValue</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Display value</p>
+
+    <div class='pre p1 fill-light mt0'>displayValue</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
     
   
 
@@ -5738,6 +5815,14 @@
 
               
                 <tr>
+  <td class='break-word'><span class='code bold'>opts.displayChar</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span></span></td>
+</tr>
+
+
+              
+                <tr>
   <td class='break-word'><span class='code bold'>opts.lazy</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
   </td>
   <td class='break-word'><span></span></td>
@@ -5890,6 +5975,60 @@
   <p>Single char for empty input</p>
 
     <div class='pre p1 fill-light mt0'>placeholderChar</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='maskedpatterndisplaychar'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>displayChar</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Single char for filled input</p>
+
+    <div class='pre p1 fill-light mt0'>displayChar</div>
   
     <p>
       Type:
@@ -10308,7 +10447,7 @@
   
     <p>
       Type:
-      {parent: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"parent"</code>>, mask: <a href="#mask">Mask</a>, isOptional: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"isOptional"</code>>, lazy: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"lazy"</code>>, eager: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"eager"</code>>, placeholderChar: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"placeholderChar"</code>>}
+      {parent: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"parent"</code>>, isOptional: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"isOptional"</code>>, lazy: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"lazy"</code>>, eager: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"eager"</code>>, placeholderChar: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"placeholderChar"</code>>, displayChar: $PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"displayChar"</code>>, mask: <a href="#mask">Mask</a>}
     </p>
   
   
@@ -10333,12 +10472,6 @@
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>mask</span> <code class='quiet'>(<a href="#mask">Mask</a>)</code>
-          
-          
-        </div>
-      
-        <div class='space-bottom0'>
           <span class='code bold'>isOptional</span> <code class='quiet'>($PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"isOptional"</code>>)</code>
           
           
@@ -10358,6 +10491,18 @@
       
         <div class='space-bottom0'>
           <span class='code bold'>placeholderChar</span> <code class='quiet'>($PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"placeholderChar"</code>>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>displayChar</span> <code class='quiet'>($PropertyType&#x3C;<a href="#patterninputdefinition">PatternInputDefinition</a>, <code>"displayChar"</code>>)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>mask</span> <code class='quiet'>(<a href="#mask">Mask</a>)</code>
           
           
         </div>
@@ -10777,6 +10922,59 @@
     <p>
       Type:
       $PropertyType&#x3C;<a href="#maskedpattern">MaskedPattern</a>, <code>"placeholderChar"</code>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='patterninputdefinitiondisplaychar'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>displayChar</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+    <div class='pre p1 fill-light mt0'>displayChar</div>
+  
+    <p>
+      Type:
+      $PropertyType&#x3C;<a href="#maskedpattern">MaskedPattern</a>, <code>"displayChar"</code>>
     </p>
   
   
