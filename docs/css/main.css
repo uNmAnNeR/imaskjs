@@ -1,6 +1,7 @@
 header {
   margin: 30px 0;
   text-align: center;
+  position: relative;
 }
 
 nav {
@@ -181,4 +182,24 @@ fieldset *:last-child {
   align-items: center;
   padding-left: 12px;
   margin: 0;
+}
+
+.github-link {
+  text-indent: -9999px;
+  background-image: url(../i/github-mark.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  opacity: 0.7;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 0.2s ease;
+}
+
+.github-link:hover {
+  opacity: 1;
 }
