@@ -11,7 +11,7 @@
   <script src="dist/imask.js"></script>
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
-    const mask = {
+    const mask = [{
       mask: 'XXX-XX-0000',
       definitions: {
         X: {
@@ -22,11 +22,11 @@
       },
       lazy: false,
       overwrite: 'shift',
-    };
+    }];
 
     var result = document.getElementById('value');
     var unmasked = document.getElementById('unmasked');
-    var imask = IMask(document.getElementById('input'), mask).on('accept', () => {
+    var imask = IMask(document.getElementById('input'), {mask}).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;

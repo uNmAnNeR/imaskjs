@@ -338,8 +338,10 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
       super.skipInvalid;
   }
 
-  set skipInvalid (skipInvalid: *) {
-    console.warn('"skipInvalid" option is not available in dynamic mask, use this option in siblings');
+  set skipInvalid (skipInvalid: boolean) {
+    if (this.isInitialized || skipInvalid !== Masked.DEFAULTS.skipInvalid) {
+      console.warn('"skipInvalid" option is not available in dynamic mask, use this option in siblings');
+    }
   }
 
   /**
