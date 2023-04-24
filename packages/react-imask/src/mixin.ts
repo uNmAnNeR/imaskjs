@@ -124,7 +124,7 @@ export type IMaskMixinProps<
     Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
     IMask.InputMask<Opts>['unmaskedValue'],
   MaskElement extends ReactElement=ReactElement
-> = Opts & ReactMaskProps<Opts, Unmask, Value, MaskElement>;
+> = IMask.DeduceMaskedOptions<Opts> & ReactMaskProps<Opts, Unmask, Value, MaskElement>;
 
 export type IMaskInputProps<
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
@@ -212,7 +212,7 @@ export default function IMaskMixin<
       }
     }
 
-    _extractMaskOptionsFromProps (props: IMaskMixinProps<Opts, Unmask, Value, MaskElement>): Opts {
+    _extractMaskOptionsFromProps (props: Readonly<IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps>>): Opts {
       const { ...cloneProps } = props;
 
       // keep only mask options props
@@ -223,17 +223,18 @@ export default function IMaskMixin<
           delete cloneProps[nonMaskProp];
         });
 
+      // TODO type actually should be IMask.DeduceMasked<Opts>
       return cloneProps as unknown as Opts;
     }
 
-    _extractNonMaskProps (props: IMaskMixinProps<Opts, Unmask, Value, MaskElement>): IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps> {
+    _extractNonMaskProps (props: Readonly<IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps>>): MaskElementProps {
       const { ...cloneProps } = props;
 
       (MASK_PROPS_NAMES as Array<keyof IMaskMixinProps<Opts, Unmask, Value, MaskElement>>).forEach(maskProp => {
         delete cloneProps[maskProp];
       });
 
-      return cloneProps as IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps>;
+      return cloneProps as MaskElementProps;
     }
 
     get maskValue (): Value {
