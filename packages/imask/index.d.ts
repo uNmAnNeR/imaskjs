@@ -187,7 +187,7 @@ declare namespace IMask {
       doCommit(): void;
       nearestInputPos(cursorPos: number, direction: Direction): number;
     }
-    type PatternDefinition = AnyMasked | AnyMaskedOptions & Pick<
+    type PatternDefinition = AnyMask | AnyMasked | AnyMaskedOptions & Pick<
       PatternInputDefinition,
       'lazy' | 'placeholderChar' | 'displayChar'
     >;
@@ -393,9 +393,11 @@ declare namespace IMask {
     | MaskedPatternOptions
     | MaskedRangeOptions
     | MaskedDynamicOptions
+    | MaskedEnumOptions
+    | MaskedRangeOptions
+    | MaskedDynamicOptions
     | BaseMaskedOptions<RegExp>
     | BaseMaskedOptions<Function>
-    | BaseMaskedOptions<AnyMaskedOptionsArray>
     | BaseMaskedOptions<AnyMaskedOptionsMasked>
     | BaseMaskedOptions<MaskedFunction>
     | BaseMaskedOptions<MaskedRegExp>
@@ -408,14 +410,14 @@ declare namespace IMask {
     & MaskedNumberOptions
     & MaskedPatternOptions
     & MaskedDynamicOptions
+    & MaskedEnumOptions
+    & MaskedRangeOptions
+    & MaskedDynamicOptions
     & BaseMaskedOptions<RegExp>
     & BaseMaskedOptions<Function>
-    & BaseMaskedOptions<AnyMaskedOptionsArray>
     & BaseMaskedOptions<AnyMaskedOptionsMasked>
     & BaseMaskedOptions<MaskedFunction>
     & BaseMaskedOptions<MaskedRegExp>
-    & BaseMaskedOptions<MaskedEnum>
-    & BaseMaskedOptions<MaskedRange>
     & BaseMaskedOptions<typeof Masked>;
   interface AnyMaskedOptionsArray extends Array<AnyMaskedOptions> {}
   interface AnyMaskedOptionsMasked extends Masked<AnyMaskedOptions> {}
