@@ -1,6 +1,8 @@
 // @flow
 
 
+import IMask from "./holder";
+
 /**
   Provides details of changing model value
   @param {Object} [details]
@@ -55,3 +57,5 @@ class ChangeDetails {
     return this.tailShift + this.inserted.length;
   }
 }
+
+IMask.ChangeDetails = ChangeDetails;
