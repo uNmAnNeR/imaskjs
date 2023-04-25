@@ -25,7 +25,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /** Compliled {@link Masked} options */
   compiledMasks: Array<Masked<*>>;
   /** Chooses {@link Masked} depending on input value */
-  dispatch: (string, Masked<*>, AppendFlags) => Masked<*>;
+  dispatch: (string, Masked<*>, AppendFlags, string | String | TailDetails) => Masked<*>;
 
   /**
     @param {Object} opts
@@ -67,7 +67,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
-  _applyDispatch (appended: string='', flags: AppendFlags={}): ChangeDetails {
+  _applyDispatch (appended: string='', flags: AppendFlags={}, tail: string | String | TailDetails = ''): ChangeDetails {
     const prevValueBeforeTail = flags.tail && flags._beforeTailState != null ?
       flags._beforeTailState._value :
       this.value;
@@ -83,7 +83,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     const prevMaskState = prevMask?.state;
 
     // clone flags to prevent overwriting `_beforeTailState`
-    this.currentMask = this.doDispatch(appended, { ...flags });
+    this.currentMask = this.doDispatch(appended, { ...flags }, tail);
 
     // restore state after dispatch
     if (this.currentMask) {
@@ -136,16 +136,11 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
 
   appendTail (tail: string | String | TailDetails): ChangeDetails {
     const details = new ChangeDetails();
-    if (tail) details.aggregate(this._applyDispatch(tail.toString()));
+    if (tail) details.aggregate(this._applyDispatch('', {}, tail));
 
-    if (this.currentMask) {
-      const consistentState = this.state;
-      let tailDetails = this.currentMask.appendTail(tail);
-      if (tailDetails.rawInserted === tail.toString()) return tailDetails;
-      else this.state = consistentState;
-    }
-
-    return super.appendTail(tail);
+    return details.aggregate(this.currentMask ?
+      this.currentMask.appendTail(tail) :
+      super.appendTail(tail));
   }
 
   currentMaskFlags (flags: AppendFlags): AppendFlags {
@@ -159,8 +154,8 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
   /**
     @override
   */
-  doDispatch(appended: string, flags: AppendFlags={}): ?Masked<*> {
-    return this.dispatch(appended, this, flags);
+  doDispatch(appended: string, flags: AppendFlags={}, tail: string | String | TailDetails=''): ?Masked<*> {
+    return this.dispatch(appended, this, flags, tail);
   }
 
   /**
@@ -380,7 +375,7 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
 }
 
 MaskedDynamic.DEFAULTS = {
-  dispatch: (appended, masked, flags) => {
+  dispatch: (appended, masked, flags, tail) => {
     if (!masked.compiledMasks.length) return;
 
     const inputValue = masked.rawInputValue;
@@ -390,13 +385,14 @@ MaskedDynamic.DEFAULTS = {
       m.reset();
       m.append(inputValue, { raw: true });
       m.append(appended, masked.currentMaskFlags(flags));
+      const { requiredSkipped } = m.appendTail(tail);
       const weight = m.rawInputValue.length;
 
-      return {weight, index};
+      return { weight, requiredSkipped, index };
     });
 
     // pop masks with longer values first
-    inputs.sort((i1, i2) => i2.weight - i1.weight);
+    inputs.sort((i1, i2) => i2.weight - i1.weight || i2.requiredSkipped - i1.requiredSkipped);
 
     return masked.compiledMasks[inputs[0].index];
   }

@@ -109,4 +109,30 @@ describe('MaskedDynamic', function () {
     masked.updateOptions({ mask: mask.map(m => ({ ...m, lazy: false })) });
     assert.equal(masked.value, '_');
   });
+
+  it('should consider pattern tail for nested', function () {
+    masked.updateOptions({
+      mask: [
+        {
+          mask: '0`0',
+          lazy: false,
+        },
+        {
+          mask: '0`0`0',
+          lazy: false,
+        },
+      ],
+    });
+
+    masked.unmaskedValue = '12';
+    assert.equal(masked.value, '12');
+
+    masked.splice(0, 1, '');
+    assert.equal(masked.value, '_2');
+
+    masked.unmaskedValue = '123';
+    masked.splice(1, 1, '');
+
+    assert.equal(masked.value, '1_3');
+  });
 });

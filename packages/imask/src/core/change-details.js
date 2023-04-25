@@ -19,6 +19,8 @@ class ChangeDetails {
   tailShift: number;
   /** Raw inserted is used by dynamic mask */
   rawInserted: string;
+  /** */
+  requiredSkipped: number;
 
   constructor (details?: {
     inserted?: $PropertyType<ChangeDetails, 'inserted'>,
@@ -31,6 +33,7 @@ class ChangeDetails {
       rawInserted: '',
       skip: false,
       tailShift: 0,
+      requiredSkipped: 0,
     }, details);
   }
 
@@ -43,6 +46,7 @@ class ChangeDetails {
     this.skip = this.skip || details.skip;
     this.inserted += details.inserted;
     this.tailShift += details.tailShift;
+    this.requiredSkipped += details.requiredSkipped;
     return this;
   }
 
