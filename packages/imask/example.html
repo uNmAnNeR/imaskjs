@@ -11,22 +11,56 @@
   <script src="dist/imask.js"></script>
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
-    const mask = [{
-      mask: 'XXX-XX-0000',
-      definitions: {
-        X: {
-          mask: '0',
-          displayChar: 'X',
-          placeholderChar: '#',
+    const opts = {
+      mask: [
+        {
+          mask: "HH:`mm",
+          lazy: false,
+          blocks: {
+            HH: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 23,
+              placeholderChar: "H",
+            },
+            mm: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 59,
+              placeholderChar: "m",
+            },
+          }
         },
-      },
-      lazy: false,
-      overwrite: 'shift',
-    }];
+        {
+          mask: "HH:`mm:`ss",
+          lazy: false,
+          blocks: {
+            HH: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 23,
+              placeholderChar: "H",
+            },
+            mm: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 59,
+              placeholderChar: "m",
+            },
+            ss: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 59,
+              placeholderChar: "s",
+            },
+          }
+        }
+      ]
+    };
 
     var result = document.getElementById('value');
     var unmasked = document.getElementById('unmasked');
-    var imask = IMask(document.getElementById('input'), {mask}).on('accept', () => {
+    var imask = IMask(document.getElementById('input'), opts).on('accept', () => {
       console.log(imask.value, imask.unmaskedValue, imask.typedValue);
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;

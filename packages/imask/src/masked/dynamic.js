@@ -134,6 +134,20 @@ class MaskedDynamic extends Masked<DynamicMaskType> {
     return details;
   }
 
+  appendTail (tail: string | String | TailDetails): ChangeDetails {
+    const details = new ChangeDetails();
+    if (tail) details.aggregate(this._applyDispatch(tail.toString()));
+
+    if (this.currentMask) {
+      const consistentState = this.state;
+      let tailDetails = this.currentMask.appendTail(tail);
+      if (tailDetails.rawInserted === tail.toString()) return tailDetails;
+      else this.state = consistentState;
+    }
+
+    return super.appendTail(tail);
+  }
+
   currentMaskFlags (flags: AppendFlags): AppendFlags {
     return {
       ...flags,

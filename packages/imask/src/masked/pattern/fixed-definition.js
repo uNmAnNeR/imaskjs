@@ -94,7 +94,7 @@ class PatternFixedDefinition implements PatternBlock {
   _appendChar (ch: string, flags?: AppendFlags={}): ChangeDetails {
     const details = new ChangeDetails();
 
-    if (this._value) return details;
+    if (this.isFilled) return details;
     const appendEager = this.eager === true || this.eager === 'append';
 
     const appended = this.char === ch;
@@ -112,7 +112,7 @@ class PatternFixedDefinition implements PatternBlock {
 
   _appendPlaceholder (): ChangeDetails {
     const details = new ChangeDetails();
-    if (this._value) return details;
+    if (this.isFilled) return details;
 
     this._value = details.inserted = this.char;
     return details;
