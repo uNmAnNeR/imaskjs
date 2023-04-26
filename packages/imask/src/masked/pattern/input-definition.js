@@ -169,6 +169,10 @@ class PatternInputDefinition implements PatternBlock {
     }
   }
 
+  totalInputPositions (fromPos?: number=0, toPos?: number=this.value.length): number {
+    return this.value.slice(fromPos, toPos).length;
+  }
+
   doValidate (...args: *): boolean {
     return this.masked.doValidate(...args) && (
       !this.parent || this.parent.doValidate(...args));

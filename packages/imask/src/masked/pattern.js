@@ -518,6 +518,17 @@ class MaskedPattern extends Masked<string> {
     return cursorPos;
   }
 
+  /**
+    @override
+  */
+  totalInputPositions (fromPos?: number=0, toPos?: number=this.value.length): number {
+    let total = 0;
+    this._forEachBlocksInRange(fromPos, toPos, (b, _, bFromPos, bToPos) => {
+      total += b.totalInputPositions(bFromPos, bToPos);
+    });
+    return total;
+  }
+
   /** Get block by name */
   maskedBlock (name: string): ?PatternBlock {
     return this.maskedBlocks(name)[0];

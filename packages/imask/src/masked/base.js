@@ -193,6 +193,10 @@ class Masked<MaskType> {
     return cursorPos;
   }
 
+  totalInputPositions (fromPos?: number=0, toPos?: number=this.value.length): number {
+    return Math.min(this.value.length, toPos - fromPos);
+  }
+
   /** Extracts value in range considering flags */
   extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
     return this.value.slice(fromPos, toPos);

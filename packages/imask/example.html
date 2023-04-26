@@ -14,13 +14,47 @@
     const opts = {
       mask: [
         {
-          mask: '0`0',
+          mask: "HH:`mm",
           lazy: false,
+          blocks: {
+            HH: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 23,
+              placeholderChar: "H",
+            },
+            mm: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 59,
+              placeholderChar: "m",
+            },
+          }
         },
         {
-          mask: '0`0`0',
+          mask: "HH:`mm:`ss",
           lazy: false,
-        },
+          blocks: {
+            HH: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 23,
+              placeholderChar: "H",
+            },
+            mm: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 59,
+              placeholderChar: "m",
+            },
+            ss: {
+              mask: IMask.MaskedRange,
+              from: 0,
+              to: 59,
+              placeholderChar: "s",
+            },
+          }
+        }
       ]
     };
 

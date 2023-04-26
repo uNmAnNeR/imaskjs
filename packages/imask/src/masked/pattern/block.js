@@ -35,4 +35,5 @@ interface PatternBlock {
   _appendEager (): ChangeDetails;
   doCommit (): void;
   nearestInputPos (cursorPos: number, direction: Direction): number;
+  totalInputPositions (fromPos?: number, toPos?: number): number;
 }

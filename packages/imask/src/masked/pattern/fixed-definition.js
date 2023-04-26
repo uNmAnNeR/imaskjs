@@ -79,6 +79,10 @@ class PatternFixedDefinition implements PatternBlock {
     }
   }
 
+  totalInputPositions (fromPos?: number=0, toPos?: number=this._value.length): number {
+    return this._isRawInput ? (toPos - fromPos) : 0;
+  }
+
   extractInput (fromPos?: number=0, toPos?: number=this._value.length, flags?: ExtractFlags={}): string {
     return flags.raw && this._isRawInput && this._value.slice(fromPos, toPos) || '';
   }

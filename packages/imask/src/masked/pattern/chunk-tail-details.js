@@ -96,7 +96,6 @@ class ChunksTailDetails implements TailDetails {
           masked._stops.indexOf(stop) >= 0
         ) {
           const phDetails = masked._appendPlaceholder(stop);
-          phDetails.requiredSkipped = phDetails.inserted.length;
           details.aggregate(phDetails);
         }
         chunkBlock = chunk instanceof ChunksTailDetails && masked._blocks[stop];

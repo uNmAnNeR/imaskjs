@@ -135,4 +135,26 @@ describe('MaskedDynamic', function () {
 
     assert.equal(masked.value, '1_3');
   });
+
+  it('should consider input positions', function () {
+    masked.updateOptions({
+      mask: [
+        {
+          mask: '00`00',
+          lazy: false,
+        },
+        {
+          mask: '00`00`00',
+          lazy: false,
+        },
+      ],
+    });
+
+    masked.value = '123456';
+    masked.splice(2, 2, '');
+    assert.equal(masked.value, '12__56');
+
+    masked.splice(5, 1, '');
+    assert.equal(masked.value, '12__5_');
+  });
 });

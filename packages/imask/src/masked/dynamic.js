@@ -3,7 +3,7 @@ import { objectIncludes } from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 import createMask from './factory.js';
 import Masked, { type AppendFlags, type MaskedState } from './base.js';
-import { normalizePrepare } from '../core/utils.js';
+import { normalizePrepare, DIRECTION } from '../core/utils.js';
 import { type TailDetails } from '../core/tail-details.js';
 import IMask from '../core/holder.js';
 
@@ -382,17 +382,22 @@ MaskedDynamic.DEFAULTS = {
 
     // simulate input
     const inputs = masked.compiledMasks.map((m, index) => {
-      m.reset();
-      m.append(inputValue, { raw: true });
+      if (m.rawInputValue !== inputValue) {
+        m.reset();
+        m.append(inputValue, { raw: true });
+      } else {
+        m.remove(m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT));
+      }
       m.append(appended, masked.currentMaskFlags(flags));
-      const { requiredSkipped } = m.appendTail(tail);
+      m.appendTail(tail);
       const weight = m.rawInputValue.length;
+      const totalInputPositions = m.totalInputPositions(0, m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT));
 
-      return { weight, requiredSkipped, index };
+      return { weight, totalInputPositions, index };
     });
 
     // pop masks with longer values first
-    inputs.sort((i1, i2) => i2.weight - i1.weight || i2.requiredSkipped - i1.requiredSkipped);
+    inputs.sort((i1, i2) => i2.weight - i1.weight || i2.totalInputPositions - i1.totalInputPositions);
 
     return masked.compiledMasks[inputs[0].index];
   }
