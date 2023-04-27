@@ -1,6 +1,6 @@
 {
   "name": "react-imask",
-  "version": "6.6.1-alpha.2",
+  "version": "6.6.1",
   "license": "MIT",
   "author": "Alexey Kryazhev",
   "homepage": "https://imask.js.org/",
@@ -20,7 +20,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^6.6.1-alpha.2",
+    "imask": "^6.6.1",
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
