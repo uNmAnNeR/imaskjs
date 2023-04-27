@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { IMaskDirective, IMASK_FACTORY } from 'angular-imask';
+import { IMASK_FACTORY } from 'angular-imask';
 import { NumberIMaskFactory } from './number-imask-factory';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [IMaskDirective],
   providers: [
     {provide: IMASK_FACTORY, useClass: NumberIMaskFactory} // it's optional
   ],

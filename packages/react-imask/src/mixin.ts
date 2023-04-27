@@ -244,7 +244,7 @@ export default function IMaskMixin<
     }
 
     set maskValue (value: Value) {
-      value = (value == null ? '' : value) as Value;
+      value = (value == null && this.props.unmask !== 'typed' ? '' : value) as Value;
       if (this.props.unmask === 'typed') this.maskRef.typedValue = value as unknown as IMask.MaskedTypedValue<Opts['mask']>;
       else if (this.props.unmask) this.maskRef.unmaskedValue = value as unknown as IMask.InputMask<Opts>['unmaskedValue'];
       else this.maskRef.value = value as unknown as IMask.InputMask<Opts>['value'];

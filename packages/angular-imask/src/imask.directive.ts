@@ -8,6 +8,9 @@ import {
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 import { IMASK_FACTORY } from './imask-factory-token';
 
+export
+type Falsy = false | 0 | "" | null | undefined;
+
 export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => IMaskDirective),
@@ -27,7 +30,13 @@ export const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeEleme
   },
   providers: [MASKEDINPUT_VALUE_ACCESSOR],
 })
-export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
+export class IMaskDirective<
+  Opts extends IMask.AnyMaskedOptions,
+  Unmask extends ('typed' | boolean) = false,
+  Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
+    Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
+    IMask.InputMask<Opts>['unmaskedValue']
+> implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
   maskRef?: IMask.InputMask<Opts>;
   onTouched: any = () => {};
   onChange: any = () => {};
@@ -43,28 +52,28 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   private _compositionMode = inject(COMPOSITION_BUFFER_MODE, {optional: true}) ?? !this._isAndroid();
 
   @Input() imask?: Opts;
-  @Input() unmask?: boolean|'typed';
+  @Input() unmask?: Unmask;
   @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => IMask.MaskElement = DEFAULT_IMASK_ELEMENT;
-  @Output() accept = new EventEmitter<void>();
-  @Output() complete = new EventEmitter<void>();
+  @Output() accept = new EventEmitter<Value>();
+  @Output() complete = new EventEmitter<Value>();
 
   get element () {
     return this.imaskElement(this._elementRef, this);
   }
 
-  get maskValue (): any {
-    if (!this.maskRef) return this.element.value;
+  get maskValue (): Value {
+    if (!this.maskRef) return this.element.value as unknown as Value;
 
-    if (this.unmask === 'typed') return this.maskRef.typedValue;
-    if (this.unmask) return this.maskRef.unmaskedValue;
-    return this.maskRef.value;
+    if (this.unmask === 'typed') return this.maskRef.typedValue as unknown as Value;
+    if (this.unmask) return this.maskRef.unmaskedValue as unknown as Value;
+    return this.maskRef.value as unknown as Value;
   }
 
-  set maskValue (value: any) {
+  set maskValue (value: Value) {
     if (this.maskRef) {
-      if (this.unmask === 'typed') this.maskRef.typedValue = value;
-      else if (this.unmask) this.maskRef.unmaskedValue = value;
-      else this.maskRef.value = value;
+      if (this.unmask === 'typed') this.maskRef.typedValue = value as unknown as IMask.MaskedTypedValue<Opts['mask']>;
+      else if (this.unmask) this.maskRef.unmaskedValue = value as unknown as IMask.InputMask<Opts>['unmaskedValue'];
+      else this.maskRef.value = value as unknown as IMask.InputMask<Opts>['value'];
     } else {
       this._renderer.setProperty(this.element, 'value', value);
     }
@@ -105,18 +114,18 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
     this.complete.complete();
   }
 
-  beginWrite (value: any): void {
+  beginWrite (value: Value): void {
     this._writing = true;
     this._writingValue = value;
   }
 
-  endWrite (): any {
+  endWrite (): Value {
     this._writing = false;
     return this._writingValue;
   }
 
-  writeValue(value: any) {
-    value = value == null && this.unmask !== 'typed' ? '' : value;
+  writeValue(value: Value) {
+    value = (value == null && this.unmask !== 'typed' ? '' : value) as Value;
 
     if (this.maskRef) {
       this.beginWrite(value);
@@ -141,7 +150,7 @@ export class IMaskDirective<Opts extends IMask.AnyMaskedOptions> implements Cont
   }
 
   private initMask () {
-    this.maskRef = this._factory.create(this.element, this.imask as Opts)
+    this.maskRef = this._factory.create(this.element, this.imask)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
   }
