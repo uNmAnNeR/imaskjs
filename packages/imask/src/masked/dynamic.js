@@ -382,18 +382,26 @@ MaskedDynamic.DEFAULTS = {
 
     // simulate input
     const inputs = masked.compiledMasks.map((m, index) => {
+      const isCurrent = masked.currentMask === m;
+      const startInputPos = isCurrent ? m.value.length : m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT);
+
       if (m.rawInputValue !== inputValue) {
         m.reset();
         m.append(inputValue, { raw: true });
-      } else {
-        m.remove(m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT));
+      } else if (!isCurrent) {
+        m.remove(startInputPos);
       }
       m.append(appended, masked.currentMaskFlags(flags));
       m.appendTail(tail);
-      const weight = m.rawInputValue.length;
-      const totalInputPositions = m.totalInputPositions(0, m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT));
 
-      return { weight, totalInputPositions, index };
+      return {
+        index,
+        weight: m.rawInputValue.length,
+        totalInputPositions: m.totalInputPositions(
+          0,
+          Math.max(startInputPos, m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT)),
+        ),
+      };
     });
 
     // pop masks with longer values first
