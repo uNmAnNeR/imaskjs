@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { JSX } from 'solid-js/jsx-runtime';
 import { createEffect, onCleanup, splitProps } from 'solid-js';
-import IMask from 'imask';
+import IMask, { type InputMask } from 'imask';
 
 
 // TODO can `directive` be reused here?
@@ -11,9 +11,9 @@ const createMaskedInput =
 <
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
   Value = {
-    typedValue: IMask.InputMask<Opts>['typedValue'];
-    value: IMask.InputMask<Opts>['value'];
-    unmaskedValue: IMask.InputMask<Opts>['unmaskedValue'];
+    typedValue: InputMask<Opts>['typedValue'];
+    value: InputMask<Opts>['value'];
+    unmaskedValue: InputMask<Opts>['unmaskedValue'];
   }
 >(
   mask: Opts
@@ -25,16 +25,16 @@ const createMaskedInput =
   > & {
     onAccept?: (
       value: Value,
-      maskRef: IMask.InputMask<Opts>,
+      maskRef: InputMask<Opts>,
       e?: InputEvent
     ) => void;
     onComplete?: (
       value: Value,
-      maskRef: IMask.InputMask<Opts>,
+      maskRef: InputMask<Opts>,
       e?: InputEvent
     ) => void;
-    value?: IMask.InputMask<Opts>['value'];
-    unmaskedValue?: IMask.InputMask<Opts>['unmaskedValue'];
+    value?: InputMask<Opts>['value'];
+    unmaskedValue?: InputMask<Opts>['unmaskedValue'];
   }
 ) => {
   const [maskProps, inputProps] = splitProps(props, [
@@ -44,7 +44,7 @@ const createMaskedInput =
     'value',
     'unmaskedValue',
   ]);
-  let m: IMask.InputMask<Opts>;
+  let m: InputMask<Opts>;
 
   createEffect(() => {
     if (m && maskProps.unmaskedValue) {

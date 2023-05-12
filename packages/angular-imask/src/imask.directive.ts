@@ -1,4 +1,4 @@
-import IMask from 'imask';
+import IMask, { type InputMask, type MaskElement } from 'imask';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
@@ -33,11 +33,11 @@ export const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeEleme
 export class IMaskDirective<
   Opts extends IMask.AnyMaskedOptions,
   Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
-    IMask.InputMask<Opts>['unmaskedValue']
+  Value = Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
+    Unmask extends Falsy ? InputMask<Opts>['value'] :
+    InputMask<Opts>['unmaskedValue']
 > implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
-  maskRef?: IMask.InputMask<Opts>;
+  maskRef?: InputMask<Opts>;
   onTouched: any = () => {};
   onChange: any = () => {};
   private _viewInitialized = false;
@@ -53,7 +53,7 @@ export class IMaskDirective<
 
   @Input() imask?: Opts;
   @Input() unmask?: Unmask;
-  @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => IMask.MaskElement = DEFAULT_IMASK_ELEMENT;
+  @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => MaskElement = DEFAULT_IMASK_ELEMENT;
   @Output() accept = new EventEmitter<Value>();
   @Output() complete = new EventEmitter<Value>();
 
@@ -72,8 +72,8 @@ export class IMaskDirective<
   set maskValue (value: Value) {
     if (this.maskRef) {
       if (this.unmask === 'typed') this.maskRef.typedValue = value as unknown as IMask.MaskedTypedValue<Opts['mask']>;
-      else if (this.unmask) this.maskRef.unmaskedValue = value as unknown as IMask.InputMask<Opts>['unmaskedValue'];
-      else this.maskRef.value = value as unknown as IMask.InputMask<Opts>['value'];
+      else if (this.unmask) this.maskRef.unmaskedValue = value as unknown as InputMask<Opts>['unmaskedValue'];
+      else this.maskRef.value = value as unknown as InputMask<Opts>['value'];
     } else {
       this._renderer.setProperty(this.element, 'value', value);
     }

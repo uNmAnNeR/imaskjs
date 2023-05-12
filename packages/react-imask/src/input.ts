@@ -1,5 +1,5 @@
 import React from 'react';
-import IMask from 'imask';
+import IMask, { type InputMask } from 'imask';
 import IMaskMixin, { IMaskInputProps, Falsy, ReactElementProps } from './mixin';
 
 
@@ -13,9 +13,9 @@ const IMaskInputClass = IMaskMixin(({ inputRef, ...props }) =>
 const IMaskInputFn = <
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
   Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
-    IMask.InputMask<Opts>['unmaskedValue'],
+  Value = Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
+    Unmask extends Falsy ? InputMask<Opts>['value'] :
+    InputMask<Opts>['unmaskedValue'],
 >(
   props: IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, ReactElementProps<HTMLInputElement>>,
   ref: React.Ref<React.ComponentType<IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, ReactElementProps<HTMLInputElement>>>>
@@ -27,9 +27,9 @@ const IMaskInputFn = <
 const IMaskInput = React.forwardRef(IMaskInputFn as <
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
   Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? IMask.InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? IMask.InputMask<Opts>['value'] :
-    IMask.InputMask<Opts>['unmaskedValue'],
+  Value = Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
+    Unmask extends Falsy ? InputMask<Opts>['value'] :
+    InputMask<Opts>['unmaskedValue'],
 >(
   props: IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, ReactElementProps<HTMLInputElement>> & { ref?: React.Ref<React.ComponentType<IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, ReactElementProps<HTMLInputElement>>>> }
 ) => React.ReactElement<IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, ReactElementProps<HTMLInputElement>>>);

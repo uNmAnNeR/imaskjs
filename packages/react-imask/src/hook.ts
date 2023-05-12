@@ -1,4 +1,4 @@
-import IMask from 'imask';
+import IMask, { type InputMask } from 'imask';
 import { useEffect, useCallback, useState, useRef, Dispatch } from 'react';
 import type { MutableRefObject } from 'react';
 import type { ReactMaskProps, ReactElement } from './mixin';
@@ -10,28 +10,28 @@ function useIMask<
   MaskElement extends ReactElement=HTMLInputElement,
 >(
   opts: Opts,
-  { onAccept, onComplete }: Partial<Pick<ReactMaskProps<Opts, true, IMask.InputMask<Opts>['value'], MaskElement>, 'onAccept' | 'onComplete'>> = {}
+  { onAccept, onComplete }: Partial<Pick<ReactMaskProps<Opts, true, InputMask<Opts>['value'], MaskElement>, 'onAccept' | 'onComplete'>> = {}
 ): {
   ref: MutableRefObject<MaskElement>,
-  maskRef: MutableRefObject<IMask.InputMask<Opts>>,
-  value: IMask.InputMask<Opts>['value'],
-  setValue: Dispatch<IMask.InputMask<Opts>['value']>,
-  unmaskedValue: IMask.InputMask<Opts>['unmaskedValue'],
-  setUnmaskedValue: Dispatch<IMask.InputMask<Opts>['unmaskedValue']>,
-  typedValue: IMask.InputMask<Opts>['typedValue'],
-  setTypedValue: Dispatch<IMask.InputMask<Opts>['typedValue']>,
+  maskRef: MutableRefObject<InputMask<Opts>>,
+  value: InputMask<Opts>['value'],
+  setValue: Dispatch<InputMask<Opts>['value']>,
+  unmaskedValue: InputMask<Opts>['unmaskedValue'],
+  setUnmaskedValue: Dispatch<InputMask<Opts>['unmaskedValue']>,
+  typedValue: InputMask<Opts>['typedValue'],
+  setTypedValue: Dispatch<InputMask<Opts>['typedValue']>,
 } {
   const ref = useRef<MaskElement>(null);
-  const maskRef = useRef<IMask.InputMask<Opts>>(null);
+  const maskRef = useRef<InputMask<Opts>>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
   const [lastAcceptState, setLastAcceptState] = useState<{
-    value?: IMask.InputMask<Opts>['value'],
-    unmaskedValue?: IMask.InputMask<Opts>['unmaskedValue'],
-    typedValue?: IMask.InputMask<Opts>['typedValue'],
+    value?: InputMask<Opts>['value'],
+    unmaskedValue?: InputMask<Opts>['unmaskedValue'],
+    typedValue?: InputMask<Opts>['typedValue'],
   }>({});
-  const [value, setValue] = useState<IMask.InputMask<Opts>['value']>('');
-  const [unmaskedValue, setUnmaskedValue] = useState<IMask.InputMask<Opts>['unmaskedValue']>('');
-  const [typedValue, setTypedValue] = useState<IMask.InputMask<Opts>['typedValue']>();
+  const [value, setValue] = useState<InputMask<Opts>['value']>('');
+  const [unmaskedValue, setUnmaskedValue] = useState<InputMask<Opts>['unmaskedValue']>('');
+  const [typedValue, setTypedValue] = useState<InputMask<Opts>['typedValue']>();
 
   const _destroyMask = useCallback(() => {
     maskRef.current?.destroy();

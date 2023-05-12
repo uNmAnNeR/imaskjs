@@ -1,10 +1,9 @@
-// @flow
-import type Masked from '../base.js';
-import type MaskedPattern from '../pattern.js';
-import type ChangeDetails from '../../core/change-details.js';
-import { type TailDetails } from '../../core/tail-details.js';
-import { type ExtractFlags, type AppendFlags } from '../base.js';
-import { type Direction } from '../../core/utils.js';
+import type Masked from '../base';
+import type MaskedPattern from '../pattern';
+import type ChangeDetails from '../../core/change-details';
+import { type TailDetails } from '../../core/tail-details';
+import { type ExtractFlags, type AppendFlags } from '../base';
+import { type Direction } from '../../core/utils';
 
 
 /**
@@ -13,15 +12,15 @@ import { type Direction } from '../../core/utils.js';
 */
 export
 interface PatternBlock {
-  +value: string;
-  +unmaskedValue: string;
-  +displayValue: string;
-  +isComplete: boolean;
-  +lazy?: boolean;
-  +eager?: boolean | 'remove' | 'append';
-  +isFilled: boolean;
-  +isOptional?: boolean;
-  +isFixed?: boolean;
+  readonly value: string;
+  readonly unmaskedValue: string;
+  readonly displayValue: string;
+  readonly isComplete: boolean;
+  readonly lazy?: boolean;
+  readonly eager?: boolean | 'remove' | 'append';
+  readonly isFilled: boolean;
+  readonly isOptional?: boolean;
+  readonly isFixed?: boolean;
   state: any;
 
   reset (): void;
@@ -31,7 +30,7 @@ interface PatternBlock {
   append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails;
   appendTail (tail: string | TailDetails): ChangeDetails;
   _appendChar (str: string, flags: AppendFlags): ChangeDetails;
-  _appendPlaceholder (?number): ChangeDetails;
+  _appendPlaceholder (toBlockIndex?: number): ChangeDetails;
   _appendEager (): ChangeDetails;
   doCommit (): void;
   nearestInputPos (cursorPos: number, direction: Direction): number;

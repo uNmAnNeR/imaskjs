@@ -124,7 +124,7 @@ declare namespace IMask {
       tail?: string | TailDetails
     ): ChangeDetails;
     remove(fromPos?: number, toPos?: number): ChangeDetails;
-    doPrepare(str: string, flags: AppendFlags): string | [string, ChangeDetails];
+    doPrepare(str: string, flags: AppendFlags): [string, ChangeDetails];
     doValidate(flags: AppendFlags): boolean;
     doCommit(): boolean;
     splice(

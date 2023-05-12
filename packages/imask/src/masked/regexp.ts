@@ -1,16 +1,15 @@
-// @flow
-import Masked, { type MaskedOptions } from './base.js';
-import IMask from '../core/holder.js';
+import Masked, { type MaskedOptions } from './base';
+import IMask from '../core/holder';
 
 
 /** Masking by RegExp */
 export default
-class MaskedRegExp extends Masked<RegExp> {
+class MaskedRegExp<Parent extends Masked=any> extends Masked<RegExp, Parent> {
   /**
     @override
     @param {Object} opts
   */
-  _update (opts: $Shape<MaskedOptions<RegExp>>) {
+  override _update (opts: Partial<MaskedOptions<RegExp, Parent>>) {
     if (opts.mask) opts.validate = (value) => value.search(opts.mask) >= 0;
     super._update(opts);
   }

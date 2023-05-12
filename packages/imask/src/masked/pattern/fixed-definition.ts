@@ -1,22 +1,16 @@
-// @flow
-import ChangeDetails from '../../core/change-details.js';
-import { DIRECTION, type Direction, isString } from '../../core/utils.js';
-import { type TailDetails } from '../../core/tail-details.js';
-import ContinuousTailDetails from '../../core/continuous-tail-details.js';
-import { type ExtractFlags, type AppendFlags, type MaskedState } from '../base.js';
-import { type PatternBlock } from './block.js';
+import ChangeDetails from '../../core/change-details';
+import { DIRECTION, type Direction, isString } from '../../core/utils';
+import { type TailDetails } from '../../core/tail-details';
+import ContinuousTailDetails from '../../core/continuous-tail-details';
+import { type ExtractFlags, type AppendFlags, type MaskedState } from '../base';
+import { type PatternBlock } from './block';
 
 
 /** */
-type PatternFixedDefinitionOptions = {
-  char: $PropertyType<PatternFixedDefinition, 'char'>,
-  isUnmasking?: $PropertyType<PatternFixedDefinition, 'isUnmasking'>,
-};
+type PatternFixedDefinitionOptions = Pick<PatternFixedDefinition, 'char' | 'isUnmasking' | 'eager'>;
+/** */
+type PatternFixedDefinitionState = MaskedState & Pick<PatternFixedDefinition, '_isRawInput'>;
 
-type PatternFixedDefinitionState = {|
-  ...MaskedState,
-  _isRawInput: ?boolean,
-|};
 
 export default
 class PatternFixedDefinition implements PatternBlock {
@@ -25,11 +19,11 @@ class PatternFixedDefinition implements PatternBlock {
   /** */
   char: string;
   /** */
-  isUnmasking: ?boolean;
+  isUnmasking?: boolean;
   /** */
   eager: boolean | 'remove' | 'append';
   /** */
-  _isRawInput: ?boolean;
+  _isRawInput?: boolean;
   /** */
   isFixed: boolean;
 
@@ -56,7 +50,7 @@ class PatternFixedDefinition implements PatternBlock {
     this._value = '';
   }
 
-  remove (fromPos?: number=0, toPos?: number=this._value.length): ChangeDetails {
+  remove (fromPos: number=0, toPos: number=this._value.length): ChangeDetails {
     this._value = this._value.slice(0, fromPos) + this._value.slice(toPos);
     if (!this._value) this._isRawInput = false;
 
@@ -79,11 +73,11 @@ class PatternFixedDefinition implements PatternBlock {
     }
   }
 
-  totalInputPositions (fromPos?: number=0, toPos?: number=this._value.length): number {
+  totalInputPositions (fromPos: number=0, toPos: number=this._value.length): number {
     return this._isRawInput ? (toPos - fromPos) : 0;
   }
 
-  extractInput (fromPos?: number=0, toPos?: number=this._value.length, flags?: ExtractFlags={}): string {
+  extractInput (fromPos: number=0, toPos: number=this._value.length, flags: ExtractFlags={}): string {
     return flags.raw && this._isRawInput && this._value.slice(fromPos, toPos) || '';
   }
 
@@ -95,7 +89,7 @@ class PatternFixedDefinition implements PatternBlock {
     return Boolean(this._value);
   }
 
-  _appendChar (ch: string, flags?: AppendFlags={}): ChangeDetails {
+  _appendChar (ch: string, flags: AppendFlags={}): ChangeDetails {
     const details = new ChangeDetails();
 
     if (this.isFilled) return details;
@@ -122,7 +116,7 @@ class PatternFixedDefinition implements PatternBlock {
     return details;
   }
 
-  extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
+  extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
     return new ContinuousTailDetails('');
   }
 
@@ -130,7 +124,7 @@ class PatternFixedDefinition implements PatternBlock {
   appendTail (tail: string | String | TailDetails): ChangeDetails {
     if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
 
-    return tail.appendTo(this);
+    return (tail as TailDetails).appendTo(this);
   }
 
   append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails {

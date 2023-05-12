@@ -1,4 +1,3 @@
-// @flow
 import {DIRECTION, type Direction, forceDirection} from '../core/utils.js';
 import ChangeDetails from '../core/change-details.js';
 import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base.js';
@@ -14,19 +13,18 @@ import IMask from '../core/holder.js';
 import './regexp.js';  // support for default definitions which are regexp's
 
 
-type MaskedPatternOptions = {
-  ...MaskedOptions<string>,
-  definitions?: $PropertyType<MaskedPattern, 'definitions'>,
-  blocks?: $PropertyType<MaskedPattern, 'blocks'>,
-  placeholderChar?: $PropertyType<MaskedPattern, 'placeholderChar'>,
-  displayChar?: $PropertyType<MaskedPattern, 'displayChar'>,
-  lazy?: $PropertyType<MaskedPattern, 'lazy'>,
-};
+export
+type MaskedPatternOptions<Parent extends Masked=any> = MaskedOptions<string, Parent> & Partial<Pick<MaskedPattern,
+  | 'definitions'
+  | 'blocks'
+  | 'placeholderChar'
+  | 'displayChar'
+  | 'lazy'
+>>;
 
-type MaskedPatternState = {|
-  ...MaskedState,
-  _blocks: Array<*>,
-|};
+type MaskedPatternState = MaskedState & {
+  _blocks: Array<any>, // TODO type
+};
 
 type BlockPosData = {
   index: number,
@@ -43,15 +41,15 @@ type BlockPosData = {
   @param {boolean} opts.lazy
 */
 export default
-class MaskedPattern extends Masked<string> {
+class MaskedPattern<Parent extends Masked=any> extends Masked<string, Parent> {
   static DEFAULTS: any;
   static STOP_CHAR: string;
   static ESCAPE_CHAR: string;
-  static InputDefinition: Class<PatternInputDefinition>;
-  static FixedDefinition: Class<PatternFixedDefinition>;
+  static InputDefinition: typeof PatternInputDefinition;
+  static FixedDefinition: typeof PatternFixedDefinition;
 
   /** */
-  blocks: {[string]: MaskedOptions<any>};
+  blocks: {[key: string]: MaskedOptions<any, any>}; // TODO type
   /** */
   definitions: Definitions;
   /** Single char for empty input */
@@ -60,11 +58,12 @@ class MaskedPattern extends Masked<string> {
   displayChar: string;
   /** Show placeholder only when needed */
   lazy: boolean;
+
   _blocks: Array<PatternBlock>;
-  _maskedBlocks: {[string]: Array<number>};
+  _maskedBlocks: {[key: string]: Array<number>};
   _stops: Array<number>;
 
-  constructor (opts: any={}) {  // TODO type $Shape<MaskedPatternOptions>={} does not work
+  constructor (opts: MaskedPatternOptions<Parent>) {
     opts.definitions = Object.assign({}, DEFAULT_INPUT_DEFINITIONS, opts.definitions);
     super({
       ...MaskedPattern.DEFAULTS,
@@ -76,7 +75,7 @@ class MaskedPattern extends Masked<string> {
     @override
     @param {Object} opts
   */
-  _update (opts: $Shape<MaskedPatternOptions>={}) {
+  override _update (opts: Partial<MaskedPatternOptions<Parent>>) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
     super._update(opts);
     this._rebuildMask();
@@ -113,7 +112,7 @@ class MaskedPattern extends Masked<string> {
             displayChar: this.displayChar,
             overwrite: this.overwrite,
             ...this.blocks[bName],
-          });
+          } as any);
 
           if (maskedBlock) {
             this._blocks.push(maskedBlock);
@@ -153,7 +152,7 @@ class MaskedPattern extends Masked<string> {
         isInput = false;
       }
 
-      const maskOpts = defs[char]?.mask && !(defs[char]?.mask.prototype instanceof IMask.Masked) ? defs[char] : { mask: defs[char] };
+      const maskOpts = defs[char]?.mask && !(defs[char]?.mask.prototype instanceof Masked) ? defs[char] : { mask: defs[char] };
       const def = isInput ?
         new PatternInputDefinition({
           parent: this,
@@ -310,7 +309,7 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  extractTail (fromPos?: number=0, toPos?: number=this.value.length): ChunksTailDetails {
+  extractTail (fromPos: number=0, toPos: number=this.value.length): ChunksTailDetails {
     const chunkTail = new ChunksTailDetails();
     if (fromPos === toPos) return chunkTail;
 
@@ -329,7 +328,7 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags: ExtractFlags={}): string {
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {
     if (fromPos === toPos) return '';
 
     let input = '';
@@ -341,7 +340,7 @@ class MaskedPattern extends Masked<string> {
     return input;
   }
 
-  _findStopBefore (blockIndex: number): ?number {
+  _findStopBefore (blockIndex: number): number | undefined {
     let stopBefore;
     for (let si=0; si<this._stops.length; ++si) {
       const stop = this._stops[si];
@@ -352,7 +351,7 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Appends placeholder depending on laziness */
-  _appendPlaceholder (toBlockIndex: ?number): ChangeDetails {
+  _appendPlaceholder (toBlockIndex?: number): ChangeDetails {
     const details = new ChangeDetails();
     if (this.lazy && toBlockIndex == null) return details;
 
@@ -365,9 +364,7 @@ class MaskedPattern extends Masked<string> {
     this._blocks.slice(startBlockIndex, endBlockIndex)
       .forEach(b => {
         if (!b.lazy || toBlockIndex != null) {
-          // $FlowFixMe `_blocks` may not be present
-          const args = b._blocks != null ? [b._blocks.length] : [];
-          const bDetails = b._appendPlaceholder(...args);
+          const bDetails = b._appendPlaceholder((b as any)._blocks?.length);
           this._value += bDetails.inserted;
           details.aggregate(bDetails);
         }
@@ -377,7 +374,7 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Finds block in pos */
-  _mapPosToBlock (pos: number): ?BlockPosData {
+  _mapPosToBlock (pos: number): BlockPosData | undefined {
     let accVal = '';
     for (let bi=0; bi<this._blocks.length; ++bi) {
       const block = this._blocks[bi];
@@ -521,7 +518,7 @@ class MaskedPattern extends Masked<string> {
   /**
     @override
   */
-  totalInputPositions (fromPos?: number=0, toPos?: number=this.value.length): number {
+  totalInputPositions (fromPos: number=0, toPos: number=this.value.length): number {
     let total = 0;
     this._forEachBlocksInRange(fromPos, toPos, (b, _, bFromPos, bToPos) => {
       total += b.totalInputPositions(bFromPos, bToPos);
@@ -530,7 +527,7 @@ class MaskedPattern extends Masked<string> {
   }
 
   /** Get block by name */
-  maskedBlock (name: string): ?PatternBlock {
+  maskedBlock (name: string): PatternBlock | undefined {
     return this.maskedBlocks(name)[0];
   }
 

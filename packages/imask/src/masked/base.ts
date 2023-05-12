@@ -1,28 +1,14 @@
-// @flow
-import ChangeDetails from '../core/change-details.js';
-import ContinuousTailDetails from '../core/continuous-tail-details.js';
-import { type Direction, DIRECTION, isString, normalizePrepare, forceDirection } from '../core/utils.js';
-import { type TailDetails } from '../core/tail-details.js';
-import IMask from '../core/holder.js';
+import ChangeDetails from '../core/change-details';
+import ContinuousTailDetails from '../core/continuous-tail-details';
+import { type Direction, DIRECTION, isString, forceDirection, ClassOptions } from '../core/utils';
+import { type TailDetails } from '../core/tail-details';
+import IMask from '../core/holder';
 
-
-/** Supported mask type */
-export
-type Mask =
-  string |
-  String |
-  RegExp |
-  Class<Number> |
-  Class<Date> |
-  Array<any> |
-  $PropertyType<Masked<*>, 'validate'> |
-  Masked<*> |
-  Class<Masked<*>>;
 
 export
-type MaskedState = {|
+type MaskedState = {
   _value: string,
-|};
+};
 
 /** Append flags */
 export
@@ -40,65 +26,67 @@ type ExtractFlags = {
 };
 
 export
-type MaskedOptions<MaskType> = {
-  mask: $PropertyType<Masked<MaskType>, 'mask'>,
-  parent?: $PropertyType<Masked<*>, 'parent'>,
-  prepare?: $PropertyType<Masked<MaskType>, 'prepare'>,
-  validate?: $PropertyType<Masked<MaskType>, 'validate'>,
-  commit?: $PropertyType<Masked<MaskType>, 'commit'>,
-  overwrite?: $PropertyType<Masked<MaskType>, 'overwrite'>,
-  eager?: $PropertyType<Masked<MaskType>, 'eager'>,
-  format?: $PropertyType<Masked<MaskType>, 'format'>,
-  parse?: $PropertyType<Masked<MaskType>, 'parse'>,
-  skipInvalid?: $PropertyType<Masked<MaskType>, 'skipInvalid'>,
-};
+type MaskedOptions<Mask extends any, Parent extends Masked> = Pick<Masked<Mask, Parent>,
+  | 'parent'
+  | 'mask'
+  | 'prepare'
+  | 'validate'
+  | 'commit'
+  | 'format'
+  | 'parse'
+  | 'overwrite'
+  | 'eager'
+  | 'skipInvalid'
+>;
 
 
 /** Provides common masking stuff */
 export default
-class Masked<MaskType> {
-  static DEFAULTS: any; // $Shape<MaskedOptions>; TODO after fix https://github.com/facebook/flow/issues/4773
-  static EMPTY_VALUES: any;
+class Masked<Mask extends any=any, Parent extends Masked=any> {
+  static DEFAULTS: Partial<MaskedOptions<any, any>>;
+  static EMPTY_VALUES: any; // TODO
 
   /** @type {Mask} */
-  mask: MaskType;
-  /** */ // $FlowFixMe no ideas
-  parent: ?Masked<*>;
+  mask: Mask;
+  /** */
+  parent?: Parent; // TODO
   /** Transforms value before mask processing */
-  prepare: (string, Masked<MaskType>, AppendFlags) => string | [string, ChangeDetails];
+  prepare?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
   /** Validates if value is acceptable */
-  validate: (string, Masked<MaskType>, AppendFlags) => boolean;
+  validate?: (value: string, masked: this, flags: AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
-  commit: (string, Masked<MaskType>) => void;
+  commit?: (value: string, masked: this) => void;
   /** Format typed value to string */
-  format: (any, Masked<MaskType>) => string;
+  format?: (value: any, masked: this) => string; // TODO any
   /** Parse strgin to get typed value */
-  parse: (string, Masked<MaskType>) => any;
+  parse?: (str: string, masked: this) => any;  // TODO any
   /** Enable characters overwriting */
-  overwrite: ?boolean | 'shift';
+  overwrite?: boolean | 'shift' | undefined;
   /** */
-  eager: boolean | 'remove' | 'append';
+  eager?: boolean | 'remove' | 'append' | undefined;
   /** */
-  skipInvalid: boolean;
-  /** */
-  isInitialized: boolean;
-  _value: string;
-  _refreshing: ?boolean;
-  _isolated: ?boolean;
+  skipInvalid?: boolean | undefined;
 
-  constructor (opts: {[string]: any}) {
+  /** */
+  _initialized: boolean;
+
+  _value: string;
+  _refreshing?: boolean;
+  _isolated?: boolean;
+
+  constructor (opts: MaskedOptions<Mask, Parent>) {
     this._value = '';
     this._update({
       ...Masked.DEFAULTS,
       ...opts,
     });
-    this.isInitialized = true;
+    this._initialized = true;
   }
 
   /** Sets and applies new options */
-  updateOptions (opts: {[string]: any}) {
+  updateOptions (opts: Partial<MaskedOptions<Mask, Parent>>) {
     if (!Object.keys(opts).length) return;
-    // $FlowFixMe
+
     this.withValueRefresh(this._update.bind(this, opts));
   }
 
@@ -106,18 +94,18 @@ class Masked<MaskType> {
     Sets new options
     @protected
   */
-  _update (opts: {[string]: any}) {
+  _update (opts: Partial<MaskedOptions<Mask, Parent>>) {
     Object.assign(this, opts);
   }
 
   /** Mask state */
-  get state (): any {
+  get state (): MaskedState {
     return {
       _value: this.value,
     };
   }
 
-  set state (state: any) {
+  set state (state: MaskedState) {
     this._value = state._value;
   }
 
@@ -193,17 +181,17 @@ class Masked<MaskType> {
     return cursorPos;
   }
 
-  totalInputPositions (fromPos?: number=0, toPos?: number=this.value.length): number {
+  totalInputPositions (fromPos: number=0, toPos: number=this.value.length): number {
     return Math.min(this.value.length, toPos - fromPos);
   }
 
   /** Extracts value in range considering flags */
-  extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
+  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
     return this.value.slice(fromPos, toPos);
   }
 
   /** Extracts tail in range */
-  extractTail (fromPos?: number=0, toPos?: number=this.value.length): TailDetails {
+  extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
     return new ContinuousTailDetails(this.extractInput(fromPos, toPos), fromPos);
   }
 
@@ -212,7 +200,7 @@ class Masked<MaskType> {
   appendTail (tail: string | String | TailDetails): ChangeDetails {
     if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
 
-    return tail.appendTo(this);
+    return (tail as TailDetails).appendTo(this);
   }
 
   /** Appends char */
@@ -230,7 +218,7 @@ class Masked<MaskType> {
   _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
     const consistentState: MaskedState = this.state;
     let details: ChangeDetails;
-    [ch, details] = normalizePrepare(this.doPrepare(ch, flags));
+    [ch, details] = this.doPrepare(ch, flags);
 
     details = details.aggregate(this._appendCharRaw(ch, flags));
 
@@ -288,7 +276,7 @@ class Masked<MaskType> {
   append (str: string, flags?: AppendFlags, tail?: string | String | TailDetails): ChangeDetails {
     if (!isString(str)) throw new Error('value should be string');
     const details = new ChangeDetails();
-    const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail;
+    const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail as TailDetails;
     if (flags?.tail) flags._beforeTailState = this.state;
 
     for (let ci=0; ci<str.length; ++ci) {
@@ -313,14 +301,14 @@ class Masked<MaskType> {
   }
 
   /** */
-  remove (fromPos?: number=0, toPos?: number=this.value.length): ChangeDetails {
+  remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
     this._value = this.value.slice(0, fromPos) + this.value.slice(toPos);
     return new ChangeDetails();
   }
 
   /** Calls function and reapplies current value */
   withValueRefresh<T>(fn: () => T): T {
-    if (this._refreshing || !this.isInitialized) return fn();
+    if (this._refreshing || !this._initialized) return fn();
     this._refreshing = true;
 
     const rawInput = this.rawInputValue;
@@ -339,8 +327,8 @@ class Masked<MaskType> {
   }
 
   /** */
-  runIsolated<T>(fn: (masked: any) => T): T {
-    if (this._isolated || !this.isInitialized) return fn(this);
+  runIsolated<T>(fn: (masked: this) => T): T {
+    if (this._isolated || !this._initialized) return fn(this);
     this._isolated = true;
     const state = this.state;
 
@@ -357,14 +345,21 @@ class Masked<MaskType> {
     return this.skipInvalid;
   }
 
+  normalizePrepare (prep: string | [string, ChangeDetails]): [string, ChangeDetails] {
+    return Array.isArray(prep) ? prep : [
+      prep,
+      new ChangeDetails(),
+    ];
+  }
+
   /**
     Prepares string before mask processing
     @protected
   */
-  doPrepare (str: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
-    return this.prepare ?
+  doPrepare (str: string, flags: AppendFlags={}): [string, ChangeDetails] {
+    return this.normalizePrepare(this.prepare ?
       this.prepare(str, this, flags) :
-      str;
+      str);
   }
 
   /**

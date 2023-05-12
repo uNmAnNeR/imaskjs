@@ -1,7 +1,8 @@
-// @flow
-
-
 import IMask from "./holder";
+import { type ClassOptions } from './utils';
+
+
+type ChangeDetailsOptions = ClassOptions<ChangeDetails>;
 
 /**
   Provides details of changing model value
@@ -22,12 +23,7 @@ class ChangeDetails {
   /** Raw inserted is used by dynamic mask */
   rawInserted: string;
 
-  constructor (details?: {
-    inserted?: $PropertyType<ChangeDetails, 'inserted'>,
-    rawInserted?: $PropertyType<ChangeDetails, 'rawInserted'>,
-    skip?: $PropertyType<ChangeDetails, 'skip'>,
-    tailShift?: $PropertyType<ChangeDetails, 'tailShift'>,
-  }) {
+  constructor (details?: Partial<ChangeDetailsOptions>) {
     Object.assign(this, {
       inserted: '',
       rawInserted: '',
@@ -40,7 +36,7 @@ class ChangeDetails {
     Aggregate changes
     @returns {ChangeDetails} `this`
   */
-  aggregate (details: ChangeDetails): ChangeDetails {
+  aggregate (details: ChangeDetails): this {
     this.rawInserted += details.rawInserted;
     this.skip = this.skip || details.skip;
     this.inserted += details.inserted;
@@ -53,5 +49,6 @@ class ChangeDetails {
     return this.tailShift + this.inserted.length;
   }
 }
+
 
 IMask.ChangeDetails = ChangeDetails;

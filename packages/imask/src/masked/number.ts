@@ -1,22 +1,21 @@
-// @flow
-import { escapeRegExp, indexInDirection, posInDirection, type Direction, DIRECTION, normalizePrepare } from '../core/utils.js';
-import ChangeDetails from '../core/change-details.js';
-import { type TailDetails } from '../core/tail-details.js';
+import { escapeRegExp, type Direction, DIRECTION, type ClassOptions } from '../core/utils';
+import ChangeDetails from '../core/change-details';
+import { type TailDetails } from '../core/tail-details';
 
-import Masked, { type MaskedOptions, type ExtractFlags, type AppendFlags } from './base.js';
-import IMask from '../core/holder.js';
+import Masked, { type MaskedOptions, type ExtractFlags, type AppendFlags } from './base';
+import IMask from '../core/holder';
 
 
-type MaskedNumberOptions = {
-  ...MaskedOptions<Class<Number>>,
-  radix: $PropertyType<MaskedNumber, 'radix'>,
-  thousandsSeparator: $PropertyType<MaskedNumber, 'thousandsSeparator'>,
-  mapToRadix: $PropertyType<MaskedNumber, 'mapToRadix'>,
-  scale: $PropertyType<MaskedNumber, 'scale'>,
-  signed: $PropertyType<MaskedNumber, 'signed'>,
-  normalizeZeros: $PropertyType<MaskedNumber, 'normalizeZeros'>,
-  padFractionalZeros: $PropertyType<MaskedNumber, 'padFractionalZeros'>,
-};
+export
+type MaskedNumberOptions<Parent extends Masked=any> = MaskedOptions<NumberConstructor, Parent> & Partial<Pick<MaskedNumber,
+  | 'radix'
+  | 'thousandsSeparator'
+  | 'mapToRadix'
+  | 'scale'
+  | 'signed'
+  | 'normalizeZeros'
+  | 'padFractionalZeros'
+>>;
 
 /**
   Number mask
@@ -32,8 +31,8 @@ type MaskedNumberOptions = {
   @param {boolean} opts.padFractionalZeros - Flag to pad trailing zeros after point in the end of editing
 */
 export default
-class MaskedNumber extends Masked<Class<Number>> {
-  static DEFAULTS: $Shape<MaskedNumberOptions>;
+class MaskedNumber extends Masked<NumberConstructor, any> {
+  static DEFAULTS: Partial<MaskedNumberOptions>;
   static UNMASKED_RADIX: string;
 
   /** Single char */
@@ -60,17 +59,17 @@ class MaskedNumber extends Masked<Class<Number>> {
   _mapToRadixRegExp: RegExp;
   _separatorsProcessed: boolean;
 
-  constructor (opts: $Shape<MaskedNumberOptions>) {
+  constructor (opts: MaskedNumberOptions) {
     super({
       ...MaskedNumber.DEFAULTS,
-      ...opts
+      ...opts,
     });
   }
 
   /**
     @override
   */
-  _update (opts: MaskedNumberOptions) {
+  override _update (opts: Partial<MaskedNumberOptions>) {
     super._update(opts);
     this._updateRegExps();
   }
@@ -104,7 +103,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doPrepare (ch: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
+  override doPrepare (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
     ch = this._removeThousandsSeparators(
       this.scale && this.mapToRadix.length && (
         /*
@@ -119,7 +118,7 @@ class MaskedNumber extends Masked<Class<Number>> {
         !flags.input && !flags.raw
       ) ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
     );
-    const [prepCh, details] = normalizePrepare(super.doPrepare(ch, flags));
+    const [prepCh, details] = super.doPrepare(ch, flags);
     if (ch && !prepCh) details.skip = true;
     return [prepCh, details];
   }
@@ -146,7 +145,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  extractInput (fromPos?: number=0, toPos?: number=this.value.length, flags?: ExtractFlags): string {
+  override extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
     [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
 
     return this._removeThousandsSeparators(super.extractInput(fromPos, toPos, flags));
@@ -155,7 +154,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
+  override _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
     if (!this.thousandsSeparator) return super._appendCharRaw(ch, flags);
 
     const prevBeforeTailValue = flags.tail && flags._beforeTailState ?
@@ -200,7 +199,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  remove (fromPos?: number=0, toPos?: number=this.value.length): ChangeDetails {
+  override remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
     [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
 
     const valueBeforePos = this.value.slice(0, fromPos);
@@ -218,7 +217,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  nearestInputPos (cursorPos: number, direction?: Direction): number {
+  override nearestInputPos (cursorPos: number, direction?: Direction): number {
     if (!this.thousandsSeparator) return cursorPos;
 
     switch (direction) {
@@ -252,7 +251,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doValidate (flags: AppendFlags): boolean {
+  override doValidate (flags: AppendFlags): boolean {
     // validate as string
     let valid = Boolean(this._removeThousandsSeparators(this.value).match(this._numberRegExp));
 
@@ -272,7 +271,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  doCommit () {
+  override doCommit () {
     if (this.value) {
       const number = this.number;
       let validnum = number;
@@ -334,25 +333,25 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  get unmaskedValue (): string {
+  override get unmaskedValue (): string {
     return this._removeThousandsSeparators(
       this._normalizeZeros(
         this.value))
       .replace(this.radix, MaskedNumber.UNMASKED_RADIX);
   }
 
-  set unmaskedValue (unmaskedValue: string) {
+  override set unmaskedValue (unmaskedValue: string) {
     super.unmaskedValue = unmaskedValue;
   }
 
   /**
     @override
   */
-  get typedValue (): number {
+  override get typedValue (): number {
     return this.doParse(this.unmaskedValue);
   }
 
-  set typedValue (n: number) {
+  override set typedValue (n: number) {
     this.rawInputValue = this.doFormat(n).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
   }
 
@@ -378,7 +377,7 @@ class MaskedNumber extends Masked<Class<Number>> {
   /**
     @override
   */
-  typedValueEquals (value: any): boolean {
+  override typedValueEquals (value: any): boolean {
     // handle  0 -> '' case (typed = 0 even if value = '')
     // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
     return (

@@ -7,7 +7,7 @@
   "description": "React input mask",
   "main": "dist/react-imask.js",
   "module": "esm/index.js",
-  "types": "dist/index.d.ts",
+  "types": "esm/index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "scripts": {
     "build": "tsc --emitDeclarationOnly && rollup -c",

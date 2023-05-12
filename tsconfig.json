@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es2022",
+    "target": "es2022",
     "allowJs": true,
-    "target": "es2015",
     "noImplicitAny": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "lib": ["dom", "es2015.promise", "es2015"]
+    "lib": ["dom", "es2022"]
   },
   "typeRoots": [
     "./node_modules/@types"

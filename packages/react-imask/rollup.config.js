@@ -59,10 +59,11 @@ export default [
       babel(babelConfig),
       copy({
         targets: [
-          { src: 'dist/*.d.ts', dest: 'esm' },
-          { src: 'dist/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
-        ]
-      })
+          { src: 'esm/*.d.ts', dest: 'dist' },
+          { src: 'esm/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
+        ],
+        flatten: false,
+      }),
     ]
   }
 ]

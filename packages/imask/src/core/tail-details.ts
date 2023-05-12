@@ -1,6 +1,5 @@
-// @flow
-import type { AppendFlags } from '../masked/base.js';
-import type ChangeDetails from './change-details.js';
+import type { AppendFlags } from '../masked/base';
+import type ChangeDetails from './change-details';
 
 
 export
@@ -15,7 +14,7 @@ interface TailDetails {
   /** Tail start position */
   from: number;
   /** Start position */
-  stop: ?number;
+  stop?: number;
   /** */
   state: any;
 

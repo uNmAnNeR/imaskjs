@@ -9,7 +9,7 @@
   "main": "dist/imask.js",
   "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs",
-  "types": "index.d.ts",
+  "types": "esm/index.d.ts",
   "engines": {
     "npm": ">=4.0.0"
   },
@@ -17,14 +17,14 @@
     "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive",
     "pretest": "flow check",
     "watch": "rollup -c -w",
-    "build": "rollup -c",
+    "build": "tsc --emitDeclarationOnly && rollup -c",
     "flow": "flow",
     "lint": "eslint src/",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "javascript",
-    "jquery",
+    "inputmask",
     "input",
     "mask"
   ],

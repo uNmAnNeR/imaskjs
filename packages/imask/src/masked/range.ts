@@ -1,14 +1,16 @@
-// @flow
-import MaskedPattern from './pattern.js';
-import ChangeDetails from '../core/change-details.js';
-import { normalizePrepare } from '../core/utils.js';
-import { type AppendFlags } from './base.js';
-import IMask from '../core/holder.js';
+import MaskedPattern, { type MaskedPatternOptions } from './pattern';
+import ChangeDetails from '../core/change-details';
+import Masked, { type AppendFlags } from './base';
+import IMask from '../core/holder';
+
+export
+type MaskedRangeOptions<Parent extends Masked=any> = MaskedPatternOptions<Parent> &
+  Partial<Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>>;
 
 
 /** Pattern which accepts ranges */
 export default
-class MaskedRange extends MaskedPattern {
+class MaskedRange<Parent extends Masked=any> extends MaskedPattern<Parent> {
   /**
     Optionally sets max length of pattern.
     Used when pattern length is longer then `to` param length. Pads zeros at start in this case.
@@ -28,7 +30,7 @@ class MaskedRange extends MaskedPattern {
   /**
     @override
   */
-  _update (opts: any) {  // TODO type
+  override _update (opts: Partial<MaskedRangeOptions>) {  // TODO type
     opts = {
       to: this.to || 0,
       from: this.from || 0,
@@ -52,7 +54,7 @@ class MaskedRange extends MaskedPattern {
   /**
     @override
   */
-  get isComplete (): boolean {
+  override get isComplete (): boolean {
     return super.isComplete && Boolean(this.value);
   }
 
@@ -75,36 +77,36 @@ class MaskedRange extends MaskedPattern {
   /**
     @override
   */ 
-  doPrepare (ch: string, flags: AppendFlags={}): string | [string, ChangeDetails] {
+  override doPrepare (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
     let details: ChangeDetails;
-    [ch, details] = normalizePrepare(super.doPrepare(ch.replace(/\D/g, ''), flags));
+    [ch, details] = super.doPrepare(ch.replace(/\D/g, ''), flags);
 
-    if (!this.autofix || !ch) return ch;
+    if (!this.autofix || !ch) return [ch, details];
 
     const fromStr = String(this.from).padStart(this.maxLength, '0');
     const toStr = String(this.to).padStart(this.maxLength, '0');
 
     let nextVal = this.value + ch;
-    if (nextVal.length > this.maxLength) return '';
+    if (nextVal.length > this.maxLength) return ['', details];
 
     const [minstr, maxstr] = this.boundaries(nextVal);
 
-    if (Number(maxstr) < this.from) return fromStr[nextVal.length - 1];
+    if (Number(maxstr) < this.from) return [fromStr[nextVal.length - 1], details];
 
     if (Number(minstr) > this.to) {
       if (this.autofix === 'pad' && nextVal.length < this.maxLength) {
         return ['', details.aggregate(this.append(fromStr[nextVal.length - 1]+ch, flags))];
       }
-      return toStr[nextVal.length - 1];
+      return [toStr[nextVal.length - 1], details];
     }
 
-    return ch;
+    return [ch, details];
   }
 
   /**
     @override
   */
-  doValidate (...args: *): boolean {
+  override doValidate (flags: AppendFlags): boolean {
     const str = this.value;
 
     const firstNonZero = str.search(/[^0]/);
@@ -113,7 +115,7 @@ class MaskedRange extends MaskedPattern {
     const [minstr, maxstr] = this.boundaries(str);
 
     return this.from <= Number(maxstr) && Number(minstr) <= this.to &&
-      super.doValidate(...args);
+      super.doValidate(flags);
   }
 }
 

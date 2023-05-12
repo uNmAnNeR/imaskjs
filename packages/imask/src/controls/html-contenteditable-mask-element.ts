@@ -1,15 +1,14 @@
-// @flow
-import HTMLMaskElement from './html-mask-element.js';
-import IMask from '../core/holder.js';
+import HTMLMaskElement from './html-mask-element';
+import IMask from '../core/holder';
 
 
 export default
-class HTMLContenteditableMaskElement extends HTMLMaskElement {
+class HTMLContenteditableMaskElement extends HTMLMaskElement<HTMLElement> {
   /**
     Returns HTMLElement selection start
     @override
   */
-  get _unsafeSelectionStart (): number {
+  override get _unsafeSelectionStart (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
     const anchorOffset = selection && selection.anchorOffset;
@@ -24,7 +23,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     Returns HTMLElement selection end
     @override
   */
-  get _unsafeSelectionEnd (): number {
+  override get _unsafeSelectionEnd (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
     const anchorOffset = selection && selection.anchorOffset;
@@ -39,7 +38,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     Sets HTMLElement selection
     @override
   */
-  _unsafeSelect (start: number, end: number) {
+  override _unsafeSelect (start: number, end: number) {
     if (!this.rootElement.createRange) return;
 
     const range = this.rootElement.createRange();
@@ -57,11 +56,10 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     HTMLElement value
     @override
   */
-  get value (): string {
-    // $FlowFixMe
+  override get value (): string {
     return this.input.textContent;
   }
-  set value (value: string) {
+  override set value (value: string) {
     this.input.textContent = value;
   }
 }

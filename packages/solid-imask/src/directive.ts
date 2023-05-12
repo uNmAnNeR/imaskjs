@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { JSX } from 'solid-js/jsx-runtime';
 import { createEffect } from 'solid-js';
-import IMask from 'imask';
+import IMask, { type InputMask } from 'imask';
 
 interface SolidMaskedDirectiveInterface<
 Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
 Value = {
-  typedValue: IMask.InputMask<Opts>['typedValue'];
-  value: IMask.InputMask<Opts>['value'];
-  unmaskedValue: IMask.InputMask<Opts>['unmaskedValue'];
+  typedValue: InputMask<Opts>['typedValue'];
+  value: InputMask<Opts>['value'];
+  unmaskedValue: InputMask<Opts>['unmaskedValue'];
 }
 > {
   mask: Opts;
   onAccept?: (
     value: Value,
-    maskRef: IMask.InputMask<Opts>,
+    maskRef: InputMask<Opts>,
     e?: InputEvent
   ) => void;
   onComplete?: (
     value: Value,
-    maskRef: IMask.InputMask<Opts>,
+    maskRef: InputMask<Opts>,
     e?: InputEvent
   ) => void;
-  value?: () => IMask.InputMask<Opts>['value'];
-  unmaskedValue?: () => IMask.InputMask<Opts>['unmaskedValue'];
+  value?: () => InputMask<Opts>['value'];
+  unmaskedValue?: () => InputMask<Opts>['unmaskedValue'];
   }
 
 declare module 'solid-js' {
@@ -37,9 +37,9 @@ declare module 'solid-js' {
 const masked = <
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
   Value = {
-    typedValue: IMask.InputMask<Opts>['typedValue'];
-    value: IMask.InputMask<Opts>['value'];
-    unmaskedValue: IMask.InputMask<Opts>['unmaskedValue'];
+    typedValue: InputMask<Opts>['typedValue'];
+    value: InputMask<Opts>['value'];
+    unmaskedValue: InputMask<Opts>['unmaskedValue'];
   }
 >(
   el: HTMLElement,
@@ -47,16 +47,16 @@ const masked = <
     mask: Opts;
     onAccept?: (
       value: Value,
-      maskRef: IMask.InputMask<Opts>,
+      maskRef: InputMask<Opts>,
       e?: InputEvent
     ) => void;
     onComplete?: (
       value: Value,
-      maskRef: IMask.InputMask<Opts>,
+      maskRef: InputMask<Opts>,
       e?: InputEvent
     ) => void;
-    value?: () => IMask.InputMask<Opts>['value'];
-    unmaskedValue?: () => IMask.InputMask<Opts>['unmaskedValue'];
+    value?: () => InputMask<Opts>['value'];
+    unmaskedValue?: () => InputMask<Opts>['unmaskedValue'];
   }
 ) => {
   const { mask, onAccept, onComplete, value, unmaskedValue } = props();

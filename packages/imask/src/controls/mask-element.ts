@@ -1,4 +1,3 @@
-// @flow
 import IMask from '../core/holder.js';
 
 
@@ -18,9 +17,9 @@ type ElementEvent =
 export default
 class MaskElement {
   /** */
-  +_unsafeSelectionStart: number;
+  readonly _unsafeSelectionStart: number;
   /** */
-  +_unsafeSelectionEnd: number;
+  readonly _unsafeSelectionEnd: number;
   /** */
   value: string;
 
@@ -63,7 +62,7 @@ class MaskElement {
   /** Should be overriden in subclasses */
   get isActive (): boolean { return false; }
   /** Should be overriden in subclasses */
-  bindEvents (handlers: {[ElementEvent]: Function}) {}
+  bindEvents (handlers: {[key in ElementEvent]: Function}) {}
   /** Should be overriden in subclasses */
   unbindEvents (): void {}
 }

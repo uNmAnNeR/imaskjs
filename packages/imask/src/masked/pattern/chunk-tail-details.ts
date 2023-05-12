@@ -1,27 +1,26 @@
-// @flow
-import type { TailDetails, AppendTail } from '../../core/tail-details.js';
-import ChangeDetails from '../../core/change-details.js';
-import { isString } from '../../core/utils.js';
-import ContinuousTailDetails from '../../core/continuous-tail-details.js';
-import IMask from '../../core/holder.js';
+import type { TailDetails, AppendTail } from '../../core/tail-details';
+import ChangeDetails from '../../core/change-details';
+import { isString, type ClassOptions } from '../../core/utils';
+import ContinuousTailDetails from '../../core/continuous-tail-details';
+import IMask from '../../core/holder';
+import type MaskedPattern from '../pattern';
 
 
-type ChunksTailState = {
-  chunks: $PropertyType<ChunksTailDetails, 'chunks'>,
-  from: $PropertyType<ChunksTailDetails, 'from'>,
-  stop?: $PropertyType<ChunksTailDetails, 'stop'>,
-  blockIndex?: $PropertyType<ChunksTailDetails, 'blockIndex'>,
-};
+type ChunksTailState = Pick<ChunksTailDetails,
+  | 'from'
+  | 'stop'
+  | 'blockIndex'
+> & { chunks: Array<TailDetails['state']> };
 
 export default
 class ChunksTailDetails implements TailDetails {
   chunks: Array<TailDetails>;
   from: number;
-  stop: ?number;
+  stop?: number;
   /** */
-  blockIndex: ?number;
+  blockIndex?: number;
 
-  constructor (chunks?: Array<TailDetails>=[], from?: number=0) {
+  constructor (chunks: Array<TailDetails>=[], from: number=0) {
     this.chunks = chunks;
     this.from = from;
   }
@@ -33,7 +32,7 @@ class ChunksTailDetails implements TailDetails {
   // $FlowFixMe no ideas
   extend (tailChunk: string | String | TailDetails): void {
     if (!String(tailChunk)) return;
-    if (isString(tailChunk)) tailChunk = new ContinuousTailDetails(String(tailChunk));
+    tailChunk = (isString(tailChunk) ? new ContinuousTailDetails(String(tailChunk)) : tailChunk) as TailDetails;
 
     const lastChunk = this.chunks[this.chunks.length-1];
     const extendLast = lastChunk &&
@@ -71,8 +70,7 @@ class ChunksTailDetails implements TailDetails {
     }
   }
 
-  appendTo (masked: AppendTail): ChangeDetails {
-    // $FlowFixMe
+  appendTo (masked: AppendTail | MaskedPattern): ChangeDetails {
     if (!(masked instanceof IMask.MaskedPattern)) {
       const tail = new ContinuousTailDetails(this.toString());
       return tail.appendTo(masked);

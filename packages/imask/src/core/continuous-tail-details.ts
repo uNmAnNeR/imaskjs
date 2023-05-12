@@ -1,13 +1,12 @@
-// @flow
-import type { TailDetails, AppendTail } from './tail-details.js';
-import type ChangeDetails from './change-details.js';
+import type { TailDetails, AppendTail } from './tail-details';
+import type ChangeDetails from './change-details';
 
 
-type ContinuousTailState = {
-  value: $PropertyType<ContinuousTailDetails, 'value'>,
-  from: $PropertyType<ContinuousTailDetails, 'from'>,
-  stop?: $PropertyType<ContinuousTailDetails, 'stop'>,
-};
+type ContinuousTailState = Pick<ContinuousTailDetails,
+  | 'value'
+  | 'from'
+  | 'stop'
+>;
 
 /** Provides details of continuous extracted tail */
 export default
@@ -17,9 +16,9 @@ class ContinuousTailDetails implements TailDetails {
   /** Tail start position */
   from: number;
   /** Start position */
-  stop: ?number;
+  stop?: number;
 
-  constructor (value?: string='', from?: number=0, stop?: number) {
+  constructor (value: string='', from: number=0, stop?: number) {
     this.value = value;
     this.from = from;
     this.stop = stop;

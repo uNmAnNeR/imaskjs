@@ -37,6 +37,7 @@
     "strictMetadataEmit": true,
     "strictInjectionParameters": true,
     "enableResourceInlining": true,
+    "skipLibCheck": true,
     "compilationMode": "partial",
   }
 }

@@ -1,12 +1,29 @@
-// @flow
-import ChangeDetails from './change-details.js';
+type IfEquals<X, Y, A=X, B=never> =
+  (<T>() => T extends X ? 1 : 2) extends
+  (<T>() => T extends Y ? 1 : 2) ? A : B;
+
+export
+type KeysMatching<T, V> = { [K in keyof T]-?: T[K] extends V ? K : never }[keyof T];
+
+export
+type WritableKeys<T> = {
+  [P in keyof T]-?: IfEquals<{ [Q in P]: T[P] }, { -readonly [Q in P]: T[P] }, P>
+}[keyof T];
+
+export
+type ReadonlyKeys<T> = {
+  [P in keyof T]-?: IfEquals<{ [Q in P]: T[P] }, { -readonly [Q in P]: T[P] }, never, P>
+}[keyof T];
+
+export
+type ClassOptions<Cls> = Omit<Cls, ReadonlyKeys<Cls> | KeysMatching<Cls, Function> | `_${string}`>;
 
 
 /** Checks if value is string */
 export
-function isString (str: mixed): boolean %checks {
+function isString (str: unknown): str is string {
   return typeof str === 'string' || str instanceof String;
-}
+}``
 
 /**
   Direction
@@ -23,35 +40,14 @@ const DIRECTION = {
   FORCE_LEFT: 'FORCE_LEFT',
   RIGHT: 'RIGHT',
   FORCE_RIGHT: 'FORCE_RIGHT',
-}
+} as const;
+
 /**
   Direction
   @enum {string}
 */
 export
-type Direction = $Values<typeof DIRECTION>;
-
-/** Returns next char index in direction */
-export
-function indexInDirection (pos: number, direction: Direction): number {
-  if (direction === DIRECTION.LEFT) --pos;
-  return pos;
-}
-
-/** Returns next char position in direction */
-export
-function posInDirection (pos: number, direction: Direction): number {
-  switch (direction) {
-    case DIRECTION.LEFT:
-    case DIRECTION.FORCE_LEFT:
-      return --pos;
-    case DIRECTION.RIGHT:
-    case DIRECTION.FORCE_RIGHT:
-      return ++pos;
-    default:
-      return pos;
-  }
-}
+type Direction = typeof DIRECTION[keyof typeof DIRECTION];
 
 /** */
 export
@@ -70,14 +66,6 @@ function forceDirection (direction: Direction): Direction {
 export
 function escapeRegExp (str: string): string {
   return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
-}
-
-export
-function normalizePrepare (prep: string | [string, ChangeDetails]): [string, ChangeDetails] {
-  return Array.isArray(prep) ? prep : [
-    prep,
-    new ChangeDetails(),
-  ];
 }
 
 // cloned from https://github.com/epoberezkin/fast-deep-equal with small changes

@@ -1,30 +1,29 @@
-// @flow
-import MaskElement, {type ElementEvent} from './mask-element.js';
-import IMask from '../core/holder.js';
+import MaskElement, { type ElementEvent } from './mask-element';
+import IMask from '../core/holder';
 
 
 /** Bridge between HTMLElement and {@link Masked} */
 export default
-class HTMLMaskElement extends MaskElement {
+class HTMLMaskElement<Element extends HTMLElement=HTMLTextAreaElement | HTMLInputElement> extends MaskElement {
   /** Mapping between HTMLElement events and mask internal events */
-  static EVENTS_MAP: {[ElementEvent]: string};
+  static EVENTS_MAP: {[k in ElementEvent]: string};
   /** HTMLElement to use mask on */
   input: HTMLTextAreaElement | HTMLInputElement;
-  _handlers: {[string]: Function};
+  _handlers: {[k: string]: EventListener};
 
   /**
     @param {HTMLInputElement|HTMLTextAreaElement} input
   */
-  constructor (input: HTMLTextAreaElement | HTMLInputElement) {
+  constructor (input: Element) {
     super();
-    this.input = input;
+    this.input = input as unknown as HTMLTextAreaElement | HTMLInputElement;
     this._handlers = {};
   }
 
   /** */
   // $FlowFixMe https://github.com/facebook/flow/issues/2839
   get rootElement (): HTMLDocument {
-    return this.input.getRootNode?.() ?? document;
+    return (this.input.getRootNode?.() ?? document) as HTMLDocument;
   }
 
   /**
@@ -40,7 +39,8 @@ class HTMLMaskElement extends MaskElement {
     Returns HTMLElement selection start
     @override
   */
-  get _unsafeSelectionStart (): number {
+  // @ts-ignore
+  override get _unsafeSelectionStart (): number {
     return this.input.selectionStart;
   }
 
@@ -48,7 +48,8 @@ class HTMLMaskElement extends MaskElement {
     Returns HTMLElement selection end
     @override
   */
-  get _unsafeSelectionEnd (): number {
+  // @ts-ignore
+  override get _unsafeSelectionEnd (): number {
     return this.input.selectionEnd;
   }
 
@@ -64,10 +65,11 @@ class HTMLMaskElement extends MaskElement {
     HTMLElement value
     @override
   */
-  get value (): string {
+  // @ts-ignore
+  override get value (): string {
     return this.input.value;
   }
-  set value (value: string) {
+  override set value (value: string) {
     this.input.value = value;
   }
 
@@ -75,8 +77,8 @@ class HTMLMaskElement extends MaskElement {
     Binds HTMLElement events to mask internal events
     @override
   */
-  bindEvents (handlers: {[ElementEvent]: Function}) {
-    Object.keys(handlers)
+  override bindEvents (handlers: {[key in ElementEvent]: EventListener}) {
+    (Object.keys(handlers) as Array<ElementEvent>)
       .forEach(event => this._toggleEventHandler(HTMLMaskElement.EVENTS_MAP[event], handlers[event]));
   }
 
@@ -84,13 +86,13 @@ class HTMLMaskElement extends MaskElement {
     Unbinds HTMLElement events to mask internal events
     @override
   */
-  unbindEvents () {
+  override unbindEvents () {
     Object.keys(this._handlers)
       .forEach(event => this._toggleEventHandler(event));
   }
 
   /** */
-  _toggleEventHandler (event: string, handler?: Function): void {
+  _toggleEventHandler (event: string, handler?: EventListener): void {
     if (this._handlers[event]) {
       this.input.removeEventListener(event, this._handlers[event]);
       delete this._handlers[event];
@@ -109,7 +111,7 @@ HTMLMaskElement.EVENTS_MAP = {
   click: 'click',
   focus: 'focus',
   commit: 'blur',
-};
+} as const;
 
 
 IMask.HTMLMaskElement = HTMLMaskElement;

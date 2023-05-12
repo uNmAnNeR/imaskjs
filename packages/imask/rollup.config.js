@@ -7,11 +7,13 @@ import polyfill from 'rollup-plugin-polyfill';
 import multi from 'rollup-plugin-multi-input';
 import copy from 'rollup-plugin-copy';
 
+const extensions = ['.js', '.ts'];
 
 const commonPlugins = [
-  nodeResolve(),
+  nodeResolve({ extensions }),
   babel({
     extends: './.babelrc',
+    extensions,
     rootMode: 'upward',
     babelHelpers: 'bundled',
   }),
@@ -19,7 +21,7 @@ const commonPlugins = [
 
 export default [
   ...[false, true].map(min => ({
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: {
       file: `dist/imask${min ? '.min' : ''}.js`,
       format: 'umd',
@@ -30,12 +32,12 @@ export default [
       eslint({configFile: '../../.eslintrc'}),
       ...commonPlugins,
       commonjs(),
-      polyfill(['./polyfills.js']),
+      polyfill(['./polyfills.ts']),
       min && terser(),
     ],
   })),
   {
-    input: ['src/**/*.js'],
+    input: ['src/**/*.ts'],
     output: {
       format: 'esm',
       dir: 'esm',
@@ -45,8 +47,10 @@ export default [
       ...commonPlugins,
       copy({
         targets: [
-          { src: 'index.d.ts', dest: 'esm', rename: 'imask.d.ts' },
-        ]
+          { src: 'esm/**/*.d.ts', dest: 'dist' },
+          { src: 'esm/index.d.ts', dest: 'dist', rename: 'imask.d.ts' },
+        ],
+        flatten: false,
       })
     ]
   }

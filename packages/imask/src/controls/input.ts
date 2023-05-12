@@ -1,19 +1,17 @@
-// @flow
-import {objectIncludes, DIRECTION, type Selection} from '../core/utils.js';
-import ActionDetails from '../core/action-details.js';
-import MaskedDate from '../masked/date.js';
-import createMask, {maskedClass} from '../masked/factory.js';
-import type Masked from '../masked/base.js';
-import {type Mask} from '../masked/base.js';
-import MaskElement from './mask-element.js';
-import HTMLMaskElement from './html-mask-element.js';
-import HTMLContenteditableMaskElement from './html-contenteditable-mask-element.js';
-import IMask from '../core/holder.js';
+import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
+import ActionDetails from '../core/action-details';
+import MaskedDate from '../masked/date';
+import createMask, { maskedClass, type AnyMaskedOptions, type AnyMasked } from '../masked/factory';
+import Masked from '../masked/base';
+import MaskElement from './mask-element';
+import HTMLMaskElement from './html-mask-element';
+import HTMLContenteditableMaskElement from './html-contenteditable-mask-element';
+import IMask from '../core/holder';
 
 
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
-class InputMask {
+class InputMask<Opts extends (AnyMaskedOptions | AnyMasked)> {
   /**
     View element
     @readonly
@@ -24,29 +22,21 @@ class InputMask {
     Internal {@link Masked} model
     @readonly
   */
-  masked: Masked<*>;
-  alignCursor: () => void;
-  alignCursorFriendly: () => void;
+  masked: Masked<Opts['mask'], Opts['parent']>;
 
-  _listeners: {[string]: Array<Function>};
+  _listeners: Record<string, Array<EventListener>>;
   _value: string;
   _changingCursorPos: number;
   _unmaskedValue: string;
-  _saveSelection: (?Event) => void;
   _selection: Selection;
-  _onInput: () => void;
-  _onChange: () => void;
-  _onDrop: (Event) => void;
-  _onFocus: (Event) => void;
-  _onClick: (Event) => void;
-  _cursorChanging: ?TimeoutID;
-  _inputEvent: ?InputEvent;
+  _cursorChanging?: ReturnType<typeof setTimeout>;
+  _inputEvent?: InputEvent;
 
   /**
     @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
     @param {Object} opts
   */
-  constructor (el: MaskElement | HTMLTextAreaElement | HTMLInputElement, opts: {[string]: any} | Masked<*>) {
+  constructor (el: MaskElement | HTMLElement, opts: Opts) {
     this.el =
       (el instanceof MaskElement) ? el :
       (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
@@ -74,15 +64,15 @@ class InputMask {
   }
 
   /** Read or update mask */
-  get mask (): Mask {
+  get mask (): Opts['mask'] {
     return this.masked.mask;
   }
 
-  maskEquals (mask: Mask): boolean {
+  maskEquals (mask: Opts['mask']): boolean {
     return mask == null || this.masked?.maskEquals(mask);
   }
 
-  set mask (mask: Mask) {
+  set mask (mask: Opts['mask']) {
     if (this.maskEquals(mask)) return;
 
     // $FlowFixMe No ideas ... after update
@@ -91,7 +81,7 @@ class InputMask {
       return;
     }
 
-    const masked = createMask({mask});
+    const masked = createMask({ mask } as AnyMaskedOptions);
     masked.unmaskedValue = this.masked.unmaskedValue;
     this.masked = masked;
   }
@@ -167,11 +157,11 @@ class InputMask {
     Fires custom event
     @protected
    */
-  _fireEvent (ev: string, ...args: *) {
+  _fireEvent (ev: string, e: InputEvent) {
     const listeners = this._listeners[ev];
     if (!listeners) return;
 
-    listeners.forEach(l => l(...args));
+    listeners.forEach(l => l(e));
   }
 
   /**
@@ -209,7 +199,7 @@ class InputMask {
     }
     this._selection = {
       start: this.selectionStart,
-      end: this.cursorPos
+      end: this.cursorPos,
     };
   }
 
@@ -235,7 +225,7 @@ class InputMask {
   }
 
   /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
-  updateOptions (opts: {[string]: any}) {
+  updateOptions (opts: {[key: string]: any}) {
     const { mask, ...restOpts } = opts;
 
     const updateMask = !this.maskEquals(mask);
@@ -302,14 +292,14 @@ class InputMask {
   }
 
   /** Adds listener on custom event */
-  on (ev: string, handler: Function): this {
+  on (ev: string, handler: EventListener): this {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
     return this;
   }
 
   /** Removes custom event listener */
-  off (ev: string, handler: Function): this {
+  off (ev: string, handler: EventListener): this {
     if (!this._listeners[ev]) return this;
     if (!handler) {
       delete this._listeners[ev];
@@ -328,12 +318,15 @@ class InputMask {
     // fix strange IE behavior
     if (!this._selection) return this.updateValue();
 
-    const details = new ActionDetails(
+    const details = new ActionDetails({
       // new state
-      this.el.value, this.cursorPos,
+      value: this.el.value,
+      cursorPos: this.cursorPos,
+
       // old state
-      this.displayValue, this._selection,
-    );
+      oldValue: this.displayValue,
+      oldSelection: this._selection,
+    });
 
     const oldRawValue = this.masked.rawInputValue;
 
@@ -391,9 +384,8 @@ class InputMask {
   /** Unbind view events and removes element reference */
   destroy () {
     this._unbindEvents();
-    // $FlowFixMe why not do so?
+    // @ts-ignore why not
     this._listeners.length = 0;
-    // $FlowFixMe
     delete this.el;
   }
 }

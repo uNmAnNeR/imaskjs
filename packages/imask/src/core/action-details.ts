@@ -1,5 +1,7 @@
-// @flow
-import {type Direction, type Selection, DIRECTION} from './utils.js';
+import { type Direction, type Selection, type ClassOptions, DIRECTION } from './utils';
+
+export
+type ActionDetailsOptions = ClassOptions<ActionDetails>;
 
 
 /** Provides details of changing input */
@@ -14,16 +16,8 @@ class ActionDetails {
   /** Old selection */
   oldSelection: Selection;
 
-  constructor (
-    value: string,
-    cursorPos: number,
-    oldValue: string,
-    oldSelection: Selection
-  ) {
-    this.value = value;
-    this.cursorPos = cursorPos;
-    this.oldValue = oldValue;
-    this.oldSelection = oldSelection;
+  constructor (opts: ActionDetailsOptions) {
+    Object.assign(this, opts);
 
     // double check if left part was changed (autofilling, other non-standard input triggers)
     while (this.value.slice(0, this.startChangePos) !== this.oldValue.slice(0, this.startChangePos)) {

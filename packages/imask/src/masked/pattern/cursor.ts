@@ -1,7 +1,6 @@
-// @flow
-import { DIRECTION } from '../../core/utils.js';
-import type MaskedPattern from '../pattern.js';
-import { type PatternBlock } from './block.js';
+import { DIRECTION } from '../../core/utils';
+import type MaskedPattern from '../pattern';
+import { type PatternBlock } from './block';
 
 
 type PatternCursorState = { offset: number, index: number, ok: boolean };
@@ -68,7 +67,7 @@ class PatternCursor {
     }
   }
 
-  _pushLeft(fn: () => ?boolean): boolean {
+  _pushLeft(fn: () => boolean | undefined): boolean {
     this.pushState();
     for (this.bindBlock(); 0<=this.index; --this.index, this.offset=this.block?.value.length || 0) {
       if (fn()) return this.ok = true;
@@ -77,7 +76,7 @@ class PatternCursor {
     return this.ok = false;
   }
 
-  _pushRight (fn: () => ?boolean): boolean {
+  _pushRight (fn: () => boolean | undefined): boolean {
     this.pushState();
     for (this.bindBlock(); this.index<this.masked._blocks.length; ++this.index, this.offset=0) {
       if (fn()) return this.ok = true;
