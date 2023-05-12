@@ -21,14 +21,14 @@ import { create } from 'domain';
 
 export type AnyMaskedOptions =
   | MaskedDateOptions
-  // | MaskedNumberOptions
-  // | MaskedPatternOptions
-  // | MaskedDynamicOptions
-  // | MaskedEnumOptions
-  // | MaskedRangeOptions
-  // | MaskedOptions<RegExp, any>
-  // | MaskedOptions<Function, any>
-  // | MaskedOptions<typeof Masked, any>
+  | MaskedNumberOptions
+  | MaskedPatternOptions
+  | MaskedDynamicOptions
+  | MaskedEnumOptions
+  | MaskedRangeOptions
+  | MaskedOptions<RegExp, any>
+  | MaskedOptions<Function, any>
+  | MaskedOptions<typeof Masked, any>
 ;
 
 export type AnyMask = AnyMaskedOptions['mask'];
