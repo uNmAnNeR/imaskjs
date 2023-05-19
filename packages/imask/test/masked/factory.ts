@@ -1,4 +1,5 @@
-import { assert } from 'chai';
+import assert from 'assert';
+import { describe, it } from 'node:test';
 
 import { createMask } from '../../src';
 

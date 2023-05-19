@@ -4,7 +4,7 @@ import Masked, { type AppendFlags } from './base';
 import IMask from '../core/holder';
 
 export
-type MaskedRangeOptions<Parent extends Masked=any> = MaskedPatternOptions<Parent> &
+type MaskedRangeOptions<Parent extends Masked=any> = Omit<MaskedPatternOptions<Parent>, 'mask'> &
   Partial<Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>>;
 
 
@@ -27,10 +27,14 @@ class MaskedRange<Parent extends Masked=any> extends MaskedPattern<Parent> {
     return this.maxLength - String(this.from).length;
   }
 
+  constructor (opts: MaskedRangeOptions) {
+    super(opts as MaskedPatternOptions); // mask will be created in _update
+  }
+
   /**
     @override
   */
-  override _update (opts: Partial<MaskedRangeOptions>) {  // TODO type
+  override _update (opts: MaskedRangeOptions) {  // TODO type
     opts = {
       to: this.to || 0,
       from: this.from || 0,

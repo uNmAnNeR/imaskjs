@@ -8,7 +8,7 @@ type MaskedEnumOptions<Parent extends Masked=any> = MaskedPatternOptions<Parent>
 
 /** Pattern which validates enum values */
 export default
-class MaskedEnum<Parent extends Masked=any> extends MaskedPattern {
+class MaskedEnum<Parent extends Masked=any> extends MaskedPattern<Parent> {
   enum: Array<string>;
 
   /**

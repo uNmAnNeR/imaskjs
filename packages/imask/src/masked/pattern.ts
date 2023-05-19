@@ -75,6 +75,14 @@ class MaskedPattern<Parent extends Masked=any> extends Masked<string, Parent> {
     @override
     @param {Object} opts
   */
+  updateOptions (opts: Partial<MaskedPatternOptions<Parent>>) {
+    super.updateOptions(opts);
+  }
+
+  /**
+    @override
+    @param {Object} opts
+  */
   override _update (opts: Partial<MaskedPatternOptions<Parent>>) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
     super._update(opts);

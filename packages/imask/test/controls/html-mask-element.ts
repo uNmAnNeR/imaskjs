@@ -1,6 +1,7 @@
-import { assert } from 'chai';
+import assert from 'assert';
+import { describe, it } from 'node:test';
 
-import HTMLMaskElement from '../../src/controls/html-mask-element';
+import HTMLMaskElement from 'src/controls/html-mask-element';
 
 
 describe('HTMLMaskElement', function () {

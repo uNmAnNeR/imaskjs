@@ -19,7 +19,7 @@ type MaskedDateOptions<Parent extends Masked=any> = Omit<MaskedPatternOptions<Pa
 
 /** Date mask */
 export default
-class MaskedDate extends MaskedPattern {
+class MaskedDate<Parent extends Masked=any> extends MaskedPattern<Parent> {
   static GET_DEFAULT_BLOCKS: () => {[k: string]: any};
   static DEFAULTS: Partial<MaskedDateOptions>;
 

@@ -1,10 +1,11 @@
-import { assert } from 'chai';
+import assert from 'assert';
+import { describe, it, beforeEach } from 'node:test';
 
 import MaskedRange from '../../src/masked/range';
 
 
 describe('MaskedRange', function () {
-  const masked = new MaskedRange();
+  const masked = new MaskedRange({});
 
   beforeEach(function () {
     masked.updateOptions({

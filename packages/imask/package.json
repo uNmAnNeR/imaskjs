@@ -10,11 +10,13 @@
   "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs",
   "types": "esm/index.d.ts",
+  "type": "module",
   "engines": {
     "npm": ">=4.0.0"
   },
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive",
+    "test2": "cross-env NODE_ENV=test node --loader tsx --test test/**/*",
     "pretest": "flow check",
     "watch": "rollup -c -w",
     "build": "tsc --emitDeclarationOnly && rollup -c",

@@ -26,7 +26,7 @@ type ExtractFlags = {
 };
 
 export
-type MaskedOptions<Mask extends any, Parent extends Masked> = Pick<Masked<Mask, Parent>,
+type MaskedOptions<Mask extends any=any, Parent extends Masked=any> = Pick<Masked<Mask, Parent>,
   | 'parent'
   | 'mask'
   | 'prepare'
@@ -43,7 +43,7 @@ type MaskedOptions<Mask extends any, Parent extends Masked> = Pick<Masked<Mask, 
 /** Provides common masking stuff */
 export default
 class Masked<Mask extends any=any, Parent extends Masked=any> {
-  static DEFAULTS: Partial<MaskedOptions<any, any>>;
+  static DEFAULTS: Partial<MaskedOptions>;
   static EMPTY_VALUES: any; // TODO
 
   /** @type {Mask} */

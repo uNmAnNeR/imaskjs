@@ -1,5 +1,5 @@
-import { assert } from 'chai';
-import sinon from 'sinon';
+import assert from 'assert';
+import { describe, it, beforeEach, mock } from 'node:test';
 
 import MaskedPattern from '../../../src/masked/pattern';
 import { DIRECTION } from '../../../src/core/utils.js';
@@ -55,13 +55,13 @@ describe('Insert', function () {
   });
 
   it('should prepare value before insert', function () {
-    const prepareStub = sinon.stub().returnsArg(0);
+    const prepareStub = mock.fn(v => v);
     masked.updateOptions({
       mask: '+{7}(000)000-00-00',
       prepare: prepareStub
     });
     masked.value = '+79998887766';
-    assert(prepareStub.called);
+    assert.equal(prepareStub.mock.callCount(), 1);
   });
 
   it('should insert value in the middle', function () {

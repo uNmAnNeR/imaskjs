@@ -1,4 +1,5 @@
-import { assert } from 'chai';
+import assert from 'assert';
+import { describe, it, beforeEach } from 'node:test';
 
 import { PIPE_TYPE, createPipe, pipe } from '../../src/masked/pipe';
 import createMask from '../../src/masked/factory';

@@ -1,12 +1,18 @@
 {
   "require": [
-    "./nyc-babel-register.js"
+    "./nyc-babel-register.cjs"
   ],
   "include": [
+    "src/**/*.ts",
     "src/**/*.js"
   ],
   "exclude": [
+    "test/**/*.ts",
     "test/**/*.js"
+  ],
+  "extension": [
+    ".ts",
+    ".js"
   ],
   "reporter": [
     "text",

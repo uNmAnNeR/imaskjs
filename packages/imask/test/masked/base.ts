@@ -1,4 +1,5 @@
-import { assert } from 'chai';
+import assert from 'assert';
+import { describe, it } from 'node:test';
 
 import MaskedPattern from '../../src/masked/pattern';
 import MaskedDate from '../../src/masked/date';

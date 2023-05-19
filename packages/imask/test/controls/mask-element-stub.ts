@@ -9,12 +9,12 @@ class MaskElementStub extends MaskElement {
     this.select(0, 0);
   }
 
-  isActive () {
+  get isActive () {
     return true;
   }
 
-  select (start, end) {
-    this._unsafeSelectionStart = start;
+  override select (start: number, end: number) {
+    (this._unsafeSelectionStart as any) = start;
     this._unsafeSelectionEnd = end;
   }
 }

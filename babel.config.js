@@ -12,8 +12,8 @@ module.exports = function (api) {
   if (process.env.NODE_ENV === 'test') {
     presetOptions.targets = { node: 'current' };
     plugins.push(['istanbul', {
-      exclude: ['test/**/*.js'],
-      include: ['src/**/*.js'],
+      exclude: ['test/**/*.js', 'test/**/*.ts'],
+      include: ['src/**/*.js', 'src/**/*.ts'],
     }]);
   }
 

@@ -1,7 +1,7 @@
 import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
 import MaskedDate from '../masked/date';
-import createMask, { maskedClass, type AnyMaskedOptions, type AnyMasked } from '../masked/factory';
+import createMask, { maskedClass, type AnyMaskedOptions, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
 import Masked from '../masked/base';
 import MaskElement from './mask-element';
 import HTMLMaskElement from './html-mask-element';
@@ -11,7 +11,7 @@ import IMask from '../core/holder';
 
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
-class InputMask<Opts extends (AnyMaskedOptions | AnyMasked)> {
+class InputMask<Opts extends FactoryArg, Parent extends Masked=any> {
   /**
     View element
     @readonly
@@ -22,7 +22,7 @@ class InputMask<Opts extends (AnyMaskedOptions | AnyMasked)> {
     Internal {@link Masked} model
     @readonly
   */
-  masked: Masked<Opts['mask'], Opts['parent']>;
+  masked: FactoryReturnMasked<Opts>;
 
   _listeners: Record<string, Array<EventListener>>;
   _value: string;
@@ -75,13 +75,12 @@ class InputMask<Opts extends (AnyMaskedOptions | AnyMasked)> {
   set mask (mask: Opts['mask']) {
     if (this.maskEquals(mask)) return;
 
-    // $FlowFixMe No ideas ... after update
-    if (!(mask instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask)) {
+    if (!((mask as Masked) instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask)) {
       this.masked.updateOptions({mask});
       return;
     }
 
-    const masked = createMask({ mask } as AnyMaskedOptions);
+    const masked = createMask<Opts>({ mask } as Opts);
     masked.unmaskedValue = this.masked.unmaskedValue;
     this.masked = masked;
   }

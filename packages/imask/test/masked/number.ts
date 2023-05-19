@@ -1,4 +1,5 @@
-import { assert } from 'chai';
+import assert from 'assert';
+import { describe, it, beforeEach } from 'node:test';
 
 import MaskedNumber from '../../src/masked/number';
 import { DIRECTION } from '../../src/core/utils';

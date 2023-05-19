@@ -1,6 +1,6 @@
 import { objectIncludes } from '../core/utils';
 import ChangeDetails from '../core/change-details';
-import createMask from './factory';
+import createMask, { type FactoryArg } from './factory';
 import Masked, { type AppendFlags, type MaskedState, type MaskedOptions, type ExtractFlags } from './base';
 import { DIRECTION, type Direction } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
@@ -14,21 +14,21 @@ type MaskedDynamicState = MaskedState & {
   currentMask: any,
 };
 
-type DynamicMaskType = Array<{[k: string]: any}> | ArrayConstructor;
+type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
 
 export
-type MaskedDynamicOptions = MaskedOptions<DynamicMaskType, Masked> & Partial<Pick<MaskedDynamic, 'dispatch'>>;
+type MaskedDynamicOptions<Parent extends Masked=any> = MaskedOptions<DynamicMaskType, Parent> & Partial<Pick<MaskedDynamic, 'dispatch'>>;
 
 /** Dynamic mask for choosing apropriate mask in run-time */
 export default
-class MaskedDynamic extends Masked<DynamicMaskType> {
+class MaskedDynamic<Parent extends Masked=any> extends Masked<DynamicMaskType, Parent> {
   static DEFAULTS: Partial<MaskedDynamicOptions>;
 
   // TODO types
   /** Currently chosen mask */
   currentMask?: Masked;
   /** Compliled {@link Masked} options */
-  compiledMasks: Array<Masked>;
+  compiledMasks: Array<Masked>; // TODO FactoryReturnMasked<?>
   /** Chooses {@link Masked} depending on input value */
   dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags, tail: string | String | TailDetails) => Masked;
 

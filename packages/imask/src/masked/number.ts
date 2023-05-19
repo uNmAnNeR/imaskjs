@@ -31,7 +31,7 @@ type MaskedNumberOptions<Parent extends Masked=any> = MaskedOptions<NumberConstr
   @param {boolean} opts.padFractionalZeros - Flag to pad trailing zeros after point in the end of editing
 */
 export default
-class MaskedNumber extends Masked<NumberConstructor, any> {
+class MaskedNumber<Parent extends Masked=any> extends Masked<NumberConstructor, Parent> {
   static DEFAULTS: Partial<MaskedNumberOptions>;
   static UNMASKED_RADIX: string;
 
