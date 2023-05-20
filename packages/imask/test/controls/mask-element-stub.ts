@@ -15,6 +15,6 @@ class MaskElementStub extends MaskElement {
 
   override select (start: number, end: number) {
     (this._unsafeSelectionStart as any) = start;
-    this._unsafeSelectionEnd = end;
+    (this._unsafeSelectionEnd as any) = end;
   }
 }

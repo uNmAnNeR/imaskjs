@@ -17,31 +17,36 @@ type MaskedDynamicState = MaskedState & {
 type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
 
 export
-type MaskedDynamicOptions<Parent extends Masked=any> = MaskedOptions<DynamicMaskType, Parent> & Partial<Pick<MaskedDynamic, 'dispatch'>>;
+type MaskedDynamicOptions = MaskedOptions<MaskedDynamic> & Partial<Pick<MaskedDynamic, 'dispatch'>>;
 
-/** Dynamic mask for choosing apropriate mask in run-time */
+/** Dynamic mask for choosing appropriate mask in run-time */
 export default
-class MaskedDynamic<Parent extends Masked=any> extends Masked<DynamicMaskType, Parent> {
+class MaskedDynamic extends Masked {
   static DEFAULTS: Partial<MaskedDynamicOptions>;
 
+  declare mask: DynamicMaskType;
   // TODO types
   /** Currently chosen mask */
-  currentMask?: Masked;
+  declare currentMask?: Masked;
   /** Compliled {@link Masked} options */
-  compiledMasks: Array<Masked>; // TODO FactoryReturnMasked<?>
+  declare compiledMasks: Array<Masked>; // TODO FactoryReturnMasked<?>
   /** Chooses {@link Masked} depending on input value */
-  dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags, tail: string | String | TailDetails) => Masked;
+  declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags, tail: string | String | TailDetails) => Masked;
 
   /**
     @param {Object} opts
   */
-  constructor (opts: MaskedDynamicOptions) {
+  constructor (opts?: MaskedDynamicOptions) {
     super({
       ...MaskedDynamic.DEFAULTS,
       ...opts
     });
 
     this.currentMask = null;
+  }
+
+  override updateOptions (opts: Partial<MaskedDynamicOptions>) {
+    super.updateOptions(opts);
   }
 
   /**
@@ -78,7 +83,6 @@ class MaskedDynamic<Parent extends Masked=any> extends Masked<DynamicMaskType, P
       this.value;
     const inputValue = this.rawInputValue;
     const insertValue = flags.tail && flags._beforeTailState != null ?
-      // $FlowFixMe - tired to fight with type system
       flags._beforeTailState._rawInputValue :
       inputValue;
     const tailValue = inputValue.slice(insertValue.length);
@@ -97,13 +101,11 @@ class MaskedDynamic<Parent extends Masked=any> extends Masked<DynamicMaskType, P
         this.currentMask.reset();
 
         if (insertValue) {
-          // $FlowFixMe - it's ok, we don't change current mask above
           const d = this.currentMask.append(insertValue, {raw: true});
           details.tailShift = d.inserted.length - prevValueBeforeTail.length;
         }
 
         if (tailValue) {
-          // $FlowFixMe - it's ok, we don't change current mask above
           details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
         }
       } else {

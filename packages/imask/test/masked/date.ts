@@ -19,7 +19,7 @@ describe('MaskedDate', function () {
       pattern: MaskedDate.DEFAULTS.pattern + '.',
       lazy: false,
       format: function (date) {
-        return MaskedDate.DEFAULTS.format(date) + '.';
+        return MaskedDate.DEFAULTS.format(date, masked) + '.';
       },
     });
     assert(masked.isDateExist('12.12.2000'), 'date is not exists');

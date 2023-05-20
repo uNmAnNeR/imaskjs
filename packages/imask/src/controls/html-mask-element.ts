@@ -4,24 +4,23 @@ import IMask from '../core/holder';
 
 /** Bridge between HTMLElement and {@link Masked} */
 export default
-class HTMLMaskElement<Element extends HTMLElement=HTMLTextAreaElement | HTMLInputElement> extends MaskElement {
+class HTMLMaskElement extends MaskElement {
   /** Mapping between HTMLElement events and mask internal events */
   static EVENTS_MAP: {[k in ElementEvent]: string};
   /** HTMLElement to use mask on */
-  input: HTMLTextAreaElement | HTMLInputElement;
-  _handlers: {[k: string]: EventListener};
+  declare input: HTMLElement;
+  declare _handlers: {[k: string]: EventListener};
 
   /**
     @param {HTMLInputElement|HTMLTextAreaElement} input
   */
-  constructor (input: Element) {
+  constructor (input: HTMLElement) {
     super();
-    this.input = input as unknown as HTMLTextAreaElement | HTMLInputElement;
+    this.input = input;
     this._handlers = {};
   }
 
   /** */
-  // $FlowFixMe https://github.com/facebook/flow/issues/2839
   get rootElement (): HTMLDocument {
     return (this.input.getRootNode?.() ?? document) as HTMLDocument;
   }
@@ -31,46 +30,7 @@ class HTMLMaskElement<Element extends HTMLElement=HTMLTextAreaElement | HTMLInpu
     @readonly
   */
   get isActive (): boolean {
-    //$FlowFixMe
     return this.input === this.rootElement.activeElement;
-  }
-
-  /**
-    Returns HTMLElement selection start
-    @override
-  */
-  // @ts-ignore
-  override get _unsafeSelectionStart (): number {
-    return this.input.selectionStart;
-  }
-
-  /**
-    Returns HTMLElement selection end
-    @override
-  */
-  // @ts-ignore
-  override get _unsafeSelectionEnd (): number {
-    return this.input.selectionEnd;
-  }
-
-  /**
-    Sets HTMLElement selection
-    @override
-  */
-  _unsafeSelect (start: number, end: number) {
-    this.input.setSelectionRange(start, end);
-  }
-
-  /**
-    HTMLElement value
-    @override
-  */
-  // @ts-ignore
-  override get value (): string {
-    return this.input.value;
-  }
-  override set value (value: string) {
-    this.input.value = value;
   }
 
   /**

@@ -4,43 +4,44 @@ import MaskedDate from '../masked/date';
 import createMask, { maskedClass, type AnyMaskedOptions, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
 import Masked from '../masked/base';
 import MaskElement from './mask-element';
-import HTMLMaskElement from './html-mask-element';
+import HTMLInputMaskElement, { type InputElement } from './html-input-mask-element';
 import HTMLContenteditableMaskElement from './html-contenteditable-mask-element';
 import IMask from '../core/holder';
 
 
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
-class InputMask<Opts extends FactoryArg, Parent extends Masked=any> {
+class InputMask<Opts extends FactoryArg> {
   /**
     View element
     @readonly
   */
-  el: MaskElement;
+  declare el: MaskElement;
 
   /**
     Internal {@link Masked} model
     @readonly
   */
-  masked: FactoryReturnMasked<Opts>;
+  declare masked: FactoryReturnMasked<Opts>;
 
-  _listeners: Record<string, Array<EventListener>>;
-  _value: string;
-  _changingCursorPos: number;
-  _unmaskedValue: string;
-  _selection: Selection;
-  _cursorChanging?: ReturnType<typeof setTimeout>;
-  _inputEvent?: InputEvent;
+  declare _listeners: Record<string, Array<EventListener>>;
+  declare _value: string;
+  declare _changingCursorPos: number;
+  declare _unmaskedValue: string;
+  declare _selection: Selection;
+  declare _cursorChanging?: ReturnType<typeof setTimeout>;
+  declare _inputEvent?: InputEvent;
 
   /**
     @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
     @param {Object} opts
   */
-  constructor (el: MaskElement | HTMLElement, opts: Opts) {
+  constructor (el: MaskElement | InputElement | HTMLElement, opts: Opts) {
     this.el =
       (el instanceof MaskElement) ? el :
-      (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
-      new HTMLMaskElement(el);
+       (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
+       new HTMLInputMaskElement(el as InputElement);
+
     this.masked = createMask(opts);
 
     this._listeners = {};

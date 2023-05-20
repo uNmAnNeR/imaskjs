@@ -7,11 +7,11 @@ type PatternCursorState = { offset: number, index: number, ok: boolean };
 
 export default
 class PatternCursor {
-  masked: MaskedPattern;
-  offset: number;
-  index: number;
-  ok: boolean;
-  _log: PatternCursorState[];
+  declare masked: MaskedPattern;
+  declare offset: number;
+  declare index: number;
+  declare ok: boolean;
+  declare _log: PatternCursorState[];
 
   constructor (masked: MaskedPattern, pos: number) {
     this.masked = masked;

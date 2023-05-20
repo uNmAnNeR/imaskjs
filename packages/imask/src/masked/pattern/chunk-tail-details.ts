@@ -14,11 +14,11 @@ type ChunksTailState = Pick<ChunksTailDetails,
 
 export default
 class ChunksTailDetails implements TailDetails {
-  chunks: Array<TailDetails>;
-  from: number;
-  stop?: number;
+  declare chunks: Array<TailDetails>;
+  declare from: number;
+  declare stop?: number;
   /** */
-  blockIndex?: number;
+  declare blockIndex?: number;
 
   constructor (chunks: Array<TailDetails>=[], from: number=0) {
     this.chunks = chunks;
@@ -29,7 +29,6 @@ class ChunksTailDetails implements TailDetails {
     return this.chunks.map(String).join('');
   }
 
-  // $FlowFixMe no ideas
   extend (tailChunk: string | String | TailDetails): void {
     if (!String(tailChunk)) return;
     tailChunk = (isString(tailChunk) ? new ContinuousTailDetails(String(tailChunk)) : tailChunk) as TailDetails;
@@ -132,7 +131,6 @@ class ChunksTailDetails implements TailDetails {
       const chunk = "chunks" in cstate ?
         new ChunksTailDetails() :
         new ContinuousTailDetails();
-      // $FlowFixMe already checked above
       chunk.state = cstate;
       return chunk;
     });

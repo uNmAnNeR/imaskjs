@@ -47,7 +47,7 @@ describe('Align LEFT', function () {
     ['*XX', '[*]XX'].forEach(mask => {
       masked.updateOptions({mask});
       for (var pos=0; pos<masked._blocks.length-1; ++pos) {
-        assert.isAtMost(masked.nearestInputPos(pos), 1);
+        assert.ok(masked.nearestInputPos(pos) <= 1);
       }
     });
   });

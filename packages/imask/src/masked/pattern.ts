@@ -8,13 +8,13 @@ import ChunksTailDetails from './pattern/chunk-tail-details.js';
 import ContinuousTailDetails from '../core/continuous-tail-details.js';
 import { type PatternBlock } from './pattern/block.js';
 import PatternCursor from './pattern/cursor.js';
-import createMask from './factory.js';
+import createMask, { type FactoryClassOpts, type FactoryStaticOpts } from './factory.js';
 import IMask from '../core/holder.js';
 import './regexp.js';  // support for default definitions which are regexp's
 
 
 export
-type MaskedPatternOptions<Parent extends Masked=any> = MaskedOptions<string, Parent> & Partial<Pick<MaskedPattern,
+type MaskedPatternOptions = MaskedOptions<MaskedPattern> & Partial<Pick<MaskedPattern,
   | 'definitions'
   | 'blocks'
   | 'placeholderChar'
@@ -31,6 +31,7 @@ type BlockPosData = {
   offset: number,
 };
 
+
 /**
   Pattern mask
   @param {Object} opts
@@ -41,41 +42,38 @@ type BlockPosData = {
   @param {boolean} opts.lazy
 */
 export default
-class MaskedPattern<Parent extends Masked=any> extends Masked<string, Parent> {
+class MaskedPattern extends Masked {
   static DEFAULTS: any;
   static STOP_CHAR: string;
   static ESCAPE_CHAR: string;
   static InputDefinition: typeof PatternInputDefinition;
   static FixedDefinition: typeof PatternFixedDefinition;
 
+  declare mask: string;
   /** */
-  blocks: {[key: string]: MaskedOptions<any, any>}; // TODO type
+  declare blocks: { [key: string]: FactoryClassOpts | FactoryStaticOpts };
   /** */
-  definitions: Definitions;
+  declare definitions: Definitions;
   /** Single char for empty input */
-  placeholderChar: string;
+  declare placeholderChar: string;
   /** Single char for filled input */
-  displayChar: string;
+  declare displayChar: string;
   /** Show placeholder only when needed */
-  lazy: boolean;
+  declare lazy: boolean;
 
-  _blocks: Array<PatternBlock>;
-  _maskedBlocks: {[key: string]: Array<number>};
-  _stops: Array<number>;
+  declare _blocks: Array<PatternBlock>;
+  declare _maskedBlocks: {[key: string]: Array<number>};
+  declare _stops: Array<number>;
 
-  constructor (opts: MaskedPatternOptions<Parent>) {
-    opts.definitions = Object.assign({}, DEFAULT_INPUT_DEFINITIONS, opts.definitions);
+  constructor (opts: MaskedPatternOptions) {
     super({
       ...MaskedPattern.DEFAULTS,
       ...opts,
+      definitions: Object.assign({}, DEFAULT_INPUT_DEFINITIONS, opts?.definitions),
     });
   }
 
-  /**
-    @override
-    @param {Object} opts
-  */
-  updateOptions (opts: Partial<MaskedPatternOptions<Parent>>) {
+  override updateOptions (opts: Partial<MaskedPatternOptions>) {
     super.updateOptions(opts);
   }
 
@@ -83,7 +81,7 @@ class MaskedPattern<Parent extends Masked=any> extends Masked<string, Parent> {
     @override
     @param {Object} opts
   */
-  override _update (opts: Partial<MaskedPatternOptions<Parent>>) {
+  override _update (opts: Partial<MaskedPatternOptions>) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
     super._update(opts);
     this._rebuildMask();
@@ -111,7 +109,6 @@ class MaskedPattern<Parent extends Masked=any> extends Masked<string, Parent> {
         // use block name with max length
         const bName = bNames[0];
         if (bName) {
-          // $FlowFixMe no ideas
           const maskedBlock = createMask({
             parent: this,
             lazy: this.lazy,
@@ -120,7 +117,7 @@ class MaskedPattern<Parent extends Masked=any> extends Masked<string, Parent> {
             displayChar: this.displayChar,
             overwrite: this.overwrite,
             ...this.blocks[bName],
-          } as any);
+          });
 
           if (maskedBlock) {
             this._blocks.push(maskedBlock);

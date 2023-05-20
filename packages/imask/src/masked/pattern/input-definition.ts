@@ -13,22 +13,21 @@ type Definitions = {
   [k: string]: any, // TODO
 };
 
+// TODO any
 /** */
-type PatternInputDefinitionOptions<Handler extends Masked, Parent extends Masked> = Pick<PatternInputDefinition<Handler, Parent>,
+type PatternInputDefinitionOptions = { mask: any, [k: string]: any } & Partial<Pick<PatternInputDefinition,
   | 'parent'
   | 'isOptional'
   | 'lazy'
   | 'eager'
   | 'placeholderChar'
   | 'displayChar'
-> & { mask: any, [k: string]: any };
+>>;
 
-type PatternInputDefinitionState<Handler extends Masked> = {
-  masked: any, // TODO state ?
+type PatternInputDefinitionState = {
+  masked: Masked['state'],
   isFilled: boolean,
 };
-
-type hz = Masked<string> extends Masked<any> ? 1 : 2;
 
 export
 const DEFAULT_INPUT_DEFINITIONS: { [k: string]: RegExp } = {
@@ -39,25 +38,25 @@ const DEFAULT_INPUT_DEFINITIONS: { [k: string]: RegExp } = {
 
 /** */
 export default
-class PatternInputDefinition<Handler extends Masked, Parent extends Masked> implements PatternBlock {
+class PatternInputDefinition implements PatternBlock {
   /** */
-  readonly masked: Masked;
+  declare readonly masked: Masked;
   /** */
-  parent: Parent;
+  declare parent: Masked;
   /** */
-  isOptional: boolean;
+  declare isOptional: boolean;
   /** */
-  isFilled: boolean;
+  declare isFilled: boolean;
   /** */
-  lazy: MaskedPattern['lazy'];
+  declare lazy: MaskedPattern['lazy'];
   /** */
-  eager: MaskedPattern['eager'];
+  declare eager: MaskedPattern['eager'];
   /** */
-  placeholderChar: MaskedPattern['placeholderChar'];
+  declare placeholderChar: MaskedPattern['placeholderChar'];
   /** */
-  displayChar: MaskedPattern['displayChar'];
+  declare displayChar: MaskedPattern['displayChar'];
 
-  constructor(opts: PatternInputDefinitionOptions<Handler, Parent>) {
+  constructor(opts: PatternInputDefinitionOptions) {
     const { parent, isOptional, placeholderChar, displayChar, lazy, eager, ...maskOpts } = opts;
 
     this.masked = createMask(maskOpts);
@@ -179,14 +178,14 @@ class PatternInputDefinition<Handler extends Masked, Parent extends Masked> impl
     this.masked.doCommit();
   }
 
-  get state (): PatternInputDefinitionState<Handler> {
+  get state (): PatternInputDefinitionState {
     return {
       masked: this.masked.state,
       isFilled: this.isFilled,
     };
   }
 
-  set state (state: PatternInputDefinitionState<Handler>) {
+  set state (state: PatternInputDefinitionState) {
     this.masked.state = state.masked;
     this.isFilled = state.isFilled;
   }

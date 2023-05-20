@@ -12,11 +12,11 @@ type ContinuousTailState = Pick<ContinuousTailDetails,
 export default
 class ContinuousTailDetails implements TailDetails {
   /** Tail value as string */
-  value: string;
+  declare value: string;
   /** Tail start position */
-  from: number;
+  declare from: number;
   /** Start position */
-  stop?: number;
+  declare stop?: number;
 
   constructor (value: string='', from: number=0, stop?: number) {
     this.value = value;

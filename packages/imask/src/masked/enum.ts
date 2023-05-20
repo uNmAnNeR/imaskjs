@@ -3,21 +3,28 @@ import Masked, { AppendFlags } from './base';
 import IMask from '../core/holder';
 
 export
-type MaskedEnumOptions<Parent extends Masked=any> = MaskedPatternOptions<Parent> & { enum: MaskedEnum<Parent>['enum'] };
+type MaskedEnumOptions = Omit<MaskedPatternOptions, 'mask'> & Pick<MaskedEnum, 'enum'>;
+
+export
+type MaskedEnumPatternOptions = MaskedPatternOptions & Partial<Pick<MaskedEnum, 'enum'>>;
 
 
 /** Pattern which validates enum values */
 export default
-class MaskedEnum<Parent extends Masked=any> extends MaskedPattern<Parent> {
-  enum: Array<string>;
+class MaskedEnum extends MaskedPattern {
+  declare enum: Array<string>;
+
+  override updateOptions (opts: Partial<MaskedEnumOptions>) {
+    super.updateOptions(opts);
+  }
 
   /**
     @override
     @param {Object} opts
   */
-  override _update (opts: Partial<MaskedEnumOptions<Parent>>) {  // TODO type
-    const eopts = { ...opts };
-    if (opts.enum) eopts.mask = '*'.repeat(opts.enum[0].length),
+  override _update (opts: Partial<MaskedEnumOptions>) {
+    const { enum: _enum, ...eopts }: MaskedEnumPatternOptions = opts;
+    if (_enum) eopts.mask = '*'.repeat(_enum[0].length);
 
     super._update(eopts);
   }

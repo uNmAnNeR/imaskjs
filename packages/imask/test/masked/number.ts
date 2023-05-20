@@ -18,7 +18,7 @@ describe('MaskedNumber', function () {
   });
 
   describe('#_normalizeZeros', function () {
-    assert.isEmpty(masked._normalizeZeros(''));
+    assert.equal(masked._normalizeZeros(''), '');
     assert.equal(masked._normalizeZeros('000'), '0');
     assert.equal(masked._normalizeZeros('0,'), '0');
     assert.equal(masked._normalizeZeros('000,01'), '0,01');
@@ -31,7 +31,7 @@ describe('MaskedNumber', function () {
   });
 
   describe('#_padFractionalZeros', function () {
-    assert.isEmpty(masked._padFractionalZeros(''));
+    assert.equal(masked._padFractionalZeros(''), '');
     assert.equal(masked._padFractionalZeros('0'), '0,00');
     assert.equal(masked._padFractionalZeros(',0'), ',00');
     assert.equal(masked._padFractionalZeros('0,0'), '0,00');
@@ -61,7 +61,7 @@ describe('MaskedNumber', function () {
     assert.strictEqual(masked.typedValue, 1000);
 
     masked.unmaskedValue = '9999.88';
-    assert.isNumber(masked.typedValue);
+    assert.equal(typeof masked.typedValue, 'number');
     assert.strictEqual(masked.typedValue, 9999.88);
   });
 
@@ -75,6 +75,7 @@ describe('MaskedNumber', function () {
     });
 
     it('should map for raw input', function () {
+      masked.value = '';
       masked.splice(0, 0, '12345.67', DIRECTION.NONE, { input: true, raw: true });
       assert.strictEqual(masked.unmaskedValue, '12345.67');
       assert.strictEqual(masked.value, '12345,67');

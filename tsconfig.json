@@ -6,6 +6,7 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "noEmitOnError": true,
     "moduleResolution": "node",
     "lib": ["dom", "es2022"]
   },

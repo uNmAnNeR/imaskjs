@@ -15,13 +15,13 @@ type ChangeDetailsOptions = ClassOptions<ChangeDetails>;
 export default
 class ChangeDetails {
   /** Inserted symbols */
-  inserted: string;
+  declare inserted: string;
   /** Can skip chars */
-  skip: boolean;
+  declare skip: boolean;
   /** Additional offset if any changes occurred before tail */
-  tailShift: number;
+  declare tailShift: number;
   /** Raw inserted is used by dynamic mask */
-  rawInserted: string;
+  declare rawInserted: string;
 
   constructor (details?: Partial<ChangeDetailsOptions>) {
     Object.assign(this, {

@@ -8,13 +8,13 @@ type ActionDetailsOptions = ClassOptions<ActionDetails>;
 export default
 class ActionDetails {
   /** Current input value */
-  value: string;
+  declare value: string;
   /** Current cursor position */
-  cursorPos: number;
+  declare cursorPos: number;
   /** Old input value */
-  oldValue: string;
+  declare oldValue: string;
   /** Old selection */
-  oldSelection: Selection;
+  declare oldSelection: Selection;
 
   constructor (opts: ActionDetailsOptions) {
     Object.assign(this, opts);

@@ -1,7 +1,9 @@
 import assert from 'assert';
 import { describe, it, beforeEach } from 'node:test';
 
+import '../../src';
 import MaskedDynamic from '../../src/masked/dynamic';
+import { type MaskedPatternOptions } from '../../src/masked/pattern';
 
 
 describe('MaskedDynamic', function () {
@@ -58,6 +60,7 @@ describe('MaskedDynamic', function () {
     assert.equal(masked.value, '12"');
   });
 
+  // TODO allow to use external props?
   it('should handle flags correctly', function () {
     masked.updateOptions({
       mask: [
@@ -66,33 +69,33 @@ describe('MaskedDynamic', function () {
           startsWith: '30',
           lazy: false,
           country: 'Greece'
-        },
+        } as MaskedPatternOptions,
         {
           mask: '+0 000 000-00-00',
           startsWith: '7',
           lazy: false,
           country: 'Russia'
-        },
+        } as MaskedPatternOptions,
         {
           mask: '0000000000000',
           startsWith: '',
           country: 'unknown'
-        }
+        } as MaskedPatternOptions,
       ],
       dispatch: function (appended, dynamicMasked) {
         var number = (dynamicMasked.value + appended).replace(/\D/g,'');
 
         return dynamicMasked.compiledMasks.find(function (m) {
-          return number.indexOf(m.startsWith) === 0;
+          return number.indexOf((m as any).startsWith) === 0;
         });
       }
     });
     masked.value = '70001234567';
-    assert.equal(masked.currentMask.country, 'Russia');
+    assert.equal((masked.currentMask as any).country, 'Russia');
 
     masked.splice(7, 1, '9');
     assert.equal(masked.unmaskedValue, '70009234567');
-    assert.equal(masked.currentMask.country, 'Russia');
+    assert.equal((masked.currentMask as any).country, 'Russia');
   });
 
   it('should update nested options', function () {

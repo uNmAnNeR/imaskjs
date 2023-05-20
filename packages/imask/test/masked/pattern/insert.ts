@@ -3,6 +3,7 @@ import { describe, it, beforeEach, mock } from 'node:test';
 
 import MaskedPattern from '../../../src/masked/pattern';
 import { DIRECTION } from '../../../src/core/utils.js';
+import { MaskedNumber } from '../../../esm';
 
 
 describe('Insert', function () {
@@ -159,7 +160,7 @@ describe('Insert', function () {
     masked.unmaskedValue = '123.45';
     assert.equal(masked.value, '€ 123,45');
 
-    masked.maskedBlock('num').updateOptions({ thousandsSeparator: '.' });
+    (masked.maskedBlock('num') as MaskedNumber).updateOptions({ thousandsSeparator: '.' });
     assert.equal(masked.value, '€ 123,45');
 
     masked.unmaskedValue = '123.45';

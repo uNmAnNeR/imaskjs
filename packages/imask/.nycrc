@@ -1,18 +1,10 @@
 {
-  "require": [
-    "./nyc-babel-register.cjs"
-  ],
+  "extends": "@istanbuljs/nyc-config-typescript",
   "include": [
-    "src/**/*.ts",
-    "src/**/*.js"
+    "src/**/*"
   ],
   "exclude": [
-    "test/**/*.ts",
-    "test/**/*.js"
-  ],
-  "extension": [
-    ".ts",
-    ".js"
+    "test/**/*"
   ],
   "reporter": [
     "text",

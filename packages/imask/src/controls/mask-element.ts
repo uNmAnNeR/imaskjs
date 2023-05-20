@@ -17,11 +17,11 @@ type ElementEvent =
 export default
 class MaskElement {
   /** */
-  readonly _unsafeSelectionStart: number;
+  declare readonly _unsafeSelectionStart: number;
   /** */
-  readonly _unsafeSelectionEnd: number;
+  declare readonly _unsafeSelectionEnd: number;
   /** */
-  value: string;
+  declare value: string;
 
   /** Safely returns selection start */
   get selectionStart (): number {

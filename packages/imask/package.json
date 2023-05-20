@@ -15,14 +15,13 @@
     "npm": ">=4.0.0"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc mocha --exit --recursive",
+    "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec --loader tsx --test test/**/*",
     "test2": "cross-env NODE_ENV=test node --loader tsx --test test/**/*",
-    "pretest": "flow check",
+    "pretest": "tsc --noEmit",
     "watch": "rollup -c -w",
     "build": "tsc --emitDeclarationOnly && rollup -c",
-    "flow": "flow",
     "lint": "eslint src/",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "c8 report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "javascript",

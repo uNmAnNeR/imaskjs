@@ -8,34 +8,34 @@ import { isString } from '../core/utils';
 type DateMaskType = DateConstructor;
 
 export
-type MaskedDateOptions<Parent extends Masked=any> = Omit<MaskedPatternOptions<Parent>, 'mask'> & Pick<MaskedDate,
+type MaskedDateOptions = Omit<MaskedPatternOptions, 'mask'> & Partial<Pick<MaskedDate,
+  | 'pattern'
   | 'min'
   | 'max'
   | 'autofix'
-> & {
+>> & {
   mask?: string | DateMaskType,
-  pattern?: string,
 };
 
 /** Date mask */
 export default
-class MaskedDate<Parent extends Masked=any> extends MaskedPattern<Parent> {
+class MaskedDate extends MaskedPattern {
   static GET_DEFAULT_BLOCKS: () => {[k: string]: any};
   static DEFAULTS: Partial<MaskedDateOptions>;
 
   /** Pattern mask for date according to {@link MaskedDate#format} */
-  pattern: string;
+  declare pattern: string;
   /** Start date */
-  min?: Date;
+  declare min?: Date;
   /** End date */
-  max?: Date;
+  declare max?: Date;
   /** */
-  autofix?: boolean | 'pad' | undefined;
+  declare autofix?: boolean | 'pad' | undefined;
 
   /**
     @param {Object} opts
   */
-  constructor (opts: MaskedDateOptions) {
+  constructor (opts?: MaskedDateOptions) {
     const { mask, pattern, ...patternOpts } = {
       ...MaskedDate.DEFAULTS,
       ...opts,
@@ -45,6 +45,10 @@ class MaskedDate<Parent extends Masked=any> extends MaskedPattern<Parent> {
       ...patternOpts,
       mask: isString(mask) ? mask : pattern,
     });
+  }
+
+  override updateOptions (opts: Partial<MaskedDateOptions>) {
+    super.updateOptions(opts as Partial<MaskedPatternOptions>);
   }
 
   /**

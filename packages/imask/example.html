@@ -12,50 +12,12 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: [
-        {
-          mask: "HH:`mm",
-          lazy: false,
-          blocks: {
-            HH: {
-              mask: IMask.MaskedRange,
-              from: 0,
-              to: 23,
-              placeholderChar: "H",
-            },
-            mm: {
-              mask: IMask.MaskedRange,
-              from: 0,
-              to: 59,
-              placeholderChar: "m",
-            },
-          }
-        },
-        {
-          mask: "HH:`mm:`ss",
-          lazy: false,
-          blocks: {
-            HH: {
-              mask: IMask.MaskedRange,
-              from: 0,
-              to: 23,
-              placeholderChar: "H",
-            },
-            mm: {
-              mask: IMask.MaskedRange,
-              from: 0,
-              to: 59,
-              placeholderChar: "m",
-            },
-            ss: {
-              mask: IMask.MaskedRange,
-              from: 0,
-              to: 59,
-              placeholderChar: "s",
-            },
-          }
-        }
-      ]
+      mask: Number,
+      scale: 2,
+      thousandsSeparator: '.',
+      padFractionalZeros: true,
+      radix: ',',
+      mapToRadix: ['.'],
     };
 
     var result = document.getElementById('value');
@@ -65,6 +27,8 @@
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });
+
+    imask.value = '12.345,67';
 
 
     // document.getElementById('input').addEventListener('focus', () => {

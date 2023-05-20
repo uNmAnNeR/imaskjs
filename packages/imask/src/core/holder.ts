@@ -12,12 +12,11 @@ import type {
   default as _createMask,
   AnyMaskedOptions as _AnyMaskedOptions,
   AnyMask as _AnyMask,
-  AnyMasked as _AnyMasked,
   DeduceMasked as _DeduceMasked,
   DeduceMaskedClass as _DeduceMaskedClass,
   MaskedTypedValue as _MaskedTypedValue,
-  DeduceMaskedOptions as _DeduceMaskedOptions,
   AllMaskedOptions as _AllMaskedOptions,
+  FactoryArg,
 } from '../masked/factory';
 import type { default as _ChangeDetails } from './change-details';
 
@@ -38,7 +37,7 @@ import type {
  * @param {Object} opts - Custom mask options
  * @return {InputMask}
  */
-function IMask<Opts extends IMask.AnyMaskedOptions> (el: _MaskElement | HTMLElement, opts: Opts) {
+function IMask<Opts extends FactoryArg> (el: _MaskElement | HTMLElement, opts: FactoryArg) {
   // currently available only for input-like elements
   return new IMask.InputMask(el, opts);
 }
@@ -65,11 +64,9 @@ declare namespace IMask {
 
   export type AnyMaskedOptions = _AnyMaskedOptions;
   export type AnyMask = _AnyMask;
-  export type AnyMasked<Parent extends _Masked=any> = _AnyMasked<Parent>;
   export type DeduceMasked<Opts> = _DeduceMasked<Opts>;
   export type DeduceMaskedClass<Mask> = _DeduceMaskedClass<Mask>;
   export type MaskedTypedValue<Mask> = _MaskedTypedValue<Mask>;
-  export type DeduceMaskedOptions<Opts> = _DeduceMaskedOptions<Opts>;
   export type AllMaskedOptions = _AllMaskedOptions;
 }
 

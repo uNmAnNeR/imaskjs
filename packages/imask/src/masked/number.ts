@@ -7,7 +7,7 @@ import IMask from '../core/holder';
 
 
 export
-type MaskedNumberOptions<Parent extends Masked=any> = MaskedOptions<NumberConstructor, Parent> & Partial<Pick<MaskedNumber,
+type MaskedNumberOptions = MaskedOptions<MaskedNumber> & Partial<Pick<MaskedNumber,
   | 'radix'
   | 'thousandsSeparator'
   | 'mapToRadix'
@@ -31,39 +31,44 @@ type MaskedNumberOptions<Parent extends Masked=any> = MaskedOptions<NumberConstr
   @param {boolean} opts.padFractionalZeros - Flag to pad trailing zeros after point in the end of editing
 */
 export default
-class MaskedNumber<Parent extends Masked=any> extends Masked<NumberConstructor, Parent> {
+class MaskedNumber extends Masked {
   static DEFAULTS: Partial<MaskedNumberOptions>;
   static UNMASKED_RADIX: string;
 
+  declare mask: NumberConstructor;
   /** Single char */
-  radix: string;
+  declare radix: string;
   /** Single char */
-  thousandsSeparator: string;
+  declare thousandsSeparator: string;
   /** Array of single chars */
-  mapToRadix: Array<string>;
+  declare mapToRadix: Array<string>;
   /** */
-  min: number;
+  declare min: number;
   /** */
-  max: number;
+  declare max: number;
   /** Digits after point */
-  scale: number;
+  declare scale: number;
   /** */
-  signed: boolean;
+  declare signed: boolean;
   /** Flag to remove leading and trailing zeros in the end of editing */
-  normalizeZeros: boolean;
+  declare normalizeZeros: boolean;
   /** Flag to pad trailing zeros after point in the end of editing */
-  padFractionalZeros: boolean;
+  declare padFractionalZeros: boolean;
 
-  _numberRegExp: RegExp;
-  _thousandsSeparatorRegExp: RegExp;
-  _mapToRadixRegExp: RegExp;
-  _separatorsProcessed: boolean;
+  declare _numberRegExp: RegExp;
+  declare _thousandsSeparatorRegExp: RegExp;
+  declare _mapToRadixRegExp: RegExp;
+  declare _separatorsProcessed: boolean;
 
-  constructor (opts: MaskedNumberOptions) {
+  constructor (opts?: MaskedNumberOptions) {
     super({
       ...MaskedNumber.DEFAULTS,
       ...opts,
     });
+  }
+
+  override updateOptions (opts: Partial<MaskedNumberOptions>) {
+    super.updateOptions(opts);
   }
 
   /**

@@ -42,7 +42,7 @@ describe('InputMask', function () {
         let oldMask = imask.mask;
         let oldMasked = imask.masked;
 
-        imask.mask = mask;
+        imask.mask = mask as any;
         assert.notEqual(imask.mask, oldMask);
         assert.notEqual(imask.masked, oldMasked);
 
@@ -50,7 +50,7 @@ describe('InputMask', function () {
         oldMask = imask.mask;
         oldMasked = imask.masked;
 
-        imask.mask = mask;
+        imask.mask = mask as any;
         if (mask !== Date) assert.equal(imask.mask, oldMask);
         assert.equal(imask.masked, oldMasked);
       });
@@ -67,7 +67,7 @@ describe('InputMask', function () {
       };
 
       imask.updateOptions(opts);
-      assert.instanceOf(imask.masked, IMask.MaskedNumber, 'masked is MaskedNumber');
+      assert.ok(imask.masked instanceof IMask.MaskedNumber);
       assert.equal(imask.masked.max, opts.max);
     });
   });
@@ -75,7 +75,8 @@ describe('InputMask', function () {
   describe('#typed value', function () {
     it('should be typed', function () {
       imask.updateOptions({
-        mask: Number
+        mask: Number,
+        max: Infinity,
       });
       const value = 100;
       imask.typedValue = value;
@@ -96,7 +97,7 @@ describe('InputMask', function () {
         overwrite: true
       });
 
-      const value = "100";
+      const value = '100';
       imask.value = value;
       assert.strictEqual(imask.value, value);
     });

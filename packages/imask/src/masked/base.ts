@@ -25,10 +25,12 @@ type ExtractFlags = {
   raw?: boolean
 };
 
+// see https://github.com/microsoft/TypeScript/issues/6223
+
 export
-type MaskedOptions<Mask extends any=any, Parent extends Masked=any> = Pick<Masked<Mask, Parent>,
-  | 'parent'
+type MaskedOptions<M extends Masked=any> = Partial<Pick<M,
   | 'mask'
+  | 'parent'
   | 'prepare'
   | 'validate'
   | 'commit'
@@ -37,44 +39,44 @@ type MaskedOptions<Mask extends any=any, Parent extends Masked=any> = Pick<Maske
   | 'overwrite'
   | 'eager'
   | 'skipInvalid'
->;
+>>;
 
 
 /** Provides common masking stuff */
 export default
-class Masked<Mask extends any=any, Parent extends Masked=any> {
+class Masked {
   static DEFAULTS: Partial<MaskedOptions>;
   static EMPTY_VALUES: any; // TODO
 
   /** @type {Mask} */
-  mask: Mask;
+  declare mask: unknown;
   /** */
-  parent?: Parent; // TODO
+  declare parent?: Masked;
   /** Transforms value before mask processing */
-  prepare?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
+  declare prepare?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
   /** Validates if value is acceptable */
-  validate?: (value: string, masked: this, flags: AppendFlags) => boolean;
+  declare validate?: (value: string, masked: this, flags: AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
-  commit?: (value: string, masked: this) => void;
+  declare commit?: (value: string, masked: this) => void;
   /** Format typed value to string */
-  format?: (value: any, masked: this) => string; // TODO any
+  declare format?: (value: this['typedValue'], masked: this) => string;
   /** Parse strgin to get typed value */
-  parse?: (str: string, masked: this) => any;  // TODO any
+  declare parse?: (str: string, masked: this) => this['typedValue'];
   /** Enable characters overwriting */
-  overwrite?: boolean | 'shift' | undefined;
+  declare overwrite?: boolean | 'shift' | undefined;
   /** */
-  eager?: boolean | 'remove' | 'append' | undefined;
+  declare eager?: boolean | 'remove' | 'append' | undefined;
   /** */
-  skipInvalid?: boolean | undefined;
+  declare skipInvalid?: boolean | undefined;
 
   /** */
-  _initialized: boolean;
+  declare _initialized: boolean;
 
-  _value: string;
-  _refreshing?: boolean;
-  _isolated?: boolean;
+  declare _value: string;
+  declare _refreshing?: boolean;
+  declare _isolated?: boolean;
 
-  constructor (opts: MaskedOptions<Mask, Parent>) {
+  constructor (opts: MaskedOptions) {
     this._value = '';
     this._update({
       ...Masked.DEFAULTS,
@@ -84,7 +86,7 @@ class Masked<Mask extends any=any, Parent extends Masked=any> {
   }
 
   /** Sets and applies new options */
-  updateOptions (opts: Partial<MaskedOptions<Mask, Parent>>) {
+  updateOptions (opts: Partial<MaskedOptions>) {
     if (!Object.keys(opts).length) return;
 
     this.withValueRefresh(this._update.bind(this, opts));
@@ -94,7 +96,7 @@ class Masked<Mask extends any=any, Parent extends Masked=any> {
     Sets new options
     @protected
   */
-  _update (opts: Partial<MaskedOptions<Mask, Parent>>) {
+  _update (opts: Partial<MaskedOptions>) {
     Object.assign(this, opts);
   }
 
@@ -196,7 +198,6 @@ class Masked<Mask extends any=any, Parent extends Masked=any> {
   }
 
   /** Appends tail */
-  // $FlowFixMe no ideas
   appendTail (tail: string | String | TailDetails): ChangeDetails {
     if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
 
@@ -272,7 +273,6 @@ class Masked<Mask extends any=any, Parent extends Masked=any> {
   }
 
   /** Appends symbols considering flags */
-  // $FlowFixMe no ideas
   append (str: string, flags?: AppendFlags, tail?: string | String | TailDetails): ChangeDetails {
     if (!isString(str)) throw new Error('value should be string');
     const details = new ChangeDetails();
@@ -390,7 +390,7 @@ class Masked<Mask extends any=any, Parent extends Masked=any> {
   }
 
   /** */
-  splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction, flags: AppendFlags = { input: true }): ChangeDetails {
+  splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction = DIRECTION.NONE, flags: AppendFlags = { input: true }): ChangeDetails {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);
 
@@ -449,7 +449,7 @@ class Masked<Mask extends any=any, Parent extends Masked=any> {
 }
 Masked.DEFAULTS = {
   format: String,
-  parse: v => v,
+  parse: (v: unknown) => v,
   skipInvalid: true,
 };
 Masked.EMPTY_VALUES = [undefined, null, ''];

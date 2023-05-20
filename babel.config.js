@@ -19,8 +19,8 @@ module.exports = function (api) {
 
   return {
     presets: [
-      ['@babel/env', presetOptions],
-      '@babel/typescript'
+      [ '@babel/env', presetOptions ],
+      [ '@babel/typescript', { allowDeclareFields: true } ]
     ],
     plugins,
     exclude,

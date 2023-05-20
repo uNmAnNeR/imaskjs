@@ -5,7 +5,7 @@ import MaskedRange from '../../src/masked/range';
 
 
 describe('MaskedRange', function () {
-  const masked = new MaskedRange({});
+  const masked = new MaskedRange();
 
   beforeEach(function () {
     masked.updateOptions({

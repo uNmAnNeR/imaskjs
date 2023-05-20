@@ -3,11 +3,13 @@ import IMask from '../core/holder';
 
 
 export default
-class HTMLContenteditableMaskElement extends HTMLMaskElement<HTMLElement> {
+class HTMLContenteditableMaskElement extends HTMLMaskElement {
+  declare input: HTMLElement;
   /**
     Returns HTMLElement selection start
     @override
   */
+  // @ts-ignore
   override get _unsafeSelectionStart (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
@@ -23,6 +25,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement<HTMLElement> {
     Returns HTMLElement selection end
     @override
   */
+  // @ts-ignore
   override get _unsafeSelectionEnd (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
@@ -56,6 +59,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement<HTMLElement> {
     HTMLElement value
     @override
   */
+  // @ts-ignore
   override get value (): string {
     return this.input.textContent;
   }

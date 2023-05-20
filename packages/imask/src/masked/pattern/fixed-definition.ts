@@ -15,17 +15,17 @@ type PatternFixedDefinitionState = MaskedState & Pick<PatternFixedDefinition, '_
 export default
 class PatternFixedDefinition implements PatternBlock {
   /** */
-  _value: string;
+  declare _value: string;
   /** */
-  char: string;
+  declare char: string;
   /** */
-  isUnmasking?: boolean;
+  declare isUnmasking?: boolean;
   /** */
-  eager: boolean | 'remove' | 'append';
+  declare eager: boolean | 'remove' | 'append';
   /** */
-  _isRawInput?: boolean;
+  declare _isRawInput?: boolean;
   /** */
-  isFixed: boolean;
+  declare isFixed: boolean;
 
   constructor(opts: PatternFixedDefinitionOptions) {
     Object.assign(this, opts);
@@ -120,7 +120,6 @@ class PatternFixedDefinition implements PatternBlock {
     return new ContinuousTailDetails('');
   }
 
-  // $FlowFixMe no ideas
   appendTail (tail: string | String | TailDetails): ChangeDetails {
     if (isString(tail)) tail = new ContinuousTailDetails(String(tail));
 

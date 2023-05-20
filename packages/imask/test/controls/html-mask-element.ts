@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { describe, it } from 'node:test';
 
-import HTMLMaskElement from 'src/controls/html-mask-element';
+import HTMLMaskElement from '../../src/controls/html-mask-element';
 
 
 describe('HTMLMaskElement', function () {
@@ -14,7 +14,7 @@ describe('HTMLMaskElement', function () {
         get activeElement () {
           return this;
         }
-      };
+      } as any;
 
       const maskElement = new HTMLMaskElement(input);
       assert.strictEqual(maskElement.isActive, true);
@@ -23,8 +23,8 @@ describe('HTMLMaskElement', function () {
     it('should use document as a fallback', function () {
       const doc = global.document;
 
-      const input = {};
-      global.document = { activeElement: input };
+      const input = {} as any;
+      global.document = { activeElement: input } as any;
       const maskElement = new HTMLMaskElement(input);
       assert.strictEqual(maskElement.isActive, true);
 

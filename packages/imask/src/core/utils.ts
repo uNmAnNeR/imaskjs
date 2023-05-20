@@ -101,7 +101,6 @@ function objectIncludes (b: any, a: any): boolean {
     // if (keys.length !== Object.keys(b).length) return false;
 
     for (i = 0; i < keys.length; i++)
-      // $FlowFixMe ... ???
       if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
 
     for (i = 0; i < keys.length; i++)
