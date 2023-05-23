@@ -91,13 +91,6 @@ type FactoryStaticReturnMasked<Opts extends FactoryStaticOpts> =
   : never
 ;
 
-
-export
-type FactoryInstanceOpts = MaskedOptions & { mask: Masked };
-
-export
-type FactoryInstanceReturnMasked<Opts extends FactoryInstanceOpts> = Opts extends { mask: infer Masked } ? Masked : never;
-
 export
 type DeduceMaskedFromOpts<Opts extends FactoryStaticOpts> =
   Opts extends MaskedPatternOptions
@@ -112,8 +105,6 @@ type DeduceMaskedFromOpts<Opts extends FactoryStaticOpts> =
   ? MaskedFunction
   : Opts extends MaskedDynamicOptions
   ? MaskedDynamic
-  : Opts extends FactoryInstanceOpts
-  ? FactoryInstanceReturnMasked<Opts>
   : never
 
 export
@@ -154,7 +145,7 @@ type FactoryConstructorReturnMasked<Opts extends FactoryConstructorOpts> =
 ;
 
 export
-type FactoryOpts = FactoryConstructorOpts | FactoryInstanceOpts | FactoryStaticOpts;
+type FactoryOpts = FactoryConstructorOpts | FactoryStaticOpts;
 
 export
 type FactoryArg = Masked | FactoryOpts;
@@ -165,8 +156,6 @@ type FactoryReturnMasked<Opts extends FactoryArg> =
   ? Opts
   : Opts extends FactoryConstructorOpts
   ? FactoryConstructorReturnMasked<Opts>
-  : Opts extends FactoryInstanceOpts
-  ? FactoryInstanceReturnMasked<Opts>
   : Opts extends FactoryStaticOpts
   ? FactoryStaticReturnMasked<Opts>
   : never;
@@ -222,7 +211,6 @@ type AllMaskedOptions =
   & MaskedDynamicOptions
   & MaskedRegExpOptions
   & MaskedFunctionOptions
-  & FactoryInstanceOpts
   & FactoryConstructorOpts
 ;
 
