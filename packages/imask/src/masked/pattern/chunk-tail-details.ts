@@ -1,6 +1,6 @@
 import type { TailDetails, AppendTail } from '../../core/tail-details';
 import ChangeDetails from '../../core/change-details';
-import { isString, type ClassOptions } from '../../core/utils';
+import { isString } from '../../core/utils';
 import ContinuousTailDetails from '../../core/continuous-tail-details';
 import IMask from '../../core/holder';
 import type MaskedPattern from '../pattern';

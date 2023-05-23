@@ -1,5 +1,5 @@
 import MaskedPattern, { type MaskedPatternOptions } from './pattern';
-import Masked, { AppendFlags } from './base';
+import { AppendFlags } from './base';
 import IMask from '../core/holder';
 
 export

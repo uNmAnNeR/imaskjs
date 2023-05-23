@@ -7,7 +7,7 @@ type MaskedRegExpOptions = MaskedOptions<MaskedRegExp>;
 
 /** Masking by RegExp */
 export default
-class MaskedRegExp extends Masked {
+class MaskedRegExp extends Masked<string> {
   declare mask: RegExp;
 
   override updateOptions (opts: Partial<MaskedRegExpOptions>) {

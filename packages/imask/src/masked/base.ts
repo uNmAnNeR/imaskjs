@@ -1,6 +1,6 @@
 import ChangeDetails from '../core/change-details';
 import ContinuousTailDetails from '../core/continuous-tail-details';
-import { type Direction, DIRECTION, isString, forceDirection, ClassOptions } from '../core/utils';
+import { type Direction, DIRECTION, isString, forceDirection } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
 import IMask from '../core/holder';
 
@@ -12,11 +12,11 @@ type MaskedState = {
 
 /** Append flags */
 export
-type AppendFlags = {
+type AppendFlags<State=MaskedState> = {
   input?: boolean,
   tail?: boolean,
   raw?: boolean,
-  _beforeTailState?: any,  // TODO types...
+  _beforeTailState?: State,
 };
 
 /** Extract flags */
@@ -28,7 +28,7 @@ type ExtractFlags = {
 // see https://github.com/microsoft/TypeScript/issues/6223
 
 export
-type MaskedOptions<M extends Masked=any> = Partial<Pick<M,
+type MaskedOptions<M extends Masked=Masked, Props extends keyof M=never> = Partial<Pick<M,
   | 'mask'
   | 'parent'
   | 'prepare'
@@ -39,14 +39,15 @@ type MaskedOptions<M extends Masked=any> = Partial<Pick<M,
   | 'overwrite'
   | 'eager'
   | 'skipInvalid'
+  | Props
 >>;
 
 
 /** Provides common masking stuff */
 export default
-class Masked {
+class Masked<Value=any> {
   static DEFAULTS: Partial<MaskedOptions>;
-  static EMPTY_VALUES: any; // TODO
+  static EMPTY_VALUES: Array<any>;
 
   /** @type {Mask} */
   declare mask: unknown;
@@ -59,9 +60,9 @@ class Masked {
   /** Does additional processing in the end of editing */
   declare commit?: (value: string, masked: this) => void;
   /** Format typed value to string */
-  declare format?: (value: this['typedValue'], masked: this) => string;
+  declare format?: (value: Value, masked: this) => string;
   /** Parse strgin to get typed value */
-  declare parse?: (str: string, masked: this) => this['typedValue'];
+  declare parse?: (str: string, masked: this) => Value;
   /** Enable characters overwriting */
   declare overwrite?: boolean | 'shift' | undefined;
   /** */
@@ -145,11 +146,11 @@ class Masked {
   }
 
   /** */
-  get typedValue (): any {
+  get typedValue (): Value {
     return this.doParse(this.value);
   }
 
-  set typedValue (value: any) {
+  set typedValue (value: Value) {
     this.value = this.doFormat(value);
   }
 
@@ -345,19 +346,12 @@ class Masked {
     return this.skipInvalid;
   }
 
-  normalizePrepare (prep: string | [string, ChangeDetails]): [string, ChangeDetails] {
-    return Array.isArray(prep) ? prep : [
-      prep,
-      new ChangeDetails(),
-    ];
-  }
-
   /**
     Prepares string before mask processing
     @protected
   */
   doPrepare (str: string, flags: AppendFlags={}): [string, ChangeDetails] {
-    return this.normalizePrepare(this.prepare ?
+    return ChangeDetails.normalize(this.prepare ?
       this.prepare(str, this, flags) :
       str);
   }
@@ -380,13 +374,13 @@ class Masked {
   }
 
   /** */
-  doFormat (value: any): string {
-    return this.format ? this.format(value, this) : value;
+  doFormat (value: Value): string {
+    return this.format ? this.format(value, this) : String(value);
   }
 
   /** */
-  doParse (str: string): any {
-    return this.parse ? this.parse(str, this) : str;
+  doParse (str: string): Value {
+    return this.parse ? this.parse(str, this) : str as Value;
   }
 
   /** */
@@ -449,7 +443,7 @@ class Masked {
 }
 Masked.DEFAULTS = {
   format: String,
-  parse: (v: unknown) => v,
+  parse: (v: any) => v,
   skipInvalid: true,
 };
 Masked.EMPTY_VALUES = [undefined, null, ''];

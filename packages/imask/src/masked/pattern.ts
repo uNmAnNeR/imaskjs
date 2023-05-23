@@ -1,29 +1,32 @@
-import {DIRECTION, type Direction, forceDirection} from '../core/utils.js';
-import ChangeDetails from '../core/change-details.js';
-import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base.js';
-import PatternInputDefinition, { DEFAULT_INPUT_DEFINITIONS, type Definitions } from './pattern/input-definition.js';
-import PatternFixedDefinition from './pattern/fixed-definition.js';
-import { type TailDetails } from '../core/tail-details.js';
-import ChunksTailDetails from './pattern/chunk-tail-details.js';
-import ContinuousTailDetails from '../core/continuous-tail-details.js';
-import { type PatternBlock } from './pattern/block.js';
-import PatternCursor from './pattern/cursor.js';
-import createMask, { type FactoryClassOpts, type FactoryStaticOpts } from './factory.js';
-import IMask from '../core/holder.js';
-import './regexp.js';  // support for default definitions which are regexp's
+import exp from 'constants';
+import ChangeDetails from '../core/change-details';
+import IMask from '../core/holder';
+import { type TailDetails } from '../core/tail-details';
+import { DIRECTION, type Direction } from '../core/utils';
+import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base';
+import createMask, { type FactoryOpts } from './factory';
+import { type PatternBlock } from './pattern/block';
+import ChunksTailDetails from './pattern/chunk-tail-details';
+import PatternCursor from './pattern/cursor';
+import PatternFixedDefinition from './pattern/fixed-definition';
+import PatternInputDefinition, { DEFAULT_INPUT_DEFINITIONS, type Definitions } from './pattern/input-definition';
+import './regexp'; // support for default definitions which are regexp's
 
 
 export
-type MaskedPatternOptions = MaskedOptions<MaskedPattern> & Partial<Pick<MaskedPattern,
+type MaskedPatternOptions<Value=string, M extends MaskedPattern<Value>=MaskedPattern<Value>, Props extends keyof M=never> = MaskedOptions<M,
   | 'definitions'
   | 'blocks'
   | 'placeholderChar'
   | 'displayChar'
   | 'lazy'
->>;
+  | Props
+>;
 
+
+export
 type MaskedPatternState = MaskedState & {
-  _blocks: Array<any>, // TODO type
+  _blocks: Array<any>,
 };
 
 type BlockPosData = {
@@ -42,8 +45,8 @@ type BlockPosData = {
   @param {boolean} opts.lazy
 */
 export default
-class MaskedPattern extends Masked {
-  static DEFAULTS: any;
+class MaskedPattern<Value=string> extends Masked<Value> {
+  static DEFAULTS: Partial<MaskedPatternOptions<any>>;
   static STOP_CHAR: string;
   static ESCAPE_CHAR: string;
   static InputDefinition: typeof PatternInputDefinition;
@@ -51,7 +54,7 @@ class MaskedPattern extends Masked {
 
   declare mask: string;
   /** */
-  declare blocks: { [key: string]: FactoryClassOpts | FactoryStaticOpts };
+  declare blocks: { [key: string]: FactoryOpts };
   /** */
   declare definitions: Definitions;
   /** Single char for empty input */
@@ -65,15 +68,15 @@ class MaskedPattern extends Masked {
   declare _maskedBlocks: {[key: string]: Array<number>};
   declare _stops: Array<number>;
 
-  constructor (opts: MaskedPatternOptions) {
+  constructor (opts: MaskedPatternOptions<Value>) {
     super({
       ...MaskedPattern.DEFAULTS,
       ...opts,
       definitions: Object.assign({}, DEFAULT_INPUT_DEFINITIONS, opts?.definitions),
-    });
+    } as MaskedOptions);
   }
 
-  override updateOptions (opts: Partial<MaskedPatternOptions>) {
+  override updateOptions (opts: Partial<MaskedPatternOptions<Value>>) {
     super.updateOptions(opts);
   }
 
@@ -81,7 +84,7 @@ class MaskedPattern extends Masked {
     @override
     @param {Object} opts
   */
-  override _update (opts: Partial<MaskedPatternOptions>) {
+  override _update (opts: Partial<MaskedPatternOptions<Value>>) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
     super._update(opts);
     this._rebuildMask();
@@ -291,7 +294,7 @@ class MaskedPattern extends Masked {
   /**
     @override
   */
-  _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
+  _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
     const blockIter = this._mapPosToBlock(this.value.length);
     const details = new ChangeDetails();
     if (!blockIter) return details;
@@ -369,7 +372,7 @@ class MaskedPattern extends Masked {
     this._blocks.slice(startBlockIndex, endBlockIndex)
       .forEach(b => {
         if (!b.lazy || toBlockIndex != null) {
-          const bDetails = b._appendPlaceholder((b as any)._blocks?.length);
+          const bDetails = b._appendPlaceholder((b as MaskedPattern)._blocks?.length);
           this._value += bDetails.inserted;
           details.aggregate(bDetails);
         }

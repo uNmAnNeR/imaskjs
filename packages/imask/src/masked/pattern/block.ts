@@ -1,5 +1,4 @@
 import type Masked from '../base';
-import type MaskedPattern from '../pattern';
 import type ChangeDetails from '../../core/change-details';
 import { type TailDetails } from '../../core/tail-details';
 import { type ExtractFlags, type AppendFlags } from '../base';

@@ -6,14 +6,14 @@ import { type PatternBlock } from './block';
 type PatternCursorState = { offset: number, index: number, ok: boolean };
 
 export default
-class PatternCursor {
-  declare masked: MaskedPattern;
+class PatternCursor<Value> {
+  declare masked: MaskedPattern<Value>;
   declare offset: number;
   declare index: number;
   declare ok: boolean;
   declare _log: PatternCursorState[];
 
-  constructor (masked: MaskedPattern, pos: number) {
+  constructor (masked: MaskedPattern<Value>, pos: number) {
     this.masked = masked;
     this._log = [];
 

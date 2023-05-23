@@ -9,19 +9,19 @@ import IMask from '../core/holder';
 
 type MaskedDynamicState = MaskedState & {
   _rawInputValue: string,
-  compiledMasks: Array<any>,
+  compiledMasks: Array<MaskedState>,
   currentMaskRef?: Masked,
-  currentMask: any,
+  currentMask: MaskedState,
 };
 
 type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
 
 export
-type MaskedDynamicOptions = MaskedOptions<MaskedDynamic> & Partial<Pick<MaskedDynamic, 'dispatch'>>;
+type MaskedDynamicOptions = MaskedOptions<MaskedDynamic, 'dispatch'>;
 
 /** Dynamic mask for choosing appropriate mask in run-time */
 export default
-class MaskedDynamic extends Masked {
+class MaskedDynamic<Value=any> extends Masked<Value> {
   static DEFAULTS: Partial<MaskedDynamicOptions>;
 
   declare mask: DynamicMaskType;
@@ -31,7 +31,7 @@ class MaskedDynamic extends Masked {
   /** Compliled {@link Masked} options */
   declare compiledMasks: Array<Masked>; // TODO FactoryReturnMasked<?>
   /** Chooses {@link Masked} depending on input value */
-  declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags, tail: string | String | TailDetails) => Masked;
+  declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags<MaskedDynamicState>, tail: string | String | TailDetails) => Masked;
 
   /**
     @param {Object} opts
@@ -67,7 +67,7 @@ class MaskedDynamic extends Masked {
   /**
     @override
   */
-  override _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
+  override _appendCharRaw (ch: string, flags: AppendFlags<MaskedDynamicState>={}): ChangeDetails {
     const details = this._applyDispatch(ch, flags);
 
     if (this.currentMask) {
@@ -77,7 +77,7 @@ class MaskedDynamic extends Masked {
     return details;
   }
 
-  _applyDispatch (appended: string='', flags: AppendFlags={}, tail: string | String | TailDetails = ''): ChangeDetails {
+  _applyDispatch (appended: string='', flags: AppendFlags<MaskedDynamicState>={}, tail: string | String | TailDetails = ''): ChangeDetails {
     const prevValueBeforeTail = flags.tail && flags._beforeTailState != null ?
       flags._beforeTailState._value :
       this.value;
@@ -153,7 +153,7 @@ class MaskedDynamic extends Masked {
       super.appendTail(tail));
   }
 
-  currentMaskFlags (flags: AppendFlags): AppendFlags {
+  currentMaskFlags (flags: AppendFlags<MaskedDynamicState>): AppendFlags {
     return {
       ...flags,
       _beforeTailState: flags._beforeTailState?.currentMaskRef === this.currentMask && flags._beforeTailState?.currentMask ||
@@ -162,14 +162,14 @@ class MaskedDynamic extends Masked {
   }
 
   /** */
-  doDispatch(appended: string, flags: AppendFlags={}, tail: string | String | TailDetails=''): Masked | undefined {
+  doDispatch(appended: string, flags: AppendFlags<MaskedDynamicState>={}, tail: string | String | TailDetails=''): Masked | undefined {
     return this.dispatch(appended, this, flags, tail);
   }
 
   /**
     @override
   */
-  override doValidate (flags: AppendFlags): boolean {
+  override doValidate (flags: AppendFlags<MaskedDynamicState>): boolean {
     return super.doValidate(flags) && (
       !this.currentMask || this.currentMask.doValidate(this.currentMaskFlags(flags))
     );
@@ -178,7 +178,7 @@ class MaskedDynamic extends Masked {
   /**
     @override
   */
-  override doPrepare (str: string, flags: AppendFlags={}): [string, ChangeDetails] {
+  override doPrepare (str: string, flags: AppendFlags<MaskedDynamicState>={}): [string, ChangeDetails] {
     let [s, details] = super.doPrepare(str, flags);
 
     if (this.currentMask) {
@@ -223,12 +223,12 @@ class MaskedDynamic extends Masked {
   /**
     @override
   */
-  override get typedValue (): any {
+  override get typedValue (): Value {
     return this.currentMask ? this.currentMask.typedValue : '';
   }
 
   // probably typedValue should not be used with dynamic
-  override set typedValue (value: any) {
+  override set typedValue (value: Value) {
     let unmaskedValue = String(value);
 
     // double check it
@@ -367,22 +367,16 @@ class MaskedDynamic extends Masked {
     }
   }
 
-  /**
-    @override
-  */
   override maskEquals (mask: any): boolean {
-    return Array.isArray(mask) &&
+    return Array.isArray(mask) ?
       this.compiledMasks.every((m, mi) => {
         if (!mask[mi]) return;
 
         const { mask: oldMask, ...restOpts } = mask[mi];
         return objectIncludes(m, restOpts) && m.maskEquals(oldMask);
-      });
+      }) : super.maskEquals(mask);
   }
 
-  /**
-    @override
-  */
   override typedValueEquals (value: any): boolean {
     return Boolean(this.currentMask?.typedValueEquals(value));
   }

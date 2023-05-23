@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { describe, it, beforeEach } from 'node:test';
+import { beforeEach, describe } from 'node:test';
 
 import MaskedRange from '../../src/masked/range';
 

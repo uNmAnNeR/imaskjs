@@ -2,6 +2,7 @@ import assert from 'assert';
 import { describe, it, beforeEach } from 'node:test';
 
 import IMask, { InputMask, createMask } from '../../src';
+import { MaskedNumberOptions } from '../../src/masked/number';
 import MaskElementStub from './mask-element-stub';
 
 
@@ -66,7 +67,7 @@ describe('InputMask', function () {
         max: 100
       };
 
-      imask.updateOptions(opts);
+      (imask as unknown as InputMask<MaskedNumberOptions>).updateOptions(opts);
       assert.ok(imask.masked instanceof IMask.MaskedNumber);
       assert.equal(imask.masked.max, opts.max);
     });
@@ -74,32 +75,34 @@ describe('InputMask', function () {
 
   describe('#typed value', function () {
     it('should be typed', function () {
-      imask.updateOptions({
+      const nmask = (imask as unknown as InputMask<MaskedNumberOptions>);
+      nmask.updateOptions({
         mask: Number,
         max: Infinity,
       });
       const value = 100;
-      imask.typedValue = value;
-      assert.strictEqual(imask.typedValue, value);
-      assert.strictEqual(imask.unmaskedValue, String(value));
+      nmask.typedValue = value;
+      assert.strictEqual(nmask.typedValue, value);
+      assert.strictEqual(nmask.unmaskedValue, String(value));
 
       const str = '200';
-      imask.unmaskedValue = str;
-      assert.strictEqual(imask.typedValue, Number(str));
-      assert.strictEqual(imask.unmaskedValue, str);
+      nmask.unmaskedValue = str;
+      assert.strictEqual(nmask.typedValue, Number(str));
+      assert.strictEqual(nmask.unmaskedValue, str);
     });
   });
 
   describe('#update value when overwrite option is true', function () {
     it('should update mask and set new value', function () {
-      imask.updateOptions({
+      const nmask = (imask as unknown as InputMask<MaskedNumberOptions>);
+      nmask.updateOptions({
         mask: Number,
         overwrite: true
       });
 
       const value = '100';
-      imask.value = value;
-      assert.strictEqual(imask.value, value);
+      nmask.value = value;
+      assert.strictEqual(nmask.value, value);
     });
   });
 });

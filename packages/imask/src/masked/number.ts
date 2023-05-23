@@ -1,4 +1,4 @@
-import { escapeRegExp, type Direction, DIRECTION, type ClassOptions } from '../core/utils';
+import { escapeRegExp, type Direction, DIRECTION } from '../core/utils';
 import ChangeDetails from '../core/change-details';
 import { type TailDetails } from '../core/tail-details';
 
@@ -7,15 +7,17 @@ import IMask from '../core/holder';
 
 
 export
-type MaskedNumberOptions = MaskedOptions<MaskedNumber> & Partial<Pick<MaskedNumber,
+type MaskedNumberOptions = MaskedOptions<MaskedNumber,
   | 'radix'
   | 'thousandsSeparator'
   | 'mapToRadix'
   | 'scale'
   | 'signed'
+  | 'min'
+  | 'max'
   | 'normalizeZeros'
   | 'padFractionalZeros'
->>;
+>;
 
 /**
   Number mask
@@ -31,9 +33,10 @@ type MaskedNumberOptions = MaskedOptions<MaskedNumber> & Partial<Pick<MaskedNumb
   @param {boolean} opts.padFractionalZeros - Flag to pad trailing zeros after point in the end of editing
 */
 export default
-class MaskedNumber extends Masked {
+class MaskedNumber extends Masked<number> {
   static DEFAULTS: Partial<MaskedNumberOptions>;
   static UNMASKED_RADIX: string;
+  static EMPTY_VALUES: Array<null | undefined | string | number>;
 
   declare mask: NumberConstructor;
   /** Single char */
@@ -402,7 +405,7 @@ MaskedNumber.DEFAULTS = {
   normalizeZeros: true,
   padFractionalZeros: false,
   parse: Number,
-  format: n => n.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }),
+  format: (n: number) => n.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }),
 };
 MaskedNumber.EMPTY_VALUES = [...Masked.EMPTY_VALUES, 0];
 

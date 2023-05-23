@@ -1,7 +1,6 @@
 import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
-import MaskedDate from '../masked/date';
-import createMask, { maskedClass, type AnyMaskedOptions, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
+import createMask, { maskedClass, type FactoryArg, type FactoryReturnMasked, type AnyMask } from '../masked/factory';
 import Masked from '../masked/base';
 import MaskElement from './mask-element';
 import HTMLInputMaskElement, { type InputElement } from './html-input-mask-element';
@@ -77,11 +76,12 @@ class InputMask<Opts extends FactoryArg> {
     if (this.maskEquals(mask)) return;
 
     if (!((mask as Masked) instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask)) {
-      this.masked.updateOptions({mask});
+      // TODO "any" no idea
+      this.masked.updateOptions({ mask } as any);
       return;
     }
 
-    const masked = createMask<Opts>({ mask } as Opts);
+    const masked = createMask({ mask } as Opts);
     masked.unmaskedValue = this.masked.unmaskedValue;
     this.masked = masked;
   }
@@ -113,11 +113,11 @@ class InputMask<Opts extends FactoryArg> {
   }
 
   /** Typed unmasked value */
-  get typedValue (): any {
+  get typedValue (): FactoryReturnMasked<Opts>['typedValue'] {
     return this.masked.typedValue;
   }
 
-  set typedValue (val: any) {
+  set typedValue (val: FactoryReturnMasked<Opts>['typedValue']) {
     if (this.masked.typedValueEquals(val)) return;
 
     this.masked.typedValue = val;
@@ -225,14 +225,14 @@ class InputMask<Opts extends FactoryArg> {
   }
 
   /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
-  updateOptions (opts: {[key: string]: any}) {
+  updateOptions (opts: Partial<Opts>) {
     const { mask, ...restOpts } = opts;
 
     const updateMask = !this.maskEquals(mask);
     const updateOpts = !objectIncludes(this.masked, restOpts);
 
     if (updateMask) this.mask = mask;
-    if (updateOpts) this.masked.updateOptions(restOpts);
+    if (updateOpts) this.masked.updateOptions(restOpts as any); // TODO "any" no idea
 
     if (updateMask || updateOpts) this.updateControl();
   }

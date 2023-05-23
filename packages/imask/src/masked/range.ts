@@ -1,14 +1,14 @@
-import MaskedPattern, { type MaskedPatternOptions } from './pattern';
 import ChangeDetails from '../core/change-details';
-import Masked, { type AppendFlags } from './base';
 import IMask from '../core/holder';
+import { type AppendFlags } from './base';
+import MaskedPattern, { type MaskedPatternOptions } from './pattern';
 
 export
 type MaskedRangeOptions = Omit<MaskedPatternOptions, 'mask'> &
-  Partial<Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>>;
+  Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>;
 
 type MaskedRangePatternOptions = MaskedPatternOptions &
-  Partial<Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>>;
+  Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>;
 
 
 /** Pattern which accepts ranges */
@@ -18,13 +18,13 @@ class MaskedRange extends MaskedPattern {
     Optionally sets max length of pattern.
     Used when pattern length is longer then `to` param length. Pads zeros at start in this case.
   */
-  declare maxLength: number;
+  declare maxLength?: number;
   /** Min bound */
   declare from: number;
   /** Max bound */
   declare to: number;
   /** */
-  declare autofix: boolean | 'pad';
+  declare autofix?: boolean | 'pad';
 
   get _matchFrom (): number {
     return this.maxLength - String(this.from).length;
@@ -39,7 +39,7 @@ class MaskedRange extends MaskedPattern {
   }
 
   override _update (opts: Partial<MaskedRangeOptions>) {
-    let { to=0, from=0, maxLength=0, autofix, ...patternOpts }: MaskedRangePatternOptions = opts;
+    let { to=0, from=0, maxLength=0, autofix, ...patternOpts }: Partial<MaskedRangePatternOptions> = opts;
 
     maxLength = Math.max(String(to).length, maxLength);
 

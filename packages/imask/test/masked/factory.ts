@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { describe, it } from 'node:test';
+import { describe } from 'node:test';
 
 import { createMask } from '../../src';
 import type Masked from '../../src/masked/base';

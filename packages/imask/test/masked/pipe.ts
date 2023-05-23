@@ -1,9 +1,9 @@
 import assert from 'assert';
-import { describe, it, beforeEach } from 'node:test';
+import { describe } from 'node:test';
 
 import '../../src';
-import { PIPE_TYPE, createPipe, pipe } from '../../src/masked/pipe';
 import createMask from '../../src/masked/factory';
+import { pipe, PIPE_TYPE } from '../../src/masked/pipe';
 
 
 describe('Pipe', function () {

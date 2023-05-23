@@ -23,6 +23,13 @@ class ChangeDetails {
   /** Raw inserted is used by dynamic mask */
   declare rawInserted: string;
 
+  static normalize (prep: string | [string, ChangeDetails]): [string, ChangeDetails] {
+    return Array.isArray(prep) ? prep : [
+      prep,
+      new ChangeDetails(),
+    ];
+  }
+
   constructor (details?: Partial<ChangeDetailsOptions>) {
     Object.assign(this, {
       inserted: '',

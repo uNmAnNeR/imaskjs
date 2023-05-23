@@ -7,7 +7,7 @@ type MaskedFunctionOptions = MaskedOptions<MaskedFunction>;
 
 /** Masking by custom Function */
 export default
-class MaskedFunction extends Masked {
+class MaskedFunction<Value=any> extends Masked<Value> {
   declare mask: (value: string, masked: this) => boolean;
   override updateOptions (opts: Partial<MaskedFunctionOptions>) {
     super.updateOptions(opts);
