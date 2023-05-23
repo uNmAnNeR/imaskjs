@@ -5,7 +5,13 @@
   ],
 
   "compilerOptions": {
+    "rootDir": "./src",
     "declaration": true,
-    "declarationDir": "./esm"
+    "declarationDir": "./esm",
+    "paths": {
+      "imask": [
+        "../imask"
+      ]
+    },
   }
 }

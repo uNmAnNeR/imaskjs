@@ -1,5 +1,5 @@
-import IMask, { type MaskElement, type InputMask } from 'imask';
+import IMask, { type InputMaskElement, type InputMask, type FactoryArg } from 'imask';
 
 export interface IMaskFactory {
-    create<Opts extends IMask.AnyMaskedOptions>(el: MaskElement | HTMLElement, opts: Opts): InputMask<Opts>
+    create<Opts extends FactoryArg>(el: InputMaskElement, opts: Opts): InputMask<Opts>
 }

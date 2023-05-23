@@ -20,7 +20,7 @@
         "node_modules/@angular/*"
       ],
       "imask": [
-        "node_modules/imask"
+        "../imask"
       ],
       "angular-imask": [
         "dist"

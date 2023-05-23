@@ -24,41 +24,41 @@ import { type MaskedDateOptions } from './date';
 type MaskedDateFactoryOptions = Omit<MaskedDateOptions, 'mask'> & { mask: DateConstructor };
 
 
-type MaskedConstructor =
-  | typeof MaskedDate
-  | typeof MaskedNumber
-  | typeof MaskedEnum
-  | typeof MaskedRange
-  | typeof MaskedRegExp
-  | typeof MaskedFunction
-  | typeof MaskedPattern
-  | typeof MaskedDynamic
-  | typeof MaskedRegExp
-;
+// type MaskedConstructor =
+//   | typeof MaskedDate
+//   | typeof MaskedNumber
+//   | typeof MaskedEnum
+//   | typeof MaskedRange
+//   | typeof MaskedRegExp
+//   | typeof MaskedFunction
+//   | typeof MaskedPattern
+//   | typeof MaskedDynamic
+//   | typeof MaskedRegExp
+// ;
 
-export type AnyMaskedOptions =
-  | MaskedDateFactoryOptions
-  | MaskedNumberOptions
-  | MaskedPatternOptions
-  | MaskedDynamicOptions
-  | MaskedEnumOptions
-  | MaskedRangeOptions
-  | MaskedRegExpOptions
-  | MaskedFunctionOptions
-  | MaskedOptions<Masked>
-  | { mask: MaskedConstructor }
-;
+// export type AnyMaskedOptions =
+//   | MaskedDateFactoryOptions
+//   | MaskedNumberOptions
+//   | MaskedPatternOptions
+//   | MaskedDynamicOptions
+//   | MaskedEnumOptions
+//   | MaskedRangeOptions
+//   | MaskedRegExpOptions
+//   | MaskedFunctionOptions
+//   | MaskedOptions<Masked>
+//   | { mask: MaskedConstructor }
+// ;
 
-export type AnyMask =
-  | MaskedDateFactoryOptions['mask']
-  | MaskedNumberOptions['mask']
-  | MaskedPatternOptions['mask']
-  | MaskedDynamicOptions['mask']
-  | MaskedRegExpOptions['mask']
-  | MaskedFunctionOptions['mask']
-  | Masked
-  | MaskedConstructor
-;
+// export type AnyMask =
+//   | MaskedDateFactoryOptions['mask']
+//   | MaskedNumberOptions['mask']
+//   | MaskedPatternOptions['mask']
+//   | MaskedDynamicOptions['mask']
+//   | MaskedRegExpOptions['mask']
+//   | MaskedFunctionOptions['mask']
+//   | Masked
+//   | MaskedConstructor
+// ;
 
 export
 type FactoryStaticOpts =
@@ -172,59 +172,59 @@ type FactoryReturnMasked<Opts extends FactoryArg> =
   : never;
 
 
-export
-type DeduceMasked<Opts> =
-  Opts extends Masked
-  ? Opts
-  : Opts extends FactoryStaticOpts
-    ? DeduceMaskedFromOpts<Opts>
-    : never;
+// export
+// type DeduceMasked<Opts> =
+//   Opts extends Masked
+//   ? Opts
+//   : Opts extends FactoryStaticOpts
+//     ? DeduceMaskedFromOpts<Opts>
+//     : never;
 
 
-export
-type DeduceMaskedClass<Mask> =
-  Mask extends Masked
-    ? typeof Masked
-    : Mask extends string
-      ? typeof IMask.MaskedPattern
-      : Mask extends DateConstructor
-      ? typeof IMask.MaskedDate
-      : Mask extends Date
-      ? typeof IMask.MaskedDate
-      : Mask extends NumberConstructor
-      ? typeof IMask.MaskedNumber
-      : Mask extends RegExp
-      ? typeof IMask.MaskedRegExp
-      : Mask extends Array<any>
-      ? typeof IMask.MaskedDynamic
-      : Mask extends ArrayConstructor
-      ? typeof IMask.MaskedDynamic
-      : Mask extends Function
-      ? typeof IMask.MaskedFunction
-      : never;
+// export
+// type DeduceMaskedClass<Mask> =
+//   Mask extends Masked
+//     ? typeof Masked
+//     : Mask extends string
+//       ? typeof IMask.MaskedPattern
+//       : Mask extends DateConstructor
+//       ? typeof IMask.MaskedDate
+//       : Mask extends Date
+//       ? typeof IMask.MaskedDate
+//       : Mask extends NumberConstructor
+//       ? typeof IMask.MaskedNumber
+//       : Mask extends RegExp
+//       ? typeof IMask.MaskedRegExp
+//       : Mask extends Array<any>
+//       ? typeof IMask.MaskedDynamic
+//       : Mask extends ArrayConstructor
+//       ? typeof IMask.MaskedDynamic
+//       : Mask extends Function
+//       ? typeof IMask.MaskedFunction
+//       : never;
 
-export
-type MaskedTypedValue<Mask> = Mask extends NumberConstructor
-  ? number
-  : Mask extends DateConstructor
-  ? Date
-  : string;
+// export
+// type MaskedTypedValue<Mask> = Mask extends NumberConstructor
+//   ? number
+//   : Mask extends DateConstructor
+//   ? Date
+//   : string;
 
 
-export
-type AllMaskedOptions =
-  & MaskedDateFactoryOptions
-  & MaskedNumberOptions
-  & MaskedPatternOptions
-  & MaskedDynamicOptions
-  & MaskedEnumOptions
-  & MaskedRangeOptions
-  & MaskedDynamicOptions
-  & MaskedRegExpOptions
-  & MaskedFunctionOptions
-  & FactoryInstanceOpts
-  & FactoryConstructorOpts
-;
+// export
+// type AllMaskedOptions =
+//   & MaskedDateFactoryOptions
+//   & MaskedNumberOptions
+//   & MaskedPatternOptions
+//   & MaskedDynamicOptions
+//   & MaskedEnumOptions
+//   & MaskedRangeOptions
+//   & MaskedDynamicOptions
+//   & MaskedRegExpOptions
+//   & MaskedFunctionOptions
+//   & FactoryInstanceOpts
+//   & FactoryConstructorOpts
+// ;
 
 
 

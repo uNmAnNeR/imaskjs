@@ -1,4 +1,4 @@
-import IMask, { type InputMask, type MaskElement } from 'imask';
+import IMask, { type InputMask, type InputMaskElement, type FactoryArg } from 'imask';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
@@ -17,6 +17,12 @@ export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
   multi: true,
 };
 
+type Value<Opts extends FactoryArg, Unmask extends ('typed' | boolean)> =
+  Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
+  Unmask extends Falsy ? InputMask<Opts>['value'] :
+  InputMask<Opts>['unmaskedValue']
+;
+
 export const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeElement;
 @Directive({
   selector: '[imask]',
@@ -31,11 +37,9 @@ export const DEFAULT_IMASK_ELEMENT = (elementRef: any) => elementRef.nativeEleme
   providers: [MASKEDINPUT_VALUE_ACCESSOR],
 })
 export class IMaskDirective<
-  Opts extends IMask.AnyMaskedOptions,
+  Opts extends FactoryArg,
   Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? InputMask<Opts>['value'] :
-    InputMask<Opts>['unmaskedValue']
+  V = Value<Opts, Unmask>,
 > implements ControlValueAccessor, AfterViewInit, OnDestroy, OnChanges {
   maskRef?: InputMask<Opts>;
   onTouched: any = () => {};
@@ -53,27 +57,27 @@ export class IMaskDirective<
 
   @Input() imask?: Opts;
   @Input() unmask?: Unmask;
-  @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => MaskElement = DEFAULT_IMASK_ELEMENT;
-  @Output() accept = new EventEmitter<Value>();
-  @Output() complete = new EventEmitter<Value>();
+  @Input() imaskElement: (elementRef: ElementRef, directiveRef: any) => InputMaskElement = DEFAULT_IMASK_ELEMENT;
+  @Output() accept = new EventEmitter<V>();
+  @Output() complete = new EventEmitter<V>();
 
   get element () {
     return this.imaskElement(this._elementRef, this);
   }
 
-  get maskValue (): Value {
-    if (!this.maskRef) return this.element.value as unknown as Value;
+  get maskValue (): V {
+    if (!this.maskRef) return ((this.element as any)?.value || '') as V;
 
-    if (this.unmask === 'typed') return this.maskRef.typedValue as unknown as Value;
-    if (this.unmask) return this.maskRef.unmaskedValue as unknown as Value;
-    return this.maskRef.value as unknown as Value;
+    if (this.unmask === 'typed') return this.maskRef.typedValue as V;
+    if (this.unmask) return this.maskRef.unmaskedValue as V;
+    return this.maskRef.value as V;
   }
 
-  set maskValue (value: Value) {
+  set maskValue (value: V) {
     if (this.maskRef) {
-      if (this.unmask === 'typed') this.maskRef.typedValue = value as unknown as IMask.MaskedTypedValue<Opts['mask']>;
-      else if (this.unmask) this.maskRef.unmaskedValue = value as unknown as InputMask<Opts>['unmaskedValue'];
-      else this.maskRef.value = value as unknown as InputMask<Opts>['value'];
+      if (this.unmask === 'typed') this.maskRef.typedValue = value;
+      else if (this.unmask) this.maskRef.unmaskedValue = value as string;
+      else this.maskRef.value = value as string;
     } else {
       this._renderer.setProperty(this.element, 'value', value);
     }
@@ -114,18 +118,18 @@ export class IMaskDirective<
     this.complete.complete();
   }
 
-  beginWrite (value: Value): void {
+  beginWrite (value: V): void {
     this._writing = true;
     this._writingValue = value;
   }
 
-  endWrite (): Value {
+  endWrite (): V {
     this._writing = false;
     return this._writingValue;
   }
 
-  writeValue(value: Value) {
-    value = (value == null && this.unmask !== 'typed' ? '' : value) as Value;
+  writeValue(value: V) {
+    value = (value == null && this.unmask !== 'typed' ? '' : value) as V;
 
     if (this.maskRef) {
       this.beginWrite(value);

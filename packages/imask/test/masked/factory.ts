@@ -9,7 +9,7 @@ import MaskedNumber from '../../src/masked/number';
 describe('Masked Factory', function () {
   describe('#maskedClass', function () {
     it('should clone mask from masked', function () {
-      const masked = createMask({ mask: Number });
+      const masked = createMask({ mask: 123 });
 
       const constructorClass = maskedClass(Number);
       const instanceClass = maskedClass(masked);

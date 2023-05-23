@@ -1,12 +1,15 @@
 import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
-import createMask, { maskedClass, type FactoryArg, type FactoryReturnMasked, type AnyMask } from '../masked/factory';
+import createMask, { maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
 import Masked from '../masked/base';
 import MaskElement from './mask-element';
 import HTMLInputMaskElement, { type InputElement } from './html-input-mask-element';
 import HTMLContenteditableMaskElement from './html-contenteditable-mask-element';
 import IMask from '../core/holder';
 
+
+export
+type InputMaskElement = MaskElement | InputElement | HTMLElement;
 
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
@@ -35,7 +38,7 @@ class InputMask<Opts extends FactoryArg> {
     @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
     @param {Object} opts
   */
-  constructor (el: MaskElement | InputElement | HTMLElement, opts: Opts) {
+  constructor (el: InputMaskElement, opts: Opts) {
     this.el =
       (el instanceof MaskElement) ? el :
        (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :

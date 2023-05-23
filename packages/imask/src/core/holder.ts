@@ -1,4 +1,4 @@
-import type { default as _InputMask } from '../controls/input';
+import type { default as _InputMask, InputMaskElement as _InputMaskElement } from '../controls/input';
 import type { default as _Masked } from '../masked/base';
 import type { default as _MaskedPattern } from '../masked/pattern';
 import type { default as _MaskedDate } from '../masked/date';
@@ -10,12 +10,6 @@ import type { default as _MaskedFunction } from '../masked/function';
 import type { default as _MaskedRegExp } from '../masked/regexp';
 import type {
   default as _createMask,
-  AnyMaskedOptions as _AnyMaskedOptions,
-  AnyMask as _AnyMask,
-  DeduceMasked as _DeduceMasked,
-  DeduceMaskedClass as _DeduceMaskedClass,
-  MaskedTypedValue as _MaskedTypedValue,
-  AllMaskedOptions as _AllMaskedOptions,
   FactoryArg,
 } from '../masked/factory';
 import type { default as _ChangeDetails } from './change-details';
@@ -33,11 +27,11 @@ import type {
 /**
  * Applies mask on element.
  * @constructor
- * @param {MaskElement|HTMLElement} el - Element to apply mask
+ * @param {InputMaskElement} el - Element to apply mask
  * @param {Object} opts - Custom mask options
  * @return {InputMask}
  */
-function IMask<Opts extends FactoryArg> (el: _MaskElement | HTMLElement, opts: FactoryArg) {
+function IMask<Opts extends FactoryArg> (el: _InputMaskElement, opts: Opts): _InputMask<Opts> {
   // currently available only for input-like elements
   return new IMask.InputMask(el, opts);
 }
@@ -61,13 +55,6 @@ declare namespace IMask {
   export let createPipe: typeof _createPipe;
   export let pipe: typeof _pipe;
   export let PIPE_TYPE: typeof _PIPE_TYPE;
-
-  export type AnyMaskedOptions = _AnyMaskedOptions;
-  export type AnyMask = _AnyMask;
-  export type DeduceMasked<Opts> = _DeduceMasked<Opts>;
-  export type DeduceMaskedClass<Mask> = _DeduceMaskedClass<Mask>;
-  export type MaskedTypedValue<Mask> = _MaskedTypedValue<Mask>;
-  export type AllMaskedOptions = _AllMaskedOptions;
 }
 
 export default IMask;

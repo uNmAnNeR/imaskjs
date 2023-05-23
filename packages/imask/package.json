@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec --loader tsx --test test/**/*",
-    "pretest": "tsc --noEmit",
+    "pretest": "tsc --project tsconfig.test.json",
     "watch": "rollup -c -w",
     "build": "tsc --emitDeclarationOnly && rollup -c",
     "lint": "eslint src/",
