@@ -137,6 +137,7 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
   }
 }
 MaskedDate.DEFAULTS = {
+  mask: Date as any,
   pattern: 'd{.}`m{.}`Y',
   format: (date: Date) => {
     if (!date) return '';

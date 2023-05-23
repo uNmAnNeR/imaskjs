@@ -23,7 +23,26 @@ type ClassOptions<Cls> = Omit<Cls, ReadonlyKeys<Cls> | KeysMatching<Cls, Functio
 export
 function isString (str: unknown): str is string {
   return typeof str === 'string' || str instanceof String;
-}``
+}
+
+/** Checks if value is object */
+export
+function isObject (obj: unknown): obj is Object {
+  return typeof obj === 'object' && obj != null && obj?.constructor?.name === 'Object';
+}
+
+export
+function pick<T, K extends keyof T, V> (
+  obj: T,
+  keys: K[] | ((v: V, k: K) => boolean),
+): Pick<T, K> {
+  if (Array.isArray(keys)) return pick(obj, (_, k) => keys.includes(k));
+  return (Object.entries(obj) as unknown as Array<[K, V]>)
+    .reduce((acc, [k, v]) => {
+      if (keys(v, k)) acc[k] = v;
+      return acc;
+    }, {} as any);
+}
 
 /**
   Direction

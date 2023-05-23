@@ -23,6 +23,16 @@ class MyMasked extends Masked {}
 
 
 type cases = [
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedRegExp }>, MaskedRegExp>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedPattern }>, MaskedPattern>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedFunction }>, MaskedFunction>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedDate }>, MaskedDate>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedNumber }>, MaskedNumber>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedDynamic }>, MaskedDynamic>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedRange }>, MaskedRange>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MaskedEnum }>, MaskedEnum>>,
+  Check<Equal<FactoryReturnMasked<{ mask: MyMasked }>, MyMasked>>,
+
   Check<Equal<FactoryReturnMasked<{ mask: typeof MaskedRegExp }>, MaskedRegExp>>,
   Check<Equal<FactoryReturnMasked<{ mask: typeof MaskedPattern }>, MaskedPattern>>,
   Check<Equal<FactoryReturnMasked<{ mask: typeof MaskedFunction }>, MaskedFunction>>,

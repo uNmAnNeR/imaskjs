@@ -382,9 +382,6 @@ class MaskedNumber extends Masked<number> {
       (this.max != null && this.max < 0);
   }
 
-  /**
-    @override
-  */
   override typedValueEquals (value: any): boolean {
     // handle  0 -> '' case (typed = 0 even if value = '')
     // for details see https://github.com/uNmAnNeR/imaskjs/issues/134
@@ -397,6 +394,7 @@ class MaskedNumber extends Masked<number> {
 
 MaskedNumber.UNMASKED_RADIX = '.';
 MaskedNumber.DEFAULTS = {
+  mask: Number,
   radix: ',',
   thousandsSeparator: '',
   mapToRadix: [MaskedNumber.UNMASKED_RADIX],

@@ -4,12 +4,12 @@ import IMask from '../core/holder';
 import { type TailDetails } from '../core/tail-details';
 import { DIRECTION, type Direction } from '../core/utils';
 import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base';
-import createMask, { type FactoryOpts } from './factory';
+import createMask, { type FactoryOpts, normalizeOpts } from './factory';
 import { type PatternBlock } from './pattern/block';
 import ChunksTailDetails from './pattern/chunk-tail-details';
 import PatternCursor from './pattern/cursor';
 import PatternFixedDefinition from './pattern/fixed-definition';
-import PatternInputDefinition, { DEFAULT_INPUT_DEFINITIONS, type Definitions } from './pattern/input-definition';
+import PatternInputDefinition, { DEFAULT_INPUT_DEFINITIONS } from './pattern/input-definition';
 import './regexp'; // support for default definitions which are regexp's
 
 
@@ -23,6 +23,10 @@ type MaskedPatternOptions<Value=string, M extends MaskedPattern<Value>=MaskedPat
   | Props
 >;
 
+export
+type Definitions = {
+  [k: string]: FactoryOpts,
+};
 
 export
 type MaskedPatternState = MaskedState & {
@@ -113,13 +117,13 @@ class MaskedPattern<Value=string> extends Masked<Value> {
         const bName = bNames[0];
         if (bName) {
           const maskedBlock = createMask({
-            parent: this,
             lazy: this.lazy,
             eager: this.eager,
             placeholderChar: this.placeholderChar,
             displayChar: this.displayChar,
             overwrite: this.overwrite,
-            ...this.blocks[bName],
+            ...normalizeOpts(this.blocks[bName]),
+            parent: this,
           });
 
           if (maskedBlock) {
@@ -160,17 +164,16 @@ class MaskedPattern<Value=string> extends Masked<Value> {
         isInput = false;
       }
 
-      const maskOpts = defs[char]?.mask && !(defs[char]?.mask.prototype instanceof Masked) ? defs[char] : { mask: defs[char] };
       const def = isInput ?
         new PatternInputDefinition({
-          parent: this,
           isOptional: optionalBlock,
           lazy: this.lazy,
           eager: this.eager,
           placeholderChar: this.placeholderChar,
           displayChar: this.displayChar,
-          ...maskOpts,
-        }) :
+          ...normalizeOpts(defs[char]),
+          parent: this,
+        } as any) :
         new PatternFixedDefinition({
           char,
           eager: this.eager,

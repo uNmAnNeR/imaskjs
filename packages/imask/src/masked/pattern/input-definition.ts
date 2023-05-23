@@ -1,4 +1,4 @@
-import createMask from '../factory';
+import createMask, { type NormalizedOpts } from '../factory';
 import type Masked from '../base';
 import type MaskedPattern from '../pattern';
 import { type TailDetails } from '../../core/tail-details';
@@ -8,14 +8,8 @@ import { DIRECTION, type Direction } from '../../core/utils';
 import { type PatternBlock } from './block';
 
 
-export
-type Definitions = {
-  [k: string]: any, // TODO
-};
-
-// TODO any
 /** */
-type PatternInputDefinitionOptions = { mask: any, [k: string]: any } & Partial<Pick<PatternInputDefinition,
+type PatternInputDefinitionOptions = NormalizedOpts & Partial<Pick<PatternInputDefinition,
   | 'parent'
   | 'isOptional'
   | 'lazy'

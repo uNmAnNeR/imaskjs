@@ -81,7 +81,7 @@ class InputMask<Opts extends FactoryArg> {
       return;
     }
 
-    const masked = createMask({ mask } as Opts);
+    const masked = (mask instanceof IMask.Masked ? mask : createMask({ mask } as Opts)) as FactoryReturnMasked<Opts>;
     masked.unmaskedValue = this.masked.unmaskedValue;
     this.masked = masked;
   }

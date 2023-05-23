@@ -28,8 +28,8 @@
     "core-js": "^3.30.0",
     "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
-    "documentation": "^12.3.0",
     "eslint": "^8.37.0",
+    "eslint-plugin-tsdoc": "^0.2.17",
     "lerna": "^6.6.1",
     "opencollective-postinstall": "^2.0.3",
     "rollup": "^2.79.1",
@@ -38,6 +38,7 @@
     "rollup-plugin-polyfill": "^3.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "tsx": "^3.12.7",
+    "typedoc": "^0.24.7",
     "typescript": "^4.9.5"
   },
   "engines": {
@@ -46,7 +47,7 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap --hoist && opencollective-postinstall",
-    "doc": "node ./node_modules/documentation/bin/documentation.js build packages/imask/src/imask.js -f html -o docs/api",
+    "doc": "typedoc packages/imask/src/index.ts --entryPointStrategy resolve packages/imask/src/ --out docs/api",
     "lerna": "lerna",
     "flow": "lerna run flow -- check",
     "clean": "lerna clean",

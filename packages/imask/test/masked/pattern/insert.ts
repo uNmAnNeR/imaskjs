@@ -3,7 +3,7 @@ import { describe, it, beforeEach, mock } from 'node:test';
 
 import MaskedPattern from '../../../src/masked/pattern';
 import { DIRECTION } from '../../../src/core/utils.js';
-import { MaskedNumber } from '../../../esm';
+import type MaskedNumber from '../../../src/masked/number';
 
 
 describe('Insert', function () {

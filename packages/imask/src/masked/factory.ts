@@ -1,4 +1,4 @@
-import { isString } from '../core/utils';
+import { isString, pick, isObject } from '../core/utils';
 import type Masked from './base';
 import { type MaskedOptions } from './base';
 import IMask from '../core/holder';
@@ -91,6 +91,13 @@ type FactoryStaticReturnMasked<Opts extends FactoryStaticOpts> =
   : never
 ;
 
+
+export
+type FactoryInstanceOpts = MaskedOptions & { mask: Masked };
+
+export
+type FactoryInstanceReturnMasked<Opts extends FactoryInstanceOpts> = Opts extends { mask: infer Masked } ? Masked : never;
+
 export
 type DeduceMaskedFromOpts<Opts extends FactoryStaticOpts> =
   Opts extends MaskedPatternOptions
@@ -105,6 +112,8 @@ type DeduceMaskedFromOpts<Opts extends FactoryStaticOpts> =
   ? MaskedFunction
   : Opts extends MaskedDynamicOptions
   ? MaskedDynamic
+  : Opts extends FactoryInstanceOpts
+  ? FactoryInstanceReturnMasked<Opts>
   : never
 
 export
@@ -145,7 +154,7 @@ type FactoryConstructorReturnMasked<Opts extends FactoryConstructorOpts> =
 ;
 
 export
-type FactoryOpts = FactoryConstructorOpts | FactoryStaticOpts;
+type FactoryOpts = FactoryConstructorOpts | FactoryInstanceOpts | FactoryStaticOpts;
 
 export
 type FactoryArg = Masked | FactoryOpts;
@@ -156,6 +165,8 @@ type FactoryReturnMasked<Opts extends FactoryArg> =
   ? Opts
   : Opts extends FactoryConstructorOpts
   ? FactoryConstructorReturnMasked<Opts>
+  : Opts extends FactoryInstanceOpts
+  ? FactoryInstanceReturnMasked<Opts>
   : Opts extends FactoryStaticOpts
   ? FactoryStaticReturnMasked<Opts>
   : never;
@@ -211,6 +222,7 @@ type AllMaskedOptions =
   & MaskedDynamicOptions
   & MaskedRegExpOptions
   & MaskedFunctionOptions
+  & FactoryInstanceOpts
   & FactoryConstructorOpts
 ;
 
@@ -252,7 +264,7 @@ export function maskedClass(mask: any): any {
   if (mask === Number) return IMask.MaskedNumber;
   if (Array.isArray(mask) || mask === Array) return IMask.MaskedDynamic;
   if (IMask.Masked && (mask as any).prototype instanceof IMask.Masked) return mask;
-  if (mask instanceof IMask.Masked) return mask.constructor;
+  if (IMask.Masked && mask instanceof IMask.Masked) return mask.constructor;
   if (mask instanceof Function) return IMask.MaskedFunction;
 
   console.warn('Mask not found for mask', mask);  // eslint-disable-line no-console
@@ -260,12 +272,33 @@ export function maskedClass(mask: any): any {
 }
 
 export
-function normalizeOpts<Opts extends FactoryArg> (opts: Opts): FactoryOpts {
-  if (!opts) throw new Error('Options in not defined');
-  if (IMask.Masked && (opts instanceof IMask.Masked || (opts as any).prototype instanceof IMask.Masked)) return { mask: opts } as FactoryOpts;
-  if (IMask.Masked && opts.mask instanceof IMask.Masked) throw new Error('Masked instance cannot be used inside object, use it directly as argument');
+type NormalizedOpts = FactoryOpts & { _mask?: FactoryStaticOpts['mask'] };
 
-  return opts as FactoryOpts;
+export
+function normalizeOpts<Opts extends FactoryArg> (opts: Opts): NormalizedOpts {
+  if (!opts) throw new Error('Options in not defined');
+
+  if (IMask.Masked) {
+    if ((opts as any).prototype instanceof IMask.Masked) return { mask: opts } as NormalizedOpts;
+
+    const { mask=undefined, ...instanceOpts } = opts instanceof IMask.Masked ? { mask: opts } :
+      opts.mask instanceof IMask.Masked ? opts : {};
+
+    if (mask) {
+      const _mask = (mask as Masked).mask;
+
+      return {
+        ...pick(mask, (_, k: string) => !k.startsWith('_')),
+        mask: mask.constructor,
+        _mask,
+        ...instanceOpts,
+      } as NormalizedOpts;
+    }
+  }
+
+  if (!isObject(opts)) return { mask: opts };
+
+  return { ...opts } as NormalizedOpts;
 }
 
 // TODO can't use overloads here because of https://github.com/microsoft/TypeScript/issues/50754
@@ -297,15 +330,14 @@ function normalizeOpts<Opts extends FactoryArg> (opts: Opts): FactoryOpts {
 export default
 function createMask<Opts extends FactoryArg> (opts: Opts): FactoryReturnMasked<Opts> {
   if (IMask.Masked && (opts instanceof IMask.Masked)) return opts as FactoryReturnMasked<Opts>;
+  const nOpts = normalizeOpts(opts);
 
-  opts = {...opts};
-  const mask = opts.mask;
-
-  if (IMask.Masked && (mask instanceof IMask.Masked)) return mask as FactoryReturnMasked<Opts>;
-
-  const MaskedClass = maskedClass(mask);
+  const MaskedClass = maskedClass(nOpts.mask);
   if (!MaskedClass) throw new Error('Masked class is not found for provided mask, appropriate module needs to be imported manually before creating mask.');
-  return new MaskedClass(opts);
+
+  if (nOpts.mask === MaskedClass) delete nOpts.mask;
+  if (nOpts._mask) { nOpts.mask = nOpts._mask; delete nOpts._mask; }
+  return new MaskedClass(nOpts);
 }
 
 

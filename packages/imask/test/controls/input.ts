@@ -47,7 +47,6 @@ describe('InputMask', function () {
         assert.notEqual(imask.mask, oldMask);
         assert.notEqual(imask.masked, oldMasked);
 
-
         oldMask = imask.mask;
         oldMasked = imask.masked;
 
