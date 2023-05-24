@@ -51,7 +51,7 @@ or use CDN:
 `npm run make`
 
 ## Compatibility
-Supports all major browsers and IE11+ [need to support older?](https://imask.js.org/guide.html#support-older)
+Supports all major browsers. Can also be used with outdated browsers. [See how](https://imask.js.org/guide.html#support-outdated)
 
 ## Getting help
 - [Documentation and examples](https://imask.js.org/)

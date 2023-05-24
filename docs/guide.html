@@ -41,7 +41,7 @@ var mask = IMask(element, maskOptions);</code></pre>
 
   <p>IMask consists of two independent layers: model and view.<br>
   Model layer contains all masking facilities which can be used independently without UI.</p>
-  <p id="support-older">View layer is a glue between UI element and model, it connects listeners and controls changes in both directions.</p>
+  <p id="support-outdated">View layer is a glue between UI element and model, it connects listeners and controls changes in both directions.</p>
   <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. <ins>In order to support older browsers</ins> manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
   <p>Currently, view layer contains only one component <code>InputMask</code> which supports HTML input-like API. Instance of <code>InputMask</code> is returned when IMask constructor is called.</p>
   <p>To create new mask on element use:</p>
