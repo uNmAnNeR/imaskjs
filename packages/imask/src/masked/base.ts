@@ -127,9 +127,9 @@ class Masked<Value=any> {
   }
 
   /** Resolve new value */
-  resolve (value: string): string {
+  resolve (value: string, flags: AppendFlags = {input: true}): string {
     this.reset();
-    this.append(value, {input: true}, '');
+    this.append(value, flags, '');
     this.doCommit();
     return this.value;
   }

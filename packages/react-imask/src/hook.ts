@@ -76,7 +76,7 @@ function useIMask<
     } else {
       mask?.updateOptions(opts);
     }
-    setInitialized(Boolean(mask));
+    setInitialized(Boolean(maskRef.current));
   }, [opts, _destroyMask, _onAccept]);
 
   useEffect(() => {
