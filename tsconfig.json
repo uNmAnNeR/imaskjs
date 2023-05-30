@@ -7,6 +7,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "noEmitOnError": true,
+    "isolatedModules": true,
     "moduleResolution": "node",
     "lib": ["dom", "es2022"]
   },

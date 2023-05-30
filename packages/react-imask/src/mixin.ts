@@ -25,7 +25,7 @@ type ReactMaskProps<
   unmask?: Opts['unmask'];
   value?: UnmaskValue<Opts>;
   inputRef?: React.Ref<MaskElement>;
-  ref?: React.Ref<React.ComponentType<IMaskInputProps<MaskElement, Opts>>>;
+  ref?: React.Ref<React.ComponentType<IMaskInputProps<MaskElement>>>;
 }
 
 export
