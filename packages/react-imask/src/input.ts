@@ -13,7 +13,7 @@ const IMaskInputFn = <
   Opts extends IMaskInputProps<HTMLInputElement>,
 >(
   props: Opts,
-  ref: React.Ref<React.ComponentType<IMaskInputProps<HTMLInputElement, Opts>>>
+  ref: any, // otherwise throws TS2590
 ) =>
   // TODO type
   React.createElement(IMaskInputClass as unknown as React.ComponentType<IMaskInputProps<HTMLInputElement, Opts>>, { ...props, ref })

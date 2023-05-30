@@ -18,7 +18,7 @@ type UnmaskValue<Opts extends ReactMaskOpts> =
 export
 type ReactMaskProps<
   MaskElement extends InputMaskElement,
-  Opts extends ReactMaskOpts,
+  Opts extends ReactMaskOpts=ReactMaskOpts,
 > = {
   onAccept?: (value: UnmaskValue<Opts>, maskRef: InputMask<Opts>, e?: InputEvent) => void;
   onComplete?: (value: UnmaskValue<Opts>, maskRef: InputMask<Opts>, e?: InputEvent) => void;
@@ -126,7 +126,7 @@ const MASK_OPTIONS_PROPS_NAMES: Array<Omit<keyof typeof MASK_PROPS_NAMES, keyof 
 
 export type IMaskMixinProps<
   MaskElement extends InputMaskElement,
-  Opts extends ReactMaskOpts & ReactMaskProps<MaskElement, ReactMaskOpts>=ReactMaskOpts & ReactMaskProps<MaskElement, ReactMaskOpts>,
+  Opts extends ReactMaskOpts & ReactMaskProps<MaskElement>=ReactMaskOpts & ReactMaskProps<MaskElement>,
 > = Opts & ReactMaskProps<MaskElement, Opts>;
 
 export type IMaskInputProps<
@@ -266,5 +266,5 @@ export default function IMaskMixin<
   return React.forwardRef<
     React.ComponentType<IMaskInputProps<MaskElement, Opts>>,
     IMaskInputProps<MaskElement, Opts>
-  >((props, ref) => React.createElement(MaskedComponent, { ...props, ref }));
+  >((props: IMaskInputProps<MaskElement, Opts>, ref: any /* otherwise throws TS2590 */) => React.createElement(MaskedComponent, { ...props, ref }));
 }
