@@ -114,7 +114,7 @@ declare namespace IMask {
     constructor(opts: BaseMaskedOptions<MaskType>);
     updateOptions(opts: Partial<BaseMaskedOptions<MaskType>>): void;
     reset(): void;
-    resolve(value: string): string;
+    resolve(value: string, flags?: AppendFlags): string;
     nearestInputPos(cursorPos: number, direction?: Direction): number;
     extractTail(fromPos?: number, toPos?: number): TailDetails;
     appendTail(tail: string | TailDetails): ChangeDetails;
