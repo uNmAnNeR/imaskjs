@@ -56,6 +56,7 @@
     "build:core": "rimraf --glob \"packages/imask/{dist,esm}\" && lerna run build --scope=imask",
     "build:react": "rimraf --glob \"packages/react-imask/{dist,esm}\" && lerna run build --scope=react-imask",
     "build:angular": "rimraf --glob \"packages/angular-imask/dist\" && lerna run build --scope=angular-imask",
+    "build:solid": "rimraf --glob \"packages/solid-imask/dist\" && lerna run build --scope=solid-imask",
     "build:plugins": "rimraf --glob \"packages/!(imask)/{dist,esm}\" && lerna run build --ignore=imask",
     "test": "lerna run test --parallel",
     "make": "npm run test && npm run build",

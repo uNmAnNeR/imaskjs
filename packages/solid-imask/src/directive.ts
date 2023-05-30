@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { JSX } from 'solid-js/jsx-runtime';
 import { createEffect } from 'solid-js';
-import IMask, { type InputMask } from 'imask';
+import IMask, { type InputMask, type FactoryArg } from 'imask';
 
 interface SolidMaskedDirectiveInterface<
-Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
-Value = {
-  typedValue: InputMask<Opts>['typedValue'];
-  value: InputMask<Opts>['value'];
-  unmaskedValue: InputMask<Opts>['unmaskedValue'];
-}
+  Opts extends FactoryArg,
+  Value = {
+    typedValue: InputMask<Opts>['typedValue'];
+    value: InputMask<Opts>['value'];
+    unmaskedValue: InputMask<Opts>['unmaskedValue'];
+  }
 > {
   mask: Opts;
   onAccept?: (
@@ -24,18 +24,18 @@ Value = {
   ) => void;
   value?: () => InputMask<Opts>['value'];
   unmaskedValue?: () => InputMask<Opts>['unmaskedValue'];
-  }
+}
 
 declare module 'solid-js' {
   namespace JSX {
     interface Directives {
-      masked: SolidMaskedDirectiveInterface
+      masked: SolidMaskedDirectiveInterface<FactoryArg>;
     }
   }
 }
 
 const masked = <
-  Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
+  Opts extends FactoryArg,
   Value = {
     typedValue: InputMask<Opts>['typedValue'];
     value: InputMask<Opts>['value'];
