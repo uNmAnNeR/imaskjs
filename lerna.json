@@ -1,6 +1,4 @@
 {
   "version": "6.6.1",
-  "packages": [
-    "packages/*"
-  ]
+  "useWorkspaces": true
 }

@@ -41,8 +41,8 @@ class InputMask<Opts extends FactoryArg> {
   constructor (el: InputMaskElement, opts: Opts) {
     this.el =
       (el instanceof MaskElement) ? el :
-       (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
-       new HTMLInputMaskElement(el as InputElement);
+      (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
+      new HTMLInputMaskElement(el as InputElement);
 
     this.masked = createMask(opts);
 

@@ -71,6 +71,18 @@ type FactoryStaticOpts =
 ;
 
 export
+type AllFactoryStaticOpts =
+  & MaskedDateFactoryOptions
+  & MaskedNumberOptions
+  & MaskedPatternOptions
+  & MaskedDynamicOptions
+  & MaskedRegExpOptions
+  & MaskedFunctionOptions
+  & MaskedEnumOptions
+  & MaskedRangeOptions
+;
+
+export
 type FactoryStaticReturnMasked<Opts extends FactoryStaticOpts> =
   Opts extends MaskedDateFactoryOptions
   ? MaskedDate

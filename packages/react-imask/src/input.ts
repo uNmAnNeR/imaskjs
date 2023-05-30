@@ -1,6 +1,5 @@
 import React from 'react';
-import IMask, { type InputMask } from 'imask';
-import IMaskMixin, { IMaskInputProps, Falsy } from './mixin';
+import IMaskMixin, { IMaskInputProps } from './mixin';
 
 
 const IMaskInputClass = IMaskMixin(({ inputRef, ...props }) =>
@@ -11,28 +10,20 @@ const IMaskInputClass = IMaskMixin(({ inputRef, ...props }) =>
 );
 
 const IMaskInputFn = <
-  Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
-  Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? InputMask<Opts>['value'] :
-    InputMask<Opts>['unmaskedValue'],
+  Opts extends IMaskInputProps<HTMLInputElement>,
 >(
-  props: IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, React.HTMLProps<HTMLInputElement>>,
-  ref: React.Ref<React.ComponentType<IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, React.HTMLProps<HTMLInputElement>>>>
+  props: Opts,
+  ref: React.Ref<React.ComponentType<IMaskInputProps<HTMLInputElement, Opts>>>
 ) =>
   // TODO type
-  React.createElement(IMaskInputClass as unknown as React.ComponentType<IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, React.HTMLProps<HTMLInputElement>>>, { ...props, ref })
+  React.createElement(IMaskInputClass as unknown as React.ComponentType<IMaskInputProps<HTMLInputElement, Opts>>, { ...props, ref })
 ;
 
 const IMaskInput = React.forwardRef(IMaskInputFn as <
-  Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
-  Unmask extends ('typed' | boolean) = false,
-  Value = Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
-    Unmask extends Falsy ? InputMask<Opts>['value'] :
-    InputMask<Opts>['unmaskedValue'],
+  Opts extends IMaskInputProps<HTMLInputElement>,
 >(
-  props: IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, React.HTMLProps<HTMLInputElement>> & { ref?: React.Ref<React.ComponentType<IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, React.HTMLProps<HTMLInputElement>>>> }
-) => React.ReactElement<IMaskInputProps<Opts, Unmask, Value, HTMLInputElement, React.HTMLProps<HTMLInputElement>>>);
+  props: Opts & { ref?: React.Ref<React.ComponentType<IMaskInputProps<HTMLInputElement, Opts>>> }
+) => React.ReactElement<IMaskInputProps<HTMLInputElement, Opts>>);
 
 
 export default IMaskInput;

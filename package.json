@@ -44,8 +44,11 @@
     "npm": ">=4.0.0",
     "node": ">=8.0.0"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "postinstall": "lerna bootstrap --hoist && opencollective-postinstall",
+    "postinstall": "opencollective-postinstall",
     "doc": "typedoc packages/imask/src/index.ts --entryPointStrategy resolve packages/imask/src/ --out docs/api",
     "lerna": "lerna",
     "clean": "lerna clean",
