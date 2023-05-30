@@ -288,7 +288,7 @@ class MaskedNumber extends Masked<number> {
       if (this.min != null) validnum = Math.max(validnum, this.min);
       if (this.max != null) validnum = Math.min(validnum, this.max);
 
-      if (validnum !== number) this.unmaskedValue = this.doFormat(validnum);
+      if (validnum !== number) this.unmaskedValue = this.format(validnum, this);
 
       let formatted = this.value;
 
@@ -338,9 +338,6 @@ class MaskedNumber extends Masked<number> {
     return super.doSkipInvalid(ch, flags, checkTail) && !dropFractional;
   }
 
-  /**
-    @override
-  */
   override get unmaskedValue (): string {
     return this._removeThousandsSeparators(
       this._normalizeZeros(
@@ -352,15 +349,12 @@ class MaskedNumber extends Masked<number> {
     super.unmaskedValue = unmaskedValue;
   }
 
-  /**
-    @override
-  */
   override get typedValue (): number {
-    return this.doParse(this.unmaskedValue);
+    return this.parse(this.unmaskedValue, this);
   }
 
   override set typedValue (n: number) {
-    this.rawInputValue = this.doFormat(n).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
+    this.rawInputValue = this.format(n, this).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
   }
 
   /** Parsed Number */

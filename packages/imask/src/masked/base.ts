@@ -147,11 +147,15 @@ class Masked<Value=any> {
 
   /** */
   get typedValue (): Value {
-    return this.doParse(this.value);
+    return this.parse ? this.parse(this.value, this) : this.unmaskedValue as Value;
   }
 
   set typedValue (value: Value) {
-    this.value = this.doFormat(value);
+    if (this.format) {
+      this.value = this.format(value, this);
+    } else {
+      this.unmaskedValue = String(value);
+    }
   }
 
   /** Value that includes raw user input */
@@ -438,12 +442,10 @@ class Masked<Value=any> {
 
     return value === tval ||
       Masked.EMPTY_VALUES.includes(value) && Masked.EMPTY_VALUES.includes(tval) ||
-      this.doFormat(value) === this.doFormat(this.typedValue);
+      this.format && this.format(value, this) === this.format(this.typedValue, this);
   }
 }
 Masked.DEFAULTS = {
-  format: String,
-  parse: (v: any) => v,
   skipInvalid: true,
 };
 Masked.EMPTY_VALUES = [undefined, null, ''];
