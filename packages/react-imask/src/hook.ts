@@ -1,13 +1,13 @@
-import IMask, { type InputMask } from 'imask';
+import IMask, { type InputMask, type InputMaskElement } from 'imask';
 import { useEffect, useCallback, useState, useRef, Dispatch } from 'react';
 import type { MutableRefObject } from 'react';
-import type { ReactMaskProps, ReactElement } from './mixin';
+import type { ReactMaskProps } from './mixin';
 
 
 export default
 function useIMask<
   Opts extends IMask.AnyMaskedOptions = IMask.AnyMaskedOptions,
-  MaskElement extends ReactElement=HTMLInputElement,
+  MaskElement extends InputMaskElement=HTMLInputElement,
 >(
   opts: Opts,
   { onAccept, onComplete }: Partial<Pick<ReactMaskProps<Opts, true, InputMask<Opts>['value'], MaskElement>, 'onAccept' | 'onComplete'>> = {}
