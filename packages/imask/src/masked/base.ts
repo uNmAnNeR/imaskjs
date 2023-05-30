@@ -123,15 +123,14 @@ class Masked<Value=any> {
   }
 
   set value (value: string) {
-    this.resolve(value);
+    this.resolve(value, { input: true });
   }
 
   /** Resolve new value */
-  resolve (value: string, flags: AppendFlags = {input: true}): string {
+  resolve (value: string, flags: AppendFlags={ input: true }): void {
     this.reset();
     this.append(value, flags, '');
     this.doCommit();
-    return this.value;
   }
 
   /** */
@@ -140,9 +139,7 @@ class Masked<Value=any> {
   }
 
   set unmaskedValue (value: string) {
-    this.reset();
-    this.append(value, {}, '');
-    this.doCommit();
+    this.resolve(value, {});
   }
 
   /** */
@@ -164,9 +161,7 @@ class Masked<Value=any> {
   }
 
   set rawInputValue (value: string) {
-    this.reset();
-    this.append(value, {raw: true}, '');
-    this.doCommit();
+    this.resolve(value, { raw: true });
   }
 
   get displayValue (): string {
@@ -347,7 +342,7 @@ class Masked<Value=any> {
 
   /** */
   doSkipInvalid (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): boolean {
-    return this.skipInvalid;
+    return Boolean(this.skipInvalid);
   }
 
   /**
@@ -375,16 +370,6 @@ class Masked<Value=any> {
   */
   doCommit () {
     if (this.commit) this.commit(this.value, this);
-  }
-
-  /** */
-  doFormat (value: Value): string {
-    return this.format ? this.format(value, this) : String(value);
-  }
-
-  /** */
-  doParse (str: string): Value {
-    return this.parse ? this.parse(str, this) : str as Value;
   }
 
   /** */
