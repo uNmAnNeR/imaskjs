@@ -219,9 +219,8 @@ export default function IMaskMixin<
     _extractMaskOptionsFromProps (props: Readonly<Props>): MaskOpts<MaskElement, Props> {
       const { ...cloneProps }: Readonly<Props> = props;
 
-      // keep only mask options props
+      // keep only mask options
       (Object.keys(cloneProps) as Array<keyof Props>)
-        // TODO why need cast to string?
         .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop as MaskPropsKeys) < 0)
         .forEach(nonMaskProp => {
           delete cloneProps[nonMaskProp];
@@ -248,7 +247,7 @@ export default function IMaskMixin<
 
     set maskValue (value: UnmaskValue<Props>) {
       value = (value == null && this.props.unmask !== 'typed' ? '' : value) as UnmaskValue<Props>;
-      if (this.props.unmask === 'typed') this.maskRef.typedValue = value as any;
+      if (this.props.unmask === 'typed') this.maskRef.typedValue = value as UnmaskValue<Props>;
       else if (this.props.unmask) this.maskRef.unmaskedValue = value as UnmaskValue<Props>;
       else this.maskRef.value = value as UnmaskValue<Props>;
     }
@@ -276,5 +275,5 @@ export default function IMaskMixin<
   return React.forwardRef<
     React.ComponentType<Props>,
     Props
-  >((props: Props, ref: any /* otherwise throws TS2590 */) => React.createElement(MaskedComponent, { ...props, ref }));
+  >((props, ref) => React.createElement(MaskedComponent, { ...props, ref }));
 }

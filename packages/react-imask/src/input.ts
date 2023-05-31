@@ -10,20 +10,19 @@ const IMaskInputClass = IMaskMixin(({ inputRef, ...props }) =>
 );
 
 const IMaskInputFn = <
-  Opts extends IMaskInputProps<HTMLInputElement>,
+  Props extends IMaskInputProps<HTMLInputElement>,
 >(
-  props: Opts,
-  ref: any, // otherwise throws TS2590
+  props: Props,
+  ref: React.Ref<React.ComponentType<Props>>
 ) =>
-  // TODO type
-  React.createElement(IMaskInputClass as unknown as React.ComponentType<IMaskInputProps<HTMLInputElement, Opts>>, { ...props, ref })
+  React.createElement(IMaskInputClass, { ...props, ref })
 ;
 
 const IMaskInput = React.forwardRef(IMaskInputFn as <
-  Opts extends IMaskInputProps<HTMLInputElement>,
+  Props extends IMaskInputProps<HTMLInputElement>,
 >(
-  props: Opts & { ref?: React.Ref<React.ComponentType<IMaskInputProps<HTMLInputElement, Opts>>> }
-) => React.ReactElement<IMaskInputProps<HTMLInputElement, Opts>>);
+  props: Props & { ref?: React.Ref<React.ComponentType<Props>> }
+) => React.ReactElement<Props>);
 
 
 export default IMaskInput;
