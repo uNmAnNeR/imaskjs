@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "es2022",
-    "target": "es2022",
+    "module": "esnext",
+    "target": "esnext",
     "allowJs": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
@@ -9,17 +9,12 @@
     "noEmitOnError": true,
     "isolatedModules": true,
     "moduleResolution": "node",
-    "lib": ["dom", "es2022"]
+    "lib": ["dom", "esnext"]
   },
   "typeRoots": [
     "./node_modules/@types"
   ],
-  "types": [
-    "node",
-    "sinon",
-    "mocha",
-    "chai"
-  ],
+  "types": ["node"],
 
   "exclude": [
     "coverage",

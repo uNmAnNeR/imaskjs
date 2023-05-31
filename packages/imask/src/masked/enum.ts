@@ -18,10 +18,6 @@ class MaskedEnum extends MaskedPattern {
     super.updateOptions(opts);
   }
 
-  /**
-    @override
-    @param {Object} opts
-  */
   override _update (opts: Partial<MaskedEnumOptions>) {
     const { enum: _enum, ...eopts }: MaskedEnumPatternOptions = opts;
     if (_enum) eopts.mask = '*'.repeat(_enum[0].length);
@@ -29,9 +25,6 @@ class MaskedEnum extends MaskedPattern {
     super._update(eopts);
   }
 
-  /**
-    @override
-  */
   override doValidate (flags: AppendFlags): boolean {
     return this.enum.some(e => e.indexOf(this.unmaskedValue) >= 0) &&
       super.doValidate(flags);

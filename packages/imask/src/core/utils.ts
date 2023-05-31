@@ -68,7 +68,6 @@ const DIRECTION = {
 export
 type Direction = typeof DIRECTION[keyof typeof DIRECTION];
 
-/** */
 export
 function forceDirection (direction: Direction): Direction {
   switch (direction) {

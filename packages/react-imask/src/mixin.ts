@@ -114,7 +114,7 @@ const MASK_PROPS: { [key in keyof (AllFactoryStaticOpts & ReactMaskProps<InputMa
 const MASK_PROPS_NAMES = (Object.keys(MASK_PROPS) as Array<keyof typeof MASK_PROPS>).filter(p => p !== 'value');
 const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'] as const;
 
-type ReactElementProps<MaskElement extends InputMaskElement> = Omit<Omit<React.HTMLProps<MaskElement>, keyof typeof MASK_PROPS>, keyof typeof NON_MASK_OPTIONS_PROPS_NAMES>;
+type ReactElementProps<MaskElement extends InputMaskElement> = Omit<Omit<React.HTMLProps<MaskElement>, keyof typeof MASK_PROPS>, typeof NON_MASK_OPTIONS_PROPS_NAMES[number]>;
 type NonMaskProps<
   MaskElement extends InputMaskElement,
   Props extends IMaskMixinProps<MaskElement>=IMaskMixinProps<MaskElement>
@@ -127,7 +127,7 @@ type ReactMixinComponent<
 
 type MaskPropsKeys = Exclude<keyof typeof MASK_PROPS, typeof NON_MASK_OPTIONS_PROPS_NAMES[number]>;
 const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
-  NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName as any) < 0
+  NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName as typeof NON_MASK_OPTIONS_PROPS_NAMES[number]) < 0
 ) as Array<MaskPropsKeys>;
 
 type MaskOpts<
@@ -182,7 +182,7 @@ export default function IMaskMixin<
         this.destroyMask();
         if ('value' in props) {
           if ((this.element as HTMLElement)?.isContentEditable && (this.element as HTMLElement).tagName !== 'INPUT' && (this.element as HTMLElement).tagName !== 'TEXTAREA') (this.element as HTMLElement).textContent = props.value;
-          else (this.element as any).value = props.value;
+          else (this.element as HTMLInputElement).value = props.value;
         }
       }
     }

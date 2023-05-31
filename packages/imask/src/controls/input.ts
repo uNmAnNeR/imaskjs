@@ -16,14 +16,10 @@ export default
 class InputMask<Opts extends FactoryArg> {
   /**
     View element
-    @readonly
   */
   declare el: MaskElement;
 
-  /**
-    Internal {@link Masked} model
-    @readonly
-  */
+  /** Internal {@link Masked} model */
   declare masked: FactoryReturnMasked<Opts>;
 
   declare _listeners: Record<string, Array<EventListener>>;
@@ -34,10 +30,6 @@ class InputMask<Opts extends FactoryArg> {
   declare _cursorChanging?: ReturnType<typeof setTimeout>;
   declare _inputEvent?: InputEvent;
 
-  /**
-    @param {MaskElement|HTMLInputElement|HTMLTextAreaElement} el
-    @param {Object} opts
-  */
   constructor (el: InputMaskElement, opts: Opts) {
     this.el =
       (el instanceof MaskElement) ? el :
@@ -133,10 +125,7 @@ class InputMask<Opts extends FactoryArg> {
     return this.masked.displayValue;
   }
 
-  /**
-    Starts listening to element events
-    @protected
-  */
+  /** Starts listening to element events */
   _bindEvents () {
     this.el.bindEvents({
       selectionChange: this._saveSelection,
@@ -148,18 +137,12 @@ class InputMask<Opts extends FactoryArg> {
     });
   }
 
-  /**
-    Stops listening to element events
-    @protected
-   */
+  /** Stops listening to element events */
   _unbindEvents () {
     if (this.el) this.el.unbindEvents();
   }
 
-  /**
-    Fires custom event
-    @protected
-   */
+  /** Fires custom event */
   _fireEvent (ev: string, e: InputEvent) {
     const listeners = this._listeners[ev];
     if (!listeners) return;
@@ -167,10 +150,7 @@ class InputMask<Opts extends FactoryArg> {
     listeners.forEach(l => l(e));
   }
 
-  /**
-    Current selection start
-    @readonly
-  */
+  /** Current selection start */
   get selectionStart (): number {
     return this._cursorChanging ?
       this._changingCursorPos :
@@ -192,10 +172,7 @@ class InputMask<Opts extends FactoryArg> {
     this._saveSelection();
   }
 
-  /**
-    Stores current selection
-    @protected
-  */
+  /** Stores current selection */
   _saveSelection (/* ev */) {
     if (this.displayValue !== this.el.value) {
       console.warn('Element value was changed outside of mask. Syncronize mask using `mask.updateValue()` to work properly.'); // eslint-disable-line no-console
@@ -249,10 +226,7 @@ class InputMask<Opts extends FactoryArg> {
     this._delayUpdateCursor(cursorPos);
   }
 
-  /**
-    Delays cursor update to support mobile browsers
-    @private
-  */
+  /** Delays cursor update to support mobile browsers */
   _delayUpdateCursor (cursorPos: number) {
     this._abortUpdateCursor();
     this._changingCursorPos = cursorPos;
@@ -263,19 +237,13 @@ class InputMask<Opts extends FactoryArg> {
     }, 10);
   }
 
-  /**
-    Fires custom events
-    @protected
-  */
+  /** Fires custom events */
   _fireChangeEvents () {
     this._fireEvent('accept', this._inputEvent);
     if (this.masked.isComplete) this._fireEvent('complete', this._inputEvent);
   }
 
-  /**
-    Aborts delayed cursor update
-    @private
-  */
+  /** Aborts delayed cursor update */
   _abortUpdateCursor () {
     if (this._cursorChanging) {
       clearTimeout(this._cursorChanging);

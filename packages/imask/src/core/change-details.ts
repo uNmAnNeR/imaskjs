@@ -1,16 +1,11 @@
 import IMask from "./holder";
 import { type ClassOptions } from './utils';
 
-
+export
 type ChangeDetailsOptions = ClassOptions<ChangeDetails>;
 
 /**
   Provides details of changing model value
-  @param {Object} [details]
-  @param {string} [details.inserted] - Inserted symbols
-  @param {boolean} [details.skip] - Can skip chars
-  @param {number} [details.removeCount] - Removed symbols count
-  @param {number} [details.tailShift] - Additional offset if any changes occurred before tail
 */
 export default
 class ChangeDetails {

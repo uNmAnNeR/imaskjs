@@ -12,10 +12,7 @@ class MaskedFunction<Value=any> extends Masked<Value> {
   override updateOptions (opts: Partial<MaskedFunctionOptions>) {
     super.updateOptions(opts);
   }
-  /**
-    @override
-    @param {Object} opts
-  */
+
   override _update (opts: Partial<MaskedFunctionOptions>) {
     super._update({
       ...opts,

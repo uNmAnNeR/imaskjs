@@ -11,23 +11,18 @@ class HTMLMaskElement extends MaskElement {
   declare input: HTMLElement;
   declare _handlers: {[k: string]: EventListener};
 
-  /**
-    @param {HTMLInputElement|HTMLTextAreaElement} input
-  */
   constructor (input: HTMLElement) {
     super();
     this.input = input;
     this._handlers = {};
   }
 
-  /** */
   get rootElement (): HTMLDocument {
     return (this.input.getRootNode?.() ?? document) as HTMLDocument;
   }
 
   /**
     Is element in focus
-    @readonly
   */
   get isActive (): boolean {
     return this.input === this.rootElement.activeElement;
@@ -35,7 +30,6 @@ class HTMLMaskElement extends MaskElement {
 
   /**
     Binds HTMLElement events to mask internal events
-    @override
   */
   override bindEvents (handlers: {[key in ElementEvent]: EventListener}) {
     (Object.keys(handlers) as Array<ElementEvent>)
@@ -44,14 +38,12 @@ class HTMLMaskElement extends MaskElement {
 
   /**
     Unbinds HTMLElement events to mask internal events
-    @override
   */
   override unbindEvents () {
     Object.keys(this._handlers)
       .forEach(event => this._toggleEventHandler(event));
   }
 
-  /** */
   _toggleEventHandler (event: string, handler?: EventListener): void {
     if (this._handlers[event]) {
       this.input.removeEventListener(event, this._handlers[event]);

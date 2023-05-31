@@ -1,12 +1,11 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src"],
 
   "compilerOptions": {
     "declaration": true,
-    "rootDir": "./src",
-    "declarationDir": "./esm"
+    "rootDir": "src",
+    "declarationMap": true,
+    "declarationDir": "esm"
   }
 }

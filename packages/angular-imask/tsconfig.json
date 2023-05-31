@@ -1,4 +1,7 @@
 {
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+
   "compilerOptions": {
     "outDir": "./dist",
     "noImplicitOverride": true,
@@ -9,10 +12,7 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
     "importHelpers": true,
-    "target": "ES2022",
-    "module": "ES2022",
     "useDefineForClassFields": false,
     "baseUrl": "./",
     "paths": {
@@ -27,10 +27,6 @@
       ],
     },
     "types": [],
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
   },
   "angularCompilerOptions": {
     "skipTemplateCodegen": true,

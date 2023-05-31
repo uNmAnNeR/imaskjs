@@ -1,6 +1,6 @@
 import { DIRECTION } from '../../core/utils';
 import type MaskedPattern from '../pattern';
-import { type PatternBlock } from './block';
+import type PatternBlock from './block';
 
 
 type PatternCursorState = { offset: number, index: number, ok: boolean };

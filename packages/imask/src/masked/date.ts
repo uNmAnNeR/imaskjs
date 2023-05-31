@@ -6,7 +6,9 @@ import { type AppendFlags } from './base';
 import { isString } from '../core/utils';
 
 
+export
 type DateMaskType = DateConstructor;
+
 type DateOptionsKeys =
   | 'pattern'
   | 'min'
@@ -36,9 +38,6 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
   /** */
   declare autofix?: boolean | 'pad' | undefined;
 
-  /**
-    @param {Object} opts
-  */
   constructor (opts?: MaskedDateOptions<Value>) {
     const { mask, pattern, ...patternOpts } = {
       ...(MaskedDate.DEFAULTS as MaskedDateOptions<Value>),
@@ -55,9 +54,6 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
     super.updateOptions(opts as Partial<MaskedPatternOptions<Value>>);
   }
 
-  /**
-    @override
-  */
   override _update (opts: Partial<MaskedDateOptions<Value>>) {
     const { mask, pattern, blocks, ...patternOpts } = {
       ...MaskedDate.DEFAULTS,
@@ -93,9 +89,6 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
     });
   }
 
-  /**
-    @override
-  */
   override doValidate (flags: AppendFlags): boolean {
     const date = this.date;
 
@@ -119,9 +112,6 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
     this.typedValue = date;
   }
 
-  /**
-    @override
-  */
   override get typedValue (): Value | null {
     return this.isComplete ? super.typedValue : null;
   }
@@ -129,9 +119,6 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
     super.typedValue = value;
   }
 
-  /**
-    @override
-  */
   override maskEquals (mask: any): boolean {
     return mask === Date || super.maskEquals(mask);
   }

@@ -3,12 +3,13 @@ import { DIRECTION, type Direction, isString } from '../../core/utils';
 import { type TailDetails } from '../../core/tail-details';
 import ContinuousTailDetails from '../../core/continuous-tail-details';
 import { type ExtractFlags, type AppendFlags, type MaskedState } from '../base';
-import { type PatternBlock } from './block';
+import type PatternBlock from './block';
 
 
-/** */
+export
 type PatternFixedDefinitionOptions = Pick<PatternFixedDefinition, 'char' | 'isUnmasking' | 'eager'>;
-/** */
+
+export
 type PatternFixedDefinitionState = MaskedState & Pick<PatternFixedDefinition, '_isRawInput'>;
 
 

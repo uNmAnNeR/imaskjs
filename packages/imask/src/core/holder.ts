@@ -24,13 +24,7 @@ import type {
 } from '../masked/pipe';
 
 
-/**
- * Applies mask on element.
- * @constructor
- * @param {InputMaskElement} el - Element to apply mask
- * @param {Object} opts - Custom mask options
- * @return {InputMask}
- */
+/** Applies mask on element */
 function IMask<Opts extends FactoryArg> (el: _InputMaskElement, opts: Opts): _InputMask<Opts> {
   // currently available only for input-like elements
   return new IMask.InputMask(el, opts);

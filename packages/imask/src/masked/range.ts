@@ -77,9 +77,7 @@ class MaskedRange extends MaskedPattern {
   }
 
   // TODO str is a single char everytime
-  /**
-    @override
-  */ 
+   
   override doPrepare (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
     let details: ChangeDetails;
     [ch, details] = super.doPrepare(ch.replace(/\D/g, ''), flags);

@@ -21,16 +21,6 @@ type MaskedNumberOptions = MaskedOptions<MaskedNumber,
 
 /**
   Number mask
-  @param {Object} opts
-  @param {string} opts.radix - Single char
-  @param {string} opts.thousandsSeparator - Single char
-  @param {Array<string>} opts.mapToRadix - Array of single chars
-  @param {number} opts.min
-  @param {number} opts.max
-  @param {number} opts.scale - Digits after point
-  @param {boolean} opts.signed - Allow negative
-  @param {boolean} opts.normalizeZeros - Flag to remove leading and trailing zeros in the end of editing
-  @param {boolean} opts.padFractionalZeros - Flag to pad trailing zeros after point in the end of editing
 */
 export default
 class MaskedNumber extends Masked<number> {
@@ -74,15 +64,11 @@ class MaskedNumber extends Masked<number> {
     super.updateOptions(opts);
   }
 
-  /**
-    @override
-  */
   override _update (opts: Partial<MaskedNumberOptions>) {
     super._update(opts);
     this._updateRegExps();
   }
 
-  /** */
   _updateRegExps () {
     let start = '^' + (this.allowNegative ? '[+|\\-]?' : '');
     let mid = '\\d*';
@@ -95,12 +81,10 @@ class MaskedNumber extends Masked<number> {
     this._thousandsSeparatorRegExp = new RegExp(escapeRegExp(this.thousandsSeparator), 'g');
   }
 
-  /** */
   _removeThousandsSeparators (value: string): string {
     return value.replace(this._thousandsSeparatorRegExp, '');
   }
 
-  /** */
   _insertThousandsSeparators (value: string): string {
     // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
     const parts = value.split(this.radix);
@@ -108,9 +92,6 @@ class MaskedNumber extends Masked<number> {
     return parts.join(this.radix);
   }
 
-  /**
-    @override
-  */
   override doPrepare (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
     ch = this._removeThousandsSeparators(
       this.scale && this.mapToRadix.length && (
@@ -131,7 +112,6 @@ class MaskedNumber extends Masked<number> {
     return [prepCh, details];
   }
 
-  /** */
   _separatorsCount (to: number, extendOnSeparators: boolean=false): number {
     let count = 0;
 
@@ -145,23 +125,17 @@ class MaskedNumber extends Masked<number> {
     return count;
   }
 
-  /** */
   _separatorsCountFromSlice (slice: string=this._value): number {
     return this._separatorsCount(this._removeThousandsSeparators(slice).length, true);
   }
 
-  /**
-    @override
-  */
   override extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
     [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
 
     return this._removeThousandsSeparators(super.extractInput(fromPos, toPos, flags));
   }
 
-  /**
-    @override
-  */
+  
   override _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
     if (!this.thousandsSeparator) return super._appendCharRaw(ch, flags);
 
@@ -184,7 +158,6 @@ class MaskedNumber extends Masked<number> {
     return appendDetails;
   }
 
-  /** */
   _findSeparatorAround (pos: number): number {
     if (this.thousandsSeparator) {
       const searchFrom = pos - this.thousandsSeparator.length + 1;
@@ -204,9 +177,7 @@ class MaskedNumber extends Masked<number> {
     return [from, to];
   }
 
-  /**
-    @override
-  */
+  
   override remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
     [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
 
@@ -222,9 +193,6 @@ class MaskedNumber extends Masked<number> {
     });
   }
 
-  /**
-    @override
-  */
   override nearestInputPos (cursorPos: number, direction?: Direction): number {
     if (!this.thousandsSeparator) return cursorPos;
 
@@ -256,9 +224,6 @@ class MaskedNumber extends Masked<number> {
     return cursorPos;
   }
 
-  /**
-    @override
-  */
   override doValidate (flags: AppendFlags): boolean {
     // validate as string
     let valid = Boolean(this._removeThousandsSeparators(this.value).match(this._numberRegExp));
@@ -276,9 +241,6 @@ class MaskedNumber extends Masked<number> {
     return valid && super.doValidate(flags);
   }
 
-  /**
-    @override
-  */
   override doCommit () {
     if (this.value) {
       const number = this.number;
@@ -301,7 +263,6 @@ class MaskedNumber extends Masked<number> {
     super.doCommit();
   }
 
-  /** */
   _normalizeZeros (value: string): string {
     const parts = this._removeThousandsSeparators(value).split(this.radix);
 
@@ -318,7 +279,6 @@ class MaskedNumber extends Masked<number> {
     return this._insertThousandsSeparators(parts.join(this.radix));
   }
 
-  /** */
   _padFractionalZeros (value: string): string {
     if (!value) return value;
 
@@ -328,7 +288,6 @@ class MaskedNumber extends Masked<number> {
     return parts.join(this.radix);
   }
 
-  /** */
   doSkipInvalid (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): boolean {
     const dropFractional = this.scale === 0 && ch !== this.thousandsSeparator && (
       ch === this.radix ||
@@ -368,7 +327,6 @@ class MaskedNumber extends Masked<number> {
 
   /**
     Is negative allowed
-    @readonly
   */
   get allowNegative (): boolean {
     return this.signed ||

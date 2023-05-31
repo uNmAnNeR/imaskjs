@@ -5,10 +5,7 @@ import IMask from '../core/holder';
 export default
 class HTMLContenteditableMaskElement extends HTMLMaskElement {
   declare input: HTMLElement;
-  /**
-    Returns HTMLElement selection start
-    @override
-  */
+  /** Returns HTMLElement selection start */
   // @ts-ignore
   override get _unsafeSelectionStart (): number {
     const root = this.rootElement;
@@ -21,10 +18,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     return focusOffset;
   }
 
-  /**
-    Returns HTMLElement selection end
-    @override
-  */
+  /** Returns HTMLElement selection end */
   // @ts-ignore
   override get _unsafeSelectionEnd (): number {
     const root = this.rootElement;
@@ -37,10 +31,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     return focusOffset;
   }
 
-  /**
-    Sets HTMLElement selection
-    @override
-  */
+  /** Sets HTMLElement selection */
   override _unsafeSelect (start: number, end: number) {
     if (!this.rootElement.createRange) return;
 
@@ -55,10 +46,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
     }
   }
 
-  /**
-    HTMLElement value
-    @override
-  */
+  /** HTMLElement value */
   // @ts-ignore
   override get value (): string {
     return this.input.textContent;

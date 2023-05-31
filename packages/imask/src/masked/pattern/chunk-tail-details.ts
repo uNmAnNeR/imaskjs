@@ -6,6 +6,7 @@ import IMask from '../../core/holder';
 import type MaskedPattern from '../pattern';
 
 
+export
 type ChunksTailState = Pick<ChunksTailDetails,
   | 'from'
   | 'stop'

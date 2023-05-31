@@ -9,7 +9,7 @@ import { type Direction } from '../../core/utils';
   Subset of {@link Masked} attributes used with pattern
   @interface
 */
-export
+export default
 interface PatternBlock {
   readonly value: string;
   readonly unmaskedValue: string;

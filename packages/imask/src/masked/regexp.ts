@@ -14,10 +14,6 @@ class MaskedRegExp extends Masked<string> {
     super.updateOptions(opts);
   }
 
-  /**
-    @override
-    @param {Object} opts
-  */
   override _update (opts: Partial<MaskedRegExpOptions>) {
     if (opts.mask) opts.validate = (value) => value.search(opts.mask) >= 0;
     super._update(opts);

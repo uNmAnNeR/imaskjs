@@ -6,7 +6,7 @@ import { DIRECTION, type Direction } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
 import IMask from '../core/holder';
 
-
+export
 type MaskedDynamicState = MaskedState & {
   _rawInputValue: string,
   compiledMasks: Array<MaskedState>,
@@ -14,6 +14,7 @@ type MaskedDynamicState = MaskedState & {
   currentMask: MaskedState,
 };
 
+export
 type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
 
 export
@@ -33,9 +34,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   /** Chooses {@link Masked} depending on input value */
   declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags<MaskedDynamicState>, tail: string | String | TailDetails) => Masked;
 
-  /**
-    @param {Object} opts
-  */
   constructor (opts?: MaskedDynamicOptions) {
     super({
       ...MaskedDynamic.DEFAULTS,
@@ -49,9 +47,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     super.updateOptions(opts);
   }
 
-  /**
-    @override
-  */
   override _update (opts: Partial<MaskedDynamicOptions>) {
     super._update(opts);
     if ('mask' in opts) {
@@ -64,9 +59,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     }
   }
 
-  /**
-    @override
-  */
   override _appendCharRaw (ch: string, flags: AppendFlags<MaskedDynamicState>={}): ChangeDetails {
     const details = this._applyDispatch(ch, flags);
 
@@ -128,9 +120,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return details;
   }
 
-   /**
-    @override
-  */
   override _appendEager (): ChangeDetails {
     const details = this._applyDispatch();
 
@@ -141,9 +130,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return details;
   }
 
-  /**
-    @override
-  */
   override appendTail (tail: string | String | TailDetails): ChangeDetails {
     const details = new ChangeDetails();
     if (tail) details.aggregate(this._applyDispatch('', {}, tail));
@@ -161,23 +147,16 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     };
   }
 
-  /** */
   doDispatch(appended: string, flags: AppendFlags<MaskedDynamicState>={}, tail: string | String | TailDetails=''): Masked | undefined {
     return this.dispatch(appended, this, flags, tail);
   }
 
-  /**
-    @override
-  */
   override doValidate (flags: AppendFlags<MaskedDynamicState>): boolean {
     return super.doValidate(flags) && (
       !this.currentMask || this.currentMask.doValidate(this.currentMaskFlags(flags))
     );
   }
 
-  /**
-    @override
-  */
   override doPrepare (str: string, flags: AppendFlags<MaskedDynamicState>={}): [string, ChangeDetails] {
     let [s, details] = super.doPrepare(str, flags);
 
@@ -190,17 +169,11 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return [s, details];
   }
 
-  /**
-    @override
-  */
   override reset () {
     this.currentMask?.reset();
     this.compiledMasks.forEach(m => m.reset());
   }
 
-  /**
-    @override
-  */
   override get value (): string {
     return this.currentMask ? this.currentMask.value : '';
   }
@@ -209,9 +182,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     super.value = value;
   }
 
-  /**
-    @override
-  */
   override get unmaskedValue (): string {
     return this.currentMask ? this.currentMask.unmaskedValue : '';
   }
@@ -220,9 +190,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     super.unmaskedValue = unmaskedValue;
   }
 
-  /**
-    @override
-  */
   override get typedValue (): Value {
     return this.currentMask ? this.currentMask.typedValue : '';
   }
@@ -243,23 +210,14 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return this.currentMask ? this.currentMask.displayValue : '';
   }
 
-  /**
-    @override
-  */
   override get isComplete (): boolean {
     return Boolean(this.currentMask?.isComplete);
   }
 
-  /**
-    @override
-  */
   override get isFilled (): boolean {
     return Boolean(this.currentMask?.isFilled);
   }
 
-  /**
-    @override
-  */
   override remove (fromPos?: number, toPos?: number): ChangeDetails {
     const details: ChangeDetails = new ChangeDetails();
     if (this.currentMask) {
@@ -271,9 +229,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return details;
   }
 
-  /**
-    @override
-  */
   override get state (): MaskedDynamicState {
     return {
       ...super.state,
@@ -294,44 +249,29 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     super.state = maskedState;
   }
 
-  /**
-    @override
-  */
   override extractInput (fromPos?: number, toPos?: number, flags?: ExtractFlags): string {
     return this.currentMask ?
       this.currentMask.extractInput(fromPos, toPos, flags) :
       '';
   }
 
-  /**
-    @override
-  */
   override extractTail (fromPos?: number, toPos?: number): TailDetails {
     return this.currentMask ?
       this.currentMask.extractTail(fromPos, toPos) :
       super.extractTail(fromPos, toPos);
   }
 
-  /**
-    @override
-  */
   override doCommit () {
     if (this.currentMask) this.currentMask.doCommit();
     super.doCommit();
   }
 
-  /**
-    @override
-  */
   override nearestInputPos(cursorPos: number, direction?: Direction): number {
     return this.currentMask ?
       this.currentMask.nearestInputPos(cursorPos, direction) :
       super.nearestInputPos(cursorPos, direction);
   }
 
-  /**
-    @override
-  */
   // @ts-ignore i don't mind overriding
   override get overwrite (): boolean | 'shift' | undefined {
     return this.currentMask ?

@@ -93,10 +93,7 @@ class Masked<Value=any> {
     this.withValueRefresh(this._update.bind(this, opts));
   }
 
-  /**
-    Sets new options
-    @protected
-  */
+  /** Sets new options */
   _update (opts: Partial<MaskedOptions>) {
     Object.assign(this, opts);
   }
@@ -117,7 +114,6 @@ class Masked<Value=any> {
     this._value = '';
   }
 
-  /** */
   get value (): string {
     return this._value;
   }
@@ -133,7 +129,6 @@ class Masked<Value=any> {
     this.doCommit();
   }
 
-  /** */
   get unmaskedValue (): string {
     return this.value;
   }
@@ -142,7 +137,6 @@ class Masked<Value=any> {
     this.resolve(value, {});
   }
 
-  /** */
   get typedValue (): Value {
     return this.parse ? this.parse(this.value, this) : this.unmaskedValue as Value;
   }
@@ -168,12 +162,10 @@ class Masked<Value=any> {
     return this.value;
   }
 
-  /** */
   get isComplete (): boolean {
     return true;
   }
 
-  /** */
   get isFilled (): boolean {
     return this.isComplete;
   }
@@ -300,7 +292,6 @@ class Masked<Value=any> {
     return details;
   }
 
-  /** */
   remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
     this._value = this.value.slice(0, fromPos) + this.value.slice(toPos);
     return new ChangeDetails();
@@ -326,7 +317,6 @@ class Masked<Value=any> {
     return ret;
   }
 
-  /** */
   runIsolated<T>(fn: (masked: this) => T): T {
     if (this._isolated || !this._initialized) return fn(this);
     this._isolated = true;
@@ -340,39 +330,28 @@ class Masked<Value=any> {
     return ret;
   }
 
-  /** */
   doSkipInvalid (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): boolean {
     return Boolean(this.skipInvalid);
   }
 
-  /**
-    Prepares string before mask processing
-    @protected
-  */
+  /** Prepares string before mask processing */
   doPrepare (str: string, flags: AppendFlags={}): [string, ChangeDetails] {
     return ChangeDetails.normalize(this.prepare ?
       this.prepare(str, this, flags) :
       str);
   }
 
-  /**
-    Validates if value is acceptable
-    @protected
-  */
+  /** Validates if value is acceptable */
   doValidate (flags: AppendFlags): boolean {
     return (!this.validate || this.validate(this.value, this, flags)) &&
       (!this.parent || this.parent.doValidate(flags));
   }
 
-  /**
-    Does additional processing in the end of editing
-    @protected
-  */
+  /** Does additional processing in the end of editing */
   doCommit () {
     if (this.commit) this.commit(this.value, this);
   }
 
-  /** */
   splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction = DIRECTION.NONE, flags: AppendFlags = { input: true }): ChangeDetails {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);

@@ -25,34 +25,22 @@ class ActionDetails {
     }
   }
 
-  /**
-    Start changing position
-    @readonly
-  */
+  /** Start changing position */
   get startChangePos (): number {
     return Math.min(this.cursorPos, this.oldSelection.start);
   }
 
-  /**
-    Inserted symbols count
-    @readonly
-  */
+  /** Inserted symbols count */
   get insertedCount (): number {
     return this.cursorPos - this.startChangePos;
   }
 
-  /**
-    Inserted symbols
-    @readonly
-  */
+  /** Inserted symbols */
   get inserted (): string {
     return this.value.substr(this.startChangePos, this.insertedCount);
   }
 
-  /**
-    Removed symbols count
-    @readonly
-  */
+  /** Removed symbols count */
   get removedCount (): number {
     // Math.max for opposite operation
     return Math.max((this.oldSelection.end - this.startChangePos) ||
@@ -60,34 +48,22 @@ class ActionDetails {
       this.oldValue.length - this.value.length, 0);
   }
 
-  /**
-    Removed symbols
-    @readonly
-  */
+  /** Removed symbols */
   get removed (): string {
     return this.oldValue.substr(this.startChangePos, this.removedCount);
   }
 
-  /**
-    Unchanged head symbols
-    @readonly
-  */
+  /** Unchanged head symbols */
   get head (): string {
     return this.value.substring(0, this.startChangePos);
   }
 
-  /**
-    Unchanged tail symbols
-    @readonly
-  */
+  /** Unchanged tail symbols */
   get tail (): string {
     return this.value.substring(this.startChangePos + this.insertedCount);
   }
 
-  /**
-    Remove direction
-    @readonly
-  */
+  /** Remove direction */
   get removeDirection (): Direction {
     if (!this.removedCount || this.insertedCount) return DIRECTION.NONE;
 

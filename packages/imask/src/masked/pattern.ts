@@ -5,11 +5,11 @@ import { type TailDetails } from '../core/tail-details';
 import { DIRECTION, type Direction } from '../core/utils';
 import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base';
 import createMask, { type FactoryOpts, normalizeOpts } from './factory';
-import { type PatternBlock } from './pattern/block';
+import type PatternBlock from './pattern/block';
 import ChunksTailDetails from './pattern/chunk-tail-details';
 import PatternCursor from './pattern/cursor';
 import PatternFixedDefinition from './pattern/fixed-definition';
-import PatternInputDefinition, { DEFAULT_INPUT_DEFINITIONS } from './pattern/input-definition';
+import PatternInputDefinition from './pattern/input-definition';
 import './regexp'; // support for default definitions which are regexp's
 
 
@@ -33,6 +33,7 @@ type MaskedPatternState = MaskedState & {
   _blocks: Array<any>,
 };
 
+export
 type BlockPosData = {
   index: number,
   offset: number,
@@ -41,12 +42,6 @@ type BlockPosData = {
 
 /**
   Pattern mask
-  @param {Object} opts
-  @param {Object} opts.blocks
-  @param {Object} opts.definitions
-  @param {string} opts.placeholderChar
-  @param {string} opts.displayChar
-  @param {boolean} opts.lazy
 */
 export default
 class MaskedPattern<Value=string> extends Masked<Value> {
@@ -76,7 +71,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     super({
       ...MaskedPattern.DEFAULTS,
       ...opts,
-      definitions: Object.assign({}, DEFAULT_INPUT_DEFINITIONS, opts?.definitions),
+      definitions: Object.assign({}, PatternInputDefinition.DEFAULT_DEFINITIONS, opts?.definitions),
     } as MaskedOptions);
   }
 
@@ -84,17 +79,12 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     super.updateOptions(opts);
   }
 
-  /**
-    @override
-    @param {Object} opts
-  */
   override _update (opts: Partial<MaskedPatternOptions<Value>>) {
     opts.definitions = Object.assign({}, this.definitions, opts.definitions);
     super._update(opts);
     this._rebuildMask();
   }
 
-  /** */
   _rebuildMask () {
     const defs = this.definitions;
     this._blocks = [];
@@ -184,9 +174,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     }
   }
 
-  /**
-    @override
-  */
   get state (): MaskedPatternState {
     return {
       ...super.state,
@@ -200,24 +187,15 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     super.state = maskedState;
   }
 
-  /**
-    @override
-  */
   reset () {
     super.reset();
     this._blocks.forEach(b => b.reset());
   }
 
-  /**
-    @override
-  */
   get isComplete (): boolean {
     return this._blocks.every(b => b.isComplete);
   }
 
-  /**
-    @override
-  */
   get isFilled (): boolean {
     return this._blocks.every(b => b.isFilled);
   }
@@ -230,17 +208,11 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return this._blocks.every(b => b.isOptional);
   }
 
-  /**
-    @override
-  */
   doCommit () {
     this._blocks.forEach(b => b.doCommit());
     super.doCommit();
   }
 
-  /**
-    @override
-  */
   get unmaskedValue (): string {
     return this._blocks.reduce((str, b) => str += b.unmaskedValue, '');
   }
@@ -249,9 +221,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     super.unmaskedValue = unmaskedValue;
   }
 
-  /**
-    @override
-  */
   get value (): string {
     // TODO return _value when not in change?
     return this._blocks.reduce((str, b) => str += b.value, '');
@@ -265,16 +234,10 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return this._blocks.reduce((str, b) => str += b.displayValue, '');
   }
 
-  /**
-    @override
-  */
   appendTail (tail: string | String | TailDetails): ChangeDetails {
     return super.appendTail(tail).aggregate(this._appendPlaceholder());
   }
 
-  /**
-    @override
-  */
   _appendEager (): ChangeDetails {
     const details = new ChangeDetails();
 
@@ -294,9 +257,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return details;
   }
 
-  /**
-    @override
-  */
   _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
     const blockIter = this._mapPosToBlock(this.value.length);
     const details = new ChangeDetails();
@@ -317,9 +277,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return details;
   }
 
-  /**
-    @override
-  */
   extractTail (fromPos: number=0, toPos: number=this.value.length): ChunksTailDetails {
     const chunkTail = new ChunksTailDetails();
     if (fromPos === toPos) return chunkTail;
@@ -336,9 +293,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return chunkTail;
   }
 
-  /**
-    @override
-  */
   extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {
     if (fromPos === toPos) return '';
 
@@ -402,14 +356,12 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     }
   }
 
-  /** */
   _blockStartPos (blockIndex: number): number {
     return this._blocks
       .slice(0, blockIndex)
       .reduce((pos, b) => pos += b.value.length, 0);
   }
 
-  /** */
   _forEachBlocksInRange (fromPos: number, toPos: number=this.value.length, fn: (block: PatternBlock, blockIndex: number, fromPos: number, toPos: number) => void) {
     const fromBlockIter = this._mapPosToBlock(fromPos);
 
@@ -435,9 +387,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     }
   }
 
-  /**
-    @override
-  */
   remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
     const removeDetails = super.remove(fromPos, toPos);
     this._forEachBlocksInRange(fromPos, toPos, (b, _, bFromPos, bToPos) => {
@@ -446,9 +395,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return removeDetails;
   }
 
-  /**
-    @override
-  */
   nearestInputPos (cursorPos: number, direction: Direction=DIRECTION.NONE): number {
     if (!this._blocks.length) return 0;
     const cursor = new PatternCursor(this, cursorPos);
@@ -526,9 +472,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return cursorPos;
   }
 
-  /**
-    @override
-  */
   totalInputPositions (fromPos: number=0, toPos: number=this.value.length): number {
     let total = 0;
     this._forEachBlocksInRange(fromPos, toPos, (b, _, bFromPos, bToPos) => {

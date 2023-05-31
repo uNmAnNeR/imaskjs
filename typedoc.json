@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["packages/*"],
+  "name": "IMask",
+  "entryPointStrategy": "packages",
+  "includeVersion": true,
+  "out": "docs/api"
+
+  // Potentially useful for debugging
+  // "logLevel": "Verbose"
+}

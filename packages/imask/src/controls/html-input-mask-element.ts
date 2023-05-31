@@ -10,45 +10,29 @@ class HTMLInputMaskElement extends HTMLMaskElement {
   /** InputElement to use mask on */
   declare input: InputElement;
 
-  /**
-    @param {HTMLInputElement|HTMLTextAreaElement} input
-  */
   constructor (input: InputElement) {
     super(input);
     this.input = input;
     this._handlers = {};
   }
 
-  /**
-    Returns InputElement selection start
-    @override
-  */
+  /** Returns InputElement selection start */
   // @ts-ignore
   override get _unsafeSelectionStart (): number {
     return this.input.selectionStart;
   }
 
-  /**
-    Returns InputElement selection end
-    @override
-  */
+  /** Returns InputElement selection end */
   // @ts-ignore
   override get _unsafeSelectionEnd (): number {
     return this.input.selectionEnd;
   }
 
-  /**
-    Sets InputElement selection
-    @override
-  */
+  /** Sets InputElement selection */
   _unsafeSelect (start: number, end: number) {
     this.input.setSelectionRange(start, end);
   }
 
-  /**
-    InputElement value
-    @override
-  */
   // @ts-ignore
   override get value (): string {
     return this.input.value;

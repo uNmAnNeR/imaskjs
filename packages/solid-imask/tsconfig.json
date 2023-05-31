@@ -1,14 +1,12 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
+  "include": ["src"],
 
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "declaration": true,
+    "declarationMap": true,
     "declarationDir": "./dist"
   }
 }

@@ -50,7 +50,7 @@
   ],
   "scripts": {
     "postinstall": "opencollective-postinstall",
-    "doc": "typedoc packages/imask/src/index.ts --entryPointStrategy resolve packages/imask/src/ --out docs/api",
+    "docs": "typedoc",
     "lerna": "lerna",
     "clean": "lerna clean",
     "build": "npm run build:core && npm run build:plugins",
@@ -61,7 +61,7 @@
     "build:plugins": "rimraf --glob \"packages/!(imask)/{dist,esm}\" && lerna run build --ignore=imask",
     "test": "lerna run test --parallel",
     "make": "npm run test && npm run build",
-    "release": "npm run doc && npm run make && lerna publish",
+    "release": "npm run docs && npm run make && lerna publish",
     "coverage": "lerna run coveralls --scope imask",
     "watch:core": "lerna run watch --scope imask --stream",
     "watch:vue": "lerna run watch --scope vue-imask --stream",
