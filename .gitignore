@@ -3,6 +3,7 @@ coverage/
 dist/
 esm/
 docs/_site/
+docs/api/
 *.log
 .nyc_output
 .DS_Store
