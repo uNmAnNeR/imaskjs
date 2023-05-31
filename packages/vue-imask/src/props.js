@@ -35,11 +35,6 @@ export default {
   thousandsSeparator: String,
   mapToRadix: Array,
   scale: Number,
-  signed: {
-    type: Boolean,
-    required: false,
-    default: undefined,
-  },
   normalizeZeros: {
     type: Boolean,
     required: false,

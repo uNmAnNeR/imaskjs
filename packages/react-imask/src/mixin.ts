@@ -89,7 +89,6 @@ const MASK_PROPS: { [key in keyof (AllFactoryStaticOpts & ReactMaskProps<InputMa
   thousandsSeparator: PropTypes.string,
   mapToRadix: PropTypes.arrayOf(PropTypes.string),
   scale: PropTypes.number,
-  signed: PropTypes.bool,
   normalizeZeros: PropTypes.bool,
   padFractionalZeros: PropTypes.bool,
   min: PropTypes.oneOfType([

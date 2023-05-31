@@ -135,7 +135,7 @@ describe('Masked', function () {
           },
           cents: {
             mask: '`0`0',
-            signed: false,
+            min: 0,
           }
         },
         overwrite: true,

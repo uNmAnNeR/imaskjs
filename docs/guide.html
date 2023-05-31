@@ -341,7 +341,6 @@ console.log(masked.typedValue);</code></pre>
             </div>
             <div class="col col-4">
               <div class="form-item">
-                <label class="checkbox"><input type="checkbox" name="signed">Signed</label>
                 <label class="checkbox"><input type="checkbox" name="padFractionalZeros">Pad fractional zeros</label>
                 <label class="checkbox"><input checked type="checkbox" name="normalizeZeros">Normalize zeros</label>
               </div>
@@ -377,7 +376,6 @@ console.log(masked.typedValue);</code></pre>
 
   // other options are optional with defaults below
   scale: 2,  // digits after point, 0 for integers
-  signed: false,  // disallow negative
   thousandsSeparator: '',  // any single char
   padFractionalZeros: false,  // if true, then pads zeros at end to the length of scale
   normalizeZeros: true,  // appends or removes zeros at ends
@@ -1194,7 +1192,6 @@ var numberMask = IMask(element, { mask: Number });
     var numberMask = IMask(document.getElementById('numbers-mask'), {
       mask: Number,
       scale: 2,
-      // signed: true,
       thousandsSeparator: ' ',
       // padFractionalZeros: true,
       normalizeZeros: true,
@@ -1213,7 +1210,6 @@ var numberMask = IMask(element, { mask: Number });
         scale: Number(numberEl.querySelector('[name=scale]').value),
         radix: numberEl.querySelector('[name=radix]').value,
         mapToRadix: numberEl.querySelector('[name=mapToRadix]').value.split(''),
-        signed: numberEl.querySelector('[name=signed]').checked,
         thousandsSeparator: numberEl.querySelector('[name=thousandsSeparator]').value,
         padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
         normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,

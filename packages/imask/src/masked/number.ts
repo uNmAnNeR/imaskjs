@@ -12,7 +12,6 @@ type MaskedNumberOptions = MaskedOptions<MaskedNumber,
   | 'thousandsSeparator'
   | 'mapToRadix'
   | 'scale'
-  | 'signed'
   | 'min'
   | 'max'
   | 'normalizeZeros'
@@ -41,8 +40,6 @@ class MaskedNumber extends Masked<number> {
   declare max: number;
   /** Digits after point */
   declare scale: number;
-  /** */
-  declare signed: boolean;
   /** Flag to remove leading and trailing zeros in the end of editing */
   declare normalizeZeros: boolean;
   /** Flag to pad trailing zeros after point in the end of editing */
@@ -329,9 +326,7 @@ class MaskedNumber extends Masked<number> {
     Is negative allowed
   */
   get allowNegative (): boolean {
-    return this.signed ||
-      (this.min != null && this.min < 0) ||
-      (this.max != null && this.max < 0);
+    return (this.min != null && this.min < 0) || (this.max != null && this.max < 0);
   }
 
   override typedValueEquals (value: any): boolean {
@@ -350,8 +345,9 @@ MaskedNumber.DEFAULTS = {
   radix: ',',
   thousandsSeparator: '',
   mapToRadix: [MaskedNumber.UNMASKED_RADIX],
+  min: Number.MIN_SAFE_INTEGER,
+  max: Number.MAX_SAFE_INTEGER,
   scale: 2,
-  signed: false,
   normalizeZeros: true,
   padFractionalZeros: false,
   parse: Number,
