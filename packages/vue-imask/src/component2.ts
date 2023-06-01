@@ -1,11 +1,13 @@
+import { Vue2, type VNode } from 'vue-demi';
 import IMask from 'imask';
 import props from './props';
+import { extractOptionsFromProps } from './utils';
 
 
-export default {
+export default Vue2.extend({
   name: 'imask-input',
 
-  render (createElement) {
+  render (createElement): VNode {
     const data = {
       domProps: {
         value: this.maskRef ? this.maskRef.value : this.value
@@ -15,7 +17,7 @@ export default {
 
     // if there is no mask use default input event
     if (!this.$props.mask) {
-      data.on.input = event => this.$emit('input', event.target.value);
+      data.on.input = (event: InputEvent) => this.$emit('input', (event.target as HTMLInputElement).value);
     } else {
       delete data.on.input;
     }
@@ -35,7 +37,7 @@ export default {
 
   computed: {
     maskOptions () {
-      return this._extractOptionsFromProps(this.$props);
+      return extractOptionsFromProps(this.$props, ['value', 'unmask']);
     },
   },
 
@@ -61,22 +63,6 @@ export default {
   },
 
   methods: {
-    _extractOptionsFromProps (props) {
-      props = {...props};
-
-      // keep only defined props
-      Object.keys(props)
-        .filter(prop => props[prop] === undefined)
-        .forEach(undefinedProp => {
-          delete props[undefinedProp];
-        });
-
-      delete props.value;
-      delete props.unmask;
-
-      return props;
-    },
-
     _maskValue () {
       if (this.unmask === 'typed') return this.maskRef.typedValue;
       if (this.unmask) return this.maskRef.unmaskedValue;
@@ -118,10 +104,8 @@ export default {
   props: {
     value: {},
     unmask: {
-      validator: function (value) {
-        return value === 'typed' || typeof value === 'boolean';
-      }
+      validator: (value) => value === 'typed' || typeof value === 'boolean',
     },
     ...props,
   },
-}
+});

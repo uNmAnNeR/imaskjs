@@ -9,6 +9,7 @@
   "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask",
   "scripts": {
+    "prebuild": "rimraf --glob \"{dist,esm}\"",
     "build": "rollup -c"
   },
   "keywords": [

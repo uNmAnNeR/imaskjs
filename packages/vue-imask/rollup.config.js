@@ -2,7 +2,10 @@ import { babel } from '@rollup/plugin-babel';
 import eslint from '@rollup/plugin-eslint';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json';
+import copy from 'rollup-plugin-copy';
 
 
 const globals = {
@@ -11,10 +14,17 @@ const globals = {
   'vue-demi': 'VueDemi',
 };
 
+const extensions = ['.js', '.ts'];
+const babelConfig = {
+  extensions,
+  babelHelpers: 'bundled',
+  rootMode: 'upward',
+};
+
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
       name: 'VueIMask',
@@ -25,13 +35,13 @@ export default [
     },
     plugins: [
       eslint({configFile: '../../.eslintrc'}),
-      babel({
-        rootMode: 'upward',
-      }),
+      nodeResolve({ extensions }),
+      commonjs(),
+      babel(babelConfig),
     ],
   },
   {
-    input: ['src/**/*.js'],
+    input: ['src/**/*.ts'],
     external: [...Object.keys(globals), 'imask/esm', 'imask/esm/imask'],
     output: {
       format: 'esm',
@@ -44,8 +54,15 @@ export default [
         delimiters: ['', ''],
       }),
       multi(),
-      babel({
-        rootMode: 'upward',
+      nodeResolve({ extensions }),
+      commonjs(),
+      babel(babelConfig),
+      copy({
+        targets: [
+          { src: 'esm/*.d.ts', dest: 'dist' },
+          { src: 'esm/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
+        ],
+        flatten: false,
       }),
     ]
   }

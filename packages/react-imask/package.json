@@ -10,6 +10,7 @@
   "types": "esm/index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "scripts": {
+    "prebuild": "rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c",
     "watch": "rollup -c -w"
   },

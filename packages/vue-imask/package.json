@@ -6,6 +6,7 @@
   "description": "Vue input mask",
   "main": "dist/vue-imask.js",
   "module": "esm/index.js",
+  "types": "esm/index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask",
   "contributors": [
     "naprimer",
@@ -13,7 +14,8 @@
     "cangku"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "prebuild": "rimraf --glob \"{dist,esm}\"",
+    "build": "tsc --emitDeclarationOnly && rollup -c",
     "watch": "rollup -c -w"
   },
   "keywords": [

@@ -1,15 +1,50 @@
-import IMask from 'imask';
-import { h } from 'vue-demi';
+import IMask, { type FactoryOpts, type InputMask } from 'imask';
+import { h, defineComponent, type PropType } from 'vue-demi';
 import props from './props';
+import { extractOptionsFromProps } from './utils';
 
+export
+type MaskProps = FactoryOpts & {
+  modelValue: string,
+  value: string,
+  unmasked: string,
+  typed: any,
+}
+
+type ComponentValueProp = typeof VALUE_PROPS[number];
+type MaskValueProp = 'value' | 'unmaskedValue' | 'typedValue';
 
 // order does matter = priority
-const VALUE_PROPS = ['typed', 'unmasked', 'value', 'modelValue']; 
+const VALUE_PROPS = ['typed', 'unmasked', 'value', 'modelValue'] as const; 
 
-
-export default {
+export default defineComponent<MaskProps>({
   name: 'imask-input',
   inheritAttrs: false,
+
+  props: {
+    // plugin
+    modelValue: String,
+    value: String,
+    unmasked: String,
+    typed: Object as PropType<any>,
+
+    ...props,
+  },
+
+  emits: [
+    'update:modelValue',
+    'update:value',
+    'update:unmasked',
+    'update:typed',
+    'accept',
+    'accept:value',
+    'accept:unmasked',
+    'accept:typed',
+    'complete',
+    'complete:value',
+    'complete:unmasked',
+    'complete:typed',
+  ],
 
   data () {
     return { maskRef: null };
@@ -25,7 +60,7 @@ export default {
     delete data.value;
 
     if (!this.$props.mask) {
-      data.onInput = event => this.$emit('update:modelValue', event.target.value);
+      data.onInput = (event: InputEvent) => this.$emit('update:modelValue', (event.target as HTMLInputElement).value);
     }
 
     return h('input', data);
@@ -43,7 +78,7 @@ export default {
 
   computed: {
     maskOptions () {
-      return this._extractOptionsFromProps(this.$props);
+      return extractOptionsFromProps(this.$props, VALUE_PROPS);
     },
   },
 
@@ -70,31 +105,16 @@ export default {
   },
 
   methods: {
-    _extractOptionsFromProps (props) {
-      props = {...props};
-
-      // keep only defined props
-      Object.keys(props)
-        .filter(prop => props[prop] === undefined)
-        .forEach(undefinedProp => {
-          delete props[undefinedProp];
-        });
-
-      VALUE_PROPS.forEach(p => delete props[p]);
-
-      return props;
-    },
-
-    _getMaskProps () {
+    _getMaskProps (): [ComponentValueProp, MaskValueProp] {
       const cprop = this._getComponentMaskProp();
       return [cprop, this._getMaskPropFromComponent(cprop)];
     },
 
-    _getComponentMaskProp () {
+    _getComponentMaskProp (): ComponentValueProp {
       return VALUE_PROPS.find(prop => prop in this.$props);
     },
 
-    _getMaskPropFromComponent (componentProp) {
+    _getMaskPropFromComponent (componentProp: ComponentValueProp): MaskValueProp {
       switch (componentProp) {
         case 'unmasked': return 'unmaskedValue';
         case 'typed': return 'typedValue';
@@ -103,10 +123,10 @@ export default {
     },
 
     _updateValue () {
-      const [cprop, mprop] = this._getMaskProps();
+      const [cprop, mprop]: [ComponentValueProp, MaskValueProp] = this._getMaskProps();
 
       this.maskRef[mprop] = this[cprop] == null && cprop !== 'typed' ? '' : this[cprop];
-      if (props[cprop] !== this.maskRef[mprop]) this._onAccept();
+      if (this.$props[cprop] !== this.maskRef[mprop]) this._onAccept();
     },
 
     _onAccept () {
@@ -152,29 +172,4 @@ export default {
       }
     }
   },
-
-  props: {
-    // plugin
-    modelValue: String,
-    value: String,
-    unmasked: String,
-    typed: {},
-
-    ...props,
-  },
-
-  emits: [
-    'update:modelValue',
-    'update:value',
-    'update:unmasked',
-    'update:typed',
-    'accept',
-    'accept:value',
-    'accept:unmasked',
-    'accept:typed',
-    'complete',
-    'complete:value',
-    'complete:unmasked',
-    'complete:typed',
-  ],
-}
+});

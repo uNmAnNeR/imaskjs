@@ -18,6 +18,7 @@
     "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec --loader tsx --test test/**/*",
     "pretest": "tsc --project tsconfig.test.json",
     "watch": "rollup -c -w",
+    "prebuild": "rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c",
     "lint": "eslint src/",
     "coveralls": "c8 report --reporter=text-lcov | coveralls"

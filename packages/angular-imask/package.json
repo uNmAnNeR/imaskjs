@@ -6,6 +6,7 @@
   "description": "Angular IMask Plugin",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
   "scripts": {
+    "prebuild": "rimraf --glob \"dist\"",
     "build": "ng-packagr --config tsconfig.json",
     "dev": "ng build angular-imask --watch",
     "example": "ng serve",
