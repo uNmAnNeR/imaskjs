@@ -44,6 +44,7 @@ const MASK_PROPS: { [key in keyof (AllFactoryStaticOpts & ReactMaskProps<InputMa
     PropTypes.oneOf(['typed']),
   ]),
   prepare: PropTypes.func,
+  prepareChar: PropTypes.func,
   validate: PropTypes.func,
   commit: PropTypes.func,
   overwrite: PropTypes.oneOfType([

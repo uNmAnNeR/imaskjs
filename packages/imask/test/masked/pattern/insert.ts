@@ -59,7 +59,7 @@ describe('Insert', function () {
     const prepareStub = mock.fn(v => v);
     masked.updateOptions({
       mask: '+{7}(000)000-00-00',
-      prepare: prepareStub
+      prepareChar: prepareStub
     });
     masked.value = '+79998887766';
     assert.equal(prepareStub.mock.callCount(), 1);

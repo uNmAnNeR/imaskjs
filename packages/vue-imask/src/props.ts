@@ -5,6 +5,7 @@ export default {
   // common
   mask: Object as PropType<FactoryOpts['mask']>,
   prepare: Function as PropType<FactoryOpts['prepare']>,
+  prepareChar: Function as PropType<FactoryOpts['prepareChar']>,
   validate: Function as PropType<FactoryOpts['validate']>,
   commit: Function as PropType<FactoryOpts['commit']>,
   overwrite: {

@@ -76,11 +76,9 @@ class MaskedRange extends MaskedPattern {
     return [minstr, maxstr];
   }
 
-  // TODO str is a single char everytime
-   
-  override doPrepare (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
+  override doPrepareChar (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
     let details: ChangeDetails;
-    [ch, details] = super.doPrepare(ch.replace(/\D/g, ''), flags);
+    [ch, details] = super.doPrepareChar(ch.replace(/\D/g, ''), flags);
 
     if (!this.autofix || !ch) return [ch, details];
 

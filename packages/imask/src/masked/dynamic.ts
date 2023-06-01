@@ -169,6 +169,18 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return [s, details];
   }
 
+  override doPrepareChar (str: string, flags: AppendFlags<MaskedDynamicState>={}): [string, ChangeDetails] {
+    let [s, details] = super.doPrepareChar(str, flags);
+
+    if (this.currentMask) {
+      let currentDetails;
+      ([s, currentDetails] = super.doPrepareChar(s, this.currentMaskFlags(flags)));
+      details = details.aggregate(currentDetails);
+    }
+
+    return [s, details];
+  }
+
   override reset () {
     this.currentMask?.reset();
     this.compiledMasks.forEach(m => m.reset());

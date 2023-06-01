@@ -194,7 +194,7 @@ console.log(masked.unmaskedValue);
 // or typed value if it makes sense
 console.log(masked.typedValue);</code></pre>
 
-  <p>Use <code>prepare (value, masked)</code> option for preprocessing input and <code>commit (value, masked)</code> option for postprocessing after UI is deactivated:</p>
+  <p>Use <code>prepare (value, masked)</code> or <code>prepareChar (value, masked)</code> option for preprocessing input and <code>commit (value, masked)</code> option for postprocessing after UI is deactivated:</p>
   <div class="toggle-panel">
     <label for="uppercase-mask-demo" class="muted">demo</label>
     <input id="uppercase-mask-demo" type="checkbox">
@@ -209,7 +209,7 @@ console.log(masked.typedValue);</code></pre>
   </div>
   <pre><code>var caseMask = IMask(element, {
   mask: /^\w+$/,
-  prepare: function (str) {
+  prepareChar: function (str) {
     return str.toUpperCase();
   },
   commit: function (value, masked) {
@@ -218,6 +218,7 @@ console.log(masked.typedValue);</code></pre>
     masked._value = value.toLowerCase();  // Don't do it
   }
 });</code></pre>
+  <p>The difference between <code>prepare</code> and <code>prepareChar</code> is that when inserting multiple symbols in a batch <code>prepare</code> is called once for the entire string and <code>prepareChar</code> is called for each symbol.</p>
   <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from <code>Masked</code> to add some specific behavior.</p>
   <p>Additionaly to <code>mask</code> option custom validator can be set as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves.</p>
   <p><strong>Note: do not mutate <code>Masked</code> instance inside callbacks.</strong></p>
@@ -1021,12 +1022,12 @@ var numberMask = IMask(element, { mask: Number });
 
     IMask(document.getElementById('uppercase-mask'), {
       mask: /^\w+$/,
-      prepare: function (str) {
+      prepareChar: function (str) {
         return str.toUpperCase();
       },
       commit: function (value, masked) {
         // Don't change value manually! All changes should be done in mask!
-        // But it works and helps to understand what is really change
+        // But it works and helps to understand what is really changed
         masked._value = value.toLowerCase();
       }
     });

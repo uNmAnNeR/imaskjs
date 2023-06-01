@@ -89,7 +89,7 @@ class MaskedNumber extends Masked<number> {
     return parts.join(this.radix);
   }
 
-  override doPrepare (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
+  override doPrepareChar (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
     ch = this._removeThousandsSeparators(
       this.scale && this.mapToRadix.length && (
         /*
@@ -104,7 +104,7 @@ class MaskedNumber extends Masked<number> {
         !flags.input && !flags.raw
       ) ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
     );
-    const [prepCh, details] = super.doPrepare(ch, flags);
+    const [prepCh, details] = super.doPrepareChar(ch, flags);
     if (ch && !prepCh) details.skip = true;
     return [prepCh, details];
   }

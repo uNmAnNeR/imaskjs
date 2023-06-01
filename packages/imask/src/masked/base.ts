@@ -32,6 +32,7 @@ type MaskedOptions<M extends Masked=Masked, Props extends keyof M=never> = Parti
   | 'mask'
   | 'parent'
   | 'prepare'
+  | 'prepareChar'
   | 'validate'
   | 'commit'
   | 'format'
@@ -55,6 +56,8 @@ class Masked<Value=any> {
   declare parent?: Masked;
   /** Transforms value before mask processing */
   declare prepare?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
+  /** Transforms each char before mask processing */
+  declare prepareChar?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
   /** Validates if value is acceptable */
   declare validate?: (value: string, masked: this, flags: AppendFlags) => boolean;
   /** Does additional processing in the end of editing */
@@ -211,7 +214,7 @@ class Masked<Value=any> {
   _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
     const consistentState: MaskedState = this.state;
     let details: ChangeDetails;
-    [ch, details] = this.doPrepare(ch, flags);
+    [ch, details] = this.doPrepareChar(ch, flags);
 
     details = details.aggregate(this._appendCharRaw(ch, flags));
 
@@ -267,9 +270,11 @@ class Masked<Value=any> {
   /** Appends symbols considering flags */
   append (str: string, flags?: AppendFlags, tail?: string | String | TailDetails): ChangeDetails {
     if (!isString(str)) throw new Error('value should be string');
-    const details = new ChangeDetails();
     const checkTail = isString(tail) ? new ContinuousTailDetails(String(tail)) : tail as TailDetails;
     if (flags?.tail) flags._beforeTailState = this.state;
+
+    let details;
+    [str, details] = this.doPrepare(str, flags);
 
     for (let ci=0; ci<str.length; ++ci) {
       const d = this._appendChar(str[ci], flags, checkTail);
@@ -338,6 +343,13 @@ class Masked<Value=any> {
   doPrepare (str: string, flags: AppendFlags={}): [string, ChangeDetails] {
     return ChangeDetails.normalize(this.prepare ?
       this.prepare(str, this, flags) :
+      str);
+  }
+
+  /** Prepares each char before mask processing */
+  doPrepareChar (str: string, flags: AppendFlags={}): [string, ChangeDetails] {
+    return ChangeDetails.normalize(this.prepareChar ?
+      this.prepareChar(str, this, flags) :
       str);
   }
 
