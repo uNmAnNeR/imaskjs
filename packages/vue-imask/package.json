@@ -2,7 +2,7 @@
   "name": "vue-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "6.6.1",
+  "version": "6.6.2",
   "description": "Vue input mask",
   "main": "dist/vue-imask.js",
   "module": "esm/index.js",
@@ -24,7 +24,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^6.6.1",
+    "imask": "^6.6.2",
     "vue-demi": "^0.13.11"
   },
   "peerDependencies": {
