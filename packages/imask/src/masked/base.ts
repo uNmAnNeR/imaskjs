@@ -60,7 +60,7 @@ class Masked<Value=any> {
   declare prepareChar?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
   /** Validates if value is acceptable */
   declare validate?: (value: string, masked: this, flags: AppendFlags) => boolean;
-  /** Does additional processing in the end of editing */
+  /** Does additional processing at the end of editing */
   declare commit?: (value: string, masked: this) => void;
   /** Format typed value to string */
   declare format?: (value: Value, masked: this) => string;
@@ -257,12 +257,12 @@ class Masked<Value=any> {
     return details;
   }
 
-  /** Appends optional placeholder at end */
+  /** Appends optional placeholder at the end */
   _appendPlaceholder (): ChangeDetails {
     return new ChangeDetails();
   }
 
-  /** Appends optional eager placeholder at end */
+  /** Appends optional eager placeholder at the end */
   _appendEager (): ChangeDetails {
     return new ChangeDetails();
   }
@@ -313,7 +313,7 @@ class Masked<Value=any> {
     const ret = fn();
 
     this.rawInputValue = rawInput;
-    // append lost trailing chars at end
+    // append lost trailing chars at the end
     if (this.value && this.value !== value && value.indexOf(this.value) === 0) {
       this.append(value.slice(this.value.length), {}, '');
     }
@@ -359,7 +359,7 @@ class Masked<Value=any> {
       (!this.parent || this.parent.doValidate(flags));
   }
 
-  /** Does additional processing in the end of editing */
+  /** Does additional processing at the end of editing */
   doCommit () {
     if (this.commit) this.commit(this.value, this);
   }
