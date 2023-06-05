@@ -4,7 +4,4 @@
   "entryPointStrategy": "packages",
   "includeVersion": true,
   "out": "docs/api"
-
-  // Potentially useful for debugging
-  // "logLevel": "Verbose"
 }
