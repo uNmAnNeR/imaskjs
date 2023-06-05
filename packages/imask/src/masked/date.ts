@@ -26,8 +26,42 @@ type MaskedDateOptions<Value=Date> =
 /** Date mask */
 export default
 class MaskedDate<Value=Date> extends MaskedPattern<Value> {
-  static GET_DEFAULT_BLOCKS: () => { [k: string]: MaskedRangeOptions };
-  static DEFAULTS: Partial<MaskedPatternOptions<any, MaskedDate<any>, DateOptionsKeys>>;
+  static GET_DEFAULT_BLOCKS: () => { [k: string]: MaskedRangeOptions } = () => ({
+    d: {
+      mask: MaskedRange,
+      from: 1,
+      to: 31,
+      maxLength: 2,
+    },
+    m: {
+      mask: MaskedRange,
+      from: 1,
+      to: 12,
+      maxLength: 2,
+    },
+    Y: {
+      mask: MaskedRange,
+      from: 1900,
+      to: 9999,
+    }
+  });
+  static DEFAULTS: Partial<MaskedPatternOptions<any, MaskedDate<any>, DateOptionsKeys>> = {
+    mask: Date as any,
+    pattern: 'd{.}`m{.}`Y',
+    format: (date: Date) => {
+      if (!date) return '';
+
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+
+      return [day, month, year].join('.');
+    },
+    parse: (str: string) => {
+      const [day, month, year] = str.split('.').map(Number);
+      return new Date(year, month - 1, day);
+    },
+  };
 
   /** Pattern mask for date according to {@link MaskedDate#format} */
   declare pattern: string;
@@ -123,42 +157,6 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
     return mask === Date || super.maskEquals(mask);
   }
 }
-MaskedDate.DEFAULTS = {
-  mask: Date as any,
-  pattern: 'd{.}`m{.}`Y',
-  format: (date: Date) => {
-    if (!date) return '';
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-
-    return [day, month, year].join('.');
-  },
-  parse: (str: string) => {
-    const [day, month, year] = str.split('.').map(Number);
-    return new Date(year, month - 1, day);
-  },
-};
-MaskedDate.GET_DEFAULT_BLOCKS = () => ({
-  d: {
-    mask: MaskedRange,
-    from: 1,
-    to: 31,
-    maxLength: 2,
-  },
-  m: {
-    mask: MaskedRange,
-    from: 1,
-    to: 12,
-    maxLength: 2,
-  },
-  Y: {
-    mask: MaskedRange,
-    from: 1900,
-    to: 9999,
-  }
-});
 
 
 IMask.MaskedDate = MaskedDate;

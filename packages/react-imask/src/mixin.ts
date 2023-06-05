@@ -247,9 +247,9 @@ export default function IMaskMixin<
 
     set maskValue (value: UnmaskValue<Props>) {
       value = (value == null && this.props.unmask !== 'typed' ? '' : value) as UnmaskValue<Props>;
-      if (this.props.unmask === 'typed') this.maskRef.typedValue = value as UnmaskValue<Props>;
-      else if (this.props.unmask) this.maskRef.unmaskedValue = value as UnmaskValue<Props>;
-      else this.maskRef.value = value as UnmaskValue<Props>;
+      if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
+      else if (this.props.unmask) this.maskRef.unmaskedValue = value;
+      else this.maskRef.value = value;
     }
 
     _onAccept (e?: InputEvent) {

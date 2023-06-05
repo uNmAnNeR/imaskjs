@@ -2,13 +2,20 @@ import { babel } from '@rollup/plugin-babel';
 import eslint from '@rollup/plugin-eslint';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
-import pkg from './package.json';
+import pkg from './package.json' assert { type: 'json' };
 
 
 const globals = {
   imask: 'IMask'
 };
-
+const input = ['src/**'];
+const extensions = ['.js', '.ts'];
+const babelConfig = {
+  extensions,
+  rootMode: 'upward',
+  babelHelpers: 'runtime',
+  include: input,
+};
 
 export default [
   {
@@ -22,14 +29,12 @@ export default [
       globals,
     },
     plugins: [
-      eslint({configFile: '../../.eslintrc'}),
-      babel({
-        rootMode: 'upward',
-      }),
+      eslint({overrideConfigFile: '../../.eslintrc'}),
+      babel(babelConfig),
     ],
   },
   {
-    input: ['src/**/*.js'],
+    input,
     external: [...Object.keys(globals), 'imask/esm', 'imask/esm/imask'],
     output: {
       format: 'esm',
@@ -41,10 +46,8 @@ export default [
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
       }),
-      multi(),
-      babel({
-        rootMode: 'upward',
-      }),
+      multi.default(),
+      babel(babelConfig),
     ]
   }
 ]

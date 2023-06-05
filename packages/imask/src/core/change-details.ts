@@ -1,8 +1,13 @@
 import IMask from "./holder";
-import { type ClassOptions } from './utils';
+
 
 export
-type ChangeDetailsOptions = ClassOptions<ChangeDetails>;
+type ChangeDetailsOptions = Pick<ChangeDetails,
+  | 'inserted'
+  | 'skip'
+  | 'tailShift'
+  | 'rawInserted'
+>;
 
 /**
   Provides details of changing model value

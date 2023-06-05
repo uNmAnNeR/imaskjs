@@ -6,7 +6,14 @@ import IMask from '../core/holder';
 export default
 class HTMLMaskElement extends MaskElement {
   /** Mapping between HTMLElement events and mask internal events */
-  static EVENTS_MAP: {[k in ElementEvent]: string};
+  static EVENTS_MAP = {
+    selectionChange: 'keydown',
+    input: 'input',
+    drop: 'drop',
+    click: 'click',
+    focus: 'focus',
+    commit: 'blur',
+  } as const;
   /** HTMLElement to use mask on */
   declare input: HTMLElement;
   declare _handlers: {[k: string]: EventListener};
@@ -56,14 +63,6 @@ class HTMLMaskElement extends MaskElement {
     }
   }
 }
-HTMLMaskElement.EVENTS_MAP = {
-  selectionChange: 'keydown',
-  input: 'input',
-  drop: 'drop',
-  click: 'click',
-  focus: 'focus',
-  commit: 'blur',
-} as const;
 
 
 IMask.HTMLMaskElement = HTMLMaskElement;

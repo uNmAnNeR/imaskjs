@@ -23,9 +23,21 @@ type MaskedNumberOptions = MaskedOptions<MaskedNumber,
 */
 export default
 class MaskedNumber extends Masked<number> {
-  static DEFAULTS: Partial<MaskedNumberOptions>;
-  static UNMASKED_RADIX: string;
-  static EMPTY_VALUES: Array<null | undefined | string | number>;
+  static UNMASKED_RADIX = '.';
+  static EMPTY_VALUES: Array<null | undefined | string | number> = [...Masked.EMPTY_VALUES, 0];
+  static DEFAULTS: Partial<MaskedNumberOptions> = {
+    mask: Number,
+    radix: ',',
+    thousandsSeparator: '',
+    mapToRadix: [MaskedNumber.UNMASKED_RADIX],
+    min: Number.MIN_SAFE_INTEGER,
+    max: Number.MAX_SAFE_INTEGER,
+    scale: 2,
+    normalizeZeros: true,
+    padFractionalZeros: false,
+    parse: Number,
+    format: (n: number) => n.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }),
+  };
 
   declare mask: NumberConstructor;
   /** Single char */
@@ -339,20 +351,5 @@ class MaskedNumber extends Masked<number> {
   }
 }
 
-MaskedNumber.UNMASKED_RADIX = '.';
-MaskedNumber.DEFAULTS = {
-  mask: Number,
-  radix: ',',
-  thousandsSeparator: '',
-  mapToRadix: [MaskedNumber.UNMASKED_RADIX],
-  min: Number.MIN_SAFE_INTEGER,
-  max: Number.MAX_SAFE_INTEGER,
-  scale: 2,
-  normalizeZeros: true,
-  padFractionalZeros: false,
-  parse: Number,
-  format: (n: number) => n.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }),
-};
-MaskedNumber.EMPTY_VALUES = [...Masked.EMPTY_VALUES, 0];
 
 IMask.MaskedNumber = MaskedNumber;

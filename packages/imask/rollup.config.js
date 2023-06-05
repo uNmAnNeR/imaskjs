@@ -1,23 +1,25 @@
 import { babel } from '@rollup/plugin-babel';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import eslint from '@rollup/plugin-eslint';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import polyfill from 'rollup-plugin-polyfill';
 import multi from 'rollup-plugin-multi-input';
 import copy from 'rollup-plugin-copy';
 
+
+const input = ['src/**'];
 const extensions = ['.js', '.ts'];
 
 const commonPlugins = [
   nodeResolve({ extensions }),
+  commonjs(),
   babel({
-    extends: './.babelrc',
     extensions,
     rootMode: 'upward',
-    babelHelpers: 'bundled',
+    babelHelpers: 'runtime',
+    include: input,
   }),
-];
+]; 
 
 export default [
   ...[false, true].map(min => ({
@@ -27,23 +29,23 @@ export default [
       format: 'umd',
       name: 'IMask',
       sourcemap: true,
+      exports: 'named',
     },
     plugins: [
-      eslint({configFile: '../../.eslintrc.ts.js'}),
+      eslint({ overrideConfigFile: '../../.eslintrc.ts.js' }),
       ...commonPlugins,
-      commonjs(),
-      polyfill(['./polyfills.ts']),
       min && terser(),
     ],
   })),
   {
-    input: ['src/**/*.ts'],
+    input,
     output: {
       format: 'esm',
       dir: 'esm',
     },
+    external: [/@babel\/runtime/],
     plugins: [
-      multi(),
+      multi.default(), // https://github.com/alfredosalzillo/rollup-plugin-multi-input/issues/72
       ...commonPlugins,
       copy({
         targets: [

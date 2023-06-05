@@ -29,5 +29,8 @@
     "input",
     "mask"
   ],
-  "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6"
+  "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6",
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.22.3"
+  }
 }

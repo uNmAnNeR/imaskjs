@@ -45,11 +45,14 @@ type BlockPosData = {
 */
 export default
 class MaskedPattern<Value=string> extends Masked<Value> {
-  static DEFAULTS: Partial<MaskedPatternOptions<any>>;
-  static STOP_CHAR: string;
-  static ESCAPE_CHAR: string;
-  static InputDefinition: typeof PatternInputDefinition;
-  static FixedDefinition: typeof PatternFixedDefinition;
+  static DEFAULTS: Partial<MaskedPatternOptions> = {
+    lazy: true,
+    placeholderChar: '_'
+  };
+  static STOP_CHAR = '`';
+  static ESCAPE_CHAR = '\\';
+  static InputDefinition = PatternInputDefinition;
+  static FixedDefinition = PatternFixedDefinition;
 
   declare mask: string;
   /** */
@@ -492,14 +495,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return indices.map(gi => this._blocks[gi]);
   }
 }
-MaskedPattern.DEFAULTS = {
-  lazy: true,
-  placeholderChar: '_'
-};
-MaskedPattern.STOP_CHAR = '`';
-MaskedPattern.ESCAPE_CHAR = '\\';
-MaskedPattern.InputDefinition = PatternInputDefinition;
-MaskedPattern.FixedDefinition = PatternFixedDefinition;
 
 
 IMask.MaskedPattern = MaskedPattern;

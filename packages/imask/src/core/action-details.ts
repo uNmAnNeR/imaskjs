@@ -1,7 +1,12 @@
-import { type Direction, type Selection, type ClassOptions, DIRECTION } from './utils';
+import { type Direction, type Selection, DIRECTION } from './utils';
 
 export
-type ActionDetailsOptions = ClassOptions<ActionDetails>;
+type ActionDetailsOptions = Pick<ActionDetails,
+  | 'value'
+  | 'cursorPos'
+  | 'oldValue'
+  | 'oldSelection'
+>;
 
 
 /** Provides details of changing input */

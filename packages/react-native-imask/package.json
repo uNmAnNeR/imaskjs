@@ -7,6 +7,7 @@
   "description": "React Native Input Mask",
   "main": "dist/react-native-imask.js",
   "module": "esm/index.js",
+  "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask",
   "scripts": {
     "prebuild": "rimraf --glob \"{dist,esm}\"",
@@ -19,12 +20,12 @@
     "mask"
   ],
   "dependencies": {
-    "prop-types": "^15.7.2",
+    "prop-types": "^15.8.1",
     "react-imask": "^6.6.1"
   },
   "peerDependencies": {
     "react": ">=16.0.0",
-    "react-native": ">=0.57.1"
+    "react-native": "^0.71.8"
   },
   "engines": {
     "npm": ">=4.0.0"

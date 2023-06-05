@@ -4,7 +4,7 @@ import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import pkg from './package.json';
+import pkg from './package.json' assert { type: 'json' };
 import copy from 'rollup-plugin-copy';
 
 
@@ -15,11 +15,17 @@ const globals = {
 };
 
 const extensions = ['.js', '.ts'];
-const babelConfig = {
-  extensions,
-  babelHelpers: 'bundled',
-  rootMode: 'upward',
-};
+const input = ['src/**'];
+const commonPlugins = [
+  nodeResolve({ extensions }),
+  commonjs(),
+  babel({
+    extensions,
+    rootMode: 'upward',
+    babelHelpers: 'runtime',
+    include: input,
+  }),
+];
 
 
 export default [
@@ -34,14 +40,12 @@ export default [
       globals,
     },
     plugins: [
-      eslint({configFile: '../../.eslintrc'}),
-      nodeResolve({ extensions }),
-      commonjs(),
-      babel(babelConfig),
+      eslint({ overrideConfigFile: '../../.eslintrc.ts.js' }),
+      ...commonPlugins,
     ],
   },
   {
-    input: ['src/**/*.ts'],
+    input,
     external: [...Object.keys(globals), 'imask/esm', 'imask/esm/imask'],
     output: {
       format: 'esm',
@@ -53,10 +57,8 @@ export default [
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
       }),
-      multi(),
-      nodeResolve({ extensions }),
-      commonjs(),
-      babel(babelConfig),
+      multi.default(),
+      ...commonPlugins,
       copy({
         targets: [
           { src: 'esm/*.d.ts', dest: 'dist' },

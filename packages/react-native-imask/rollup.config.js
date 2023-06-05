@@ -2,15 +2,23 @@ import { babel } from '@rollup/plugin-babel';
 import eslint from '@rollup/plugin-eslint';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
-import pkg from './package.json';
+import pkg from './package.json' assert { type: 'json' };
 
 
+const input = ['src/**'];
+const extensions = ['.js', '.ts'];
 const globals = {
   react: 'React',
   'react-native': 'ReactNative',
   'react-imask': 'ReactIMask',
   'prop-types': 'PropTypes',
   'imask': 'IMask',
+};
+const babelConfig = {
+  extensions,
+  rootMode: 'upward',
+  babelHelpers: 'runtime',
+  include: input,
 };
 
 export default [
@@ -25,14 +33,12 @@ export default [
       sourcemap: true,
     },
     plugins: [
-      eslint({configFile: '../../.eslintrc'}),
-      babel({
-        rootMode: 'upward',
-      }),
+      eslint({ overrideConfigFile: '../../.eslintrc' }),
+      babel(babelConfig),
     ],
   },
   {
-    input: ['src/**/*.js'],
+    input,
     output: {
       format: 'esm',
       dir: 'esm',
@@ -44,10 +50,8 @@ export default [
         "import MaskElement from 'imask'": "import MaskElement from 'imask/esm/controls/mask-element'",
         delimiters: ['', ''],
       }),
-      multi(),
-      babel({
-        rootMode: 'upward',
-      }),
+      multi.default(),
+      babel(babelConfig),
     ]
   }
 ];

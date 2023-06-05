@@ -6,6 +6,7 @@ import { DIRECTION, type Direction } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
 import IMask from '../core/holder';
 
+
 export
 type MaskedDynamicState = MaskedState & {
   _rawInputValue: string,
@@ -19,6 +20,7 @@ type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
 
 export
 type MaskedDynamicOptions = MaskedOptions<MaskedDynamic, 'dispatch'>;
+
 
 /** Dynamic mask for choosing appropriate mask in run-time */
 export default

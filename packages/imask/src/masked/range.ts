@@ -3,6 +3,7 @@ import IMask from '../core/holder';
 import { type AppendFlags } from './base';
 import MaskedPattern, { type MaskedPatternOptions } from './pattern';
 
+
 export
 type MaskedRangeOptions = Omit<MaskedPatternOptions, 'mask'> &
   Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>;

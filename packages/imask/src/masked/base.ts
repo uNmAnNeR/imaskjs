@@ -47,8 +47,10 @@ type MaskedOptions<M extends Masked=Masked, Props extends keyof M=never> = Parti
 /** Provides common masking stuff */
 export default
 class Masked<Value=any> {
-  static DEFAULTS: Partial<MaskedOptions>;
-  static EMPTY_VALUES: Array<any>;
+  static DEFAULTS: Partial<MaskedOptions> = {
+    skipInvalid: true,
+  };
+  static EMPTY_VALUES: Array<any> = [undefined, null, ''];
 
   /** @type {Mask} */
   declare mask: unknown;
@@ -421,10 +423,6 @@ class Masked<Value=any> {
       this.format && this.format(value, this) === this.format(this.typedValue, this);
   }
 }
-Masked.DEFAULTS = {
-  skipInvalid: true,
-};
-Masked.EMPTY_VALUES = [undefined, null, ''];
 
 
 IMask.Masked = Masked;

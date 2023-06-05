@@ -2,6 +2,7 @@ import MaskedPattern, { type MaskedPatternOptions } from './pattern';
 import { AppendFlags } from './base';
 import IMask from '../core/holder';
 
+
 export
 type MaskedEnumOptions = Omit<MaskedPatternOptions, 'mask'> & Pick<MaskedEnum, 'enum'>;
 

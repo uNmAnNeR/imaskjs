@@ -5,7 +5,7 @@ import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import pkg from './package.json';
+import pkg from './package.json' assert { type: 'json' };
 import copy from 'rollup-plugin-copy';
 
 
@@ -16,13 +16,18 @@ const globals = {
 };
 
 const extensions = ['.js', '.ts', '.tsx', '.jsx'];
-
-const babelConfig = {
-  extensions,
-  babelHelpers: 'bundled',
-  rootMode: 'upward',
-  presets: [ 'solid' ],
-};
+const input = ['src/**'];
+const commonPlugins = [
+  nodeResolve({ extensions }),
+  commonjs(),
+  babel({
+    extensions,
+    rootMode: 'upward',
+    babelHelpers: 'runtime',
+    include: input,
+    presets: [ 'solid' ],
+  }),
+];
 
 
 export default [
@@ -37,14 +42,12 @@ export default [
       sourcemap: true,
     },
     plugins: [
-      eslint(),
-      nodeResolve({ extensions }),
-      commonjs(),
-      babel(babelConfig),
+      eslint({ overrideConfigFile: '../../.eslintrc.ts.js' }),
+      ...commonPlugins,
     ],
   },
   {
-    input: ['src/**/*.ts', 'src/**/*.tsx'],
+    input,
     external: [...Object.keys(globals), 'imask/esm', 'imask/esm/imask'],
     output: {
       format: 'esm',
@@ -56,15 +59,14 @@ export default [
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
       }),
-      multi(),
-      nodeResolve({ extensions }),
-      commonjs(),
-      babel(babelConfig),
+      multi.default(),
+      ...commonPlugins,
       copy({
         targets: [
           { src: 'dist/*.d.ts', dest: 'esm' },
           { src: 'dist/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
-        ]
+        ],
+        flatten: false,
       })
     ]
   }
