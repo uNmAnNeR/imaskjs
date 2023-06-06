@@ -40,20 +40,24 @@ class MaskedRange extends MaskedPattern {
   }
 
   override _update (opts: Partial<MaskedRangeOptions>) {
-    let { to=0, from=0, maxLength=0, autofix, ...patternOpts }: Partial<MaskedRangePatternOptions> = opts;
-
-    maxLength = Math.max(String(to).length, maxLength);
-
-    const fromStr = String(from).padStart(maxLength, '0');
-    const toStr = String(to).padStart(maxLength, '0');
-    let sameCharsCount = 0;
-    while (sameCharsCount < toStr.length && toStr[sameCharsCount] === fromStr[sameCharsCount]) ++sameCharsCount;
-    patternOpts.mask = toStr.slice(0, sameCharsCount).replace(/0/g, '\\0') + '0'.repeat(maxLength - sameCharsCount);
+    const {
+      to=this.to || 0,
+      from=this.from || 0,
+      maxLength=this.maxLength || 0,
+      autofix=this.autofix,
+      ...patternOpts
+    }: Partial<MaskedRangePatternOptions> = opts;
 
     this.to = to;
     this.from = from;
-    this.maxLength = maxLength;
+    this.maxLength = Math.max(String(to).length, maxLength);
     this.autofix = autofix;
+
+    const fromStr = String(this.from).padStart(this.maxLength, '0');
+    const toStr = String(this.to).padStart(this.maxLength, '0');
+    let sameCharsCount = 0;
+    while (sameCharsCount < toStr.length && toStr[sameCharsCount] === fromStr[sameCharsCount]) ++sameCharsCount;
+    patternOpts.mask = toStr.slice(0, sameCharsCount).replace(/0/g, '\\0') + '0'.repeat(this.maxLength - sameCharsCount);
 
     super._update(patternOpts);
   }

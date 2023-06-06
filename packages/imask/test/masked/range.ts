@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { beforeEach, describe } from 'node:test';
+import { beforeEach, describe, it } from 'node:test';
 
 import MaskedRange from '../../src/masked/range';
 
@@ -34,5 +34,24 @@ describe('MaskedRange', function () {
     masked.unmaskedValue = '';
     masked.append('2', {input: true});
     assert.equal(masked.value, '002');
+  });
+
+  it('should update options', function () {
+    masked.updateOptions({
+      from: 0,
+      to: 15,
+      maxLength: 0,
+      autofix: false,
+    });
+    masked.unmaskedValue = '';
+    masked.append('6', { input: true });
+    assert.equal(masked.value, '');
+
+    masked.updateOptions({
+      autofix: 'pad',
+    });
+    masked.unmaskedValue = '';
+    masked.append('6', { input: true });
+    assert.equal(masked.value, '06');
   });
 });

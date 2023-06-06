@@ -15,7 +15,6 @@
   },
   "scripts": {
     "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec -r ts-node/register --test test/**/*",
-    "pretest": "tsc --project tsconfig.test.json",
     "watch": "rollup -c -w",
     "prebuild": "rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c",
