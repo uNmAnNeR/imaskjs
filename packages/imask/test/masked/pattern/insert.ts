@@ -2,7 +2,7 @@ import assert from 'assert';
 import { describe, it, beforeEach, mock } from 'node:test';
 
 import MaskedPattern from '../../../src/masked/pattern';
-import { DIRECTION } from '../../../src/core/utils.js';
+import { DIRECTION } from '../../../src/core/utils';
 import type MaskedNumber from '../../../src/masked/number';
 
 

@@ -6,7 +6,6 @@
   "description": "Svelte input mask",
   "main": "dist/svelte-imask.js",
   "module": "esm/index.js",
-  "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask",
   "scripts": {
     "prebuild": "rimraf --glob \"{dist,esm}\"",

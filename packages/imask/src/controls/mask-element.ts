@@ -1,4 +1,4 @@
-import IMask from '../core/holder.js';
+import IMask from '../core/holder';
 
 
 export

@@ -7,5 +7,12 @@
     "rootDir": "src",
     "declarationMap": true,
     "declarationDir": "esm"
+  },
+
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "noEmit": true
+    }
   }
 }
