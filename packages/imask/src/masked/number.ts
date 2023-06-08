@@ -116,8 +116,12 @@ class MaskedNumber extends Masked<number> {
         !flags.input && !flags.raw
       ) ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
     );
+
     const [prepCh, details] = super.doPrepareChar(ch, flags);
     if (ch && !prepCh) details.skip = true;
+
+    if (prepCh && !this.allowPositive && !this.value && prepCh !== '-') details.aggregate(this._appendChar('-'));
+
     return [prepCh, details];
   }
 
@@ -339,6 +343,13 @@ class MaskedNumber extends Masked<number> {
   */
   get allowNegative (): boolean {
     return (this.min != null && this.min < 0) || (this.max != null && this.max < 0);
+  }
+
+  /**
+    Is positive allowed
+  */
+  get allowPositive (): boolean {
+    return (this.min != null && this.min > 0) || (this.max != null && this.max > 0);
   }
 
   override typedValueEquals (value: any): boolean {
