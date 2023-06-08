@@ -228,11 +228,13 @@ export default function IMaskMixin<
     }
 
     _extractNonMaskProps (props: Readonly<IMaskInputProps<Opts, Unmask, Value, MaskElement, MaskElementProps>>): MaskElementProps {
-      const { ...cloneProps } = props;
+      const { ...cloneProps } = props as any;
 
       (MASK_PROPS_NAMES as Array<keyof IMaskMixinProps<Opts, Unmask, Value, MaskElement>>).forEach(maskProp => {
         delete cloneProps[maskProp];
       });
+      if (!('defaultValue' in cloneProps)) cloneProps.defaultValue = props.mask ? '' : cloneProps.value;
+      delete cloneProps.value;
 
       return cloneProps as MaskElementProps;
     }
