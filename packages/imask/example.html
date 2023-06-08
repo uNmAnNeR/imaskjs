@@ -12,16 +12,13 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: [
-        {
-          mask: '00`00',
-          lazy: false,
-        },
-        {
-          mask: '00`00`00',
-          lazy: false,
-        },
-      ],
+      mask: Number,
+      scale: 2,
+      signed: true,
+      thousandsSeparator: '.',
+      padFractionalZeros: true,
+      normalizeZeros: true,
+      radix: ',',
     };
 
     var result = document.getElementById('value');
@@ -31,8 +28,6 @@
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });
-
-    // imask.value = '12.345,67';
 
 
     // document.getElementById('input').addEventListener('focus', () => {

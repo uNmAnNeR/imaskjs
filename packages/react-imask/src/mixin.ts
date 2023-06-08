@@ -235,6 +235,8 @@ export default function IMaskMixin<
       (MASK_PROPS_NAMES as Array<keyof Props>).forEach(maskProp => {
         delete cloneProps[maskProp];
       });
+      if (!('defaultValue' in cloneProps)) cloneProps.defaultValue = props.mask ? '' : cloneProps.value;
+      delete cloneProps.value;
 
       return cloneProps as NonMaskProps<MaskElement, Props>;
     }
