@@ -297,16 +297,16 @@ class Masked<MaskType> {
       details.aggregate(d);
     }
 
+    if ((this.eager === true || this.eager === 'append') && flags?.input && str) {
+      details.aggregate(this._appendEager());
+    }
+
     // append tail but aggregate only tailShift
     if (checkTail != null) {
       details.tailShift += this.appendTail(checkTail).tailShift;
       // TODO it's a good idea to clear state after appending ends
       // but it causes bugs when one append calls another (when dynamic dispatch set rawInputValue)
       // this._resetBeforeTailState();
-    }
-
-    if ((this.eager === true || this.eager === 'append') && flags?.input && str) {
-      details.aggregate(this._appendEager());
     }
 
     return details;
