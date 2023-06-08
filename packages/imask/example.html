@@ -12,9 +12,13 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: Date,
-      lazy: false,
-      eager: true
+      mask: Number,
+      scale: 2,
+      signed: true,
+      thousandsSeparator: '.',
+      padFractionalZeros: true,
+      normalizeZeros: true,
+      radix: ',',
     };
 
     var result = document.getElementById('value');

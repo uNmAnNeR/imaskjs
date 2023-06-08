@@ -41,6 +41,7 @@ export class IMaskDirective<
   onTouched: any = () => {};
   onChange: any = () => {};
   private _viewInitialized = false;
+  private _initialValue;
   private _composing = false;
   private _writingValue: any;
   private _writing = false;
@@ -133,6 +134,7 @@ export class IMaskDirective<
       this.endWrite();
     } else {
       this._renderer.setProperty(this.element, 'value', value);
+      this._initialValue = value;
     }
   }
 
@@ -153,6 +155,9 @@ export class IMaskDirective<
     this.maskRef = this._factory.create(this.element, this.imask)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
+
+    if (this._initialValue != null) this.writeValue(this._initialValue);
+    delete this._initialValue;
   }
 
   setDisabledState (isDisabled: boolean) {

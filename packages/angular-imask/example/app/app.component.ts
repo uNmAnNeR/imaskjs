@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { IMASK_FACTORY } from 'angular-imask';
-import { NumberIMaskFactory } from './number-imask-factory';
+import { IMaskModule } from 'angular-imask';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  providers: [
-    {provide: IMASK_FACTORY, useClass: NumberIMaskFactory} // it's optional
-  ],
+  imports: [CommonModule, ReactiveFormsModule, IMaskModule],
   template: `
     <input
-      [imask]="{mask: '+{7}(000)000-00-00'}"
-      [unmask]="true"
+      [formControl]="control"
+      [imask]="mask"
+      unmask="typed"
       (accept)="onAccept()"
       (complete)="onComplete()"
     />
@@ -19,6 +20,17 @@ import { NumberIMaskFactory } from './number-imask-factory';
   styles: []
 })
 export class AppComponent {
+  control = new FormControl<number>(12.3);
+  mask = {
+    mask: Number,
+    scale: 2,
+    signed: true,
+    thousandsSeparator: '.',
+    padFractionalZeros: true,
+    normalizeZeros: true,
+    radix: ',',
+  };
+
   onAccept() {
     console.log('on accept')
   }
