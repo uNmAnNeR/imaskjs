@@ -45,7 +45,7 @@ export class IMaskDirective<
   onTouched: any = () => {};
   onChange: any = () => {};
   private _viewInitialized = false;
-  private _initialValue;
+  private _initialValue: any;
   private _composing = false;
   private _writingValue: any;
   private _writing = false;

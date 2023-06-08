@@ -230,7 +230,7 @@ export default function IMaskMixin<
     }
 
     _extractNonMaskProps (props: Readonly<Props>): NonMaskProps<MaskElement, Props> {
-      const { ...cloneProps }: Readonly<Props> = props;
+      const { ...cloneProps } = props as Props;
 
       (MASK_PROPS_NAMES as Array<keyof Props>).forEach(maskProp => {
         delete cloneProps[maskProp];
