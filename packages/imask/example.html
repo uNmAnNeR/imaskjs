@@ -12,12 +12,16 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: Number,
-      scale: 2,
-      signed: true,
-      max: 0,
-      thousandsSeparator: ' ',
-      normalizeZeros: true,
+      mask: [
+        {
+          mask: '0"',
+          eager: true,
+        },
+        {
+          mask: '0[0]"',
+          eager: true,
+        },
+      ],
     };
 
     var result = document.getElementById('value');

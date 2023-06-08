@@ -1,6 +1,6 @@
 import { objectIncludes } from '../core/utils';
 import ChangeDetails from '../core/change-details';
-import createMask, { type FactoryArg } from './factory';
+import createMask, { type FactoryArg, normalizeOpts } from './factory';
 import Masked, { type AppendFlags, type MaskedState, type MaskedOptions, type ExtractFlags } from './base';
 import { DIRECTION, type Direction } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
@@ -34,7 +34,11 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   /** Compliled {@link Masked} options */
   declare compiledMasks: Array<Masked>; // TODO FactoryReturnMasked<?>
   /** Chooses {@link Masked} depending on input value */
-  declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags<MaskedDynamicState>, tail: string | String | TailDetails) => Masked;
+  declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags<MaskedDynamicState>, tail: string | String | TailDetails) => (Masked | undefined);
+
+  declare _overwrite?: this['overwrite'];
+  declare _eager?: this['eager'];
+  declare _skipInvalid?: this['skipInvalid'];
 
   constructor (opts?: MaskedDynamicOptions) {
     super({
@@ -51,10 +55,16 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
 
   override _update (opts: Partial<MaskedDynamicOptions>) {
     super._update(opts);
+
     if ('mask' in opts) {
       // mask could be totally dynamic with only `dispatch` option
       this.compiledMasks = Array.isArray(opts.mask) ?
-        opts.mask.map(m => createMask(m)) :
+        opts.mask.map(m => createMask({
+          overwrite: this._overwrite,
+          eager: this._eager,
+          skipInvalid: this._skipInvalid,
+          ...normalizeOpts(m),
+        })) :
         [];
 
       // this.currentMask = this.doDispatch(''); // probably not needed but lets see
@@ -290,35 +300,33 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   override get overwrite (): boolean | 'shift' | undefined {
     return this.currentMask ?
       this.currentMask.overwrite :
-      super.overwrite;
+      this._overwrite;
   }
 
   override set overwrite (overwrite: boolean | 'shift') {
-    console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
+    this._overwrite = overwrite;
   }
 
   // @ts-ignore i don't mind overriding
   override get eager (): boolean | 'remove' | 'append' | undefined {
     return this.currentMask ?
       this.currentMask.eager :
-      super.eager;
+      this._eager;
   }
 
   override set eager (eager: boolean | 'remove' | 'append') {
-    console.warn('"eager" option is not available in dynamic mask, use this option in siblings');
+    this._eager = eager;
   }
 
   // @ts-ignore i don't mind overriding
   override get skipInvalid (): boolean | undefined {
     return this.currentMask ?
       this.currentMask.skipInvalid :
-      super.skipInvalid;
+      this._skipInvalid;
   }
 
   override set skipInvalid (skipInvalid: boolean | undefined) {
-    if (this._initialized || skipInvalid !== Masked.DEFAULTS.skipInvalid) {
-      console.warn('"skipInvalid" option is not available in dynamic mask, use this option in siblings');
-    }
+    this._skipInvalid = skipInvalid;
   }
 
   override maskEquals (mask: any): boolean {
