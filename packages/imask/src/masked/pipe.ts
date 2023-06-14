@@ -1,4 +1,4 @@
-import createMask, { type FactoryArg } from './factory';
+import createMask, { type FactoryArg, type FactoryReturnMasked } from './factory';
 import IMask from '../core/holder';
 
 
@@ -13,23 +13,41 @@ const PIPE_TYPE = {
 
 type ValueOf<T> = T[keyof T];
 
+type TypedValueOf<Opts, Type> = Type extends (typeof PIPE_TYPE.MASKED | typeof PIPE_TYPE.UNMASKED) ?
+  string :
+  FactoryReturnMasked<Opts>['typedValue']
+;
+
 /** Creates new pipe function depending on mask type, source and destination options */
 export
-function createPipe<Opts extends FactoryArg> (
-  mask: Opts,
-  from: ValueOf<typeof PIPE_TYPE>=PIPE_TYPE.MASKED,
-  to: ValueOf<typeof PIPE_TYPE>=PIPE_TYPE.MASKED
+function createPipe<
+  Arg extends FactoryArg,
+  From extends ValueOf<typeof PIPE_TYPE> = typeof PIPE_TYPE.MASKED,
+  To extends ValueOf<typeof PIPE_TYPE> = typeof PIPE_TYPE.MASKED,
+> (
+  arg: Arg,
+  from: From=PIPE_TYPE.MASKED as From,
+  to: To=PIPE_TYPE.MASKED as To,
 ) {
-  const masked = createMask(mask);
-  return (value: any) => masked.runIsolated(m => {
+  const masked = createMask(arg);
+  return (value: TypedValueOf<Arg, From>) => masked.runIsolated(m => {
     m[from] = value;
-    return m[to];
+    return m[to] as TypedValueOf<Arg, To>;
   });
 }
 
 /** Pipes value through mask depending on mask type, source and destination options */
 export
-function pipe<Opts extends FactoryArg> (value: any, mask: Opts, from?: ValueOf<typeof PIPE_TYPE>, to?: ValueOf<typeof PIPE_TYPE>) {
+function pipe<
+  Arg extends FactoryArg,
+  From extends ValueOf<typeof PIPE_TYPE> = typeof PIPE_TYPE.MASKED,
+  To extends ValueOf<typeof PIPE_TYPE> = typeof PIPE_TYPE.MASKED,
+> (
+  value: TypedValueOf<Arg, From>,
+  mask: Arg,
+  from?: From,
+  to?: To,
+) {
   return createPipe(mask, from, to)(value);
 }
 

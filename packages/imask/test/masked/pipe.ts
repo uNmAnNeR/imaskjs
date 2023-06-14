@@ -19,11 +19,11 @@ describe('Pipe', function () {
     assert.strictEqual(pipe('1,01', mask, PIPE_TYPE.MASKED, PIPE_TYPE.UNMASKED), '1.01');
     assert.strictEqual(pipe('1,01', mask, PIPE_TYPE.MASKED, PIPE_TYPE.TYPED), 1.01);
 
-    assert.strictEqual(pipe('1.01', mask, PIPE_TYPE.UNMASKED, PIPE_TYPE.MASKED), '1,01');
+    assert.strictEqual(pipe('1.01', mask, PIPE_TYPE.UNMASKED), '1,01');
     assert.strictEqual(pipe('1.01', mask, PIPE_TYPE.UNMASKED, PIPE_TYPE.UNMASKED), '1.01');
     assert.strictEqual(pipe('1.01', mask, PIPE_TYPE.UNMASKED, PIPE_TYPE.TYPED), 1.01);
 
-    assert.strictEqual(pipe(1.01, mask, PIPE_TYPE.TYPED, PIPE_TYPE.MASKED), '1,01');
+    assert.strictEqual(pipe(1.01, mask, PIPE_TYPE.TYPED), '1,01');
     assert.strictEqual(pipe(1.01, mask, PIPE_TYPE.TYPED, PIPE_TYPE.UNMASKED), '1.01');
     assert.strictEqual(pipe(1.01, mask, PIPE_TYPE.TYPED, PIPE_TYPE.TYPED), 1.01);
   });
