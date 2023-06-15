@@ -38,6 +38,8 @@ jobs:
       - run: npm run coverage
       - name: Coveralls
         uses: coverallsapp/github-action@v2
+        with:
+          base-path: ./packages/imask
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with Jekyll

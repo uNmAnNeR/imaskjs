@@ -19,7 +19,7 @@
     "lint": "eslint --quiet",
     "prebuild": "npm run lint && rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c",
-    "coveralls": "c8 report --reporter=text-lcov | coveralls"
+    "coverage": "c8 report --reporter=lcov"
   },
   "keywords": [
     "javascript",

@@ -59,7 +59,7 @@
     "make": "npm run test && npm run build",
     "release": "npm run docs && npm run make && lerna publish",
     "release:next": "npm run release -- --dist-tag next",
-    "coverage": "lerna run coveralls --scope imask",
+    "coverage": "lerna run coverage --scope imask",
     "watch:core": "lerna run watch --scope imask --stream",
     "watch:vue": "lerna run watch --scope vue-imask --stream",
     "watch:react": "lerna run watch --scope react-imask --stream",
