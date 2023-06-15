@@ -21,7 +21,6 @@
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
     "c8": "^8.0.0",
-    "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.42.0",
     "eslint-plugin-tsdoc": "^0.2.17",
