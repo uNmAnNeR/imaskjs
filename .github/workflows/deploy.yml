@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: [$default-branch]
+    branches: ["master"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v2
         with:
-          node-version: latest
+          node-version: lts
       - run: npm ci
       - run: npm run docs
       - name: Setup Pages
