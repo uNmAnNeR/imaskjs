@@ -56,6 +56,7 @@
     "build:react": "lerna run build --scope=react-imask",
     "build:angular": "lerna run build --scope=angular-imask",
     "build:solid": "lerna run build --scope=solid-imask",
+    "build:svelte": "lerna run build --scope=@imask/svelte",
     "build:plugins": "lerna run build --ignore=imask",
     "test": "lerna run test --parallel",
     "make": "npm run test && npm run build",

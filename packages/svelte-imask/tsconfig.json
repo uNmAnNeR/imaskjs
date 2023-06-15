@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+
+  "compilerOptions": {
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "declarationDir": "esm",
+    "paths": {
+      "imask": [
+        "../imask"
+      ]
+    },
+  }
+}

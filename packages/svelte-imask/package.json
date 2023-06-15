@@ -9,7 +9,7 @@
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask",
   "scripts": {
     "prebuild": "rimraf --glob \"{dist,esm}\"",
-    "build": "rollup -c"
+    "build": "tsc --emitDeclarationOnly && rollup -c"
   },
   "keywords": [
     "svelte",
