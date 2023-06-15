@@ -2,7 +2,6 @@ import createMask, { type FactoryArg, type FactoryReturnMasked } from './factory
 import IMask from '../core/holder';
 
 
-// TODO use enum?
 /** Mask pipe source and destination types */
 export
 const PIPE_TYPE = {

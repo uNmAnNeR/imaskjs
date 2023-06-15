@@ -23,43 +23,6 @@ import { type MaskedDateOptions } from './date';
 
 type MaskedDateFactoryOptions = Omit<MaskedDateOptions, 'mask'> & { mask: DateConstructor };
 
-
-// type MaskedConstructor =
-//   | typeof MaskedDate
-//   | typeof MaskedNumber
-//   | typeof MaskedEnum
-//   | typeof MaskedRange
-//   | typeof MaskedRegExp
-//   | typeof MaskedFunction
-//   | typeof MaskedPattern
-//   | typeof MaskedDynamic
-//   | typeof MaskedRegExp
-// ;
-
-// export type AnyMaskedOptions =
-//   | MaskedDateFactoryOptions
-//   | MaskedNumberOptions
-//   | MaskedPatternOptions
-//   | MaskedDynamicOptions
-//   | MaskedEnumOptions
-//   | MaskedRangeOptions
-//   | MaskedRegExpOptions
-//   | MaskedFunctionOptions
-//   | MaskedOptions<Masked>
-//   | { mask: MaskedConstructor }
-// ;
-
-// export type AnyMask =
-//   | MaskedDateFactoryOptions['mask']
-//   | MaskedNumberOptions['mask']
-//   | MaskedPatternOptions['mask']
-//   | MaskedDynamicOptions['mask']
-//   | MaskedRegExpOptions['mask']
-//   | MaskedFunctionOptions['mask']
-//   | Masked
-//   | MaskedConstructor
-// ;
-
 export
 type FactoryStaticOpts =
   | MaskedDateFactoryOptions
@@ -84,23 +47,15 @@ type AllFactoryStaticOpts =
 
 export
 type FactoryStaticReturnMasked<Opts extends FactoryStaticOpts> =
-  Opts extends MaskedDateFactoryOptions
-  ? MaskedDate
-  : Opts extends MaskedNumberOptions
-  ? MaskedNumber
-  : Opts extends MaskedEnumOptions
-  ? MaskedEnum
-  : Opts extends MaskedRangeOptions
-  ? MaskedRange
-  : Opts extends MaskedPatternOptions
-  ? MaskedPattern
-  : Opts extends MaskedDynamicOptions
-  ? MaskedDynamic
-  : Opts extends MaskedRegExpOptions
-  ? MaskedRegExp
-  : Opts extends MaskedFunctionOptions
-  ? MaskedFunction
-  : never
+  Opts extends MaskedDateFactoryOptions ? MaskedDate :
+  Opts extends MaskedNumberOptions ? MaskedNumber :
+  Opts extends MaskedEnumOptions ? MaskedEnum :
+  Opts extends MaskedRangeOptions ? MaskedRange :
+  Opts extends MaskedPatternOptions ? MaskedPattern :
+  Opts extends MaskedDynamicOptions ? MaskedDynamic :
+  Opts extends MaskedRegExpOptions ? MaskedRegExp :
+  Opts extends MaskedFunctionOptions ? MaskedFunction :
+  never
 ;
 
 
@@ -108,25 +63,7 @@ export
 type FactoryInstanceOpts = MaskedOptions & { mask: Masked };
 
 export
-type FactoryInstanceReturnMasked<Opts extends FactoryInstanceOpts> = Opts extends { mask: infer Masked } ? Masked : never;
-
-export
-type DeduceMaskedFromOpts<Opts extends FactoryStaticOpts> =
-  Opts extends MaskedPatternOptions
-  ? MaskedPattern
-  : Opts extends MaskedDateFactoryOptions
-  ? MaskedDate
-  : Opts extends MaskedNumberOptions
-  ? MaskedNumber
-  : Opts extends MaskedRegExpOptions
-  ? MaskedRegExp
-  : Opts extends MaskedFunctionOptions
-  ? MaskedFunction
-  : Opts extends MaskedDynamicOptions
-  ? MaskedDynamic
-  : Opts extends FactoryInstanceOpts
-  ? FactoryInstanceReturnMasked<Opts>
-  : never
+type FactoryInstanceReturnMasked<Opts extends FactoryInstanceOpts> = Opts extends { mask: infer M } ? M : never;
 
 export
 type FactoryConstructorOpts = MaskedOptions & { mask:
@@ -144,24 +81,14 @@ type FactoryConstructorOpts = MaskedOptions & { mask:
  
 export
 type FactoryConstructorReturnMasked<Opts extends FactoryConstructorOpts> =
-  Opts extends { mask: typeof MaskedDate } ?
-  MaskedDate :
-  Opts extends { mask: typeof MaskedNumber } ?
-  MaskedNumber :
-  Opts extends { mask: typeof MaskedEnum } ?
-  MaskedEnum :
-  Opts extends { mask: typeof MaskedRange } ?
-  MaskedRange :
-  Opts extends { mask: typeof MaskedRegExp } ?
-  MaskedRegExp :
-  Opts extends { mask: typeof MaskedFunction } ?
-  MaskedFunction :
-  Opts extends { mask: typeof MaskedPattern } ?
-  MaskedPattern :
-  Opts extends { mask: typeof MaskedDynamic } ?
-  MaskedDynamic :
-  Opts extends { mask: typeof MaskedRegExp } ?
-  MaskedRegExp :
+  Opts extends { mask: typeof MaskedDate } ? MaskedDate :
+  Opts extends { mask: typeof MaskedNumber } ? MaskedNumber :
+  Opts extends { mask: typeof MaskedEnum } ? MaskedEnum :
+  Opts extends { mask: typeof MaskedRange } ? MaskedRange :
+  Opts extends { mask: typeof MaskedRegExp } ? MaskedRegExp :
+  Opts extends { mask: typeof MaskedFunction } ? MaskedFunction :
+  Opts extends { mask: typeof MaskedPattern } ? MaskedPattern :
+  Opts extends { mask: typeof MaskedDynamic } ? MaskedDynamic :
   Masked
 ;
 
@@ -173,74 +100,16 @@ type FactoryArg = Masked | FactoryOpts;
 
 export
 type FactoryReturnMasked<Opts extends FactoryArg> =
-  Opts extends Masked
-  ? Opts
-  : Opts extends FactoryConstructorOpts
-  ? FactoryConstructorReturnMasked<Opts>
-  : Opts extends FactoryInstanceOpts
-  ? FactoryInstanceReturnMasked<Opts>
-  : Opts extends FactoryStaticOpts
-  ? FactoryStaticReturnMasked<Opts>
-  : never;
-
-
-// export
-// type DeduceMasked<Opts> =
-//   Opts extends Masked
-//   ? Opts
-//   : Opts extends FactoryStaticOpts
-//     ? DeduceMaskedFromOpts<Opts>
-//     : never;
-
-
-// export
-// type DeduceMaskedClass<Mask> =
-//   Mask extends Masked
-//     ? typeof Masked
-//     : Mask extends string
-//       ? typeof IMask.MaskedPattern
-//       : Mask extends DateConstructor
-//       ? typeof IMask.MaskedDate
-//       : Mask extends Date
-//       ? typeof IMask.MaskedDate
-//       : Mask extends NumberConstructor
-//       ? typeof IMask.MaskedNumber
-//       : Mask extends RegExp
-//       ? typeof IMask.MaskedRegExp
-//       : Mask extends Array<any>
-//       ? typeof IMask.MaskedDynamic
-//       : Mask extends ArrayConstructor
-//       ? typeof IMask.MaskedDynamic
-//       : Mask extends Function
-//       ? typeof IMask.MaskedFunction
-//       : never;
-
-// export
-// type MaskedTypedValue<Mask> = Mask extends NumberConstructor
-//   ? number
-//   : Mask extends DateConstructor
-//   ? Date
-//   : string;
-
-
-// export
-// type AllMaskedOptions =
-//   & MaskedDateFactoryOptions
-//   & MaskedNumberOptions
-//   & MaskedPatternOptions
-//   & MaskedDynamicOptions
-//   & MaskedEnumOptions
-//   & MaskedRangeOptions
-//   & MaskedDynamicOptions
-//   & MaskedRegExpOptions
-//   & MaskedFunctionOptions
-//   & FactoryInstanceOpts
-//   & FactoryConstructorOpts
-// ;
+  Opts extends Masked ? Opts :
+  Opts extends FactoryConstructorOpts ? FactoryConstructorReturnMasked<Opts> :
+  Opts extends FactoryInstanceOpts ? FactoryInstanceReturnMasked<Opts> :
+  Opts extends FactoryStaticOpts ? FactoryStaticReturnMasked<Opts> :
+  never
+;
 
 
 
-/** Get Masked class by mask type */
+// TODO can't use overloads here because of https://github.com/microsoft/TypeScript/issues/50754
 // export function maskedClass(mask: string): typeof MaskedPattern;
 // export function maskedClass(mask: DateConstructor): typeof MaskedDate;
 // export function maskedClass(mask: NumberConstructor): typeof MaskedNumber;
@@ -266,8 +135,9 @@ type FactoryReturnMasked<Opts extends FactoryArg> =
 // export function maskedClass<Mask extends typeof Masked> (mask: Mask): Mask;
 // export function maskedClass(mask: RegExp): typeof MaskedRegExp;
 // export function maskedClass(mask: (value: string, ...args: any[]) => boolean): typeof MaskedFunction;
-// TODO
-export function maskedClass(mask: any): any {
+
+/** Get Masked class by mask type */
+export function maskedClass (mask: Masked | FactoryOpts['mask']): any /* TODO */ {
   if (mask == null) throw new Error('mask property should be defined');
 
   if (mask instanceof RegExp) return IMask.MaskedRegExp;
@@ -283,17 +153,51 @@ export function maskedClass(mask: any): any {
   return IMask.Masked;
 }
 
-export
-type NormalizedOpts = FactoryOpts & { _mask?: FactoryStaticOpts['mask'] };
+type MaskedClassOf<M extends Masked> =
+  M extends MaskedDate ? typeof MaskedDate :
+  M extends MaskedNumber ? typeof MaskedNumber :
+  M extends MaskedEnum ? typeof MaskedEnum :
+  M extends MaskedRange ? typeof MaskedRange :
+  M extends MaskedRegExp ? typeof MaskedRegExp :
+  M extends MaskedFunction ? typeof MaskedFunction :
+  M extends MaskedPattern ? typeof MaskedPattern :
+  M extends MaskedDynamic ? typeof MaskedDynamic :
+  any
+;
+
+
+type NormalizedMaskedOpts<Opts extends Masked> = Omit<Opts, 'mask'> & {
+  _mask: Opts,
+  mask: MaskedClassOf<Opts>,
+};
+
+type NormalizedInstanceOpts<Opts extends FactoryInstanceOpts> =
+  Omit<Opts['mask'], `_${string}` | 'mask'> &
+  NormalizedMaskedOpts<Opts['mask']>
+;
 
 export
-function normalizeOpts<Opts extends FactoryArg> (opts: Opts): NormalizedOpts {
+type NormalizedOpts<Opts extends FactoryArg> =
+  Opts extends Masked ? NormalizedMaskedOpts<Opts> :
+  Opts extends FactoryInstanceOpts ? NormalizedInstanceOpts<Opts> :
+  Opts extends FactoryStaticOpts | FactoryConstructorOpts ? Opts :
+  { mask: Opts }
+;
+
+export
+function normalizeOpts<Opts extends FactoryArg> (opts: Opts): NormalizedOpts<Opts> {
   if (!opts) throw new Error('Options in not defined');
 
   if (IMask.Masked) {
-    if ((opts as any).prototype instanceof IMask.Masked) return { mask: opts } as NormalizedOpts;
+    if ((opts as any).prototype instanceof IMask.Masked) return { mask: opts } as NormalizedOpts<Opts>;
 
-    const { mask=undefined, ...instanceOpts } = opts instanceof IMask.Masked ? { mask: opts } :
+    /*
+      handle cases like:
+      1) opts = Masked
+      2) opts = { mask: Masked, ...instanceOpts }
+    */
+    const { mask=undefined, ...instanceOpts } =
+      opts instanceof IMask.Masked ? { mask: opts } :
       opts.mask instanceof IMask.Masked ? opts : {};
 
     if (mask) {
@@ -304,13 +208,13 @@ function normalizeOpts<Opts extends FactoryArg> (opts: Opts): NormalizedOpts {
         mask: mask.constructor,
         _mask,
         ...instanceOpts,
-      } as NormalizedOpts;
+      } as NormalizedOpts<Opts>;
     }
   }
 
-  if (!isObject(opts)) return { mask: opts };
+  if (!isObject(opts)) return { mask: opts } as unknown as NormalizedOpts<Opts>;
 
-  return { ...opts } as NormalizedOpts;
+  return { ...opts } as unknown as NormalizedOpts<Opts>;
 }
 
 // TODO can't use overloads here because of https://github.com/microsoft/TypeScript/issues/50754
@@ -348,7 +252,7 @@ function createMask<Opts extends FactoryArg> (opts: Opts): FactoryReturnMasked<O
   if (!MaskedClass) throw new Error('Masked class is not found for provided mask, appropriate module needs to be imported manually before creating mask.');
 
   if (nOpts.mask === MaskedClass) delete nOpts.mask;
-  if (nOpts._mask) { nOpts.mask = nOpts._mask; delete nOpts._mask; }
+  if ((nOpts as any)._mask) { nOpts.mask = (nOpts as any)._mask; delete (nOpts as any)._mask; }
   return new MaskedClass(nOpts);
 }
 

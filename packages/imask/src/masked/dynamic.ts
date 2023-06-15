@@ -32,7 +32,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   /** Currently chosen mask */
   declare currentMask?: Masked;
   /** Compliled {@link Masked} options */
-  declare compiledMasks: Array<Masked>; // TODO FactoryReturnMasked<?>
+  declare compiledMasks: Array<Masked>;
   /** Chooses {@link Masked} depending on input value */
   declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags<MaskedDynamicState>, tail: string | String | TailDetails) => (Masked | undefined);
 

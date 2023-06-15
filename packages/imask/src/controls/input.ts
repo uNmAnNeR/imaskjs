@@ -59,18 +59,18 @@ class InputMask<Opts extends FactoryArg> {
   }
 
   /** Read or update mask */
-  get mask (): Opts['mask'] {
+  get mask (): FactoryReturnMasked<Opts>['mask'] {
     return this.masked.mask;
   }
 
-  maskEquals (mask: Opts['mask']): boolean {
+  maskEquals (mask: any): boolean {
     return mask == null || this.masked?.maskEquals(mask);
   }
 
-  set mask (mask: Opts['mask']) {
+  set mask (mask: any) {
     if (this.maskEquals(mask)) return;
 
-    if (!((mask as Masked) instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask)) {
+    if (!((mask as Masked) instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask as Masked)) {
       // TODO "any" no idea
       this.masked.updateOptions({ mask } as any);
       return;

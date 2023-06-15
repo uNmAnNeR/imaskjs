@@ -1,4 +1,4 @@
-import { type PropType } from 'vue-demi'; // TODO
+import { type PropType } from 'vue-demi';
 import { type FactoryOpts, type MaskedDynamicOptions } from 'imask';
 
 export default {

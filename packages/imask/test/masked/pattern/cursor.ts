@@ -112,8 +112,6 @@ describe('Align RIGHT', function () {
     masked.unmaskedValue = '';
   });
 
-  // TODO
-
   it('should align right inside block', function () {
     masked.updateOptions({
       mask: 'dw',

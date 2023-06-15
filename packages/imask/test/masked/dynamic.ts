@@ -60,7 +60,6 @@ describe('MaskedDynamic', function () {
     assert.equal(masked.value, '12"');
   });
 
-  // TODO allow to use external props?
   it('should handle flags correctly', function () {
     masked.updateOptions({
       mask: [
