@@ -21,8 +21,11 @@ class MaskedEnum extends MaskedPattern {
 
   override _update (opts: Partial<MaskedEnumOptions>) {
     const { enum: _enum, ...eopts }: MaskedEnumPatternOptions = opts;
-    this.enum = _enum;
-    if (_enum) eopts.mask = '*'.repeat(_enum[0].length);
+
+    if (_enum) {
+      eopts.mask = '*'.repeat(_enum[0].length);
+      this.enum = _enum;
+    }
 
     super._update(eopts);
   }
