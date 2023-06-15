@@ -33,6 +33,7 @@ jobs:
           node-version: 'latest'
           cache: 'npm'
       - run: npm ci
+      - run: npm build
       - run: npm run docs
       - name: Setup Pages
         uses: actions/configure-pages@v3
