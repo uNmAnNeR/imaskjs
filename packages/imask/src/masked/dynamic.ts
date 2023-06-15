@@ -9,7 +9,6 @@ import IMask from '../core/holder';
 
 export
 type MaskedDynamicState = MaskedState & {
-  _rawInputValue: string,
   compiledMasks: Array<MaskedState>,
   currentMaskRef?: Masked,
   currentMask: MaskedState,
@@ -21,6 +20,7 @@ type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
 export
 type MaskedDynamicOptions = MaskedOptions<MaskedDynamic, 'dispatch'>;
 
+type HandleState = MaskedDynamicState | MaskedState;
 
 /** Dynamic mask for choosing appropriate mask in run-time */
 export default
@@ -34,7 +34,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   /** Compliled {@link Masked} options */
   declare compiledMasks: Array<Masked>;
   /** Chooses {@link Masked} depending on input value */
-  declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags<MaskedDynamicState>, tail: string | String | TailDetails) => (Masked | undefined);
+  declare dispatch: (appended: string, masked: MaskedDynamic, flags: AppendFlags<HandleState>, tail: string | String | TailDetails) => (Masked | undefined);
 
   declare _overwrite?: this['overwrite'];
   declare _eager?: this['eager'];
@@ -71,7 +71,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     }
   }
 
-  override _appendCharRaw (ch: string, flags: AppendFlags<MaskedDynamicState>={}): ChangeDetails {
+  override _appendCharRaw (ch: string, flags: AppendFlags<HandleState>={}): ChangeDetails {
     const details = this._applyDispatch(ch, flags);
 
     if (this.currentMask) {
@@ -81,7 +81,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return details;
   }
 
-  _applyDispatch (appended: string='', flags: AppendFlags<MaskedDynamicState>={}, tail: string | String | TailDetails = ''): ChangeDetails {
+  _applyDispatch (appended: string='', flags: AppendFlags<HandleState>={}, tail: string | String | TailDetails = ''): ChangeDetails {
     const prevValueBeforeTail = flags.tail && flags._beforeTailState != null ?
       flags._beforeTailState._value :
       this.value;
@@ -151,25 +151,27 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
       super.appendTail(tail));
   }
 
-  currentMaskFlags (flags: AppendFlags<MaskedDynamicState>): AppendFlags {
+  currentMaskFlags (flags: AppendFlags<HandleState>): AppendFlags {
     return {
       ...flags,
-      _beforeTailState: flags._beforeTailState?.currentMaskRef === this.currentMask && flags._beforeTailState?.currentMask ||
+      _beforeTailState:
+        (flags._beforeTailState as MaskedDynamicState)?.currentMaskRef === this.currentMask &&
+        (flags._beforeTailState as MaskedDynamicState)?.currentMask ||
         flags._beforeTailState,
     };
   }
 
-  doDispatch(appended: string, flags: AppendFlags<MaskedDynamicState>={}, tail: string | String | TailDetails=''): Masked | undefined {
+  doDispatch(appended: string, flags: AppendFlags<HandleState>={}, tail: string | String | TailDetails=''): Masked | undefined {
     return this.dispatch(appended, this, flags, tail);
   }
 
-  override doValidate (flags: AppendFlags<MaskedDynamicState>): boolean {
+  override doValidate (flags: AppendFlags<HandleState>): boolean {
     return super.doValidate(flags) && (
       !this.currentMask || this.currentMask.doValidate(this.currentMaskFlags(flags))
     );
   }
 
-  override doPrepare (str: string, flags: AppendFlags<MaskedDynamicState>={}): [string, ChangeDetails] {
+  override doPrepare (str: string, flags: AppendFlags<HandleState>={}): [string, ChangeDetails] {
     let [s, details] = super.doPrepare(str, flags);
 
     if (this.currentMask) {
@@ -181,7 +183,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return [s, details];
   }
 
-  override doPrepareChar (str: string, flags: AppendFlags<MaskedDynamicState>={}): [string, ChangeDetails] {
+  override doPrepareChar (str: string, flags: AppendFlags<HandleState>={}): [string, ChangeDetails] {
     let [s, details] = super.doPrepareChar(str, flags);
 
     if (this.currentMask) {
@@ -263,9 +265,9 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     };
   }
 
-  override set state (state: MaskedDynamicState) {
-    const {compiledMasks, currentMaskRef, currentMask, ...maskedState} = state;
-    this.compiledMasks.forEach((m, mi) => m.state = compiledMasks[mi]);
+  override set state (state: HandleState) {
+    const { compiledMasks, currentMaskRef, currentMask, ...maskedState} = state as MaskedDynamicState;
+    if (compiledMasks) this.compiledMasks.forEach((m, mi) => m.state = compiledMasks[mi]);
     if (currentMaskRef != null) {
       this.currentMask = currentMaskRef;
       this.currentMask.state = currentMask;

@@ -8,6 +8,7 @@ import IMask from '../core/holder';
 export
 type MaskedState = {
   _value: string,
+  _rawInputValue: string,
 };
 
 /** Append flags */
@@ -107,6 +108,7 @@ class Masked<Value=any> {
   get state (): MaskedState {
     return {
       _value: this.value,
+      _rawInputValue: this.rawInputValue,
     };
   }
 

@@ -31,7 +31,7 @@ export { default as MaskedNumber, type MaskedNumberOptions } from './masked/numb
 export { default as MaskedPattern, type BlockPosData, type Definitions, type MaskedPatternOptions, type MaskedPatternState } from './masked/pattern';
 export { type default as PatternBlock } from './masked/pattern/block';
 export { default as ChunksTailDetails, type ChunksTailState } from './masked/pattern/chunk-tail-details';
-export { default as PatternFixedDefinition, type PatternFixedDefinitionOptions, type PatternFixedDefinitionState } from './masked/pattern/fixed-definition';
+export { default as PatternFixedDefinition, type PatternFixedDefinitionOptions } from './masked/pattern/fixed-definition';
 export { default as PatternInputDefinition, type PatternInputDefinitionOptions, type PatternInputDefinitionState } from './masked/pattern/input-definition';
 export { createPipe, pipe, PIPE_TYPE } from './masked/pipe';
 export { default as MaskedRange, type MaskedRangeOptions } from './masked/range';

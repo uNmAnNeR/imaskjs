@@ -1,7 +1,7 @@
 import type Masked from '../base';
 import type ChangeDetails from '../../core/change-details';
 import { type TailDetails } from '../../core/tail-details';
-import { type ExtractFlags, type AppendFlags } from '../base';
+import { type ExtractFlags, type AppendFlags, type MaskedState } from '../base';
 import { type Direction } from '../../core/utils';
 
 
@@ -10,7 +10,7 @@ import { type Direction } from '../../core/utils';
   @interface
 */
 export default
-interface PatternBlock {
+interface PatternBlock<State=MaskedState> {
   readonly value: string;
   readonly unmaskedValue: string;
   readonly displayValue: string;
@@ -26,9 +26,9 @@ interface PatternBlock {
   remove (fromPos?: number, toPos?: number): ChangeDetails;
   extractInput (fromPos?: number, toPos?: number, flags?: ExtractFlags): string;
   extractTail (fromPos?: number, toPos?: number): TailDetails;
-  append (str: string, flags?: AppendFlags, tail?: TailDetails): ChangeDetails;
+  append (str: string, flags?: AppendFlags<State>, tail?: TailDetails): ChangeDetails;
   appendTail (tail: string | TailDetails): ChangeDetails;
-  _appendChar (str: string, flags: AppendFlags): ChangeDetails;
+  _appendChar (str: string, flags: AppendFlags<State>): ChangeDetails;
   _appendPlaceholder (toBlockIndex?: number): ChangeDetails;
   _appendEager (): ChangeDetails;
   doCommit (): void;

@@ -166,7 +166,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
           displayChar: this.displayChar,
           ...normalizeOpts(defs[char]),
           parent: this,
-        } as any) :
+        }) :
         new PatternFixedDefinition({
           char,
           eager: this.eager,
@@ -443,13 +443,6 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
       cursor.popState();
       if (cursor.ok) return cursor.pos;
-
-      // cursor.popState();
-      // if (
-      //   cursor.pushRightBeforeInput() &&
-      //   // TODO HACK for lazy if has aligned left inside fixed and has came to the start - use start position
-      //   (!this.lazy || this.extractInput())
-      // ) return cursor.pos;
 
       return 0;
     }

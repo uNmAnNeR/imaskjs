@@ -9,9 +9,6 @@ import type PatternBlock from './block';
 export
 type PatternFixedDefinitionOptions = Pick<PatternFixedDefinition, 'char' | 'isUnmasking' | 'eager'>;
 
-export
-type PatternFixedDefinitionState = MaskedState & Pick<PatternFixedDefinition, '_isRawInput'>;
-
 
 export default
 class PatternFixedDefinition implements PatternBlock {
@@ -40,6 +37,10 @@ class PatternFixedDefinition implements PatternBlock {
 
   get unmaskedValue (): string {
     return this.isUnmasking ? this.value : '';
+  }
+
+  get rawInputValue (): string {
+    return this._isRawInput ? this.value : '';
   }
 
   get displayValue (): string {
@@ -139,14 +140,15 @@ class PatternFixedDefinition implements PatternBlock {
 
   doCommit () {}
 
-  get state (): PatternFixedDefinitionState {
+  get state (): MaskedState {
     return {
       _value: this._value,
-      _isRawInput: this._isRawInput,
+      _rawInputValue: this.rawInputValue,
     };
   }
 
-  set state (state: PatternFixedDefinitionState) {
-    Object.assign(this, state);
+  set state (state: MaskedState) {
+    this._value = state._value;
+    this._isRawInput = Boolean(state._rawInputValue);
   }
 }
