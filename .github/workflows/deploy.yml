@@ -33,8 +33,11 @@ jobs:
           node-version: 'latest'
           cache: 'npm'
       - run: npm ci
-      - run: npm run build
+      - run: npm run make
       - run: npm run docs
+      - run: npm run coverage
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with Jekyll
