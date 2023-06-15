@@ -30,7 +30,7 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v2
         with:
-          node-version: lts
+          node-version: 'lts'
       - run: npm ci
       - run: npm run docs
       - name: Setup Pages
