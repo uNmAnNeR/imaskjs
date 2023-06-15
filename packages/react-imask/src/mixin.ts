@@ -6,6 +6,7 @@ import IMask, { type InputMask, type InputMaskElement, type FactoryOpts, type Al
 export
 type Falsy = false | 0 | "" | null | undefined;
 
+export
 type ReactMaskOpts = FactoryOpts & { unmask?: 'typed' | boolean };
 
 export
@@ -114,6 +115,7 @@ const MASK_PROPS: { [key in keyof (AllFactoryStaticOpts & ReactMaskProps<InputMa
 const MASK_PROPS_NAMES = (Object.keys(MASK_PROPS) as Array<keyof typeof MASK_PROPS>).filter(p => p !== 'value');
 const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'] as const;
 
+export
 type ReactElementProps<MaskElement extends InputMaskElement> = Omit<Omit<React.HTMLProps<MaskElement>, keyof typeof MASK_PROPS>, typeof NON_MASK_OPTIONS_PROPS_NAMES[number]>;
 type NonMaskProps<
   MaskElement extends InputMaskElement,
@@ -125,28 +127,33 @@ type ReactMixinComponent<
   MaskElement extends InputMaskElement,
 > = React.ComponentType<ReactElementProps<MaskElement> & { inputRef: React.Ref<MaskElement>; }>;
 
+export
 type MaskPropsKeys = Exclude<keyof typeof MASK_PROPS, typeof NON_MASK_OPTIONS_PROPS_NAMES[number]>;
 const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
   NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName as typeof NON_MASK_OPTIONS_PROPS_NAMES[number]) < 0
 ) as Array<MaskPropsKeys>;
 
+export
 type MaskOpts<
   MaskElement extends InputMaskElement,
   Props extends IMaskInputProps<MaskElement>=IMaskInputProps<MaskElement>
 > = Extract<Props, FactoryOpts>;
 
-export type IMaskMixinProps<
+export
+type IMaskMixinProps<
   MaskElement extends InputMaskElement,
   Props extends ReactMaskOpts & ReactMaskProps<MaskElement>=ReactMaskOpts & ReactMaskProps<MaskElement>,
 > = Props & ReactMaskProps<MaskElement, Props>;
 
-export type IMaskInputProps<
+export
+type IMaskInputProps<
   MaskElement extends InputMaskElement,
   Props extends IMaskMixinProps<MaskElement>=IMaskMixinProps<MaskElement>,
 > = ReactElementProps<MaskElement> & IMaskMixinProps<MaskElement, Props>;
 
 
-export default function IMaskMixin<
+export default
+function IMaskMixin<
   MaskElement extends InputMaskElement,
   Props extends IMaskInputProps<MaskElement>,
 >(ComposedComponent: ReactMixinComponent<MaskElement>) {

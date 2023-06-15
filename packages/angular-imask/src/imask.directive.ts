@@ -17,6 +17,7 @@ export const MASKEDINPUT_VALUE_ACCESSOR: Provider = {
   multi: true,
 };
 
+export
 type Value<Opts extends FactoryArg, Unmask extends ('typed' | boolean)> =
   Unmask extends 'typed' ? InputMask<Opts>['typedValue'] :
   Unmask extends Falsy ? InputMask<Opts>['value'] :
