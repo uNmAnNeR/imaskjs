@@ -111,7 +111,7 @@ class ChunksTailDetails implements TailDetails {
       } else {
         details.aggregate(masked.append(chunk.toString(), { tail: true }));
       }
-    };
+    }
 
     return details;
   }

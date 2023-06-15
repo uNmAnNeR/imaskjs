@@ -9,9 +9,7 @@ type ChangeDetailsOptions = Pick<ChangeDetails,
   | 'rawInserted'
 >;
 
-/**
-  Provides details of changing model value
-*/
+/** Provides details of changing model value */
 export default
 class ChangeDetails {
   /** Inserted symbols */
@@ -39,10 +37,7 @@ class ChangeDetails {
     }, details);
   }
 
-  /**
-    Aggregate changes
-    @returns {ChangeDetails} `this`
-  */
+  /** Aggregate changes */
   aggregate (details: ChangeDetails): this {
     this.rawInserted += details.rawInserted;
     this.skip = this.skip || details.skip;

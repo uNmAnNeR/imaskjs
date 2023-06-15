@@ -90,7 +90,7 @@ class MaskedRange extends MaskedPattern {
     const fromStr = String(this.from).padStart(this.maxLength, '0');
     const toStr = String(this.to).padStart(this.maxLength, '0');
 
-    let nextVal = this.value + ch;
+    const nextVal = this.value + ch;
     if (nextVal.length > this.maxLength) return ['', details];
 
     const [minstr, maxstr] = this.boundaries(nextVal);

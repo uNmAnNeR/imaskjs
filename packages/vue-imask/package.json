@@ -14,7 +14,8 @@
     "cangku"
   ],
   "scripts": {
-    "prebuild": "rimraf --glob \"{dist,esm}\"",
+    "lint": "eslint --quiet",
+    "prebuild": "npm run lint && rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c",
     "watch": "rollup -c -w"
   },

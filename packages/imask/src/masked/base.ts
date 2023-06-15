@@ -53,7 +53,7 @@ class Masked<Value=any> {
   };
   static EMPTY_VALUES: Array<any> = [undefined, null, ''];
 
-  /** @type {Mask} */
+  /** */
   declare mask: unknown;
   /** */
   declare parent?: Masked;

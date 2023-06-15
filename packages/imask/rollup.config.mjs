@@ -1,6 +1,5 @@
 import { babel } from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
-import eslint from '@rollup/plugin-eslint';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import multi from 'rollup-plugin-multi-input';
@@ -32,7 +31,6 @@ export default [
       exports: 'named',
     },
     plugins: [
-      eslint({ overrideConfigFile: '../../.eslintrc.ts.js' }),
       ...commonPlugins,
       min && terser(),
     ],

@@ -10,10 +10,7 @@ type ElementEvent =
   'focus' |
   'commit';
 
-/**
-  Generic element API to use with mask
-  @interface
-*/
+/**  Generic element API to use with mask */
 export default
 class MaskElement {
   /** */
@@ -28,7 +25,7 @@ class MaskElement {
     let start;
     try {
       start = this._unsafeSelectionStart;
-    } catch (e) {}
+    } catch {}
 
     return start != null ?
       start :
@@ -40,7 +37,7 @@ class MaskElement {
     let end;
     try {
       end = this._unsafeSelectionEnd;
-    } catch (e) {}
+    } catch {}
 
     return end != null ?
       end :
@@ -54,7 +51,7 @@ class MaskElement {
 
     try {
       this._unsafeSelect(start, end);
-    } catch (e) {}
+    } catch {}
   }
 
   /** Should be overriden in subclasses */

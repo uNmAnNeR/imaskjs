@@ -58,15 +58,14 @@ class InputMask<Opts extends FactoryArg> {
     this._onChange();
   }
 
-  /** Read or update mask */
-  get mask (): FactoryReturnMasked<Opts>['mask'] {
-    return this.masked.mask;
-  }
-
   maskEquals (mask: any): boolean {
     return mask == null || this.masked?.maskEquals(mask);
   }
 
+  /** Read or update mask */
+  get mask (): FactoryReturnMasked<Opts>['mask'] {
+    return this.masked.mask;
+  }
   set mask (mask: any) {
     if (this.maskEquals(mask)) return;
 

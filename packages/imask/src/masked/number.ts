@@ -79,9 +79,9 @@ class MaskedNumber extends Masked<number> {
   }
 
   _updateRegExps () {
-    let start = '^' + (this.allowNegative ? '[+|\\-]?' : '');
-    let mid = '\\d*';
-    let end = (this.scale ?
+    const start = '^' + (this.allowNegative ? '[+|\\-]?' : '');
+    const mid = '\\d*';
+    const end = (this.scale ?
       `(${escapeRegExp(this.radix)}\\d{0,${this.scale}})?` :
       '') + '$';
 

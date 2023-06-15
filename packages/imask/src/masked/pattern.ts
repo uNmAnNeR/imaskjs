@@ -1,4 +1,3 @@
-import exp from 'constants';
 import ChangeDetails from '../core/change-details';
 import IMask from '../core/holder';
 import { type TailDetails } from '../core/tail-details';
@@ -30,7 +29,7 @@ type Definitions = {
 
 export
 type MaskedPatternState = MaskedState & {
-  _blocks: Array<any>,
+  _blocks: Array<MaskedState>,
 };
 
 export
@@ -94,7 +93,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     this._stops = [];
     this._maskedBlocks = {};
 
-    let pattern = this.mask;
+    const pattern = this.mask;
     if (!pattern || !defs) return;
 
     let unmaskingBlock = false;

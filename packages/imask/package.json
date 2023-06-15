@@ -16,9 +16,9 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec -r ts-node/register --test test/**/*",
     "watch": "rollup -c -w",
-    "prebuild": "rimraf --glob \"{dist,esm}\"",
+    "lint": "eslint --quiet",
+    "prebuild": "npm run lint && rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c",
-    "lint": "eslint src/",
     "coveralls": "c8 report --reporter=text-lcov | coveralls"
   },
   "keywords": [

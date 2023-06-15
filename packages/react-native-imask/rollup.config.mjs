@@ -1,5 +1,4 @@
 import { babel } from '@rollup/plugin-babel';
-import eslint from '@rollup/plugin-eslint';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
 import pkg from './package.json' assert { type: 'json' };
@@ -32,10 +31,7 @@ export default [
       format: 'umd',
       sourcemap: true,
     },
-    plugins: [
-      eslint({ overrideConfigFile: '../../.eslintrc' }),
-      babel(babelConfig),
-    ],
+    plugins: babel(babelConfig),
   },
   {
     input,

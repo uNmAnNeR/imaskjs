@@ -9,7 +9,9 @@
   "types": "dist/index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
   "scripts": {
-    "build": "rimraf --glob \"{dist,esm}\" && tsc --emitDeclarationOnly && rollup -c"
+    "lint": "eslint --quiet",
+    "prebuild": "npm run lint && rimraf --glob \"{dist,esm}\"",
+    "build": "tsc --emitDeclarationOnly && rollup -c"
   },
   "keywords": [
     "solid",

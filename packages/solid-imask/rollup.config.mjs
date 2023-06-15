@@ -1,6 +1,5 @@
 // import withSolid from 'rollup-preset-solid';
 import { babel } from '@rollup/plugin-babel';
-import eslint from '@rollup/plugin-eslint';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
@@ -41,10 +40,7 @@ export default [
       format: 'umd',
       sourcemap: true,
     },
-    plugins: [
-      eslint({ overrideConfigFile: '../../.eslintrc.ts.js' }),
-      ...commonPlugins,
-    ],
+    plugins: commonPlugins,
   },
   {
     input,

@@ -118,7 +118,7 @@ class PatternFixedDefinition implements PatternBlock {
     return details;
   }
 
-  extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
+  extractTail (): TailDetails {
     return new ContinuousTailDetails('');
   }
 

@@ -94,7 +94,7 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
       ...opts,
     };
 
-    let patternBlocks = Object.assign({}, MaskedDate.GET_DEFAULT_BLOCKS());
+    const patternBlocks = Object.assign({}, MaskedDate.GET_DEFAULT_BLOCKS());
     // adjust year block
     if (opts.min) patternBlocks.Y.from = opts.min.getFullYear();
     if (opts.max) patternBlocks.Y.to = opts.max.getFullYear();

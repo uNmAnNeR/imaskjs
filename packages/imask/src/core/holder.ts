@@ -30,6 +30,7 @@ function IMask<Opts extends FactoryArg> (el: _InputMaskElement, opts: Opts): _In
   return new IMask.InputMask(el, opts);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace IMask {
   export let InputMask: typeof _InputMask;
   export let createMask: typeof _createMask;

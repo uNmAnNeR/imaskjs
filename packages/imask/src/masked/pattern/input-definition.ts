@@ -1,4 +1,4 @@
-import createMask, { type NormalizedOpts, type FactoryOpts, type FactoryReturnMasked } from '../factory';
+import createMask, { type FactoryOpts, type FactoryReturnMasked } from '../factory';
 import type Masked from '../base';
 import type MaskedPattern from '../pattern';
 import { type TailDetails } from '../../core/tail-details';

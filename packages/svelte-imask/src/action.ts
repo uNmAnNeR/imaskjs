@@ -1,8 +1,8 @@
-import IMask, { type FactoryArg, type FactoryReturnMasked, type InputMask } from 'imask';
+import IMask, { type FactoryArg, type InputMask } from 'imask';
 
 
 function fireEvent<Opts extends FactoryArg> (el: HTMLElement, eventName: string, data: InputMask<Opts>) {
-  var e = document.createEvent('CustomEvent');
+  const e = document.createEvent('CustomEvent');
   e.initCustomEvent(eventName, true, true, data);
   el.dispatchEvent(e);
 }

@@ -39,5 +39,5 @@ export { default as MaskedRegExp, type MaskedRegExpOptions } from './masked/rege
 
 try {
   (globalThis as any).IMask = IMask;
-} catch(e) {}
+} catch {}
 export default IMask;

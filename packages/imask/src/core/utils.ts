@@ -6,7 +6,7 @@ function isString (str: unknown): str is string {
 
 /** Checks if value is object */
 export
-function isObject (obj: unknown): obj is Object {
+function isObject (obj: unknown): obj is object {
   return typeof obj === 'object' && obj != null && obj?.constructor?.name === 'Object';
 }
 
@@ -23,14 +23,7 @@ function pick<T, K extends keyof T, V> (
     }, {} as any);
 }
 
-/**
-  Direction
-  @prop {string} NONE
-  @prop {string} LEFT
-  @prop {string} FORCE_LEFT
-  @prop {string} RIGHT
-  @prop {string} FORCE_RIGHT
-*/
+/** Direction */
 export
 const DIRECTION = {
   NONE: 'NONE',
@@ -40,10 +33,7 @@ const DIRECTION = {
   FORCE_RIGHT: 'FORCE_RIGHT',
 } as const;
 
-/**
-  Direction
-  @enum {string}
-*/
+/** Direction */
 export
 type Direction = typeof DIRECTION[keyof typeof DIRECTION];
 
@@ -62,7 +52,7 @@ function forceDirection (direction: Direction): Direction {
 /** Escapes regular expression control chars */
 export
 function escapeRegExp (str: string): string {
-  return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+  return str.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
 }
 
 // cloned from https://github.com/epoberezkin/fast-deep-equal with small changes
@@ -70,9 +60,8 @@ export
 function objectIncludes (b: any, a: any): boolean {
   if (a === b) return true;
 
-  var arrA = Array.isArray(a)
-    , arrB = Array.isArray(b)
-    , i;
+  const arrA = Array.isArray(a), arrB = Array.isArray(b);
+  let i;
 
   if (arrA && arrB) {
     if (a.length != b.length) return false;
@@ -84,17 +73,15 @@ function objectIncludes (b: any, a: any): boolean {
   if (arrA != arrB) return false;
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    var dateA = a instanceof Date
-      , dateB = b instanceof Date;
+    const dateA = a instanceof Date, dateB = b instanceof Date;
     if (dateA && dateB) return a.getTime() == b.getTime();
     if (dateA != dateB) return false;
 
-    var regexpA = a instanceof RegExp
-      , regexpB = b instanceof RegExp;
+    const regexpA = a instanceof RegExp, regexpB = b instanceof RegExp;
     if (regexpA && regexpB) return a.toString() == b.toString();
     if (regexpA != regexpB) return false;
 
-    var keys = Object.keys(a);
+    const keys = Object.keys(a);
     // if (keys.length !== Object.keys(b).length) return false;
 
     for (i = 0; i < keys.length; i++)
