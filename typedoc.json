@@ -3,5 +3,5 @@
   "name": "IMask",
   "entryPointStrategy": "packages",
   "includeVersion": true,
-  "out": "docs/_site/api"
+  "out": "./docs/_site/api"
 }
