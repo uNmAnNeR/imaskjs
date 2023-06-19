@@ -11,7 +11,6 @@ import copy from 'rollup-plugin-copy';
 const globals = {
   'solid-js': 'Solid',
   imask: 'IMask',
-  'prop-types': 'PropTypes',
 };
 
 const extensions = ['.js', '.ts', '.tsx', '.jsx'];

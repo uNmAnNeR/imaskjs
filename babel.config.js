@@ -5,7 +5,6 @@ module.exports = function (api) {
     useBuiltIns: false,
     loose: true,
   };
-  const exclude = ['**/node_modules/**'];
   const plugins = [
     "@babel/transform-runtime",
     ["polyfill-corejs3", {
@@ -25,6 +24,6 @@ module.exports = function (api) {
       [ '@babel/typescript', { allowDeclareFields: true } ]
     ],
     plugins,
-    exclude,
+    exclude: ['**/node_modules/**'],
   };
 };
