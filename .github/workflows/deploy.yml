@@ -34,7 +34,6 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run make
-      - run: npm run docs
       - run: npm run coverage
       - name: Coveralls
         uses: coverallsapp/github-action@v2
@@ -47,6 +46,7 @@ jobs:
         with:
           source: ./docs
           destination: ./docs/_site
+      - run: npm run docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
