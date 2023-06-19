@@ -35,6 +35,7 @@ jobs:
       - run: npm ci
       - run: npm run make
       - run: npm run coverage
+      - run: npm run docs
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:
@@ -45,12 +46,11 @@ jobs:
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./docs
-          destination: ./docs/_site
-      - run: npm run docs
+          destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./docs/_site
+          path: ./_site
 
   # Deploy job
   deploy:

@@ -5,3 +5,4 @@ baseurl: ""
 google_analytics: UA-40774777-5
 plugins:
   - jekyll-seo-tag
+keep_files: [api]
