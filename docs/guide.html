@@ -139,11 +139,11 @@ masked.reset(); // UI will NOT be updated</code></pre>
   mask: '+7 (000) 000-00-00',
   // ...and other options
 });
-var maskedValue = masked.resolve('71234567890');
+masked.resolve('71234567890');
 
-// mask keeps state after resolving
-console.log(masked.value);  // same as maskedValue
-// get unmasked value
+// now you can access masked value
+console.log(masked.value);
+// and get unmasked value
 console.log(masked.unmaskedValue);</code></pre>
 
   <h2 id="masked" class="section-h"><a href="#masked">Masked</a></h2>
