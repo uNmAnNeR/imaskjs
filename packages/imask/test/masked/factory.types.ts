@@ -12,11 +12,9 @@ import type MaskedRange from '../../src/masked/range';
 import type MaskedRegExp from '../../src/masked/regexp';
 
 import { type MaskedDynamicOptions } from '../../src/masked/dynamic';
-import { type MaskedEnumOptions } from '../../src/masked/enum';
 import { type MaskedFunctionOptions } from '../../src/masked/function';
 import { type MaskedNumberOptions } from '../../src/masked/number';
 import { type MaskedPatternOptions } from '../../src/masked/pattern';
-import { type MaskedRangeOptions } from '../../src/masked/range';
 import { type MaskedRegExpOptions } from '../../src/masked/regexp';
 
 class MyMasked extends Masked {}
@@ -57,8 +55,6 @@ type cases = [
   Check<Equal<FactoryReturnMasked<{ mask: DateConstructor }>, MaskedDate>>,
   Check<Equal<FactoryReturnMasked<MaskedNumberOptions>, MaskedNumber>>,
   Check<Equal<FactoryReturnMasked<MaskedDynamicOptions>, MaskedDynamic>>,
-  Check<Equal<FactoryReturnMasked<MaskedRangeOptions>, MaskedRange>>,
-  Check<Equal<FactoryReturnMasked<MaskedEnumOptions>, MaskedEnum>>,
 
   Check<Equal<FactoryReturnMasked<MaskedNumberOptions>['typedValue'], number>>,
 
@@ -66,4 +62,5 @@ type cases = [
   Check<NormalizedOpts<{ mask: MaskedNumber }> extends { _mask: MaskedNumber, mask: typeof MaskedNumber } ? true : false>,
   Check<NormalizedOpts<MaskedNumber> extends { _mask: MaskedNumber, mask: typeof MaskedNumber } ? true : false>,
   Check<Equal<NormalizedOpts<{ mask: typeof MaskedNumber }>, { mask: typeof MaskedNumber }>>,
+  Check<Equal<NormalizedOpts<NumberConstructor>, { mask: NumberConstructor }>>,
 ];

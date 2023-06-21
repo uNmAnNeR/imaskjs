@@ -185,4 +185,19 @@ describe('Insert', function () {
       assert.equal(masked.displayValue, 'XXX-XX-6789');
     });
   });
+
+  describe('definitions', function () {
+    it('should work', function () {
+      masked.updateOptions({
+        mask: '#00000',
+        definitions: {
+          '#': /[1-6]/,
+        },
+      });
+      masked.unmaskedValue = '123456';
+
+      assert.equal(masked.unmaskedValue, '123456');
+      assert.equal(masked.value, '123456');
+    });
+  });
 });

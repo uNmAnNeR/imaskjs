@@ -49,12 +49,21 @@ export
 type FactoryStaticReturnMasked<Opts extends FactoryStaticOpts> =
   Opts extends MaskedDateFactoryOptions ? MaskedDate :
   Opts extends MaskedNumberOptions ? MaskedNumber :
-  Opts extends MaskedEnumOptions ? MaskedEnum :
-  Opts extends MaskedRangeOptions ? MaskedRange :
   Opts extends MaskedPatternOptions ? MaskedPattern :
   Opts extends MaskedDynamicOptions ? MaskedDynamic :
   Opts extends MaskedRegExpOptions ? MaskedRegExp :
   Opts extends MaskedFunctionOptions ? MaskedFunction :
+  never
+;
+
+export
+type FactoryStaticMaskReturnMasked<Mask extends FactoryStaticOpts['mask']> =
+  Mask extends MaskedDateFactoryOptions['mask'] ? MaskedDate :
+  Mask extends MaskedNumberOptions['mask'] ? MaskedNumber :
+  Mask extends MaskedPatternOptions['mask'] ? MaskedPattern :
+  Mask extends MaskedDynamicOptions['mask'] ? MaskedDynamic :
+  Mask extends MaskedRegExpOptions['mask'] ? MaskedRegExp :
+  Mask extends MaskedFunctionOptions['mask'] ? MaskedFunction :
   never
 ;
 
@@ -96,11 +105,12 @@ export
 type FactoryOpts = FactoryConstructorOpts | FactoryInstanceOpts | FactoryStaticOpts;
 
 export
-type FactoryArg = Masked | FactoryOpts;
+type FactoryArg = Masked | FactoryOpts | FactoryStaticOpts['mask'];
 
 export
 type FactoryReturnMasked<Opts extends FactoryArg> =
   Opts extends Masked ? Opts :
+  Opts extends FactoryStaticOpts['mask'] ? FactoryStaticMaskReturnMasked<Opts> :
   Opts extends FactoryConstructorOpts ? FactoryConstructorReturnMasked<Opts> :
   Opts extends FactoryInstanceOpts ? FactoryInstanceReturnMasked<Opts> :
   Opts extends FactoryStaticOpts ? FactoryStaticReturnMasked<Opts> :
@@ -178,6 +188,7 @@ type NormalizedInstanceOpts<Opts extends FactoryInstanceOpts> =
 
 export
 type NormalizedOpts<Opts extends FactoryArg> =
+  Opts extends FactoryStaticOpts['mask'] ? { mask: Opts } :
   Opts extends Masked ? NormalizedMaskedOpts<Opts> :
   Opts extends FactoryInstanceOpts ? NormalizedInstanceOpts<Opts> :
   Opts extends FactoryStaticOpts | FactoryConstructorOpts ? Opts :
@@ -198,7 +209,7 @@ function normalizeOpts<Opts extends FactoryArg> (opts: Opts): NormalizedOpts<Opt
     */
     const { mask=undefined, ...instanceOpts } =
       opts instanceof IMask.Masked ? { mask: opts } :
-      opts.mask instanceof IMask.Masked ? opts : {};
+      isObject(opts) && (opts as FactoryInstanceOpts).mask instanceof IMask.Masked ? (opts as FactoryInstanceOpts) : {};
 
     if (mask) {
       const _mask = (mask as Masked).mask;

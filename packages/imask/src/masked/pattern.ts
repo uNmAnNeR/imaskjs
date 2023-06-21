@@ -3,7 +3,7 @@ import IMask from '../core/holder';
 import { type TailDetails } from '../core/tail-details';
 import { DIRECTION, type Direction } from '../core/utils';
 import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base';
-import createMask, { type FactoryOpts, normalizeOpts } from './factory';
+import createMask, { type FactoryArg, normalizeOpts } from './factory';
 import type PatternBlock from './pattern/block';
 import ChunksTailDetails from './pattern/chunk-tail-details';
 import PatternCursor from './pattern/cursor';
@@ -24,7 +24,7 @@ type MaskedPatternOptions<Value=string, M extends MaskedPattern<Value>=MaskedPat
 
 export
 type Definitions = {
-  [k: string]: FactoryOpts,
+  [k: string]: FactoryArg,
 };
 
 export
@@ -55,7 +55,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
   declare mask: string;
   /** */
-  declare blocks: { [key: string]: FactoryOpts };
+  declare blocks: { [key: string]: FactoryArg };
   /** */
   declare definitions: Definitions;
   /** Single char for empty input */

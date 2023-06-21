@@ -1,6 +1,6 @@
 import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
-import createMask, { maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
+import createMask, { FactoryOpts, maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
 import Masked from '../masked/base';
 import MaskElement from './mask-element';
 import HTMLInputMaskElement, { type InputElement } from './html-input-mask-element';
@@ -204,7 +204,7 @@ class InputMask<Opts extends FactoryArg> {
   }
 
   /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
-  updateOptions (opts: Partial<Opts>) {
+  updateOptions<UpdateOpts extends Partial<Opts>> (opts: UpdateOpts extends FactoryOpts ? UpdateOpts : never) {
     const { mask, ...restOpts } = opts;
 
     const updateMask = !this.maskEquals(mask);
