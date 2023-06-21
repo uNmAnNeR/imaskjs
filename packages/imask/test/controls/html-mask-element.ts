@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { describe, it } from 'node:test';
 
-import HTMLMaskElement from '../../src/controls/html-mask-element';
+import HTMLInputMaskElement from '../../src/controls/html-input-mask-element';
 
 
 describe('HTMLMaskElement', function () {
@@ -16,7 +16,7 @@ describe('HTMLMaskElement', function () {
         }
       } as any;
 
-      const maskElement = new HTMLMaskElement(input);
+      const maskElement = new HTMLInputMaskElement(input);
       assert.strictEqual(maskElement.isActive, true);
     });
 
@@ -25,7 +25,7 @@ describe('HTMLMaskElement', function () {
 
       const input = {} as any;
       global.document = { activeElement: input } as any;
-      const maskElement = new HTMLMaskElement(input);
+      const maskElement = new HTMLInputMaskElement(input);
       assert.strictEqual(maskElement.isActive, true);
 
       global.document = doc;

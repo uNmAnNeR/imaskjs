@@ -17,7 +17,11 @@ import { type MaskedNumberOptions } from '../../src/masked/number';
 import { type MaskedPatternOptions } from '../../src/masked/pattern';
 import { type MaskedRegExpOptions } from '../../src/masked/regexp';
 
-class MyMasked extends Masked {}
+class MyMasked extends Masked {
+  declare overwrite?: boolean | 'shift' | undefined;
+  declare eager?: boolean | 'remove' | 'append' | undefined;
+  declare skipInvalid?: boolean | undefined;
+}
 
 
 type cases = [

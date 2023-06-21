@@ -17,7 +17,7 @@ type DateOptionsKeys =
 ;
 
 export
-type MaskedDateOptions<Value=Date> =
+type MaskedDateOptions<Value=Date | null> =
   Omit<MaskedPatternOptions<Value>, 'mask'> &
   Partial<Pick<MaskedDate<Value>, DateOptionsKeys>> &
   { mask?: string | DateMaskType }
@@ -25,7 +25,7 @@ type MaskedDateOptions<Value=Date> =
 
 /** Date mask */
 export default
-class MaskedDate<Value=Date> extends MaskedPattern<Value> {
+class MaskedDate<Value=Date | null> extends MaskedPattern<Value> {
   static GET_DEFAULT_BLOCKS: () => { [k: string]: MaskedRangeOptions } = () => ({
     d: {
       mask: MaskedRange,
@@ -139,14 +139,14 @@ class MaskedDate<Value=Date> extends MaskedPattern<Value> {
   }
 
   /** Parsed Date */
-  get date (): Value | null {
+  get date (): Value {
     return this.typedValue;
   }
   set date (date: Value) {
     this.typedValue = date;
   }
 
-  override get typedValue (): Value | null {
+  override get typedValue (): Value {
     return this.isComplete ? super.typedValue : null;
   }
   override set typedValue (value: Value) {

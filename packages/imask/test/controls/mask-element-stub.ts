@@ -3,6 +3,14 @@ import MaskElement from '../../src/controls/mask-element';
 
 export default
 class MaskElementStub extends MaskElement {
+  declare _unsafeSelectionStart: number;
+  declare _unsafeSelectionEnd: number;
+  declare value: string;
+
+  _unsafeSelect (): void {}
+  bindEvents (): void {}
+  unbindEvents (): void {}
+
   constructor () {
     super();
     this.value = '';
