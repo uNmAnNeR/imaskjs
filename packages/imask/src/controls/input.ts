@@ -354,8 +354,7 @@ class InputMask<Opts extends FactoryArg> {
   /** Unbind view events and removes element reference */
   destroy () {
     this._unbindEvents();
-    // @ts-ignore why not
-    this._listeners.length = 0;
+    (this._listeners as any).length = 0;
     delete this.el;
   }
 }

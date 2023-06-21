@@ -1,4 +1,4 @@
-import IMask, { type FactoryOpts, type InputMask } from 'imask';
+import IMask, { type FactoryOpts } from 'imask';
 import { h, defineComponent, type PropType } from 'vue-demi';
 import props from './props';
 import { extractOptionsFromProps } from './utils';
@@ -89,7 +89,7 @@ export default defineComponent<MaskProps>({
         if (maskOptions.mask) {
           if (this.maskRef) {
             this.maskRef.updateOptions(maskOptions);
-            const [cprop, mprop] = this._getMaskProps();
+            const [cprop] = this._getMaskProps();
 
             if (cprop) this._updateValue();
           } else {

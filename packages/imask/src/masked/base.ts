@@ -47,7 +47,7 @@ type MaskedOptions<M extends Masked=Masked, Props extends keyof M=never> = Parti
 
 /** Provides common masking stuff */
 export default
-class Masked<Value=any> {
+abstract class Masked<Value=any> {
   static DEFAULTS: Partial<MaskedOptions> = {
     skipInvalid: true,
   };

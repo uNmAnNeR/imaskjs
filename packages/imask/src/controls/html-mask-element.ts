@@ -4,7 +4,7 @@ import IMask from '../core/holder';
 
 /** Bridge between HTMLElement and {@link Masked} */
 export default
-class HTMLMaskElement extends MaskElement {
+abstract class HTMLMaskElement extends MaskElement {
   /** Mapping between HTMLElement events and mask internal events */
   static EVENTS_MAP = {
     selectionChange: 'keydown',
@@ -17,6 +17,7 @@ class HTMLMaskElement extends MaskElement {
   /** HTMLElement to use mask on */
   declare input: HTMLElement;
   declare _handlers: {[k: string]: EventListener};
+  abstract value: string;
 
   constructor (input: HTMLElement) {
     super();

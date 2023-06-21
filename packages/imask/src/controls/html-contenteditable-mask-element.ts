@@ -6,7 +6,6 @@ export default
 class HTMLContenteditableMaskElement extends HTMLMaskElement {
   declare input: HTMLElement;
   /** Returns HTMLElement selection start */
-  // @ts-ignore
   override get _unsafeSelectionStart (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
@@ -19,7 +18,6 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
   }
 
   /** Returns HTMLElement selection end */
-  // @ts-ignore
   override get _unsafeSelectionEnd (): number {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
@@ -47,7 +45,6 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
   }
 
   /** HTMLElement value */
-  // @ts-ignore
   override get value (): string {
     return this.input.textContent;
   }

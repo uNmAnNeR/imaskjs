@@ -12,13 +12,13 @@ type ElementEvent =
 
 /**  Generic element API to use with mask */
 export default
-class MaskElement {
+abstract class MaskElement {
   /** */
-  declare readonly _unsafeSelectionStart: number;
+  abstract get _unsafeSelectionStart(): number;
   /** */
-  declare readonly _unsafeSelectionEnd: number;
+  abstract get _unsafeSelectionEnd(): number;
   /** */
-  declare value: string;
+  abstract value: string;
 
   /** Safely returns selection start */
   get selectionStart (): number {
@@ -54,14 +54,14 @@ class MaskElement {
     } catch {}
   }
 
-  /** Should be overriden in subclasses */
-  _unsafeSelect (start: number, end: number): void {}
-  /** Should be overriden in subclasses */
+  /** */
   get isActive (): boolean { return false; }
-  /** Should be overriden in subclasses */
-  bindEvents (handlers: {[key in ElementEvent]: Function}) {}
-  /** Should be overriden in subclasses */
-  unbindEvents (): void {}
+  /** */
+  abstract _unsafeSelect (start: number, end: number): void;
+  /** */
+  abstract bindEvents (handlers: {[key in ElementEvent]: Function}): void;
+  /** */
+  abstract unbindEvents (): void
 }
 
 

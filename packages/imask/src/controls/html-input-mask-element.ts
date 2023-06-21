@@ -17,13 +17,11 @@ class HTMLInputMaskElement extends HTMLMaskElement {
   }
 
   /** Returns InputElement selection start */
-  // @ts-ignore
   override get _unsafeSelectionStart (): number {
     return this.input.selectionStart;
   }
 
   /** Returns InputElement selection end */
-  // @ts-ignore
   override get _unsafeSelectionEnd (): number {
     return this.input.selectionEnd;
   }
@@ -33,7 +31,6 @@ class HTMLInputMaskElement extends HTMLMaskElement {
     this.input.setSelectionRange(start, end);
   }
 
-  // @ts-ignore
   override get value (): string {
     return this.input.value;
   }
