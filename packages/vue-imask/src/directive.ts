@@ -2,18 +2,18 @@ import IMask, { type InputElement, type InputMask, type FactoryArg } from 'imask
 import { isVue3 } from 'vue-demi';
 
 
-type DirectiveMaskElement = InputElement & { maskRef?: InputMask<FactoryArg> }
+type DirectiveMaskElement<Opts> = InputElement & { maskRef?: InputMask<Opts> }
 
 export default {
   name: 'imask',
 
-  [isVue3 ? 'beforeMount' : 'bind']: (el: DirectiveMaskElement, { value: options }: { value: FactoryArg }) => {
+  [isVue3 ? 'beforeMount' : 'bind']: <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>, { value: options }: { value: Opts }) => {
     if (!options) return;
 
     initMask(el, options);
   },
 
-  [isVue3 ? 'updated' : 'update']: (el: DirectiveMaskElement, { value: options }: { value: FactoryArg }) => {
+  [isVue3 ? 'updated' : 'update']: <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>, { value: options }: { value: Opts }) => {
     if (options) {
       if (el.maskRef) {
         el.maskRef.updateOptions(options);
@@ -25,24 +25,24 @@ export default {
     }
   },
 
-  [isVue3 ? 'unmounted' : 'unbind']: (el: DirectiveMaskElement) => {
+  [isVue3 ? 'unmounted' : 'unbind']: <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>) => {
     destroyMask(el);
   }
 };
 
-function fireEvent (el: DirectiveMaskElement, eventName: string, data: any) {
-  var e = document.createEvent('CustomEvent');
+function fireEvent<Opts extends FactoryArg> (el: DirectiveMaskElement<Opts>, eventName: string, data: InputMask<Opts>) {
+  const e = document.createEvent('CustomEvent');
   e.initCustomEvent(eventName, true, true, data);
   el.dispatchEvent(e);
 }
 
-function initMask (el: DirectiveMaskElement, opts: FactoryArg) {
+function initMask<Opts extends FactoryArg> (el: DirectiveMaskElement<Opts>, opts: Opts) {
   el.maskRef = IMask(el, opts)
     .on('accept', () => fireEvent(el, 'accept', el.maskRef))
     .on('complete', () => fireEvent(el, 'complete', el.maskRef));
 }
 
-function destroyMask (el: DirectiveMaskElement) {
+function destroyMask <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>) {
   if (el.maskRef) {
     el.maskRef.destroy();
     delete el.maskRef;
