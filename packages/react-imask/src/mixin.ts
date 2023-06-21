@@ -37,7 +37,7 @@ const MASK_PROPS: { [key in keyof (AllFactoryStaticOpts & ReactMaskProps<InputMa
     PropTypes.string,
     PropTypes.instanceOf(RegExp),
     PropTypes.oneOf([Date, Number, IMask.Masked]),
-    PropTypes.instanceOf(IMask.Masked),
+    PropTypes.instanceOf(IMask.Masked as any),
   ]),
   value: PropTypes.any,
   unmask: PropTypes.oneOfType([

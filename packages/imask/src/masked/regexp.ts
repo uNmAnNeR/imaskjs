@@ -8,7 +8,14 @@ type MaskedRegExpOptions = MaskedOptions<MaskedRegExp>;
 /** Masking by RegExp */
 export default
 class MaskedRegExp extends Masked<string> {
+  /** */
   declare mask: RegExp;
+  /** Enable characters overwriting */
+  declare overwrite?: boolean | 'shift' | undefined;
+  /** */
+  declare eager?: boolean | 'remove' | 'append' | undefined;
+  /** */
+  declare skipInvalid?: boolean | undefined;
 
   override updateOptions (opts: Partial<MaskedRegExpOptions>) {
     super.updateOptions(opts);

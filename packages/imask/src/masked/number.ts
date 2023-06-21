@@ -56,6 +56,12 @@ class MaskedNumber extends Masked<number> {
   declare normalizeZeros: boolean;
   /** Flag to pad trailing zeros after point in the end of editing */
   declare padFractionalZeros: boolean;
+  /** Enable characters overwriting */
+  declare overwrite?: boolean | 'shift' | undefined;
+  /** */
+  declare eager?: boolean | 'remove' | 'append' | undefined;
+  /** */
+  declare skipInvalid?: boolean | undefined;
 
   declare _numberRegExp: RegExp;
   declare _thousandsSeparatorRegExp: RegExp;

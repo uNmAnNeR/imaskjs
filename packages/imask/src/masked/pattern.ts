@@ -64,6 +64,12 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   declare displayChar: string;
   /** Show placeholder only when needed */
   declare lazy: boolean;
+  /** Enable characters overwriting */
+  declare overwrite?: boolean | 'shift' | undefined;
+  /** */
+  declare eager?: boolean | 'remove' | 'append' | undefined;
+  /** */
+  declare skipInvalid?: boolean | undefined;
 
   declare _blocks: Array<PatternBlock>;
   declare _maskedBlocks: {[key: string]: Array<number>};

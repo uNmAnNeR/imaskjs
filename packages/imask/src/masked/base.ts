@@ -67,14 +67,14 @@ abstract class Masked<Value=any> {
   declare commit?: (value: string, masked: this) => void;
   /** Format typed value to string */
   declare format?: (value: Value, masked: this) => string;
-  /** Parse strgin to get typed value */
+  /** Parse string to get typed value */
   declare parse?: (str: string, masked: this) => Value;
   /** Enable characters overwriting */
-  declare overwrite?: boolean | 'shift' | undefined;
+  abstract overwrite?: boolean | 'shift' | undefined;
   /** */
-  declare eager?: boolean | 'remove' | 'append' | undefined;
+  abstract eager?: boolean | 'remove' | 'append' | undefined;
   /** */
-  declare skipInvalid?: boolean | undefined;
+  abstract skipInvalid?: boolean | undefined;
 
   /** */
   declare _initialized: boolean;

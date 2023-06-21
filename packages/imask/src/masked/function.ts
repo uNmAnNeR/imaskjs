@@ -8,7 +8,14 @@ type MaskedFunctionOptions = MaskedOptions<MaskedFunction>;
 /** Masking by custom Function */
 export default
 class MaskedFunction<Value=any> extends Masked<Value> {
+  /** */
   declare mask: (value: string, masked: this) => boolean;
+  /** Enable characters overwriting */
+  declare overwrite?: boolean | 'shift' | undefined;
+  /** */
+  declare eager?: boolean | 'remove' | 'append' | undefined;
+  /** */
+  declare skipInvalid?: boolean | undefined;
 
   override updateOptions (opts: Partial<MaskedFunctionOptions>) {
     super.updateOptions(opts);

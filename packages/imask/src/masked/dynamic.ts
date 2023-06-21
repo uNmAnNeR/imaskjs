@@ -298,7 +298,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
       super.nearestInputPos(cursorPos, direction);
   }
 
-  // @ts-ignore i don't mind overriding
   override get overwrite (): boolean | 'shift' | undefined {
     return this.currentMask ?
       this.currentMask.overwrite :
@@ -309,7 +308,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     this._overwrite = overwrite;
   }
 
-  // @ts-ignore i don't mind overriding
   override get eager (): boolean | 'remove' | 'append' | undefined {
     return this.currentMask ?
       this.currentMask.eager :
@@ -320,7 +318,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     this._eager = eager;
   }
 
-  // @ts-ignore i don't mind overriding
   override get skipInvalid (): boolean | undefined {
     return this.currentMask ?
       this.currentMask.skipInvalid :
