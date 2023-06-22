@@ -37,6 +37,7 @@ export default [
       format: 'umd',
       sourcemap: true,
       globals,
+      interop: 'auto',
     },
     plugins: commonPlugins,
   },

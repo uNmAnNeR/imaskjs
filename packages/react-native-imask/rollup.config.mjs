@@ -30,6 +30,7 @@ export default [
       globals,
       format: 'umd',
       sourcemap: true,
+      interop: 'auto',
     },
     plugins: babel(babelConfig),
   },

@@ -24,9 +24,9 @@ export default [
   ...[false, true].map(min => ({
     input: 'src/index.ts',
     output: {
+      name: 'IMask',
       file: `dist/imask${min ? '.min' : ''}.js`,
       format: 'umd',
-      name: 'IMask',
       sourcemap: true,
       exports: 'named',
     },
