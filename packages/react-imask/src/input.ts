@@ -15,7 +15,7 @@ const IMaskInputFn = <
   props: Props,
   ref: React.Ref<React.ComponentType<Props>>
 ) =>
-  React.createElement(IMaskInputClass, { ...props, ref })
+  React.createElement(IMaskInputClass as any, { ...props, ref })  // TODO fix no idea
 ;
 
 const IMaskInput = React.forwardRef(IMaskInputFn as <

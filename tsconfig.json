@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "noEmitOnError": true,
     "isolatedModules": true,
+    "strict": true,
     "moduleResolution": "node",
     "lib": ["dom", "esnext"]
   },

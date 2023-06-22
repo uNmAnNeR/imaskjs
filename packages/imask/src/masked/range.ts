@@ -4,12 +4,12 @@ import { type AppendFlags } from './base';
 import MaskedPattern, { type MaskedPatternOptions } from './pattern';
 
 
-export
-type MaskedRangeOptions = Omit<MaskedPatternOptions, 'mask'> &
-  Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>;
-
 type MaskedRangePatternOptions = MaskedPatternOptions &
-  Pick<MaskedRange, 'maxLength' | 'from' | 'to' | 'autofix'>;
+  Pick<MaskedRange, 'from' | 'to' | 'autofix'> &
+  Partial<Pick<MaskedRange, 'maxLength'>>;
+
+export
+type MaskedRangeOptions = Omit<MaskedRangePatternOptions, 'mask'>;
 
 
 /** Pattern which accepts ranges */
@@ -19,7 +19,7 @@ class MaskedRange extends MaskedPattern {
     Optionally sets max length of pattern.
     Used when pattern length is longer then `to` param length. Pads zeros at start in this case.
   */
-  declare maxLength?: number;
+  declare maxLength: number;
   /** Min bound */
   declare from: number;
   /** Max bound */

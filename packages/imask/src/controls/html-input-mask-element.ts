@@ -17,12 +17,12 @@ class HTMLInputMaskElement extends HTMLMaskElement {
   }
 
   /** Returns InputElement selection start */
-  override get _unsafeSelectionStart (): number {
-    return this.input.selectionStart;
+  override get _unsafeSelectionStart (): number | null {
+    return this.input.selectionStart != null ? this.input.selectionStart : this.value.length;
   }
 
   /** Returns InputElement selection end */
-  override get _unsafeSelectionEnd (): number {
+  override get _unsafeSelectionEnd (): number | null {
     return this.input.selectionEnd;
   }
 

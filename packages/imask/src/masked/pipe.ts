@@ -12,7 +12,10 @@ const PIPE_TYPE = {
 
 type ValueOf<T> = T[keyof T];
 
-type TypedValueOf<Opts, Type> = Type extends (typeof PIPE_TYPE.MASKED | typeof PIPE_TYPE.UNMASKED) ?
+type TypedValueOf<
+  Opts extends FactoryArg,
+  Type extends ValueOf<typeof PIPE_TYPE>
+> = Type extends (typeof PIPE_TYPE.MASKED | typeof PIPE_TYPE.UNMASKED) ?
   string :
   FactoryReturnMasked<Opts>['typedValue']
 ;

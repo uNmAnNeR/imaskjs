@@ -62,6 +62,10 @@ class MaskedNumber extends Masked<number> {
   declare eager?: boolean | 'remove' | 'append' | undefined;
   /** */
   declare skipInvalid?: boolean | undefined;
+  /** Format typed value to string */
+  declare format: (value: number, masked: Masked) => string;
+  /** Parse string to get typed value */
+  declare parse: (str: string, masked: Masked) => number;
 
   declare _numberRegExp: RegExp;
   declare _thousandsSeparatorRegExp: RegExp;

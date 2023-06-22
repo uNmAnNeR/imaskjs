@@ -9,7 +9,7 @@ type MaskedFunctionOptions = MaskedOptions<MaskedFunction>;
 export default
 class MaskedFunction<Value=any> extends Masked<Value> {
   /** */
-  declare mask: (value: string, masked: this) => boolean;
+  declare mask: (value: string, masked: Masked) => boolean;
   /** Enable characters overwriting */
   declare overwrite?: boolean | 'shift' | undefined;
   /** */

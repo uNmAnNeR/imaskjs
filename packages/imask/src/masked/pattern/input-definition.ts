@@ -1,4 +1,4 @@
-import createMask, { type FactoryOpts, type FactoryReturnMasked } from '../factory';
+import createMask, { type FactoryArg, type FactoryOpts, type FactoryReturnMasked } from '../factory';
 import type Masked from '../base';
 import type MaskedPattern from '../pattern';
 import { type TailDetails } from '../../core/tail-details';
@@ -27,7 +27,7 @@ type PatternInputDefinitionOptions<Opts extends FactoryOpts> =
 >>;
 
 export
-type PatternInputDefinitionState<Opts> = MaskedState & {
+type PatternInputDefinitionState<Opts extends FactoryArg> = MaskedState & {
   masked: FactoryReturnMasked<Opts>['state'],
   isFilled: boolean,
 };
@@ -198,10 +198,10 @@ class PatternInputDefinition<Opts extends FactoryOpts=any> implements PatternBlo
     this.isFilled = state.isFilled;
   }
 
-  currentMaskFlags (flags: AppendFlags<PatternInputDefinitionState<Opts>>): AppendFlags {
+  currentMaskFlags (flags?: AppendFlags<PatternInputDefinitionState<Opts>>): AppendFlags {
     return {
       ...flags,
-      _beforeTailState: flags._beforeTailState?.masked || flags._beforeTailState as unknown as MaskedState,
+      _beforeTailState: flags?._beforeTailState?.masked || flags?._beforeTailState as unknown as MaskedState,
     };
   }
 }

@@ -27,27 +27,27 @@ function useIMask<
   MaskElement extends InputMaskElement,
   Opts extends FactoryOpts
 > (props: Opts | Ref<Opts>, { emit, onAccept, onComplete }: ComposableParams<Opts>={}): {
-  el: Ref<MaskElement>,
-  mask: DeepReadonly<Ref<InputMask<Opts>>>,
+  el: Ref<MaskElement | undefined>,
+  mask: DeepReadonly<Ref<InputMask<Opts> | undefined>>,
   masked: Ref<InputMask<Opts>['value']>,
   unmasked: Ref<InputMask<Opts>['unmaskedValue']>,
   typed: Ref<InputMask<Opts>['typedValue']>,
 } {
   const _props = isRef(props) ? props : ref(props);
-  const el: Ref<MaskElement> = ref();
-  const mask: Ref<InputMask<Opts>> = ref();
-  const masked: Ref<InputMask<Opts>['value']> = ref();
-  const unmasked: Ref<InputMask<Opts>['unmaskedValue']> = ref();
-  const typed: Ref<InputMask<Opts>['typedValue']> = ref();
-  let $el: MaskElement;
+  const el: Ref<MaskElement | undefined> = ref();
+  const mask: Ref<InputMask<Opts> | undefined> = ref();
+  const masked: Ref<InputMask<Opts>['value']> = ref('');
+  const unmasked: Ref<InputMask<Opts>['unmaskedValue']> = ref('');
+  const typed: Ref<InputMask<Opts>['typedValue']> = ref(null);
+  let $el: MaskElement | undefined;
   let $masked: InputMask<Opts>['value'];
   let $unmasked: InputMask<Opts>['unmaskedValue'];
   let $typed: InputMask<Opts>['typedValue'];
 
   function _onAccept () {
-    $typed = typed.value = mask.value.typedValue;
-    $unmasked = unmasked.value = mask.value.unmaskedValue;
-    $masked = masked.value = mask.value.value;
+    $typed = typed.value = (mask.value as InputMask<Opts>).typedValue;
+    $unmasked = unmasked.value = (mask.value as InputMask<Opts>).unmaskedValue;
+    $masked = masked.value = (mask.value as InputMask<Opts>).value;
 
     if (emit) {
       emit('accept', $masked);
@@ -84,7 +84,7 @@ function useIMask<
   function _destroyMask () {
     if (mask.value) {
       mask.value.destroy();
-      mask.value = null;
+      mask.value = undefined;
     }
   }
 

@@ -1,4 +1,4 @@
-import { type FactoryReturnMasked, type NormalizedOpts } from '../../src/masked/factory';
+import { type FactoryReturnMasked, type NormalizedOpts, type FactoryConstructorOpts } from '../../src/masked/factory';
 import { type Check, type Equal } from '../types';
 
 import Masked from '../../src/masked/base';
@@ -67,4 +67,6 @@ type cases = [
   Check<NormalizedOpts<MaskedNumber> extends { _mask: MaskedNumber, mask: typeof MaskedNumber } ? true : false>,
   Check<Equal<NormalizedOpts<{ mask: typeof MaskedNumber }>, { mask: typeof MaskedNumber }>>,
   Check<Equal<NormalizedOpts<NumberConstructor>, { mask: NumberConstructor }>>,
+
+  Check<FactoryConstructorOpts extends Partial<NormalizedOpts<FactoryConstructorOpts>> ? true : false>,
 ];

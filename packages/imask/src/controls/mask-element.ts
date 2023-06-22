@@ -14,9 +14,9 @@ type ElementEvent =
 export default
 abstract class MaskElement {
   /** */
-  abstract _unsafeSelectionStart: number;
+  abstract _unsafeSelectionStart: number | null;
   /** */
-  abstract _unsafeSelectionEnd: number;
+  abstract _unsafeSelectionEnd: number | null;
   /** */
   abstract value: string;
 

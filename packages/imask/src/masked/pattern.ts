@@ -13,7 +13,11 @@ import './regexp'; // support for default definitions which are regexp's
 
 
 export
-type MaskedPatternOptions<Value=string, M extends MaskedPattern<Value>=MaskedPattern<Value>, Props extends keyof M=never> = MaskedOptions<M,
+type MaskedPatternOptions<
+  Value=string,
+  M extends MaskedPattern<Value>=MaskedPattern<Value>,
+  Props extends keyof M=never,
+> = MaskedOptions<M,
   | 'definitions'
   | 'blocks'
   | 'placeholderChar'
@@ -39,15 +43,13 @@ type BlockPosData = {
 };
 
 
-/**
-  Pattern mask
-*/
+/** Pattern mask */
 export default
 class MaskedPattern<Value=string> extends Masked<Value> {
-  static DEFAULTS: Partial<MaskedPatternOptions> = {
+  static DEFAULTS: Record<string, any> = {
     lazy: true,
     placeholderChar: '_'
-  };
+  } satisfies Partial<MaskedPattern>;
   static STOP_CHAR = '`';
   static ESCAPE_CHAR = '\\';
   static InputDefinition = PatternInputDefinition;
@@ -171,7 +173,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
           displayChar: this.displayChar,
           ...normalizeOpts(defs[char]),
           parent: this,
-        }) :
+        }) as PatternBlock :
         new PatternFixedDefinition({
           char,
           eager: this.eager,

@@ -1,14 +1,10 @@
-import type Masked from '../base';
 import type ChangeDetails from '../../core/change-details';
 import { type TailDetails } from '../../core/tail-details';
 import { type ExtractFlags, type AppendFlags, type MaskedState } from '../base';
 import { type Direction } from '../../core/utils';
 
 
-/**
-  Subset of {@link Masked} attributes used with pattern
-  @interface
-*/
+/** Subset of {@link Masked} attributes used with pattern */
 export default
 interface PatternBlock<State=MaskedState> {
   readonly value: string;
@@ -16,7 +12,7 @@ interface PatternBlock<State=MaskedState> {
   readonly displayValue: string;
   readonly isComplete: boolean;
   readonly lazy?: boolean;
-  readonly eager?: boolean | 'remove' | 'append';
+  readonly eager?: boolean | 'remove' | 'append' | undefined;
   readonly isFilled: boolean;
   readonly isOptional?: boolean;
   readonly isFixed?: boolean;

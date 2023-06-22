@@ -10,8 +10,8 @@
   "types": "esm/index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "scripts": {
-    "lint": "eslint --quiet",
-    "prebuild": "npm run lint && rimraf --glob \"{dist,esm}\"",
+    "lint": "eslint src",
+    "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c",
     "watch": "rollup -c -w"
   },

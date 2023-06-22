@@ -8,8 +8,8 @@
   "module": "esm/index.js",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask",
   "scripts": {
-    "lint": "eslint --quiet",
-    "prebuild": "npm run lint && rimraf --glob \"{dist,esm}\"",
+    "lint": "eslint src",
+    "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c"
   },
   "keywords": [

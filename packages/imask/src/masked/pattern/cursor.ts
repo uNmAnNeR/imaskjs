@@ -49,9 +49,9 @@ class PatternCursor<Value> {
     this._log.push(this.state);
   }
 
-  popState (): PatternCursorState {
+  popState (): PatternCursorState | undefined {
     const s = this._log.pop();
-    this.state = s;
+    if (s) this.state = s;
     return s;
   }
 
@@ -63,7 +63,7 @@ class PatternCursor<Value> {
     }
     if (this.index >= this.masked._blocks.length) {
       this.index = this.masked._blocks.length - 1;
-      this.offset = this.block.value.length;
+      this.offset = (this.block as unknown as PatternBlock).value.length; // TODO this is stupid type error, `block` depends on index that was changed above
     }
   }
 

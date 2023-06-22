@@ -1,12 +1,12 @@
-import { type FactoryOpts } from 'imask';
-
-
 export
-function extractOptionsFromProps<Props extends FactoryOpts> (props: Props, exclude: Readonly<Array<keyof Props>>): FactoryOpts {
+function extractOptionsFromProps<
+  Props extends object,
+  ExcludeProps extends keyof Props
+> (props: Props, exclude: Readonly<ExcludeProps[]>): Omit<Props, ExcludeProps> {
   props = {...props};
 
   // keep only defined props
-  (Object.keys(props) as Array<keyof Props>)
+  (Object.keys(props) as Array<ExcludeProps>)
     .forEach(prop => {
       if (props[prop] === undefined || exclude.includes(prop)) delete props[prop];
     });

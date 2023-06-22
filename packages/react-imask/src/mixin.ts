@@ -7,7 +7,7 @@ export
 type Falsy = false | 0 | "" | null | undefined;
 
 export
-type ReactMaskOpts = FactoryOpts & { unmask?: 'typed' | boolean };
+type ReactMaskOpts<Opts extends FactoryOpts=FactoryOpts> = Opts & { unmask?: 'typed' | boolean };
 
 export
 type UnmaskValue<Opts extends ReactMaskOpts> =
@@ -142,8 +142,8 @@ type MaskOpts<
 export
 type IMaskMixinProps<
   MaskElement extends InputMaskElement,
-  Props extends ReactMaskOpts & ReactMaskProps<MaskElement>=ReactMaskOpts & ReactMaskProps<MaskElement>,
-> = Props & ReactMaskProps<MaskElement, Props>;
+  Props extends (ReactMaskOpts & ReactMaskProps<MaskElement>)=ReactMaskOpts & ReactMaskProps<MaskElement>,
+> = Omit<ReactMaskProps<MaskElement, Props>, 'ref'> & MaskOpts<MaskElement, Props>;
 
 export
 type IMaskInputProps<
@@ -161,8 +161,8 @@ function IMaskMixin<
     static displayName: string;
     static propTypes: typeof MASK_PROPS;
 
-    element: MaskElement;
-    maskRef: InputMask<MaskOpts<MaskElement, Props>>;
+    declare element: MaskElement;
+    declare maskRef?: InputMask<MaskOpts<MaskElement, Props>>;
 
     constructor (props: Props) {
       super(props);
@@ -180,14 +180,14 @@ function IMaskMixin<
       const maskOptions = this._extractMaskOptionsFromProps(props);
       if (maskOptions.mask) {
         if (this.maskRef) {
-          this.maskRef.updateOptions(maskOptions);
-          if ('value' in props) this.maskValue = props.value;
+          this.maskRef.updateOptions(maskOptions as any); // TODO fix
+          if ('value' in props && props.value !== undefined) this.maskValue = props.value;
         } else {
           this.initMask(maskOptions);
         }
       } else {
         this.destroyMask();
-        if ('value' in props) {
+        if ('value' in props && props.value !== undefined) {
           if ((this.element as HTMLElement)?.isContentEditable && (this.element as HTMLElement).tagName !== 'INPUT' && (this.element as HTMLElement).tagName !== 'TEXTAREA') (this.element as HTMLElement).textContent = props.value;
           else (this.element as HTMLInputElement).value = props.value;
         }
@@ -213,7 +213,7 @@ function IMaskMixin<
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
 
-      if ('value' in this.props) this.maskValue = this.props.value;
+      if ('value' in this.props && this.props.value !== undefined) this.maskValue = this.props.value;
     }
 
     destroyMask () {
@@ -249,12 +249,16 @@ function IMaskMixin<
     }
 
     get maskValue (): UnmaskValue<Props> {
-      if (this.props.unmask === 'typed') return this.maskRef.typedValue as unknown as UnmaskValue<Props>;
-      if (this.props.unmask) return this.maskRef.unmaskedValue as unknown as UnmaskValue<Props>;
-      return this.maskRef.value as unknown as UnmaskValue<Props>;
+      if (!this.maskRef) return '' as UnmaskValue<Props>;
+
+      if (this.props.unmask === 'typed') return this.maskRef.typedValue;
+      if (this.props.unmask) return this.maskRef.unmaskedValue;
+      return this.maskRef.value;
     }
 
     set maskValue (value: UnmaskValue<Props>) {
+      if (!this.maskRef) return;
+
       value = (value == null && this.props.unmask !== 'typed' ? '' : value) as UnmaskValue<Props>;
       if (this.props.unmask === 'typed') this.maskRef.typedValue = value;
       else if (this.props.unmask) this.maskRef.unmaskedValue = value;

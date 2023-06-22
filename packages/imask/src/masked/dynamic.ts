@@ -7,12 +7,17 @@ import { type TailDetails } from '../core/tail-details';
 import IMask from '../core/holder';
 
 
-export
-type MaskedDynamicState = MaskedState & {
-  compiledMasks: Array<MaskedState>,
-  currentMaskRef?: Masked,
+type MaskedDynamicNoRefState = MaskedState & {
+  compiledMasks: Array<MaskedState>
+};
+
+type MaskedDynamicRefState = MaskedDynamicNoRefState & {
+  currentMaskRef: Masked,
   currentMask: MaskedState,
 };
+
+export
+type MaskedDynamicState = MaskedDynamicNoRefState | MaskedDynamicRefState;
 
 export
 type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
@@ -28,7 +33,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   static DEFAULTS: Partial<MaskedDynamicOptions>;
 
   declare mask: DynamicMaskType;
-  // TODO types
   /** Currently chosen mask */
   declare currentMask?: Masked;
   /** Compliled {@link Masked} options */
@@ -46,7 +50,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
       ...opts
     });
 
-    this.currentMask = null;
+    this.currentMask = undefined;
   }
 
   override updateOptions (opts: Partial<MaskedDynamicOptions>) {
@@ -112,7 +116,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
         if (tailValue) {
           details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
         }
-      } else {
+      } else if (prevMaskState) {
         // Dispatch can do something bad with state, so
         // restore prev mask state
         this.currentMask.state = prevMaskState;
@@ -155,8 +159,8 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return {
       ...flags,
       _beforeTailState:
-        (flags._beforeTailState as MaskedDynamicState)?.currentMaskRef === this.currentMask &&
-        (flags._beforeTailState as MaskedDynamicState)?.currentMask ||
+        (flags._beforeTailState as MaskedDynamicRefState)?.currentMaskRef === this.currentMask &&
+        (flags._beforeTailState as MaskedDynamicRefState)?.currentMask ||
         flags._beforeTailState,
     };
   }
@@ -266,7 +270,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   }
 
   override set state (state: HandleState) {
-    const { compiledMasks, currentMaskRef, currentMask, ...maskedState} = state as MaskedDynamicState;
+    const { compiledMasks, currentMaskRef, currentMask, ...maskedState } = state as MaskedDynamicRefState;
     if (compiledMasks) this.compiledMasks.forEach((m, mi) => m.state = compiledMasks[mi]);
     if (currentMaskRef != null) {
       this.currentMask = currentMaskRef;
@@ -304,7 +308,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
       this._overwrite;
   }
 
-  override set overwrite (overwrite: boolean | 'shift') {
+  override set overwrite (overwrite: boolean | 'shift' | undefined) {
     this._overwrite = overwrite;
   }
 
@@ -314,7 +318,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
       this._eager;
   }
 
-  override set eager (eager: boolean | 'remove' | 'append') {
+  override set eager (eager: boolean | 'remove' | 'append' | undefined) {
     this._eager = eager;
   }
 

@@ -1,8 +1,8 @@
-import IMask, { type InputElement, type InputMask, type FactoryArg } from 'imask';
+import IMask, { type InputElement, type InputMask, type FactoryArg, type NormalizedOpts } from 'imask';
 import { isVue3 } from 'vue-demi';
 
 
-type DirectiveMaskElement<Opts> = InputElement & { maskRef?: InputMask<Opts> }
+type DirectiveMaskElement<Opts extends FactoryArg> = InputElement & { maskRef?: InputMask<Opts> }
 
 export default {
   name: 'imask',
@@ -13,13 +13,13 @@ export default {
     initMask(el, options);
   },
 
-  [isVue3 ? 'updated' : 'update']: <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>, { value: options }: { value: Opts }) => {
+  [isVue3 ? 'updated' : 'update']: <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>, { value: options }: { value: Opts | Partial<NormalizedOpts<Opts>> }) => {
     if (options) {
       if (el.maskRef) {
-        el.maskRef.updateOptions(options);
+        el.maskRef.updateOptions(options as Partial<NormalizedOpts<Opts>>);
         if (el.value !== el.maskRef.value) el.maskRef._onChange();
       }
-      else initMask(el, options);
+      else initMask(el, options as Opts);
     } else {
       destroyMask(el);
     }
@@ -38,8 +38,8 @@ function fireEvent<Opts extends FactoryArg> (el: DirectiveMaskElement<Opts>, eve
 
 function initMask<Opts extends FactoryArg> (el: DirectiveMaskElement<Opts>, opts: Opts) {
   el.maskRef = IMask(el, opts)
-    .on('accept', () => fireEvent(el, 'accept', el.maskRef))
-    .on('complete', () => fireEvent(el, 'complete', el.maskRef));
+    .on('accept', () => fireEvent(el, 'accept', el.maskRef as InputMask<Opts>))
+    .on('complete', () => fireEvent(el, 'complete', el.maskRef as InputMask<Opts>));
 }
 
 function destroyMask <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>) {

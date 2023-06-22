@@ -1,4 +1,4 @@
-import IMask, { type FactoryOpts } from 'imask';
+import IMask, { type InputMask, type FactoryOpts } from 'imask';
 import { h, defineComponent, type PropType } from 'vue-demi';
 import props from './props';
 import { extractOptionsFromProps } from './utils';
@@ -17,7 +17,7 @@ type MaskValueProp = 'value' | 'unmaskedValue' | 'typedValue';
 // order does matter = priority
 const VALUE_PROPS = ['typed', 'unmasked', 'value', 'modelValue'] as const; 
 
-export default defineComponent<MaskProps>({
+export default defineComponent({
   name: 'imask-input',
   inheritAttrs: false,
 
@@ -47,14 +47,14 @@ export default defineComponent<MaskProps>({
   ],
 
   data () {
-    return { maskRef: null };
+    return {} as { maskRef?: InputMask<FactoryOpts> };
   },
 
   render () {
     const data = {
       ...this.$attrs,
       modelValue: this.maskRef ? this.maskRef.value : this.modelValue,
-    };
+    } as any;
 
     // TODO should this somehow work at all?
     delete data.value;
@@ -66,25 +66,25 @@ export default defineComponent<MaskProps>({
     return h('input', data);
   },
 
-  mounted () {
+  mounted (): void {
     if (!this.$props.mask) return;
 
     this._initMask();
   },
 
-  destroyed () {
+  destroyed (): void {
     this._destroyMask();
   },
 
   computed: {
-    maskOptions () {
-      return extractOptionsFromProps(this.$props, VALUE_PROPS);
+    maskOptions (): FactoryOpts {
+      return extractOptionsFromProps(this.$props, VALUE_PROPS) as FactoryOpts;
     },
   },
 
   watch: {
     '$props': {
-      handler (props) {
+      handler (props): void {
         const maskOptions = this.maskOptions;
         if (maskOptions.mask) {
           if (this.maskRef) {
@@ -97,11 +97,11 @@ export default defineComponent<MaskProps>({
           }
         } else {
           this._destroyMask();
-          if ('modelValue' in props) this.$el.value = props.modelValue;
+          if ('modelValue' in props) (this.$el as HTMLInputElement).value = props.modelValue;
         }
       },
       deep: true
-    }
+    },
   },
 
   methods: {
@@ -111,7 +111,7 @@ export default defineComponent<MaskProps>({
     },
 
     _getComponentMaskProp (): ComponentValueProp {
-      return VALUE_PROPS.find(prop => prop in this.$props);
+      return VALUE_PROPS.find(prop => prop in this.$props) || 'value';
     },
 
     _getMaskPropFromComponent (componentProp: ComponentValueProp): MaskValueProp {
@@ -122,17 +122,18 @@ export default defineComponent<MaskProps>({
       }
     },
 
-    _updateValue () {
-      const [cprop, mprop]: [ComponentValueProp, MaskValueProp] = this._getMaskProps();
+    _updateValue (): void {
+      if (!this.maskRef) return;
 
+      const [cprop, mprop]: [ComponentValueProp, MaskValueProp] = this._getMaskProps();
       this.maskRef[mprop] = this[cprop] == null && cprop !== 'typed' ? '' : this[cprop];
       if (this.$props[cprop] !== this.maskRef[mprop]) this._onAccept();
     },
 
-    _onAccept () {
-      const typedValue = this.maskRef.typedValue;
-      const unmaskedValue = this.maskRef.unmaskedValue;
-      const value = this.maskRef.value;
+    _onAccept (): void {
+      const typedValue = (this.maskRef as InputMask<FactoryOpts>).typedValue;
+      const unmaskedValue = (this.maskRef as InputMask<FactoryOpts>).unmaskedValue;
+      const value = (this.maskRef as InputMask<FactoryOpts>).value;
 
       this.$emit('update:modelValue', value);
       this.$emit('update:value', value);
@@ -147,10 +148,10 @@ export default defineComponent<MaskProps>({
       this.$emit('accept:typed', typedValue);
     },
 
-    _onComplete () {
-      const typedValue = this.maskRef.typedValue;
-      const unmaskedValue = this.maskRef.unmaskedValue;
-      const value = this.maskRef.value;
+    _onComplete (): void {
+      const typedValue = (this.maskRef as InputMask<FactoryOpts>).typedValue;
+      const unmaskedValue = (this.maskRef as InputMask<FactoryOpts>).unmaskedValue;
+      const value = (this.maskRef as InputMask<FactoryOpts>).value;
 
       this.$emit('complete', value);
       this.$emit('complete:value', value);
@@ -158,14 +159,14 @@ export default defineComponent<MaskProps>({
       this.$emit('complete:typed', typedValue);
     },
 
-    _initMask () {
-      this.maskRef = IMask(this.$el, this.maskOptions)
+    _initMask (): void {
+      this.maskRef = IMask(this.$el as HTMLInputElement, this.maskOptions as any)
         .on('accept', this._onAccept.bind(this))
         .on('complete', this._onComplete.bind(this));
       this._updateValue();
     },
 
-    _destroyMask () {
+    _destroyMask (): void {
       if (this.maskRef) {
         this.maskRef.destroy();
         delete this.maskRef;

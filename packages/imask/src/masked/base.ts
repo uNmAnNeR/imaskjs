@@ -48,9 +48,9 @@ type MaskedOptions<M extends Masked=Masked, Props extends keyof M=never> = Parti
 /** Provides common masking stuff */
 export default
 abstract class Masked<Value=any> {
-  static DEFAULTS: Partial<MaskedOptions> = {
+  static DEFAULTS: Record<string, any> = {
     skipInvalid: true,
-  };
+  } satisfies Partial<MaskedOptions>;
   static EMPTY_VALUES: Array<any> = [undefined, null, ''];
 
   /** */
@@ -58,17 +58,17 @@ abstract class Masked<Value=any> {
   /** */
   declare parent?: Masked;
   /** Transforms value before mask processing */
-  declare prepare?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
+  declare prepare?: (chars: string, masked: Masked, flags: AppendFlags) => string | [string, ChangeDetails];
   /** Transforms each char before mask processing */
-  declare prepareChar?: (chars: string, masked: this, flags: AppendFlags) => string | [string, ChangeDetails];
+  declare prepareChar?: (chars: string, masked: Masked, flags: AppendFlags) => string | [string, ChangeDetails];
   /** Validates if value is acceptable */
-  declare validate?: (value: string, masked: this, flags: AppendFlags) => boolean;
+  declare validate?: (value: string, masked: Masked, flags: AppendFlags) => boolean;
   /** Does additional processing at the end of editing */
-  declare commit?: (value: string, masked: this) => void;
+  declare commit?: (value: string, masked: Masked) => void;
   /** Format typed value to string */
-  declare format?: (value: Value, masked: this) => string;
+  declare format?: (value: Value, masked: Masked) => string;
   /** Parse string to get typed value */
-  declare parse?: (str: string, masked: this) => Value;
+  declare parse?: (str: string, masked: Masked) => Value;
   /** Enable characters overwriting */
   abstract overwrite?: boolean | 'shift' | undefined;
   /** */
@@ -422,7 +422,7 @@ abstract class Masked<Value=any> {
 
     return value === tval ||
       Masked.EMPTY_VALUES.includes(value) && Masked.EMPTY_VALUES.includes(tval) ||
-      this.format && this.format(value, this) === this.format(this.typedValue, this);
+      (this.format ? this.format(value, this) === this.format(this.typedValue, this) : false);
   }
 }
 

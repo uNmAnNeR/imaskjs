@@ -1,6 +1,6 @@
 import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
-import createMask, { FactoryOpts, maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
+import createMask, { type NormalizedOpts, maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
 import Masked from '../masked/base';
 import MaskElement from './mask-element';
 import HTMLInputMaskElement, { type InputElement } from './html-input-mask-element';
@@ -10,6 +10,9 @@ import IMask from '../core/holder';
 
 export
 type InputMaskElement = MaskElement | InputElement | HTMLElement;
+
+export
+type InputMaskEventListener = (e?: InputEvent) => void;
 
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
@@ -22,7 +25,7 @@ class InputMask<Opts extends FactoryArg> {
   /** Internal {@link Masked} model */
   declare masked: FactoryReturnMasked<Opts>;
 
-  declare _listeners: Record<string, Array<EventListener>>;
+  declare _listeners: Record<string, Array<InputMaskEventListener>>;
   declare _value: string;
   declare _changingCursorPos: number;
   declare _unmaskedValue: string;
@@ -62,7 +65,7 @@ class InputMask<Opts extends FactoryArg> {
     return mask == null || this.masked?.maskEquals(mask);
   }
 
-  /** Read or update mask */
+  /** Masked */
   get mask (): FactoryReturnMasked<Opts>['mask'] {
     return this.masked.mask;
   }
@@ -142,7 +145,7 @@ class InputMask<Opts extends FactoryArg> {
   }
 
   /** Fires custom event */
-  _fireEvent (ev: string, e: InputEvent) {
+  _fireEvent (ev: string, e?: InputEvent) {
     const listeners = this._listeners[ev];
     if (!listeners) return;
 
@@ -203,15 +206,15 @@ class InputMask<Opts extends FactoryArg> {
     if (isChanged) this._fireChangeEvents();
   }
 
-  /** Updates options with deep equal check, recreates @{link Masked} model if mask type changes */
-  updateOptions<UpdateOpts extends Partial<Opts>> (opts: UpdateOpts extends FactoryOpts ? UpdateOpts : never) {
+  /** Updates options with deep equal check, recreates {@link Masked} model if mask type changes */
+  updateOptions(opts: Partial<NormalizedOpts<Opts>>) {
     const { mask, ...restOpts } = opts;
 
     const updateMask = !this.maskEquals(mask);
     const updateOpts = !objectIncludes(this.masked, restOpts);
 
     if (updateMask) this.mask = mask;
-    if (updateOpts) this.masked.updateOptions(restOpts as any); // TODO "any" no idea
+    if (updateOpts) this.masked.updateOptions(restOpts);
 
     if (updateMask || updateOpts) this.updateControl();
   }
@@ -262,14 +265,14 @@ class InputMask<Opts extends FactoryArg> {
   }
 
   /** Adds listener on custom event */
-  on (ev: string, handler: EventListener): this {
+  on (ev: string, handler: InputMaskEventListener): this {
     if (!this._listeners[ev]) this._listeners[ev] = [];
     this._listeners[ev].push(handler);
     return this;
   }
 
   /** Removes custom event listener */
-  off (ev: string, handler: EventListener): this {
+  off (ev: string, handler: InputMaskEventListener): this {
     if (!this._listeners[ev]) return this;
     if (!handler) {
       delete this._listeners[ev];
@@ -355,7 +358,7 @@ class InputMask<Opts extends FactoryArg> {
   destroy () {
     this._unbindEvents();
     (this._listeners as any).length = 0;
-    delete this.el;
+    delete (this as any).el;
   }
 }
 

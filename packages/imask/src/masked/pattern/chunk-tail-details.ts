@@ -55,7 +55,7 @@ class ChunksTailDetails implements TailDetails {
         // unwrap floating chunks to parent, keeping `from` pos
         let firstTailChunk;
         while (tailChunk.chunks.length && tailChunk.chunks[0].stop == null) {
-          firstTailChunk = tailChunk.chunks.shift();
+          firstTailChunk = tailChunk.chunks.shift() as TailDetails;  // not possible to be `undefined` because length was checked above
           firstTailChunk.from += tailChunk.from;
           this.extend(firstTailChunk);
         }

@@ -12,8 +12,8 @@ function useIMask<
   opts: Opts,
   { onAccept, onComplete }: Partial<Pick<ReactMaskProps<MaskElement, Opts>, 'onAccept' | 'onComplete'>> = {}
 ): {
-  ref: MutableRefObject<MaskElement>,
-  maskRef: MutableRefObject<InputMask<Opts>>,
+  ref: MutableRefObject<MaskElement | null>,
+  maskRef: MutableRefObject<InputMask<Opts> | null>,
   value: InputMask<Opts>['value'],
   setValue: Dispatch<InputMask<Opts>['value']>,
   unmaskedValue: InputMask<Opts>['unmaskedValue'],
@@ -21,8 +21,8 @@ function useIMask<
   typedValue: InputMask<Opts>['typedValue'],
   setTypedValue: Dispatch<InputMask<Opts>['typedValue']>,
 } {
-  const ref = useRef<MaskElement>(null);
-  const maskRef = useRef<InputMask<Opts>>(null);
+  const ref = useRef<MaskElement | null>(null);
+  const maskRef = useRef<InputMask<Opts> | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
   const [lastAcceptState, setLastAcceptState] = useState<{
     value?: InputMask<Opts>['value'],
@@ -74,7 +74,7 @@ function useIMask<
         _onAccept();
       }
     } else {
-      mask?.updateOptions(opts);
+      mask?.updateOptions(opts as any); // TODO fix no idea
     }
     setInitialized(Boolean(maskRef.current));
   }, [opts, _destroyMask, _onAccept]);

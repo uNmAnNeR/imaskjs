@@ -6,7 +6,7 @@ export default
 class HTMLContenteditableMaskElement extends HTMLMaskElement {
   declare input: HTMLElement;
   /** Returns HTMLElement selection start */
-  override get _unsafeSelectionStart (): number {
+  override get _unsafeSelectionStart (): number | null {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
     const anchorOffset = selection && selection.anchorOffset;
@@ -18,7 +18,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
   }
 
   /** Returns HTMLElement selection end */
-  override get _unsafeSelectionEnd (): number {
+  override get _unsafeSelectionEnd (): number | null {
     const root = this.rootElement;
     const selection = root.getSelection && root.getSelection();
     const anchorOffset = selection && selection.anchorOffset;
@@ -46,7 +46,7 @@ class HTMLContenteditableMaskElement extends HTMLMaskElement {
 
   /** HTMLElement value */
   override get value (): string {
-    return this.input.textContent;
+    return this.input.textContent || '';
   }
   override set value (value: string) {
     this.input.textContent = value;

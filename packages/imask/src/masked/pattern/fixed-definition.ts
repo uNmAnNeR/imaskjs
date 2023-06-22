@@ -19,7 +19,7 @@ class PatternFixedDefinition implements PatternBlock {
   /** */
   declare isUnmasking?: boolean;
   /** */
-  declare eager: boolean | 'remove' | 'append';
+  declare eager: boolean | 'remove' | 'append' | undefined;
   /** */
   declare _isRawInput?: boolean;
   /** */

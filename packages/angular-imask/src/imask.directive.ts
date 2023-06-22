@@ -1,9 +1,9 @@
-import IMask, { type InputMask, type InputMaskElement, type FactoryArg } from 'imask';
+import { type InputMask, type InputMaskElement, type FactoryArg, type NormalizedOpts } from 'imask';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
   EventEmitter, OnDestroy, OnChanges, AfterViewInit,
-  SimpleChanges, PLATFORM_ID, inject, InjectionToken
+  SimpleChanges, PLATFORM_ID, inject
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, COMPOSITION_BUFFER_MODE } from '@angular/forms';
 import { IMASK_FACTORY } from './imask-factory-token';
@@ -97,7 +97,7 @@ export class IMaskDirective<
     if (!changes['imask'] || !this._viewInitialized) return;
 
     if (this.imask) {
-      if (this.maskRef) this.maskRef.updateOptions(this.imask);
+      if (this.maskRef) this.maskRef.updateOptions(this.imask as Partial<NormalizedOpts<Opts>>);
       else {
         this.initMask();
         this.onChange(this.maskValue);
@@ -157,7 +157,7 @@ export class IMaskDirective<
   }
 
   private initMask () {
-    this.maskRef = this._factory.create(this.element, this.imask)
+    this.maskRef = this._factory.create(this.element, this.imask as Opts)
       .on('accept', this._onAccept.bind(this))
       .on('complete', this._onComplete.bind(this));
 

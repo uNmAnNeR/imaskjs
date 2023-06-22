@@ -22,7 +22,8 @@ class MaskedRegExp extends Masked<string> {
   }
 
   override _update (opts: Partial<MaskedRegExpOptions>) {
-    if (opts.mask) opts.validate = (value) => value.search(opts.mask) >= 0;
+    const mask = opts.mask;
+    if (mask) opts.validate = (value) => value.search(mask) >= 0;
     super._update(opts);
   }
 }

@@ -2,6 +2,7 @@ import MaskedPattern, { type MaskedPatternOptions } from './pattern';
 import { type MaskedRangeOptions } from './range';
 import MaskedRange from './range';
 import IMask from '../core/holder';
+import type Masked from './base';
 import { type AppendFlags } from './base';
 import { isString } from '../core/utils';
 
@@ -17,15 +18,18 @@ type DateOptionsKeys =
 ;
 
 export
-type MaskedDateOptions<Value=Date | null> =
-  Omit<MaskedPatternOptions<Value>, 'mask'> &
-  Partial<Pick<MaskedDate<Value>, DateOptionsKeys>> &
+type DateValue = Date | null;
+
+export
+type MaskedDateOptions =
+  Omit<MaskedPatternOptions<DateValue>, 'mask'> &
+  Partial<Pick<MaskedDate, DateOptionsKeys>> &
   { mask?: string | DateMaskType }
 ;
 
 /** Date mask */
 export default
-class MaskedDate<Value=Date | null> extends MaskedPattern<Value> {
+class MaskedDate extends MaskedPattern<DateValue> {
   static GET_DEFAULT_BLOCKS: () => { [k: string]: MaskedRangeOptions } = () => ({
     d: {
       mask: MaskedRange,
@@ -45,10 +49,10 @@ class MaskedDate<Value=Date | null> extends MaskedPattern<Value> {
       to: 9999,
     }
   });
-  static DEFAULTS: Partial<MaskedPatternOptions<any, MaskedDate<any>, DateOptionsKeys>> = {
-    mask: Date as any,
+  static DEFAULTS: Record<string, any> = {
+    mask: Date,
     pattern: 'd{.}`m{.}`Y',
-    format: (date: Date) => {
+    format: (date: DateValue, masked: Masked): string => {
       if (!date) return '';
 
       const day = String(date.getDate()).padStart(2, '0');
@@ -57,11 +61,11 @@ class MaskedDate<Value=Date | null> extends MaskedPattern<Value> {
 
       return [day, month, year].join('.');
     },
-    parse: (str: string) => {
+    parse: (str: string, masked: Masked): DateValue => {
       const [day, month, year] = str.split('.').map(Number);
       return new Date(year, month - 1, day);
     },
-  };
+  } satisfies Partial<MaskedDateOptions>;
 
   /** Pattern mask for date according to {@link MaskedDate#format} */
   declare pattern: string;
@@ -71,10 +75,14 @@ class MaskedDate<Value=Date | null> extends MaskedPattern<Value> {
   declare max?: Date;
   /** */
   declare autofix?: boolean | 'pad' | undefined;
+  /** Format typed value to string */
+  declare format: (value: DateValue, masked: Masked) => string;
+  /** Parse string to get typed value */
+  declare parse: (str: string, masked: Masked) => DateValue;
 
-  constructor (opts?: MaskedDateOptions<Value>) {
+  constructor (opts?: MaskedDateOptions) {
     const { mask, pattern, ...patternOpts } = {
-      ...(MaskedDate.DEFAULTS as MaskedDateOptions<Value>),
+      ...(MaskedDate.DEFAULTS as MaskedDateOptions),
       ...opts,
     };
 
@@ -84,11 +92,11 @@ class MaskedDate<Value=Date | null> extends MaskedPattern<Value> {
     });
   }
 
-  override updateOptions (opts: Partial<MaskedDateOptions<Value>>) {
-    super.updateOptions(opts as Partial<MaskedPatternOptions<Value>>);
+  override updateOptions (opts: Partial<MaskedDateOptions>) {
+    super.updateOptions(opts as Partial<MaskedPatternOptions<DateValue>>);
   }
 
-  override _update (opts: Partial<MaskedDateOptions<Value>>) {
+  override _update (opts: Partial<MaskedDateOptions>) {
     const { mask, pattern, blocks, ...patternOpts } = {
       ...MaskedDate.DEFAULTS,
       ...opts,
@@ -139,17 +147,17 @@ class MaskedDate<Value=Date | null> extends MaskedPattern<Value> {
   }
 
   /** Parsed Date */
-  get date (): Value {
+  get date (): DateValue {
     return this.typedValue;
   }
-  set date (date: Value) {
+  set date (date: DateValue) {
     this.typedValue = date;
   }
 
-  override get typedValue (): Value {
+  override get typedValue (): DateValue {
     return this.isComplete ? super.typedValue : null;
   }
-  override set typedValue (value: Value) {
+  override set typedValue (value: DateValue) {
     super.typedValue = value;
   }
 

@@ -1,4 +1,4 @@
-import IMask, { type FactoryArg, type InputMask } from 'imask';
+import IMask, { type FactoryArg, type InputMask, type NormalizedOpts } from 'imask';
 
 
 function fireEvent<Opts extends FactoryArg> (el: HTMLElement, eventName: string, data: InputMask<Opts>) {
@@ -17,7 +17,7 @@ function initMask<Opts extends FactoryArg> (el: HTMLElement, opts: InputMask<Opt
 
 export default
 function IMaskAction<Opts extends FactoryArg> (el: HTMLElement, opts: Opts) {
-  let maskRef = opts && initMask(el, opts);
+  let maskRef: InputMask<Opts> | undefined = opts && initMask(el, opts);
 
   function destroy (): void {
     if (maskRef) {
@@ -26,11 +26,11 @@ function IMaskAction<Opts extends FactoryArg> (el: HTMLElement, opts: Opts) {
     }
   }
 
-  function update (opts: InputMask<Opts> | Opts): void {
+  function update (opts: InputMask<Opts> | Opts | Partial<NormalizedOpts<Opts>>): void {
     if (!opts) return destroy();
 
     if (opts instanceof IMask.InputMask) maskRef = opts;
-    else if (maskRef) maskRef.updateOptions(opts as Opts);
+    else if (maskRef) maskRef.updateOptions(opts as Partial<NormalizedOpts<Opts>>);
     else maskRef = initMask(el, opts as Opts);
   }
 

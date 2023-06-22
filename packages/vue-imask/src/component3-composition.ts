@@ -1,4 +1,4 @@
-import IMask, { type FactoryOpts, type InputMask } from 'imask';
+import { type FactoryOpts } from 'imask';
 import { h, watch, toRef, defineComponent, PropType } from 'vue-demi';
 import props from './props';
 import useIMask, { type ComposableParams } from './composable';
@@ -50,7 +50,7 @@ export default defineComponent<MaskProps>({
   ],
 
   setup (props, { attrs, emit }) {
-    const { el, mask, masked, unmasked, typed } = useIMask(extractOptionsFromProps(props as MaskProps, VALUE_PROPS), {
+    const { el, masked, unmasked, typed } = useIMask(extractOptionsFromProps(props as MaskProps, VALUE_PROPS) as FactoryOpts, {
       emit,
       onAccept: () => {
         // emit more events
