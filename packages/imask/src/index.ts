@@ -24,7 +24,8 @@ export {
     type FactoryReturnMasked,
     type FactoryStaticOpts,
     type FactoryStaticReturnMasked,
-    type NormalizedOpts
+    type NormalizedOpts,
+    type UpdateOpts,
 } from './masked/factory';
 export { default as MaskedFunction, type MaskedFunctionOptions } from './masked/function';
 export { default as MaskedNumber, type MaskedNumberOptions } from './masked/number';

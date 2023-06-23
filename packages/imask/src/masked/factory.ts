@@ -107,6 +107,69 @@ type FactoryOpts = FactoryConstructorOpts | FactoryInstanceOpts | FactoryStaticO
 export
 type FactoryArg = Masked | FactoryOpts | FactoryStaticOpts['mask'];
 
+
+export
+type UpdateStaticOpts<Opts extends FactoryStaticOpts> =
+  Opts extends MaskedEnumOptions ? MaskedEnumOptions :
+  Opts extends MaskedRangeOptions ? MaskedRangeOptions :
+  Opts extends MaskedDynamicOptions ? MaskedDynamicOptions :
+  Opts extends MaskedPatternOptions ? MaskedPatternOptions :
+  Opts extends MaskedNumberOptions ? MaskedNumberOptions :
+  Opts extends MaskedRegExpOptions ? MaskedRegExpOptions :
+  Opts extends MaskedFunctionOptions ? MaskedFunctionOptions :
+  Opts extends MaskedDateOptions ? MaskedDateOptions :
+  never
+;
+
+type UpdateAnyOpts = Record<string, any>;
+
+export
+type UpdateInstanceOpts<M extends Masked> =
+  M extends MaskedRegExp ? MaskedRegExpOptions :
+  M extends MaskedPattern ? MaskedPatternOptions :
+  M extends MaskedFunction ? MaskedFunctionOptions :
+  M extends MaskedDate ? MaskedDateOptions :
+  M extends MaskedNumber ? MaskedNumberOptions :
+  M extends MaskedDynamic ? MaskedDynamicOptions :
+  M extends MaskedRange ? MaskedRangeOptions :
+  M extends MaskedEnum ? MaskedEnumOptions :
+  UpdateAnyOpts
+;
+
+export
+type UpdateConstructorOpts<M extends FactoryConstructorOpts> =
+  M extends { mask: typeof MaskedDate } ? MaskedDateOptions :
+  M extends { mask: typeof MaskedNumber } ? MaskedNumberOptions :
+  M extends { mask: typeof MaskedEnum } ? MaskedEnumOptions :
+  M extends { mask: typeof MaskedRange } ? MaskedRangeOptions :
+  M extends { mask: typeof MaskedRegExp } ? MaskedRegExpOptions :
+  M extends { mask: typeof MaskedFunction } ? MaskedFunctionOptions :
+  M extends { mask: typeof MaskedPattern } ? MaskedPatternOptions :
+  M extends { mask: typeof MaskedDynamic } ? MaskedDynamicOptions :
+  UpdateAnyOpts
+;
+
+export
+type UpdateStaticMaskOpts<M extends FactoryStaticOpts['mask']> =
+  M extends MaskedDateFactoryOptions['mask'] ? MaskedDateOptions :
+  M extends MaskedNumberOptions['mask'] ? MaskedNumberOptions :
+  M extends MaskedPatternOptions['mask'] ? MaskedPatternOptions :
+  M extends MaskedDynamicOptions['mask'] ? MaskedDynamicOptions :
+  M extends MaskedRegExpOptions['mask'] ? MaskedRegExpOptions :
+  M extends MaskedFunctionOptions['mask'] ? MaskedFunctionOptions :
+  never
+;
+
+export
+type UpdateOpts<Opts extends FactoryArg> = Partial<
+  Opts extends Masked ? UpdateInstanceOpts<Opts> :
+  Opts extends FactoryStaticOpts['mask'] ? UpdateStaticMaskOpts<Opts> :
+  Opts extends FactoryStaticOpts ? UpdateStaticOpts<Opts> :
+  Opts extends FactoryInstanceOpts ? UpdateInstanceOpts<Opts['mask']> :
+  Opts extends FactoryConstructorOpts ? UpdateConstructorOpts<Opts> :
+  UpdateAnyOpts
+>;
+
 export
 type FactoryReturnMasked<Opts extends FactoryArg> =
   Opts extends Masked ? Opts :

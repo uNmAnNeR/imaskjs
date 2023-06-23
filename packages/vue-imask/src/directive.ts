@@ -1,4 +1,4 @@
-import IMask, { type InputElement, type InputMask, type FactoryArg, type NormalizedOpts } from 'imask';
+import IMask, { type InputElement, type InputMask, type FactoryArg, type UpdateOpts } from 'imask';
 import { isVue3 } from 'vue-demi';
 
 
@@ -13,10 +13,10 @@ export default {
     initMask(el, options);
   },
 
-  [isVue3 ? 'updated' : 'update']: <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>, { value: options }: { value: Opts | Partial<NormalizedOpts<Opts>> }) => {
+  [isVue3 ? 'updated' : 'update']: <Opts extends FactoryArg>(el: DirectiveMaskElement<Opts>, { value: options }: { value: Opts | UpdateOpts<Opts> }) => {
     if (options) {
       if (el.maskRef) {
-        el.maskRef.updateOptions(options as Partial<NormalizedOpts<Opts>>);
+        el.maskRef.updateOptions(options as UpdateOpts<Opts>);
         if (el.value !== el.maskRef.value) el.maskRef._onChange();
       }
       else initMask(el, options as Opts);

@@ -1,4 +1,4 @@
-import { type InputMask, type InputMaskElement, type FactoryArg, type NormalizedOpts } from 'imask';
+import { type InputMask, type InputMaskElement, type FactoryArg, type UpdateOpts } from 'imask';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Directive, ElementRef, Input, Output, forwardRef, Provider, Renderer2,
@@ -97,7 +97,7 @@ export class IMaskDirective<
     if (!changes['imask'] || !this._viewInitialized) return;
 
     if (this.imask) {
-      if (this.maskRef) this.maskRef.updateOptions(this.imask as Partial<NormalizedOpts<Opts>>);
+      if (this.maskRef) this.maskRef.updateOptions(this.imask as UpdateOpts<Opts>);
       else {
         this.initMask();
         this.onChange(this.maskValue);
