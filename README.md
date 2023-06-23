@@ -1,10 +1,9 @@
 # imaskjs
 vanilla javascript input mask
 
-[![Financial Contributors on Open Collective](https://opencollective.com/imask/all/badge.svg?label=financial+contributors)](https://opencollective.com/imask) [![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=master)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=master)
 [![npm version](https://badge.fury.io/js/imask.svg)](https://badge.fury.io/jas/imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+[![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=master)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=master)
 
 <a href="https://opencollective.com/imask/donate" target="_blank">
   <img src="https://opencollective.com/imask/donate/button.png?color=blue" width=300 />
