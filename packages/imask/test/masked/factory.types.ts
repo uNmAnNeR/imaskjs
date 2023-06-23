@@ -67,6 +67,5 @@ type cases = [
   Check<NormalizedOpts<MaskedNumber> extends { _mask: MaskedNumber, mask: typeof MaskedNumber } ? true : false>,
   Check<Equal<NormalizedOpts<{ mask: typeof MaskedNumber }>, { mask: typeof MaskedNumber }>>,
   Check<Equal<NormalizedOpts<NumberConstructor>, { mask: NumberConstructor }>>,
-
   Check<FactoryConstructorOpts extends Partial<NormalizedOpts<FactoryConstructorOpts>> ? true : false>,
 ];

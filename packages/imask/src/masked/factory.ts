@@ -114,10 +114,10 @@ type UpdateStaticOpts<Opts extends FactoryStaticOpts> =
   Opts extends MaskedRangeOptions ? MaskedRangeOptions :
   Opts extends MaskedDynamicOptions ? MaskedDynamicOptions :
   Opts extends MaskedPatternOptions ? MaskedPatternOptions :
+  Opts extends MaskedDateOptions ? MaskedDateOptions :
   Opts extends MaskedNumberOptions ? MaskedNumberOptions :
   Opts extends MaskedRegExpOptions ? MaskedRegExpOptions :
   Opts extends MaskedFunctionOptions ? MaskedFunctionOptions :
-  Opts extends MaskedDateOptions ? MaskedDateOptions :
   never
 ;
 
@@ -126,13 +126,13 @@ type UpdateAnyOpts = Record<string, any>;
 export
 type UpdateInstanceOpts<M extends Masked> =
   M extends MaskedRegExp ? MaskedRegExpOptions :
-  M extends MaskedPattern ? MaskedPatternOptions :
   M extends MaskedFunction ? MaskedFunctionOptions :
   M extends MaskedDate ? MaskedDateOptions :
   M extends MaskedNumber ? MaskedNumberOptions :
   M extends MaskedDynamic ? MaskedDynamicOptions :
   M extends MaskedRange ? MaskedRangeOptions :
   M extends MaskedEnum ? MaskedEnumOptions :
+  M extends MaskedPattern ? MaskedPatternOptions :
   UpdateAnyOpts
 ;
 
