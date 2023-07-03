@@ -1,6 +1,6 @@
 import { objectIncludes } from '../core/utils';
 import ChangeDetails from '../core/change-details';
-import createMask, { type FactoryArg, normalizeOpts } from './factory';
+import createMask, { type FactoryArg, type ExtendFactoryArgOptions, type NormalizedOpts, normalizeOpts } from './factory';
 import Masked, { type AppendFlags, type MaskedState, type MaskedOptions, type ExtractFlags } from './base';
 import { DIRECTION, type Direction } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
@@ -20,7 +20,7 @@ export
 type MaskedDynamicState = MaskedDynamicNoRefState | MaskedDynamicRefState;
 
 export
-type DynamicMaskType = Array<FactoryArg> | ArrayConstructor;
+type DynamicMaskType = Array<ExtendFactoryArgOptions<{ expose?: boolean }>> | ArrayConstructor;
 
 export
 type MaskedDynamicOptions = MaskedOptions<MaskedDynamic, 'dispatch'>;
@@ -35,6 +35,8 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   declare mask: DynamicMaskType;
   /** Currently chosen mask */
   declare currentMask?: Masked;
+  /** Currently chosen mask */
+  declare exposeMask?: Masked;
   /** Compliled {@link Masked} options */
   declare compiledMasks: Array<Masked>;
   /** Chooses {@link Masked} depending on input value */
@@ -61,14 +63,23 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     super._update(opts);
 
     if ('mask' in opts) {
+      this.exposeMask = undefined;
       // mask could be totally dynamic with only `dispatch` option
       this.compiledMasks = Array.isArray(opts.mask) ?
-        opts.mask.map(m => createMask({
-          overwrite: this._overwrite,
-          eager: this._eager,
-          skipInvalid: this._skipInvalid,
-          ...normalizeOpts(m),
-        })) :
+        opts.mask.map(m => {
+          const { expose, ...maskOpts } = normalizeOpts(m) as NormalizedOpts<FactoryArg> & { expose?: boolean };
+
+          const masked = createMask({
+            overwrite: this._overwrite,
+            eager: this._eager,
+            skipInvalid: this._skipInvalid,
+            ...maskOpts,
+          });
+
+          if (expose) this.exposeMask = masked;
+
+          return masked;
+        }) :
         [];
 
       // this.currentMask = this.doDispatch(''); // probably not needed but lets see
@@ -205,32 +216,54 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   }
 
   override get value (): string {
-    return this.currentMask ? this.currentMask.value : '';
+    return this.exposeMask ? this.exposeMask.value :
+      this.currentMask ? this.currentMask.value :
+      '';
   }
 
   override set value (value: string) {
-    super.value = value;
+    if (this.exposeMask) {
+      this.exposeMask.value = value;
+      this.currentMask = this.exposeMask;
+      this._applyDispatch();
+    }
+    else super.value = value;
   }
 
   override get unmaskedValue (): string {
-    return this.currentMask ? this.currentMask.unmaskedValue : '';
+    return this.exposeMask ? this.exposeMask.unmaskedValue :
+      this.currentMask ? this.currentMask.unmaskedValue :
+      '';
   }
 
   override set unmaskedValue (unmaskedValue: string) {
-    super.unmaskedValue = unmaskedValue;
+    if (this.exposeMask) {
+      this.exposeMask.unmaskedValue = unmaskedValue;
+      this.currentMask = this.exposeMask;
+      this._applyDispatch();
+    }
+    else super.unmaskedValue = unmaskedValue;
   }
 
   override get typedValue (): Value {
-    return this.currentMask ? this.currentMask.typedValue : '';
+    return this.exposeMask ? this.exposeMask.typedValue :
+      this.currentMask ? this.currentMask.typedValue :
+      '';
   }
 
-  // probably typedValue should not be used with dynamic
-  override set typedValue (value: Value) {
-    let unmaskedValue = String(value);
+  override set typedValue (typedValue: Value) {
+    if (this.exposeMask) {
+      this.exposeMask.typedValue = typedValue;
+      this.currentMask = this.exposeMask;
+      this._applyDispatch();
+      return;
+    }
+
+    let unmaskedValue = String(typedValue);
 
     // double check it
     if (this.currentMask) {
-      this.currentMask.typedValue = value;
+      this.currentMask.typedValue = typedValue;
       unmaskedValue = this.currentMask.unmaskedValue;
     }
     this.unmaskedValue = unmaskedValue;
@@ -356,7 +389,7 @@ MaskedDynamic.DEFAULTS = {
     // simulate input
     const inputs = masked.compiledMasks.map((m, index) => {
       const isCurrent = masked.currentMask === m;
-      const startInputPos = isCurrent ? m.value.length : m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT);
+      const startInputPos = isCurrent ? m.displayValue.length : m.nearestInputPos(m.displayValue.length, DIRECTION.FORCE_LEFT);
 
       if (m.rawInputValue !== inputValue) {
         m.reset();
@@ -372,7 +405,7 @@ MaskedDynamic.DEFAULTS = {
         weight: m.rawInputValue.length,
         totalInputPositions: m.totalInputPositions(
           0,
-          Math.max(startInputPos, m.nearestInputPos(m.value.length, DIRECTION.FORCE_LEFT)),
+          Math.max(startInputPos, m.nearestInputPos(m.displayValue.length, DIRECTION.FORCE_LEFT)),
         ),
       };
     });

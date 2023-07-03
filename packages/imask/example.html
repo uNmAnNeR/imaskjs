@@ -3,7 +3,7 @@
 
 <body>
   <h1>IMask Core Demo</h1>
-  <input type="text" id="input">
+  <input type="text" id="input" value="123">
   <div>value: <span id="value"></span></div>
   <div>unmasked: <span id="unmasked"></span></div>
   <div contenteditable="true" id="ce"></div>
@@ -13,13 +13,17 @@
   <script type="text/javascript">
     const opts = {
       mask: [
+        { mask: '' },
         {
-          mask: '0"',
-          eager: true,
-        },
-        {
-          mask: '0[0]"',
-          eager: true,
+          mask: 'd % aa',
+          lazy: false,
+          blocks: {
+            d: {
+              mask: Number,
+              expose: true,
+            },
+          },
+          expose: true,
         },
       ],
     };

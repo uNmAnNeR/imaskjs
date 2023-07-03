@@ -82,7 +82,7 @@ describe('MaskedDynamic', function () {
         } as MaskedPatternOptions,
       ],
       dispatch: function (appended, dynamicMasked) {
-        var number = (dynamicMasked.value + appended).replace(/\D/g,'');
+        const number = (dynamicMasked.value + appended).replace(/\D/g,'');
 
         return dynamicMasked.compiledMasks.find(function (m) {
           return number.indexOf((m as any).startsWith) === 0;
@@ -159,5 +159,38 @@ describe('MaskedDynamic', function () {
 
     masked.splice(5, 1, '');
     assert.equal(masked.value, '12__5_');
+  });
+
+  describe('expose', function () {
+    it('should expose number', function () {
+      const mask = new MaskedDynamic<number>({
+        mask: [
+          { mask: '' },
+          {
+            mask: 'd %',
+            lazy: false,
+            blocks: {
+              d: {
+                mask: Number,
+                expose: true,
+              },
+            },
+            expose: true,
+          },
+        ],
+      });
+
+      mask.value = '123';
+      assert.equal(mask.value, '123');
+      assert.equal(mask.displayValue, '123 %');
+      assert.equal(mask.typedValue, 123);
+
+      mask.typedValue = 456;
+      assert.equal(mask.typedValue, 456);
+
+      mask.unmaskedValue = '789';
+      assert.equal(mask.unmaskedValue, '789');
+      assert.equal(mask.displayValue, '789 %');
+    });
   });
 });

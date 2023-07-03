@@ -63,13 +63,13 @@ class PatternCursor<Value> {
     }
     if (this.index >= this.masked._blocks.length) {
       this.index = this.masked._blocks.length - 1;
-      this.offset = (this.block as unknown as PatternBlock).value.length; // TODO this is stupid type error, `block` depends on index that was changed above
+      this.offset = (this.block as unknown as PatternBlock).displayValue.length; // TODO this is stupid type error, `block` depends on index that was changed above
     }
   }
 
   _pushLeft(fn: () => boolean | undefined): boolean {
     this.pushState();
-    for (this.bindBlock(); 0<=this.index; --this.index, this.offset=this.block?.value.length || 0) {
+    for (this.bindBlock(); 0<=this.index; --this.index, this.offset=this.block?.displayValue.length || 0) {
       if (fn()) return this.ok = true;
     }
 

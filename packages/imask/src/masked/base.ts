@@ -158,7 +158,7 @@ abstract class Masked<Value=any> {
 
   /** Value that includes raw user input */
   get rawInputValue (): string {
-    return this.extractInput(0, this.value.length, {raw: true});
+    return this.extractInput(0, this.displayValue.length, {raw: true});
   }
 
   set rawInputValue (value: string) {
@@ -182,17 +182,17 @@ abstract class Masked<Value=any> {
     return cursorPos;
   }
 
-  totalInputPositions (fromPos: number=0, toPos: number=this.value.length): number {
-    return Math.min(this.value.length, toPos - fromPos);
+  totalInputPositions (fromPos: number=0, toPos: number=this.displayValue.length): number {
+    return Math.min(this.displayValue.length, toPos - fromPos);
   }
 
   /** Extracts value in range considering flags */
-  extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
-    return this.value.slice(fromPos, toPos);
+  extractInput (fromPos: number=0, toPos: number=this.displayValue.length, flags?: ExtractFlags): string {
+    return this.displayValue.slice(fromPos, toPos);
   }
 
   /** Extracts tail in range */
-  extractTail (fromPos: number=0, toPos: number=this.value.length): TailDetails {
+  extractTail (fromPos: number=0, toPos: number=this.displayValue.length): TailDetails {
     return new ContinuousTailDetails(this.extractInput(fromPos, toPos), fromPos);
   }
 
@@ -231,7 +231,7 @@ abstract class Masked<Value=any> {
         const beforeTailState = this.state;
         if (this.overwrite === true) {
           consistentTail = checkTail.state;
-          checkTail.unshift(this.value.length - details.tailShift);
+          checkTail.unshift(this.displayValue.length - details.tailShift);
         }
 
         let tailDetails = this.appendTail(checkTail);
@@ -301,8 +301,8 @@ abstract class Masked<Value=any> {
     return details;
   }
 
-  remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
-    this._value = this.value.slice(0, fromPos) + this.value.slice(toPos);
+  remove (fromPos: number=0, toPos: number=this.displayValue.length): ChangeDetails {
+    this._value = this.displayValue.slice(0, fromPos) + this.displayValue.slice(toPos);
     return new ChangeDetails();
   }
 
@@ -319,7 +319,7 @@ abstract class Masked<Value=any> {
     this.rawInputValue = rawInput;
     // append lost trailing chars at the end
     if (this.value && this.value !== value && value.indexOf(this.value) === 0) {
-      this.append(value.slice(this.value.length), {}, '');
+      this.append(value.slice(this.displayValue.length), {}, '');
     }
 
     delete this._refreshing;
@@ -400,7 +400,7 @@ abstract class Masked<Value=any> {
     if (eagerRemove && removeDirection !== DIRECTION.NONE && oldRawValue === this.rawInputValue) {
       if (removeDirection === DIRECTION.FORCE_LEFT) {
         let valLength;
-        while (oldRawValue === this.rawInputValue && (valLength = this.value.length)) {
+        while (oldRawValue === this.rawInputValue && (valLength = this.displayValue.length)) {
           details
             .aggregate(new ChangeDetails({ tailShift: -1 }))
             .aggregate(this.remove(valLength-1));

@@ -152,7 +152,7 @@ class MaskedNumber extends Masked<number> {
     return this._separatorsCount(this._removeThousandsSeparators(slice).length, true);
   }
 
-  override extractInput (fromPos: number=0, toPos: number=this.value.length, flags?: ExtractFlags): string {
+  override extractInput (fromPos: number=0, toPos: number=this.displayValue.length, flags?: ExtractFlags): string {
     [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
 
     return this._removeThousandsSeparators(super.extractInput(fromPos, toPos, flags));
@@ -201,7 +201,7 @@ class MaskedNumber extends Masked<number> {
   }
 
   
-  override remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
+  override remove (fromPos: number=0, toPos: number=this.displayValue.length): ChangeDetails {
     [fromPos, toPos] = this._adjustRangeWithSeparators(fromPos, toPos);
 
     const valueBeforePos = this.value.slice(0, fromPos);

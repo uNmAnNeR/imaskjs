@@ -11,7 +11,7 @@ function isObject (obj: unknown): obj is object {
 }
 
 export
-function pick<T extends object, K extends keyof T, V extends T[keyof T]> (
+function pick<T extends Record<string, any>, K extends keyof T, V extends T[keyof T]> (
   obj: T,
   keys: K[] | ((v: V, k: K) => boolean),
 ): Pick<T, K> {

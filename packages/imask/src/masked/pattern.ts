@@ -3,7 +3,7 @@ import IMask from '../core/holder';
 import { type TailDetails } from '../core/tail-details';
 import { DIRECTION, type Direction } from '../core/utils';
 import Masked, { type AppendFlags, type ExtractFlags, type MaskedOptions, type MaskedState } from './base';
-import createMask, { type FactoryArg, normalizeOpts } from './factory';
+import createMask, { type FactoryArg, normalizeOpts, type ExtendFactoryArgOptions, NormalizedOpts } from './factory';
 import type PatternBlock from './pattern/block';
 import ChunksTailDetails from './pattern/chunk-tail-details';
 import PatternCursor from './pattern/cursor';
@@ -57,7 +57,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
   declare mask: string;
   /** */
-  declare blocks: { [key: string]: FactoryArg };
+  declare blocks: { [key: string]: ExtendFactoryArgOptions<{ expose?: boolean }> };
   /** */
   declare definitions: Definitions;
   /** Single char for empty input */
@@ -76,6 +76,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   declare _blocks: Array<PatternBlock>;
   declare _maskedBlocks: {[key: string]: Array<number>};
   declare _stops: Array<number>;
+  declare exposeBlock?: Masked;
 
   constructor (opts: MaskedPatternOptions<Value>) {
     super({
@@ -97,7 +98,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
   _rebuildMask () {
     const defs = this.definitions;
-    this._blocks = [];
+    this._blocks = []; this.exposeBlock = undefined;
     this._stops = [];
     this._maskedBlocks = {};
 
@@ -116,18 +117,20 @@ class MaskedPattern<Value=string> extends Masked<Value> {
         // use block name with max length
         const bName = bNames[0];
         if (bName) {
+          const { expose, ...blockOpts } = normalizeOpts(this.blocks[bName]) as NormalizedOpts<FactoryArg> & { expose?: boolean };
           const maskedBlock = createMask({
             lazy: this.lazy,
             eager: this.eager,
             placeholderChar: this.placeholderChar,
             displayChar: this.displayChar,
             overwrite: this.overwrite,
-            ...normalizeOpts(this.blocks[bName]),
+            ...blockOpts,
             parent: this,
           });
 
           if (maskedBlock) {
             this._blocks.push(maskedBlock);
+            if (expose) this.exposeBlock = maskedBlock;
 
             // store block index
             if (!this._maskedBlocks[bName]) this._maskedBlocks[bName] = [];
@@ -203,7 +206,8 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   }
 
   get isComplete (): boolean {
-    return this._blocks.every(b => b.isComplete);
+    return this.exposeBlock ? this.exposeBlock.isComplete :
+      this._blocks.every(b => b.isComplete);
   }
 
   get isFilled (): boolean {
@@ -224,20 +228,49 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   }
 
   get unmaskedValue (): string {
-    return this._blocks.reduce((str, b) => str += b.unmaskedValue, '');
+    return this.exposeBlock ? this.exposeBlock.unmaskedValue :
+      this._blocks.reduce((str, b) => str += b.unmaskedValue, '');
   }
 
   set unmaskedValue (unmaskedValue: string) {
-    super.unmaskedValue = unmaskedValue;
+    if (this.exposeBlock) {
+      const tail = this.extractTail(this._blockStartPos(this._blocks.indexOf(this.exposeBlock)) + this.exposeBlock.displayValue.length);
+      this.exposeBlock.unmaskedValue = unmaskedValue;
+      this.appendTail(tail);
+      this.doCommit();
+    }
+    else super.unmaskedValue = unmaskedValue;
   }
 
   get value (): string {
-    // TODO return _value when not in change?
-    return this._blocks.reduce((str, b) => str += b.value, '');
+    return this.exposeBlock ? this.exposeBlock.value :
+      // TODO return _value when not in change?
+      this._blocks.reduce((str, b) => str += b.value, '');
   }
 
   set value (value: string) {
-    super.value = value;
+    if (this.exposeBlock) {
+      const tail = this.extractTail(this._blockStartPos(this._blocks.indexOf(this.exposeBlock)) + this.exposeBlock.displayValue.length);
+      this.exposeBlock.value = value;
+      this.appendTail(tail);
+      this.doCommit();
+    }
+    else super.value = value;
+  }
+
+  get typedValue (): Value {
+    return this.exposeBlock ? this.exposeBlock.typedValue :
+      super.typedValue;
+  }
+
+  set typedValue (value: Value) {
+    if (this.exposeBlock) {
+      const tail = this.extractTail(this._blockStartPos(this._blocks.indexOf(this.exposeBlock)) + this.exposeBlock.displayValue.length);
+      this.exposeBlock.typedValue = value;
+      this.appendTail(tail);
+      this.doCommit();
+    }
+    else super.typedValue = value;
   }
 
   get displayValue (): string {
@@ -251,7 +284,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   _appendEager (): ChangeDetails {
     const details = new ChangeDetails();
 
-    let startBlockIndex = this._mapPosToBlock(this.value.length)?.index;
+    let startBlockIndex = this._mapPosToBlock(this.displayValue.length)?.index;
     if (startBlockIndex == null) return details;
 
     // TODO test if it works for nested pattern masks
@@ -268,7 +301,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   }
 
   _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
-    const blockIter = this._mapPosToBlock(this.value.length);
+    const blockIter = this._mapPosToBlock(this.displayValue.length);
     const details = new ChangeDetails();
     if (!blockIter) return details;
 
@@ -287,7 +320,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return details;
   }
 
-  extractTail (fromPos: number=0, toPos: number=this.value.length): ChunksTailDetails {
+  extractTail (fromPos: number=0, toPos: number=this.displayValue.length): ChunksTailDetails {
     const chunkTail = new ChunksTailDetails();
     if (fromPos === toPos) return chunkTail;
 
@@ -303,7 +336,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return chunkTail;
   }
 
-  extractInput (fromPos: number=0, toPos: number=this.value.length, flags: ExtractFlags={}): string {
+  extractInput (fromPos: number=0, toPos: number=this.displayValue.length, flags: ExtractFlags={}): string {
     if (fromPos === toPos) return '';
 
     let input = '';
@@ -330,7 +363,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     const details = new ChangeDetails();
     if (this.lazy && toBlockIndex == null) return details;
 
-    const startBlockIter = this._mapPosToBlock(this.value.length);
+    const startBlockIter = this._mapPosToBlock(this.displayValue.length);
     if (!startBlockIter) return details;
 
     const startBlockIndex = startBlockIter.index;
@@ -355,7 +388,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
       const block = this._blocks[bi];
       const blockStartPos = accVal.length;
 
-      accVal += block.value;
+      accVal += block.displayValue;
 
       if (pos <= accVal.length) {
         return {
@@ -369,10 +402,10 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   _blockStartPos (blockIndex: number): number {
     return this._blocks
       .slice(0, blockIndex)
-      .reduce((pos, b) => pos += b.value.length, 0);
+      .reduce((pos, b) => pos += b.displayValue.length, 0);
   }
 
-  _forEachBlocksInRange (fromPos: number, toPos: number=this.value.length, fn: (block: PatternBlock, blockIndex: number, fromPos: number, toPos: number) => void) {
+  _forEachBlocksInRange (fromPos: number, toPos: number=this.displayValue.length, fn: (block: PatternBlock, blockIndex: number, fromPos: number, toPos: number) => void) {
     const fromBlockIter = this._mapPosToBlock(fromPos);
 
     if (fromBlockIter) {
@@ -382,13 +415,13 @@ class MaskedPattern<Value=string> extends Masked<Value> {
       const fromBlockStartPos = fromBlockIter.offset;
       const fromBlockEndPos = toBlockIter && isSameBlock ?
         toBlockIter.offset :
-        this._blocks[fromBlockIter.index].value.length;
+        this._blocks[fromBlockIter.index].displayValue.length;
       fn(this._blocks[fromBlockIter.index], fromBlockIter.index, fromBlockStartPos, fromBlockEndPos);
 
       if (toBlockIter && !isSameBlock) {
         // process intermediate blocks
         for (let bi=fromBlockIter.index+1; bi<toBlockIter.index; ++bi) {
-          fn(this._blocks[bi], bi, 0, this._blocks[bi].value.length);
+          fn(this._blocks[bi], bi, 0, this._blocks[bi].displayValue.length);
         }
 
         // process last block
@@ -397,7 +430,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     }
   }
 
-  remove (fromPos: number=0, toPos: number=this.value.length): ChangeDetails {
+  remove (fromPos: number=0, toPos: number=this.displayValue.length): ChangeDetails {
     const removeDetails = super.remove(fromPos, toPos);
     this._forEachBlocksInRange(fromPos, toPos, (b, _, bFromPos, bToPos) => {
       removeDetails.aggregate(b.remove(bFromPos, bToPos));
@@ -416,7 +449,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
       if (cursor.pushRightBeforeInput()) return cursor.pos;
       cursor.popState();
       if (cursor.pushLeftBeforeInput()) return cursor.pos;
-      return this.value.length;
+      return this.displayValue.length;
     }
 
     // FORCE is only about a|* otherwise is 0
@@ -460,7 +493,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
       cursor.pushRightBeforeRequired();
 
       if (cursor.pushRightBeforeFilled()) return cursor.pos;
-      if (direction === DIRECTION.FORCE_RIGHT) return this.value.length;
+      if (direction === DIRECTION.FORCE_RIGHT) return this.displayValue.length;
 
       // backward flow
       cursor.popState();
@@ -475,7 +508,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return cursorPos;
   }
 
-  totalInputPositions (fromPos: number=0, toPos: number=this.value.length): number {
+  totalInputPositions (fromPos: number=0, toPos: number=this.displayValue.length): number {
     let total = 0;
     this._forEachBlocksInRange(fromPos, toPos, (b, _, bFromPos, bToPos) => {
       total += b.totalInputPositions(bFromPos, bToPos);

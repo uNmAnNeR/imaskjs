@@ -1,6 +1,6 @@
 export
 function extractOptionsFromProps<
-  Props extends object,
+  Props extends Record<string, any>,
   ExcludeProps extends keyof Props
 > (props: Props, exclude: Readonly<ExcludeProps[]>): Omit<Props, ExcludeProps> {
   props = {...props};

@@ -107,6 +107,10 @@ type FactoryOpts = FactoryConstructorOpts | FactoryInstanceOpts | FactoryStaticO
 export
 type FactoryArg = Masked | FactoryOpts | FactoryStaticOpts['mask'];
 
+export
+type ExtendFactoryArgOptions<Opts extends { [key: string]: any }> =
+  Masked | FactoryOpts & Opts | FactoryStaticOpts['mask']
+;
 
 export
 type UpdateStaticOpts<Opts extends FactoryStaticOpts> =

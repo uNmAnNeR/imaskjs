@@ -101,7 +101,7 @@ describe('Masked', function () {
 
   describe('#typedValueEquals', function () {
     it('should be true', function () {
-      let masked = new MaskedDate();
+      const masked = new MaskedDate();
 
       assert(masked.typedValueEquals(''));
       assert(masked.typedValueEquals(undefined));
@@ -113,7 +113,7 @@ describe('Masked', function () {
     });
 
     it('should be false', function () {
-      let masked = new MaskedNumber();
+      const masked = new MaskedNumber();
 
       assert(masked.typedValueEquals(''));
       assert(!masked.typedValueEquals(0));
@@ -125,7 +125,7 @@ describe('Masked', function () {
 
   describe('#overwrite', function () {
     it('should work with tail shift', function () {
-      let masked = new MaskedPattern({
+      const masked = new MaskedPattern({
         mask: '$num{.}cents',
         blocks: {
           num: {
@@ -150,7 +150,7 @@ describe('Masked', function () {
   });
 
   describe('#splice', function () {
-    let masked = new MaskedPattern({
+    const masked = new MaskedPattern({
       mask: '+{7}(000)000-00-00',
     });
 
@@ -175,14 +175,14 @@ describe('Masked', function () {
 
   describe('#skipInvalid', function () {
     it('should skip invalid', function () {
-      let masked = new MaskedPattern({ mask: '0000' });
+      const masked = new MaskedPattern({ mask: '0000' });
 
       masked.value = '0a1.2 3';
       assert.strictEqual(masked.value, '0123');
     });
 
     it('should not skip invalid', function () {
-      let masked = new MaskedPattern({ mask: '0000', skipInvalid: false });
+      const masked = new MaskedPattern({ mask: '0000', skipInvalid: false });
 
       masked.value = '0a1.2 3';
       assert.strictEqual(masked.value, '0');

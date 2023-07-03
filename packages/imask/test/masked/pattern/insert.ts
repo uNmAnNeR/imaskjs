@@ -200,4 +200,50 @@ describe('Insert', function () {
       assert.equal(masked.value, '123456');
     });
   });
+
+  describe('expose', function () {
+    it('should expose number', function () {
+      masked.updateOptions({
+        mask: '$num',
+        blocks: {
+          num: {
+            mask: Number,
+            expose: true,
+          },
+        },
+      });
+
+      masked.value = '123';
+      assert.equal(masked.value, '123');
+      assert.equal(masked.displayValue, '$123');
+      assert.equal(masked.typedValue, 123);
+
+      (masked as unknown as MaskedPattern<number>).typedValue = 456;
+      assert.equal(masked.typedValue, 456);
+      assert.equal(masked.displayValue, '$456');
+
+      masked.unmaskedValue = '789';
+      assert.equal(masked.unmaskedValue, '789');
+      assert.equal(masked.displayValue, '$789');
+    });
+
+    it('should correctly handle tail', function () {
+      masked.updateOptions({
+        mask: '$num aa',
+        blocks: {
+          num: {
+            mask: Number,
+            expose: true,
+          },
+        },
+      });
+
+      masked.resolve('123 aa');
+      assert.equal(masked.value, '123');
+      assert.equal(masked.displayValue, '$123 aa');
+
+      masked.value = '321';
+      assert.equal(masked.displayValue, '$321 aa');
+    })
+  });
 });

@@ -81,7 +81,7 @@ class ChunksTailDetails implements TailDetails {
     for (let ci=0; ci < this.chunks.length && !details.skip; ++ci) {
       const chunk = this.chunks[ci];
 
-      const lastBlockIter = masked._mapPosToBlock(masked.value.length);
+      const lastBlockIter = masked._mapPosToBlock(masked.displayValue.length);
       const stop = chunk.stop;
       let chunkBlock;
       if (stop != null &&
