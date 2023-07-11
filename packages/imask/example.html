@@ -12,20 +12,9 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: [
-        { mask: '' },
-        {
-          mask: 'd % aa',
-          lazy: false,
-          blocks: {
-            d: {
-              mask: Number,
-              expose: true,
-            },
-          },
-          expose: true,
-        },
-      ],
+      mask: IMask.MaskedEnum,
+      enum: ['a', 'bc', 'def'],
+      lazy: false,
     };
 
     var result = document.getElementById('value');
