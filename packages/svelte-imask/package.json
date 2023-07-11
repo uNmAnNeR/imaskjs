@@ -6,11 +6,20 @@
   "description": "Svelte input mask",
   "main": "dist/svelte-imask.js",
   "module": "esm/index.js",
+  "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask",
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c"
+  },
+  "exports": {
+    ".": {
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "default": "./dist/svelte-imask.js"
+    },
+    "./*": "./*"
   },
   "keywords": [
     "svelte",
@@ -23,7 +32,7 @@
     "imask": "^7.1.0-alpha.0"
   },
   "peerDependencies": {
-    "svelte": "^3.59.2"
+    "svelte": "^4.0.5"
   },
   "publishConfig": {
     "access": "public"

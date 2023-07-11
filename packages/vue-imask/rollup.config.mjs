@@ -11,6 +11,7 @@ const globals = {
   imask: 'IMask',
   vue: 'Vue',
   'vue-demi': 'VueDemi',
+  '@vue/composition-api': 'vueCompositionApi',
 };
 
 const extensions = ['.js', '.ts'];

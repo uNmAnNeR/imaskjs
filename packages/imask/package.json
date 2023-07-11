@@ -8,13 +8,22 @@
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
   "module": "esm/index.js",
+  "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs",
   "types": "esm/index.d.ts",
   "engines": {
     "npm": ">=4.0.0"
   },
+  "exports": {
+    ".": {
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "default": "./dist/imask.js"
+    },
+    "./*": "./*"
+  },
   "scripts": {
-    "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec -r ts-node/register --test test/**/*",
+    "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec --loader tsx --test test/**/*",
     "watch": "rollup -c -w",
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
@@ -29,6 +38,6 @@
   ],
   "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6",
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.22.5"
+    "@babel/runtime-corejs3": "^7.22.6"
   }
 }

@@ -60,7 +60,7 @@ export default [
       copy({
         targets: [
           { src: 'dist/*.d.ts', dest: 'esm' },
-          { src: 'dist/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
+          { src: 'dist/index.d.ts', dest: 'dist', rename: 'solid-imask.d.ts' },
         ],
         flatten: false,
       })
