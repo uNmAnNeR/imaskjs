@@ -20,6 +20,7 @@
       "import": "./esm/index.js",
       "default": "./dist/imask.js"
     },
+    "./esm": "./esm/index.js",
     "./*": "./*"
   },
   "scripts": {
