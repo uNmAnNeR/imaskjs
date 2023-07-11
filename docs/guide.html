@@ -577,6 +577,33 @@ var masked = IMask.PatternMasked({
   }
 });</code></pre>
 
+  <h4 id="lazy" class="section-h"><a href="#lazy">Expose block value</a> <kbd>since 7.1.0</kbd></h4>
+  <p>Block value can be exposed using the <code>expose</code> option on one of the blocks:</p>
+  <div class="toggle-panel">
+    <label for="price-mask-demo" class="muted">demo</label>
+    <input id="price-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type here against mask</label>
+          <input id="price-mask" type="text" value="">
+          <div class="desc">value: <span id="price-value"></span> <span>type: </span><span id="price-type"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var priceMask = IMask(element, {
+  mask: '$num',
+  lazy: false,  // make placeholder always visible
+
+  blocks: {
+    num: {
+      mask: Number,
+      <u>expose: true,</u>
+    },
+  }
+});</code></pre>
+
   <h4 id="lazy" class="section-h"><a href="#lazy">Lazy Mode</a></h4>
   <div class="form-item">
     <label></label>
@@ -661,7 +688,7 @@ var masked = IMask.PatternMasked({
   maxLength: 3,
   autofix: true,  // bound value
 
-  // also Pattern options can be set
+  // pattern options can be set as well
   lazy: false
 });</code></pre>
   <p>Unlike <a href="#masked-number">Number</a> mask Range mask is fixed in size, accepts only integer values but can use placeholder.</p>
@@ -716,7 +743,7 @@ var masked = IMask.PatternMasked({
   // all values should be same length!
   enum: ['F1', 'G2', 'H3'],
 
-  // also Pattern options can be set
+  // pattern options can be set as well
   lazy: false
 });</code></pre>
 
@@ -789,7 +816,7 @@ var masked = IMask.PatternMasked({
 
   autofix: true,  // defaults to `false`, see <a href="#autofix">details</a>
 
-  // also Pattern options can be set
+  // pattern options can be set as well
   lazy: false,
 
   // and other common options
@@ -937,6 +964,38 @@ var momentMask = IMask(element, {
     }
   }
 )</code></pre>
+
+  <h4 id="lazy" class="section-h"><a href="#lazy">Expose mask value</a> <kbd>since 7.1.0</kbd></h4>
+  <p>Nested mask value can be exposed using the <code>expose</code> option on one of the masks:</p>
+  <div class="toggle-panel">
+    <label for="percent-mask-demo" class="muted">demo</label>
+    <input id="percent-mask-demo" type="checkbox">
+    <div class="toggle-panel-content">
+      <form class="form">
+        <div class="form-item">
+          <label>Type here against mask</label>
+          <input id="percent-mask" type="text" value="">
+          <div class="desc">value: <span id="percent-value"></span> <span>type: </span><span id="percent-type"></span></div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <pre><code>var percentMask = IMask(element, {
+  mask: [
+    { mask: '' },
+    {
+      mask: 'd %',
+      lazy: false,
+      expose: true,
+      blocks: {
+        d: {
+          mask: NullableMaskedNumber,
+          expose: true,
+        },
+      },
+    },
+  ],
+});</code></pre>
 
 
   <h2 id="pipe" class="section-h"><a href="#pipe">Pipe <kbd>since 6.0</kbd></a></h2>
@@ -1149,6 +1208,22 @@ var numberMask = IMask(element, { mask: Number });
     });
 
 
+    var priceMask = IMask(document.getElementById('price-mask'), {
+      mask: '$num',
+      lazy: false,  // make placeholder always visible
+
+      blocks: {
+        num: {
+          mask: Number,
+          expose: true,
+        },
+      }
+    }).on('accept', function() {
+      document.getElementById('price-value').innerHTML = priceMask.unmaskedValue;
+      document.getElementById('price-type').innerHTML = typeof priceMask.typedValue;
+    });
+
+
     var rangeMask = IMask(document.getElementById('range-mask'), {
       mask: IMask.MaskedRange,
       from: 1,
@@ -1156,7 +1231,7 @@ var numberMask = IMask(element, { mask: Number });
       maxLength: 3,
       autofix: true,
 
-      // also Pattern options can be set
+      // pattern options can be set as well
       lazy: false
     }).on('accept', function() {
       document.getElementById('range-value').innerHTML = rangeMask.value || '-';
@@ -1167,7 +1242,7 @@ var numberMask = IMask(element, { mask: Number });
       // all values should be same length!
       enum: ['F1', 'G2', 'H3'],
 
-      // also Pattern options can be set
+      // pattern options can be set as well
       lazy: false
     }).on('accept', function() {
       document.getElementById('enum-value').innerHTML = enumMask.value || '-';
@@ -1366,6 +1441,26 @@ var numberMask = IMask(element, { mask: Number });
       }
     ).on('accept', function() {
       document.getElementById('dispatch-value').innerHTML = dispatchMask.masked.currentMask.country;
+    });
+
+    var percentMask = IMask(document.getElementById('percent-mask'), {
+      mask: [
+        { mask: '' },
+        {
+          mask: 'd %',
+          lazy: false,
+          expose: true,
+          blocks: {
+            d: {
+              mask: Number,
+              expose: true,
+            },
+          },
+        },
+      ],
+    }).on('accept', function() {
+      document.getElementById('percent-value').innerHTML = percentMask.unmaskedValue;
+      document.getElementById('percent-type').innerHTML = typeof percentMask.typedValue;
     });
 
     var autofixMask = IMask(
