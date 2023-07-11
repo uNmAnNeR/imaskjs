@@ -1,6 +1,6 @@
 {
   "name": "solid-imask",
-  "version": "7.1.0-alpha.0",
+  "version": "7.1.0-alpha.1",
   "license": "MIT",
   "author": "Alexey Kryazhev",
   "description": "Solid input mask",
@@ -29,7 +29,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^7.1.0-alpha.0"
+    "imask": "^7.1.0-alpha.1"
   },
   "peerDependencies": {
     "solid-js": ">=1.3.0"
