@@ -3,7 +3,7 @@ import { type FactoryOpts, type MaskedDynamicOptions } from 'imask';
 
 export default {
   // common
-  mask: Object as PropType<FactoryOpts['mask']>,
+  mask: undefined as unknown as PropType<FactoryOpts['mask']>,
   prepare: Function as PropType<FactoryOpts['prepare']>,
   prepareChar: Function as PropType<FactoryOpts['prepareChar']>,
   validate: Function as PropType<FactoryOpts['validate']>,
