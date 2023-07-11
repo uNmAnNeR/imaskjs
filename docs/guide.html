@@ -731,17 +731,22 @@ var masked = IMask.PatternMasked({
     <div class="toggle-panel-content">
       <form class="form">
         <div class="form-item">
-          <label>Type here</label>
+          <label for="enum-mask">Type here<div class="desc" id="enum-months" style="margin: 0px 0px 8px"></div></label>
           <input id="enum-mask" type="text" value="">
           <div class="desc">value: <span id="enum-value"></span></div>
         </div>
       </form>
     </div>
   </div>
-  <pre><code>var enumMask = IMask(element, {
+  <pre><code>var languages = Array.from({ length: 12 }, (_, i) =>
+  new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
+);
+
+var enumMask = IMask(element, {
   mask: IMask.MaskedEnum,
-  // all values should be same length!
-  enum: ['F1', 'G2', 'H3'],
+  enum: Array.from({ length: 12 }, (_, i) =>
+    new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
+  ),
 
   // pattern options can be set as well
   lazy: false
@@ -1237,10 +1242,14 @@ var numberMask = IMask(element, { mask: Number });
       document.getElementById('range-value').innerHTML = rangeMask.value || '-';
     });
 
+    var languages = Array.from({ length: 12 }, (_, i) =>
+      new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
+    );
+
+    document.getElementById('enum-months').innerHTML = languages.join(', ');
     var enumMask = IMask(document.getElementById('enum-mask'), {
       mask: IMask.MaskedEnum,
-      // all values should be same length!
-      enum: ['F1', 'G2', 'H3'],
+      enum: languages,
 
       // pattern options can be set as well
       lazy: false
