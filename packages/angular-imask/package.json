@@ -5,7 +5,6 @@
   "version": "7.1.0-alpha.0",
   "description": "Angular IMask Plugin",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/angular-imask",
-  "type": "module",
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"dist\"",
