@@ -1,6 +1,6 @@
 {
   "name": "solid-imask",
-  "version": "7.1.1",
+  "version": "7.1.2",
   "license": "MIT",
   "author": "Alexey Kryazhev",
   "description": "Solid input mask",
@@ -10,14 +10,42 @@
   "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
   "exports": {
-    ".": { "types": "./esm/index.d.ts", "import": "./esm/index.js", "default": "./dist/solid-imask.js" },
-    "./esm": { "types": "./esm/index.d.ts", "default": "./esm/index.js" },
-    "./esm/*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
-    "./esm/*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
-    "./*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
-    "./*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" }
+    ".": {
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "default": "./dist/solid-imask.js"
+    },
+    "./esm": {
+      "types": "./esm/index.d.ts",
+      "default": "./esm/index.js"
+    },
+    "./esm/*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./esm/*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    }
   },
-  "typesVersions": { ">=4.2": { "*": ["esm/*"], "esm/*": ["esm/*"] } },
+  "typesVersions": {
+    ">=4.2": {
+      "*": [
+        "esm/*"
+      ],
+      "esm/*": [
+        "esm/*"
+      ]
+    }
+  },
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
@@ -30,7 +58,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^7.1.1"
+    "imask": "^7.1.2"
   },
   "peerDependencies": {
     "solid-js": ">=1.3.0"

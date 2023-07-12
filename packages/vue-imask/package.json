@@ -2,7 +2,7 @@
   "name": "vue-imask",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "7.1.1",
+  "version": "7.1.2",
   "description": "Vue input mask",
   "main": "dist/vue-imask.js",
   "module": "esm/index.js",
@@ -15,14 +15,42 @@
     "cangku"
   ],
   "exports": {
-    ".": { "types": "./esm/index.d.ts", "import": "./esm/index.js", "default": "./dist/vue-imask.js" },
-    "./esm": { "types": "./esm/index.d.ts", "default": "./esm/index.js" },
-    "./esm/*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
-    "./esm/*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
-    "./*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
-    "./*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" }
+    ".": {
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "default": "./dist/vue-imask.js"
+    },
+    "./esm": {
+      "types": "./esm/index.d.ts",
+      "default": "./esm/index.js"
+    },
+    "./esm/*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./esm/*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    }
   },
-  "typesVersions": { ">=4.2": { "*": ["esm/*"], "esm/*": ["esm/*"] } },
+  "typesVersions": {
+    ">=4.2": {
+      "*": [
+        "esm/*"
+      ],
+      "esm/*": [
+        "esm/*"
+      ]
+    }
+  },
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
@@ -37,7 +65,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^7.1.1",
+    "imask": "^7.1.2",
     "vue-demi": "^0.14.5"
   },
   "peerDependencies": {
