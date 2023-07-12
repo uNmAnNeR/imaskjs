@@ -6,17 +6,18 @@
   "description": "Solid input mask",
   "main": "dist/solid-imask.js",
   "module": "esm/index.js",
-  "types": "dist/solid-imask.d.ts",
+  "types": "index.d.ts",
   "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
   "exports": {
-    ".": {
-      "types": "./esm/index.d.ts",
-      "import": "./esm/index.js",
-      "default": "./dist/solid-imask.js"
-    },
-    "./*": "./*"
+    ".": { "types": "./esm/index.d.ts", "import": "./esm/index.js", "default": "./dist/solid-imask.js" },
+    "./esm": { "types": "./esm/index.d.ts", "default": "./esm/index.js" },
+    "./esm/*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
+    "./esm/*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
+    "./*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
+    "./*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" }
   },
+  "typesVersions": { ">=4.2": { "*": ["esm/*"], "esm/*": ["esm/*"] } },
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",

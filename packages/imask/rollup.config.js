@@ -3,7 +3,6 @@ import terser from '@rollup/plugin-terser';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import multi from 'rollup-plugin-multi-input';
-import copy from 'rollup-plugin-copy';
 
 
 const input = ['src/**'];
@@ -45,13 +44,6 @@ export default [
     plugins: [
       multi.default(), // https://github.com/alfredosalzillo/rollup-plugin-multi-input/issues/72
       ...commonPlugins,
-      copy({
-        targets: [
-          { src: 'esm/**/*.d.ts', dest: 'dist' },
-          { src: 'esm/index.d.ts', dest: 'dist', rename: 'imask.d.ts' },
-        ],
-        flatten: false,
-      })
     ]
   }
 ];

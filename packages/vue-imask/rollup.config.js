@@ -4,18 +4,17 @@ import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json' assert { type: 'json' };
-import copy from 'rollup-plugin-copy';
 
-
-const input = ['src/**'];
-const extensions = ['.js', '.ts'];
 
 const globals = {
-  react: 'React',
   imask: 'IMask',
-  'prop-types': 'PropTypes',
+  vue: 'Vue',
+  'vue-demi': 'VueDemi',
+  '@vue/composition-api': 'vueCompositionApi',
 };
 
+const extensions = ['.js', '.ts'];
+const input = ['src/**'];
 const commonPlugins = [
   nodeResolve({ extensions }),
   commonjs(),
@@ -33,11 +32,11 @@ export default [
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'ReactIMask',
+      name: 'VueIMask',
       file: pkg.main,
-      globals,
       format: 'umd',
       sourcemap: true,
+      globals,
       interop: 'auto',
     },
     plugins: commonPlugins,
@@ -54,17 +53,9 @@ export default [
         "from 'imask'": "from 'imask/esm/imask'",
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
-        preventAssignment: true,
       }),
       multi.default(),
       ...commonPlugins,
-      copy({
-        targets: [
-          { src: 'esm/*.d.ts', dest: 'dist' },
-          { src: 'esm/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
-        ],
-        flatten: false,
-      }),
     ]
   }
-]
+];

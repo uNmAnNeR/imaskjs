@@ -38,7 +38,5 @@ export { createPipe, pipe, PIPE_TYPE } from './masked/pipe';
 export { default as MaskedRange, type MaskedRangeOptions } from './masked/range';
 export { default as MaskedRegExp, type MaskedRegExpOptions } from './masked/regexp';
 
-try {
-  (globalThis as any).IMask = IMask;
-} catch {}
+try { (globalThis as any).IMask = IMask; } catch {}
 export default IMask;

@@ -7,7 +7,7 @@
   "main": "dist/vue-imask.js",
   "module": "esm/index.js",
   "type": "module",
-  "types": "esm/index.d.ts",
+  "types": "index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask",
   "contributors": [
     "naprimer",
@@ -15,13 +15,14 @@
     "cangku"
   ],
   "exports": {
-    ".": {
-      "types": "./esm/index.d.ts",
-      "import": "./esm/index.js",
-      "default": "./dist/vue-imask.js"
-    },
-    "./*": "./*"
+    ".": { "types": "./esm/index.d.ts", "import": "./esm/index.js", "default": "./dist/vue-imask.js" },
+    "./esm": { "types": "./esm/index.d.ts", "default": "./esm/index.js" },
+    "./esm/*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
+    "./esm/*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
+    "./*": { "types": "./esm/*.d.ts", "default": "./esm/*.js" },
+    "./*.js": { "types": "./esm/*.d.ts", "default": "./esm/*.js" }
   },
+  "typesVersions": { ">=4.2": { "*": ["esm/*"], "esm/*": ["esm/*"] } },
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",

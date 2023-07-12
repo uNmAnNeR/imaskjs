@@ -4,7 +4,6 @@ import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json' assert { type: 'json' };
-import copy from 'rollup-plugin-copy';
 
 
 const globals = {
@@ -52,13 +51,6 @@ export default [
       }),
       multi.default(),
       ...commonPlugins,
-      copy({
-        targets: [
-          { src: 'esm/*.d.ts', dest: 'dist' },
-          { src: 'esm/index.d.ts', dest: 'dist', rename: 'svelte-imask.d.ts' },
-        ],
-        flatten: false,
-      }),
     ]
   }
 ]

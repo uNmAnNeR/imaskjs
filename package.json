@@ -28,7 +28,6 @@
     "opencollective-postinstall": "^2.0.3",
     "rimraf": "^5.0.1",
     "rollup": "^3.26.2",
-    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-multi-input": "^1.4.1",
     "tsx": "^3.12.7",
     "typedoc": "^0.24.8",
