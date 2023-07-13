@@ -1,4 +1,5 @@
 import type { default as _InputMask, InputMaskElement as _InputMaskElement } from '../controls/input';
+import type { default as _InputGroupMask } from '../controls/input-group';
 import type { default as _Masked } from '../masked/base';
 import type { default as _MaskedPattern } from '../masked/pattern';
 import type { default as _MaskedDate } from '../masked/date';
@@ -33,6 +34,7 @@ function IMask<Opts extends FactoryArg> (el: _InputMaskElement, opts: Opts): _In
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace IMask {
   export let InputMask: typeof _InputMask;
+  export let InputGroupMask: typeof _InputGroupMask;
   export let createMask: typeof _createMask;
   export let Masked: typeof _Masked;
   export let MaskedPattern: typeof _MaskedPattern;

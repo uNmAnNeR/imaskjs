@@ -3,6 +3,7 @@ export { default as HTMLContenteditableMaskElement } from './controls/html-conte
 export { default as HTMLInputMaskElement, type InputElement } from './controls/html-input-mask-element';
 export { default as HTMLMaskElement } from './controls/html-mask-element';
 export { default as InputMask, type InputMaskElement } from './controls/input';
+export { default as InputGroupMask } from './controls/input-group';
 export { default as MaskElement } from './controls/mask-element';
 export { default as ChangeDetails, type ChangeDetailsOptions } from './core/change-details';
 export { type AppendTail, type TailDetails } from './core/tail-details';

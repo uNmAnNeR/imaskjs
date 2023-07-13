@@ -8,6 +8,13 @@
   <div>unmasked: <span id="unmasked"></span></div>
   <div contenteditable="true" id="ce"></div>
 
+  <div class="group">
+    <input type="text" id="i1">
+    <input type="text" id="i2">
+    <input type="text" id="i3">
+  </div>
+  <div>value: <span id="group-value"></span></div>
+
   <script src="dist/imask.js"></script>
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
@@ -25,6 +32,20 @@
       unmasked.innerHTML = imask.unmaskedValue;
     });
 
+    const masks = ['i1', 'i2', 'i3'].map(selector => {
+      const el = document.getElementById(selector);
+      const updateWidth = () => {
+        el.style.width = 0;
+        el.style.width = el.scrollWidth + 'px';
+      };
+
+      const m = IMask(el, { mask: '000', lazy: false }).on('accept', updateWidth);
+      setTimeout(updateWidth);
+      return m;
+    })
+
+    const $groupValue = document.getElementById('group-value');
+    var ig = new IMask.InputGroupMask(masks, { overwrite: true, lazy: false }).on('accept', () => $groupValue.innerHTML = ig.unmaskedValue);
 
     // document.getElementById('input').addEventListener('focus', () => {
     //   imask.updateOptions({
@@ -47,5 +68,33 @@
     // document.getElementById('input').addEventListener('blur', () => imask.updateOptions({lazy: true}));
     // document.getElementById('input').addEventListener('focus', () => imask.updateOptions({lazy: false}));
   </script>
+
+  <style type="text/css">
+    .group input {
+      border: none;
+      outline: none;
+      padding: 0;
+      font-size: 30px;
+    }
+
+    #i1 {
+      color: red;
+    }
+
+    #i2 {
+      color: green;
+    }
+
+    #i3 {
+      color: blue;
+    }
+
+    .group {
+      display: inline-flex;
+      border: 1px solid grey;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
 </body>
 </html>

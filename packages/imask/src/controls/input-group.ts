@@ -1,27 +1,21 @@
-import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
+import { DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
-import createMask, { type UpdateOpts, maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
-import Masked from '../masked/base';
-import MaskElement from './mask-element';
-import HTMLInputMaskElement, { type InputElement } from './html-input-mask-element';
-import HTMLContenteditableMaskElement from './html-contenteditable-mask-element';
+import MaskedPattern, { type MaskedPatternOptions } from '../masked/pattern';
 import IMask from '../core/holder';
+import InputMask from './input';
 
-
-export
-type InputMaskElement = MaskElement | InputElement | HTMLElement;
 
 export
 type InputMaskEventListener = (e?: InputEvent) => void;
 
+
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
-class InputMask<Opts extends FactoryArg=FactoryArg> {
-  /** View element */
-  declare el: MaskElement;
+class InputGroupMask<Value=any> {
+  declare inputs: Array<InputMask>;
 
   /** Internal {@link Masked} model */
-  declare masked: FactoryReturnMasked<Opts>;
+  declare masked: MaskedPattern<Value>;
 
   declare _listeners: Record<string, Array<InputMaskEventListener>>;
   declare _value: string;
@@ -31,13 +25,10 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
   declare _cursorChanging?: ReturnType<typeof setTimeout>;
   declare _inputEvent?: InputEvent;
 
-  constructor (el: InputMaskElement, opts: Opts) {
-    this.el =
-      (el instanceof MaskElement) ? el :
-      (el.isContentEditable && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') ? new HTMLContenteditableMaskElement(el) :
-      new HTMLInputMaskElement(el as InputElement);
+  constructor (inputs: Array<InputMask>, opts: Partial<MaskedPatternOptions<Value>>) {
+    this.inputs = inputs;
 
-    this.masked = createMask(opts);
+    this.rebuildMasked(opts);
 
     this._listeners = {};
     this._value = '';
@@ -46,11 +37,11 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
     this._saveSelection = this._saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
     this._onChange = this._onChange.bind(this);
-    this._onDrop = this._onDrop.bind(this);
     this._onFocus = this._onFocus.bind(this);
     this._onClick = this._onClick.bind(this);
     this.alignCursor = this.alignCursor.bind(this);
     this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
+    // this._handleKeyDown = this._handleKeyDown.bind(this);
 
     this._bindEvents();
 
@@ -59,31 +50,17 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
     this._onChange();
   }
 
-  maskEquals (mask: any): boolean {
-    return mask == null || this.masked?.maskEquals(mask);
-  }
-
-  /** Masked */
-  get mask (): FactoryReturnMasked<Opts>['mask'] {
-    return this.masked.mask;
-  }
-  set mask (mask: any) {
-    if (this.maskEquals(mask)) return;
-
-    if (!((mask as Masked) instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask as Masked)) {
-      // TODO "any" no idea
-      this.masked.updateOptions({ mask } as any);
-      return;
-    }
-
-    const masked = (mask instanceof IMask.Masked ? mask : createMask({ mask } as Opts)) as FactoryReturnMasked<Opts>;
-    masked.unmaskedValue = this.masked.unmaskedValue;
-    this.masked = masked;
+  rebuildMasked (opts?: Partial<MaskedPatternOptions<Value>>) {
+    this.masked = new MaskedPattern({
+      mask: this.inputs.reduce((str, _, i) => str + i, ''),
+      blocks: this.inputs.reduce((blocks, m, i) => ({ ...blocks, [i]: m.masked }), {}),
+      ...opts,
+    });
   }
 
   /** Raw value */
   get value (): string {
-    return this._value;
+    return this.inputs.reduce((str, i) => str += i.value, '');
   }
 
   set value (str: string) {
@@ -96,7 +73,7 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
 
   /** Unmasked value */
   get unmaskedValue (): string {
-    return this._unmaskedValue;
+    return this.inputs.reduce((str, i) => str += i.unmaskedValue, '');
   }
 
   set unmaskedValue (str: string) {
@@ -108,11 +85,11 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
   }
 
   /** Typed unmasked value */
-  get typedValue (): FactoryReturnMasked<Opts>['typedValue'] {
-    return this.masked.typedValue;
+  get typedValue (): Value {
+    return this.value as Value;
   }
 
-  set typedValue (val: FactoryReturnMasked<Opts>['typedValue']) {
+  set typedValue (val: Value) {
     if (this.masked.typedValueEquals(val)) return;
 
     this.masked.typedValue = val;
@@ -122,24 +99,7 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
 
   /** Display value */
   get displayValue (): string {
-    return this.masked.displayValue;
-  }
-
-  /** Starts listening to element events */
-  _bindEvents () {
-    this.el.bindEvents({
-      selectionChange: this._saveSelection,
-      input: this._onInput,
-      drop: this._onDrop,
-      click: this._onClick,
-      focus: this._onFocus,
-      commit: this._onChange,
-    });
-  }
-
-  /** Stops listening to element events */
-  _unbindEvents () {
-    if (this.el) this.el.unbindEvents();
+    return this.inputs.reduce((str, i) => str += i.displayValue, '');
   }
 
   /** Fires custom event */
@@ -152,29 +112,61 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
 
   /** Current selection start */
   get selectionStart (): number {
-    return this._cursorChanging ?
-      this._changingCursorPos :
+    const ai = this.activeInput;
+    if (!ai) return 0;
 
-      this.el.selectionStart;
+    return this._inputStartPos(this.inputs.indexOf(ai)) + ai.selectionStart;
+  }
+
+  get activeInput (): InputMask | undefined {
+    return this.inputs.find(i => i.el.isActive);
+  }
+
+  _mapPosToInput (pos: number): { index: number, offset: number } | undefined {
+    let accVal = '';
+    for (let i=0; i<this.inputs.length; ++i) {
+      const input = this.inputs[i];
+      const inputStartPos = accVal.length;
+
+      accVal += input.displayValue;
+
+      if (pos <= accVal.length) {
+        return {
+          index: i,
+          offset: pos - inputStartPos,
+        };
+      }
+    }
+  }
+
+  _inputStartPos (inputIndex: number): number {
+    return this.inputs
+      .slice(0, inputIndex)
+      .reduce((pos, i) => pos += i.displayValue.length, 0);
   }
 
   /** Current cursor position */
   get cursorPos (): number {
-    return this._cursorChanging ?
-      this._changingCursorPos :
-
-      this.el.selectionEnd;
+    const ai = this.activeInput;
+    return !ai ? 0 : this._inputStartPos(this.inputs.indexOf(ai)) + ai.cursorPos;
   }
   set cursorPos (pos: number) {
-    if (!this.el || !this.el.isActive) return;
+    const activeInputPos = this._mapPosToInput(pos);
+    if (activeInputPos) {
+      const activeInput = this.inputs[activeInputPos.index];
+      // TODO
+      (activeInput.el as any).input.focus();
+      activeInput.cursorPos = activeInputPos.offset;
+    }
+  }
 
-    this.el.select(pos, pos);
-    this._saveSelection();
+  get elementValue () {
+    return this.inputs.reduce((str, i) => str += i.el.value, '');
   }
 
   /** Stores current selection */
   _saveSelection (/* ev */) {
-    if (this.displayValue !== this.el.value) {
+    if (this.displayValue !== this.elementValue) {
       console.warn('Element value was changed outside of mask. Syncronize mask using `mask.updateValue()` to work properly.'); // eslint-disable-line no-console
     }
     this._selection = {
@@ -185,7 +177,7 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
 
   /** Syncronizes model value from view */
   updateValue () {
-    this.masked.value = this.el.value;
+    this.masked.value = this.elementValue;
     this._value = this.masked.value;
   }
 
@@ -193,61 +185,43 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
   updateControl () {
     const newUnmaskedValue = this.masked.unmaskedValue;
     const newValue = this.masked.value;
-    const newDisplayValue = this.displayValue;
     const isChanged = (this.unmaskedValue !== newUnmaskedValue || this.value !== newValue);
 
     this._unmaskedValue = newUnmaskedValue;
     this._value = newValue;
 
-    if (this.el.value !== newDisplayValue) this.el.value = newDisplayValue;
+    if (this.elementValue !== this.displayValue) {
+      this.inputs.forEach((input, i) => {
+        input.masked.state = this.masked._blocks[i].state;
+        input.updateControl();
+      });
+    }
     if (isChanged) this._fireChangeEvents();
   }
 
   /** Updates options with deep equal check, recreates {@link Masked} model if mask type changes */
-  updateOptions(opts: UpdateOpts<Opts>) {
-    const { mask, ...restOpts } = opts;
+  // updateOptions(opts: UpdateOpts<Opts>) {
+  //   const { mask, ...restOpts } = opts;
 
-    const updateMask = !this.maskEquals(mask);
-    const updateOpts = !objectIncludes(this.masked, restOpts);
+  //   const updateMask = !this.maskEquals(mask);
+  //   const updateOpts = !objectIncludes(this.masked, restOpts);
 
-    if (updateMask) this.mask = mask;
-    if (updateOpts) this.masked.updateOptions(restOpts);
+  //   if (updateMask) this.mask = mask;
+  //   if (updateOpts) this.masked.updateOptions(restOpts);
 
-    if (updateMask || updateOpts) this.updateControl();
-  }
+  //   if (updateMask || updateOpts) this.updateControl();
+  // }
 
   /** Updates cursor */
   updateCursor (cursorPos: number) {
     if (cursorPos == null) return;
     this.cursorPos = cursorPos;
-
-    // also queue change cursor for mobile browsers
-    this._delayUpdateCursor(cursorPos);
-  }
-
-  /** Delays cursor update to support mobile browsers */
-  _delayUpdateCursor (cursorPos: number) {
-    this._abortUpdateCursor();
-    this._changingCursorPos = cursorPos;
-    this._cursorChanging = setTimeout(() => {
-      if (!this.el) return; // if was destroyed
-      this.cursorPos = this._changingCursorPos;
-      this._abortUpdateCursor();
-    }, 10);
   }
 
   /** Fires custom events */
   _fireChangeEvents () {
     this._fireEvent('accept', this._inputEvent);
     if (this.masked.isComplete) this._fireEvent('complete', this._inputEvent);
-  }
-
-  /** Aborts delayed cursor update */
-  _abortUpdateCursor () {
-    if (this._cursorChanging) {
-      clearTimeout(this._cursorChanging);
-      delete this._cursorChanging;
-    }
   }
 
   /** Aligns cursor to nearest available position */
@@ -283,11 +257,10 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
   /** Handles view input event */
   _onInput (e: InputEvent): void {
     this._inputEvent = e;
-    this._abortUpdateCursor();
 
     const details = new ActionDetails({
       // new state
-      value: this.el.value,
+      value: this.elementValue,
       cursorPos: this.cursorPos,
 
       // old state
@@ -324,7 +297,7 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
 
   /** Handles view change event and commits model value */
   _onChange () {
-    if (this.displayValue !== this.el.value) {
+    if (this.displayValue !== this.elementValue) {
       this.updateValue();
     }
     this.masked.doCommit();
@@ -332,11 +305,18 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
     this._saveSelection();
   }
 
-  /** Handles view drop event, prevents by default */
-  _onDrop (ev: Event) {
-    ev.preventDefault();
-    ev.stopPropagation();
-  }
+  // // TODO type
+  // _handleKeyDown (e: any) {
+  //   const input = e.target;
+  //   switch (e.key) {
+  //     case "ArrowLeft":
+  //         // Left pressed
+  //         break;
+  //     case "ArrowRight":
+  //         // Right pressed
+  //         break;
+  //   }
+  // }
 
   /** Restore last selection on focus */
   _onFocus (ev: Event) {
@@ -348,13 +328,19 @@ class InputMask<Opts extends FactoryArg=FactoryArg> {
     this.alignCursorFriendly();
   }
 
-  /** Unbind view events and removes element reference */
-  destroy () {
-    this._unbindEvents();
-    (this._listeners as any).length = 0;
-    delete (this as any).el;
+  _bindEvents () {
+    this.inputs.forEach(i => {
+      i.el.bindEvents({
+        input: this._onInput,
+        selectionChange: this._saveSelection,
+        commit: this._onChange,
+        click: this._onClick,
+        focus: this._onFocus,
+      });
+      // (i.el as any)._toggleEventHandler('keydown', this._handleKeyDown);
+    });
   }
 }
 
 
-IMask.InputMask = InputMask;
+IMask.InputGroupMask = InputGroupMask;

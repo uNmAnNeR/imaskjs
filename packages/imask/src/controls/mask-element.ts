@@ -59,7 +59,7 @@ abstract class MaskElement {
   /** */
   abstract _unsafeSelect (start: number, end: number): void;
   /** */
-  abstract bindEvents (handlers: {[key in ElementEvent]: Function}): void;
+  abstract bindEvents (handlers: Partial<{[key in ElementEvent]: Function}>): void;
   /** */
   abstract unbindEvents (): void
 }
