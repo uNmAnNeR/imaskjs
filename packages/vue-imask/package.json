@@ -69,13 +69,7 @@
     "vue-demi": "^0.14.5"
   },
   "peerDependencies": {
-    "@vue/composition-api": ">=1.0.0",
-    "vue": ">=2.2.0"
-  },
-  "peerDependenciesMeta": {
-    "@vue/composition-api": {
-      "optional": true
-    }
+    "vue": ">=2.7"
   },
   "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6",
   "devDependencies": {
