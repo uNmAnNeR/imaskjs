@@ -17,14 +17,14 @@ const commonPlugins = [
     babelHelpers: 'runtime',
     include: input,
   }),
-]; 
+];
 
 export default [
   ...[false, true].map(min => ({
     input: 'src/index.ts',
     output: {
       name: 'IMask',
-      file: `dist/imask${min ? '.min' : ''}.js`,
+      file: `dist/imask${min ? '.min' : ''}.cjs`,
       format: 'umd',
       sourcemap: true,
       exports: 'named',

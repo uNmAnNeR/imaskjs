@@ -6,7 +6,7 @@
   "bugs": "https://github.com/uNmAnNeR/imaskjs/issues",
   "homepage": "https://imask.js.org/",
   "description": "vanilla javascript input mask",
-  "main": "dist/imask.js",
+  "main": "dist/imask.cjs",
   "module": "esm/index.js",
   "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs",
@@ -18,7 +18,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "default": "./dist/imask.js"
+      "default": "./dist/imask.cjs"
     },
     "./holder": {
       "types": "./esm/imask.d.ts",

@@ -5,14 +5,14 @@
   "version": "7.1.2",
   "homepage": "https://imask.js.org/",
   "description": "React Native Input Mask",
-  "main": "dist/react-native-imask.js",
+  "main": "dist/react-native-imask.cjs",
   "module": "esm/index.js",
   "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-native-imask",
   "exports": {
     ".": {
       "import": "./esm/index.js",
-      "default": "./dist/react-native-imask.js"
+      "default": "./dist/react-native-imask.cjs"
     },
     "./*": "./*"
   },

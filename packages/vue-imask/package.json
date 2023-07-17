@@ -4,7 +4,7 @@
   "license": "MIT",
   "version": "7.1.2",
   "description": "Vue input mask",
-  "main": "dist/vue-imask.js",
+  "main": "dist/vue-imask.cjs",
   "module": "esm/index.js",
   "type": "module",
   "types": "index.d.ts",
@@ -18,7 +18,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "default": "./dist/vue-imask.js"
+      "default": "./dist/vue-imask.cjs"
     },
     "./esm": {
       "types": "./esm/index.d.ts",

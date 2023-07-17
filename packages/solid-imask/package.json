@@ -4,7 +4,7 @@
   "license": "MIT",
   "author": "Alexey Kryazhev",
   "description": "Solid input mask",
-  "main": "dist/solid-imask.js",
+  "main": "dist/solid-imask.cjs",
   "module": "esm/index.js",
   "types": "index.d.ts",
   "type": "module",
@@ -13,7 +13,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "default": "./dist/solid-imask.js"
+      "default": "./dist/solid-imask.cjs"
     },
     "./esm": {
       "types": "./esm/index.d.ts",
