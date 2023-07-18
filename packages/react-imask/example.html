@@ -17,22 +17,24 @@
     function IMaskHook () {
       const [ opts, setOpts ] = React.useState({ mask: Number });
 
-      const { ref, value, setValue } = ReactIMask.useIMask(opts, /* { onAccept, onComplete } */);
-
-      React.useEffect(() => {
-        if (value) return;
-
-        /*setTimeout(() => {
-          setValue('123')
-          console.log('set value from hook');
-        }, 1000); */
+      const { ref, value, setValue } = ReactIMask.useIMask({
+        blocks: {
+          d: {
+            mask: Number,
+            scale: 2,
+            signed: false,
+            thousandsSeparator: " ",
+            padFractionalZeros: false,
+            normalizeZeros: false,
+            radix: ",",
+            mapToRadix: [".", "б", "^", "ю", "&"]
+          }
+        },
+        mask: `d $`,
+        lazy: false
       });
 
-      React.useEffect(() => {
-        console.log('masked value changed', value);
-      }, [value]);
-
-      return React.createElement('input', { ref, defaultValue: 10 });
+      return React.createElement('input', { ref, defaultValue: '10000000' });
     }
 
     class App extends React.Component {

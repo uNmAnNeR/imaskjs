@@ -34,6 +34,7 @@ function useIMask<
   const [typedValue, setTypedValue] = useState<InputMask<Opts>['typedValue']>();
 
   const _destroyMask = useCallback(() => {
+    if (!initialized) return;
     maskRef.current?.destroy();
     maskRef.current = null;
   }, []);

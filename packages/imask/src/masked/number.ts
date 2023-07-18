@@ -18,9 +18,7 @@ type MaskedNumberOptions = MaskedOptions<MaskedNumber,
   | 'padFractionalZeros'
 >;
 
-/**
-  Number mask
-*/
+/** Number mask */
 export default
 class MaskedNumber extends Masked<number> {
   static UNMASKED_RADIX = '.';
@@ -112,7 +110,7 @@ class MaskedNumber extends Masked<number> {
   }
 
   override doPrepareChar (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
-    ch = this._removeThousandsSeparators(
+    const [prepCh, details] = super.doPrepareChar(this._removeThousandsSeparators(
       this.scale && this.mapToRadix.length && (
         /*
           radix should be mapped when
@@ -125,9 +123,7 @@ class MaskedNumber extends Masked<number> {
         flags.input && flags.raw ||
         !flags.input && !flags.raw
       ) ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
-    );
-
-    const [prepCh, details] = super.doPrepareChar(ch, flags);
+    ), flags);
     if (ch && !prepCh) details.skip = true;
 
     if (prepCh && !this.allowPositive && !this.value && prepCh !== '-') details.aggregate(this._appendChar('-'));
