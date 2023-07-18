@@ -97,22 +97,28 @@ function useIMask<
   useEffect(() => {
     const { value: lastAcceptValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized && lastAcceptValue !== value) mask.value = value;
-    setLastAcceptState(state);
+    if (mask && initialized) {
+      if (lastAcceptValue !== value) mask.value = value;
+      setLastAcceptState(state);
+    }
   }, [value]);
 
   useEffect(() => {
     const { unmaskedValue: lastAcceptUnmaskedValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized && lastAcceptUnmaskedValue !== unmaskedValue) mask.unmaskedValue = unmaskedValue;
-    setLastAcceptState(state);
+    if (mask && initialized) {
+      if (lastAcceptUnmaskedValue !== unmaskedValue) mask.unmaskedValue = unmaskedValue;
+      setLastAcceptState(state);
+    }
   }, [unmaskedValue]);
 
   useEffect(() => {
     const { typedValue: lastAcceptTypedValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized && lastAcceptTypedValue !== typedValue) mask.typedValue = typedValue;
-    setLastAcceptState(state);
+    if (mask && initialized) {
+      if (lastAcceptTypedValue !== typedValue) mask.typedValue = typedValue;
+      setLastAcceptState(state);
+    }
   }, [typedValue]);
 
   useEffect(() => _destroyMask, [_destroyMask]);
