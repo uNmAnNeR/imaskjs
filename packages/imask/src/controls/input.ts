@@ -288,9 +288,6 @@ class InputMask<Opts extends FactoryArg> {
     this._inputEvent = e;
     this._abortUpdateCursor();
 
-    // fix strange IE behavior
-    if (!this._selection) return this.updateValue();
-
     const details = new ActionDetails({
       // new state
       value: this.el.value,
