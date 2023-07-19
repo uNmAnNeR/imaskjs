@@ -1,3 +1,5 @@
+@import "highlight.css";
+
 header {
   margin: 30px 0;
   text-align: center;
@@ -61,10 +63,11 @@ a {
 }
 
 .toggle-panel > label {
-  text-decoration: underline;
   cursor: pointer;
   display: inline-block;
   float: right;
+  font-size: 12px;
+  color: #3794de;
 }
 
 .toggle-panel > label:hover {
@@ -125,8 +128,8 @@ body {
 .learn-more {
   position: absolute;
   right: 1rem;
-  bottom: 0;
-  text-decoration: underline;
+  bottom: 0.5rem;
+  font-size: 14px;
 }
 
 footer {
@@ -202,4 +205,8 @@ fieldset *:last-child {
 
 .github-link:hover {
   opacity: 1;
+}
+
+code {
+  background-color: rgba(55, 148, 222, 0.17);
 }

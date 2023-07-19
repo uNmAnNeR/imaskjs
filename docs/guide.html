@@ -6,14 +6,20 @@ title: Input Mask Guide
 <main>
   <h2 id="getting-started" class="section-h"><a href="#getting-started">Getting Started</a></h2>
   <p>Install from <a href="https://www.npmjs.com/package/imask">npm</a>:</p>
-  <pre><code>npm install imask</code></pre>
+{% highlight shell %}
+npm install imask
+{% endhighlight %}
   <p>And import or require:</p>
-  <pre><code>import IMask from 'imask';</code></pre>
+{% highlight shell %}
+import IMask from 'imask';
+{% endhighlight %}
   <p>or use CDN:</p>
-  <pre><code>&lt;script src=&quot;https://unpkg.com/imask&quot;&gt;&lt;/script&gt;</code></pre>
+{% highlight html %}
+<script src="https://unpkg.com/imask"></script>
+{% endhighlight %}
   <p>Simple use case:</p>
   <div class="toggle-panel">
-    <label for="start-phone-mask-demo" class="muted">demo</label>
+    <label for="start-phone-mask-demo">demo</label>
     <input id="start-phone-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -25,11 +31,13 @@ title: Input Mask Guide
       </form>
     </div>
   </div>
-  <pre><code>var element = document.getElementById('selector');
-var maskOptions = {
+{% highlight javascript %}
+const element = document.getElementById('selector');
+const maskOptions = {
   mask: '+{7}(000)000-00-00'
 };
-var mask = IMask(element, maskOptions);</code></pre>
+const mask = IMask(element, maskOptions);
+{% endhighlight %}
   
   <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CEAI6KQE&placement=imaskjsorg" id="_carbonads_js"></script>
       <link rel="stylesheet" href="css/carbon-guide.css">
@@ -45,53 +53,67 @@ var mask = IMask(element, maskOptions);</code></pre>
   <p>Input processing is based on a simple idea of comparing states before and after change. State before change is obtained on <code>keydown</code> and on <code>input</code> actual processing takes place. <ins>In order to support older browsers</ins> manually call <code>_saveSelection</code> to save state and <code>_onInput</code> to handle changes. Pull requests for the beauty are welcomed.</p>
   <p>Currently, view layer contains only one component <code>InputMask</code> which supports HTML input-like API. Instance of <code>InputMask</code> is returned when IMask constructor is called.</p>
   <p>To create new mask on element use:</p>
-  <pre><code>var mask = IMask(element, maskOptions);</code></pre>
+{% highlight javascript %}
+const mask = IMask(element, maskOptions);
+{% endhighlight %}
 
   <p>Get/set value and unmasked value:</p>
-  <pre><code>mask.value = "+7(999)999-99-99";
+{% highlight javascript %}
+mask.value = "+7(999)999-99-99";
 console.log(mask.value);  // "+7(999)999-99-99"
 console.log(mask.unmaskedValue);  // "79999999999"
 
 mask.unmaskedValue = "70000000000";
 console.log(mask.value);  // "+7(000)000-00-00"
-console.log(mask.unmaskedValue);  // "70000000000"</code></pre>
+console.log(mask.unmaskedValue);  // "70000000000"
+{% endhighlight %}
 
   <p>For typed masks like <code>Number</code> or <code>Date</code> it is possible to work with typed values:</p>
-  <pre><code>mask.updateOptions({mask: Number});
+{% highlight javascript %}mask.updateOptions({mask: Number});
 mask.typedValue = 100;  // use number
 console.log(mask.value);  // "100"
 console.log(mask.unmaskedValue);  // "100"
-console.log(mask.typedValue);  // 100</code></pre>
+console.log(mask.typedValue);  // 100
+{% endhighlight %}
   <p>For untyped masks <code>typedValue</code> and <code>unmaskedValue</code> works identically.</p>
 
   <p>Update options:</p>
-  <pre><code>mask.updateOptions({
+{% highlight javascript %}
+mask.updateOptions({
   mask: Number,
   min: 0,
   max: 100
-});  // also updates UI</code></pre>
+});  // also updates UI
+{% endhighlight %}
 
   <p>Clean and destroy:</p>
-  <pre><code>mask.destroy();</code></pre>
+{% highlight javascript %}
+mask.destroy();
+{% endhighlight %}
 
   <p>Listen to events:</p>
-  <pre><code>// 'accept' event fired on input when mask value has changed
-function log () {console.log(mask.value)};
-mask.on("accept", log);
+{% highlight javascript %}
+// 'accept' event fired on input when mask value has changed
+mask.on("accept", () => console.log(mask.value));
 
 // 'complete' event fired when the value is completely filled
 // Note: this makes sense only for Pattern-based masks
-mask.on("complete", function () {console.log(mask.value)});</code></pre>
+mask.on("complete", () => console.log(mask.value));
+{% endhighlight %}
 
   <p>Stop listening to events:</p>
-  <pre><code>mask.off("accept", log);
+{% highlight javascript %}
+mask.off("accept", log);
 
 // omit handler argument to unbind all handlers
-mask.off("complete");</code></pre>
+mask.off("complete");
+{% endhighlight %}
 
   <p>Get <code>Masked</code> model:</p>
-  <pre><code>var masked = mask.masked;
-masked.reset(); // UI will NOT be updated</code></pre>
+{% highlight javascript %}
+const masked = mask.masked;
+masked.reset(); // UI will NOT be updated
+{% endhighlight %}
 
   <p>In the above example all changes are proxied to the model layer first and then UI is updated. The core of masking on model layer is <a href="#masked-base">IMask.Masked</a> base class.
   There are also several other model classes for the different <code>mask</code> property types that provide additional functionality:</p>
@@ -135,7 +157,8 @@ masked.reset(); // UI will NOT be updated</code></pre>
   </table>
 
   <p>Mask also can be used without UI, e.g.</p>
-  <pre><code>var masked = IMask.createMask({
+{% highlight javascript %}
+const masked = IMask.createMask({
   mask: '+7 (000) 000-00-00',
   // ...and other options
 });
@@ -144,7 +167,8 @@ masked.resolve('71234567890');
 // now you can access masked value
 console.log(masked.value);
 // and get unmasked value
-console.log(masked.unmaskedValue);</code></pre>
+console.log(masked.unmaskedValue);
+{% endhighlight %}
 
   <h2 id="masked" class="section-h"><a href="#masked">Masked</a></h2>
   <nav class="breadcrumbs push-center">
@@ -164,7 +188,7 @@ console.log(masked.unmaskedValue);</code></pre>
   <p><a href="#masked-base">IMask.Masked</a> is a base class of all other <code>Masked*</code> classes. Almost all base class options are applicable to subclasses.</p>
   <p>Example usage:</p>
   <div class="toggle-panel">
-    <label for="validate-mask-demo" class="muted">demo</label>
+    <label for="validate-mask-demo">demo</label>
     <input id="validate-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -175,28 +199,34 @@ console.log(masked.unmaskedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var digitsMask = IMask(element, {
+{% highlight javascript %}
+const digitsMask = IMask(element, {
   mask: /^\d+$/
-});</code></pre>
+});
+{% endhighlight %}
 
   <p>Update options:</p>
-  <pre><code>mask.updateOptions({
+{% highlight javascript %}
+mask.updateOptions({
   // while changing mask only same type allowed
   mask: /^\w+$/,  // ok
   // mask: "0000",  // ERROR! changing mask type on existing mask is not allowed!
 
   // ... other options
-});</code></pre>
+});
+{% endhighlight %}
 
   <p>Get/set value and unmasked value:</p>
-  <pre><code>masked.value = 'hello world!';
+{% highlight javascript %}
+masked.value = 'hello world!';
 console.log(masked.unmaskedValue);
 // or typed value if it makes sense
-console.log(masked.typedValue);</code></pre>
+console.log(masked.typedValue);
+{% endhighlight %}
 
   <p>Use <code>prepare (value, masked)</code> or <code>prepareChar (value, masked)</code> option for preprocessing input and <code>commit (value, masked)</code> option for postprocessing after UI is deactivated:</p>
   <div class="toggle-panel">
-    <label for="uppercase-mask-demo" class="muted">demo</label>
+    <label for="uppercase-mask-demo">demo</label>
     <input id="uppercase-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -207,31 +237,33 @@ console.log(masked.typedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var caseMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: /^\w+$/,
-  prepareChar: function (str) {
-    return str.toUpperCase();
-  },
-  commit: function (value, masked) {
+  prepareChar: str => str.toUpperCase(),
+  commit: (value, masked) => {
     // Don't change value manually! All changes should be done in mask!
     // This example helps to understand what is really changes, only for demo
     masked._value = value.toLowerCase();  // Don't do it
   }
-});</code></pre>
+})
+{% endhighlight %}
   <p>The difference between <code>prepare</code> and <code>prepareChar</code> is that when inserting multiple symbols in a batch <code>prepare</code> is called once for the entire string and <code>prepareChar</code> is called for each symbol.</p>
   <p>Usually you don't need to create instances of that type manually, because it will be done by IMask internally. But you can subclass from <code>Masked</code> to add some specific behavior.</p>
   <p>Additionaly to <code>mask</code> option custom validator can be set as <code>validate (value, masked)</code> option for some complex checks on any mask types excluding <code>Function</code> and <code>RegExp</code>, because they are already validators themselves.</p>
   <p><strong>Note: do not mutate <code>Masked</code> instance inside callbacks.</strong></p>
   <fieldset>
     <p><strong>Also make sure that mask or validator works with any of intermediate states, not just final value. For example to restrict input to "123" you do:</strong></p>
-    <pre><code>var masked = IMask.Masked({
+{% highlight javascript %}
+const masked = IMask.Masked({
   mask: /^123$/
-});</code></pre>
+});
+{% endhighlight %}
     <p>But it does not allow to input any symbol at all, because it matches only whole string "123" and not "1" nor "12". Always take care of intermediate values at first, otherwise it might not work as expected. In complex cases it is better to use <code>Pattern</code> or <code>Function</code> masks.</p>
   </fieldset>
   <p>Example of using <code>Function</code> mask to accept any growing sequence from 0 to 9:</p>
   <div class="toggle-panel">
-    <label for="sequence-mask-demo" class="muted">demo</label>
+    <label for="sequence-mask-demo">demo</label>
     <input id="sequence-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -242,15 +274,15 @@ console.log(masked.typedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var sequenceMask = IMask(element, {
-  mask: function (value) {
-    return /^\d*$/.test(value) &amp;&amp;
-      value.split('').every(function(ch, i) {
-        var prevCh = value[i-1];
-        return !prevCh || prevCh &lt; ch;
-      });
-  }
-});</code></pre>
+{% highlight javascript %}
+IMask(element, {
+  mask: value => /^\d*$/.test(value) &&
+    value.split('').every((ch, i) => {
+      const prevCh = value[i-1];
+      return !prevCh || prevCh < ch;
+    })
+})
+{% endhighlight %}
 
   <h4 id="overwrite" class="section-h"><a href="#overwrite">Overwrite Mode <kbd>since 5.0</kbd></a></h4>
   <p>Enables characters overwriting (replace or shift) instead of inserting.</p>
@@ -266,16 +298,18 @@ console.log(masked.typedValue);</code></pre>
     </div>
 
     <div class="toggle-panel">
-      <label for="overwrite-mask-source" class="muted">source</label>
+      <label for="overwrite-mask-source">source</label>
       <input id="overwrite-mask-source" type="checkbox">
       <div class="toggle-panel-content">
-        <pre><code>var overwriteMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('overwrite-mask'),
   {
     mask: '000000',
     lazy: false,
   }
-);</code></pre>
+)
+{% endhighlight %}
       </div>
     </div>
   </div>
@@ -293,16 +327,18 @@ console.log(masked.typedValue);</code></pre>
     </div>
 
     <div class="toggle-panel">
-      <label for="skipInvalid-mask-source" class="muted">source</label>
+      <label for="skipInvalid-mask-source">source</label>
       <input id="skipInvalid-mask-source" type="checkbox">
       <div class="toggle-panel-content">
-        <pre><code>var skipInvalidMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('skipInvalid-mask'),
   {
     mask: '000000',
-    skipInvalid: &lt;CHECK&gt;,
+    skipInvalid: <CHECK>,
   }
-);</code></pre>
+)
+{% endhighlight %}
       </div>
     </div>
   </div>
@@ -310,7 +346,7 @@ console.log(masked.typedValue);</code></pre>
   <h3 id="masked-number" class="section-h"><a href="#masked-number">Number Mask</a></h3>
   <p>Number mask restricts input to integer or decimal numbers in many ways:</p>
   <div class="toggle-panel">
-    <label for="numbers-mask-demo" class="muted">demo</label>
+    <label for="numbers-mask-demo">demo</label>
     <input id="numbers-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form numbers-form">
@@ -372,7 +408,8 @@ console.log(masked.typedValue);</code></pre>
       </form>
     </div>
   </div>
-  <pre><code>var numberMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: Number,  // enable number mask
 
   // other options are optional with defaults below
@@ -386,7 +423,8 @@ console.log(masked.typedValue);</code></pre>
   // additional number interval options (e.g.)
   min: -10000,
   max: 10000
-});</code></pre>
+})
+{% endhighlight %}
 
 
   <h3 id="masked-pattern" class="section-h"><a href="#masked-pattern">Pattern Mask</a></h3>
@@ -400,7 +438,7 @@ console.log(masked.typedValue);</code></pre>
   <p>Pattern mask is just a string:</p>
 
   <div class="toggle-panel">
-    <label for="pattern-nic-demo" class="muted">demo</label>
+    <label for="pattern-nic-demo">demo</label>
     <input id="pattern-nic-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form pattern-nic-form">
@@ -458,14 +496,16 @@ console.log(masked.typedValue);</code></pre>
     </div>
   </div>
 
-  <pre><code>var patternMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: '{#}000[aaa]/NIC-`*[**]'
 });
 
 // or without UI element
-var masked = IMask.PatternMasked({
+IMask.PatternMasked({
   mask: '{#}000[aaa]/NIC-`*[**]'
-});</code></pre>
+});
+{% endhighlight %}
   where definitions are:
   <ul class="unstyled">
   <li><code>0</code> - any digit</li>
@@ -480,7 +520,7 @@ var masked = IMask.PatternMasked({
 
   <p>Additionally you can provide custom <code>definitions</code>:</p>
   <div class="toggle-panel">
-    <label for="pattern-zip-mask-demo" class="muted">demo</label>
+    <label for="pattern-zip-mask-demo">demo</label>
     <input id="pattern-zip-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -492,17 +532,19 @@ var masked = IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var zipMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: '#00000',
   definitions: {
-    // &lt;any single char&gt;: &lt;same type as mask (RegExp, Function, etc.)&gt;
+    // <any single char>: <same type as mask (RegExp, Function, etc.)>
     // defaults are '0', 'a', '*'
     '#': /[1-6]/
   }
-});</code></pre>
+})
+{% endhighlight %}
   <p>To configure placeholder use:</p>
   <div class="toggle-panel">
-    <label for="pattern-phone-mask-demo" class="muted">demo</label>
+    <label for="pattern-phone-mask-demo">demo</label>
     <input id="pattern-phone-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -514,15 +556,17 @@ var masked = IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var phoneMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: '+{7}(000)000-00-00',
   lazy: false,  // make placeholder always visible
   placeholderChar: '#'     // defaults to '_'
-});</code></pre>
+})
+{% endhighlight %}
   
   <p>Secure text entry <kbd>since 6.6.0</kbd>:</p>
   <div class="toggle-panel">
-    <label for="secure-text-mask-demo" class="muted">demo</label>
+    <label for="secure-text-mask-demo">demo</label>
     <input id="secure-text-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -534,16 +578,18 @@ var masked = IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var secureCodeMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: '000000',
   displayChar: '#',
   lazy: false,
   overwrite: 'shift',
-});</code></pre>
+})
+{% endhighlight %}
 
   <p>For complex nested masks there is <code>blocks</code> option available:</p>
   <div class="toggle-panel">
-    <label for="pattern-blocks-mask-demo" class="muted">demo</label>
+    <label for="pattern-blocks-mask-demo">demo</label>
     <input id="pattern-blocks-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -555,32 +601,34 @@ var masked = IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var blocksMask = IMask(element, {
-  mask: 'Ple\\ase fill ye\\ar 19<ins>YY</ins>, month <ins>MM</ins> \\and v\\alue <ins>VL</ins>',
+{% highlight javascript %}
+IMask(element, {
+  mask: 'Ple\\ase fill ye\\ar 19YY, month MM \\and v\\alue VL',
   lazy: false,  // make placeholder always visible
 
   blocks: {
-    <ins>YY</ins>: {
+    YY: {
       mask: '00',
     },
 
-    <ins>MM</ins>: {
+    MM: {
       mask: IMask.MaskedRange,
       from: 1,
       to: 12
     },
 
-    <ins>VL</ins>: {
+    VL: {
       mask: IMask.MaskedEnum,
       enum: ['TV', 'HD', 'VR']
     }
   }
-});</code></pre>
+})
+{% endhighlight %}
 
   <h4 id="expose-block" class="section-h"><a href="#expose-block">Expose block value</a> <kbd>since 7.1.0</kbd></h4>
   <p>Block value can be exposed using the <code>expose</code> option on one of the blocks:</p>
   <div class="toggle-panel">
-    <label for="price-mask-demo" class="muted">demo</label>
+    <label for="price-mask-demo">demo</label>
     <input id="price-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -592,17 +640,19 @@ var masked = IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var priceMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: '$num',
   lazy: false,  // make placeholder always visible
 
   blocks: {
     num: {
       mask: Number,
-      <u>expose: true,</u>
+      expose: true,
     },
   }
-});</code></pre>
+})
+{% endhighlight %}
 
   <h4 id="lazy" class="section-h"><a href="#lazy">Lazy Mode</a></h4>
   <div class="form-item">
@@ -616,14 +666,15 @@ var masked = IMask.PatternMasked({
     </div>
 
     <div class="toggle-panel">
-      <label for="pattern-lazy-mask-source" class="muted">source</label>
+      <label for="pattern-lazy-mask-source">source</label>
       <input id="pattern-lazy-mask-source" type="checkbox">
       <div class="toggle-panel-content">
-        <pre><code>var lazyMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('pattern-lazy-mask'),
   {
     mask: Date,
-    lazy: &lt;CHECK&gt;,
+    lazy: <CHECK>,
     autofix: true,
     blocks: {
       d: {mask: IMask.MaskedRange, placeholderChar: 'd', from: 1, to: 31, maxLength: 2},
@@ -631,7 +682,8 @@ var masked = IMask.PatternMasked({
       Y: {mask: IMask.MaskedRange, placeholderChar: 'y', from: 1900, to: 2999, maxLength: 4}
     }
   }
-);</code></pre>
+)
+{% endhighlight %}
       </div>
     </div>
   </div>
@@ -650,16 +702,18 @@ var masked = IMask.PatternMasked({
     </div>
 
     <div class="toggle-panel">
-      <label for="pattern-eager-mask-source" class="muted">source</label>
+      <label for="pattern-eager-mask-source">source</label>
       <input id="pattern-eager-mask-source" type="checkbox">
       <div class="toggle-panel-content">
-        <pre><code>var eagerMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('pattern-eager-mask'),
   {
     mask: '00##00##',
-    eager: &lt;SELECT&gt;,
+    eager: <SELECT>,
   }
-);</code></pre>
+)
+{% endhighlight %}
       </div>
     </div>
   </div>
@@ -668,7 +722,7 @@ var masked = IMask.PatternMasked({
   <h3 id="masked-range" class="section-h"><a href="#range">Range Mask</a></h3>
   <p>Range mask extends <a href="#masked-pattern">Pattern</a> mask and can be used to restrict input in a number range.</p>
   <div class="toggle-panel">
-    <label for="range-mask-demo" class="muted">demo</label>
+    <label for="range-mask-demo">demo</label>
     <input id="range-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -680,7 +734,8 @@ var masked = IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var rangeMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: IMask.MaskedRange,
   from: 1,
   to: 90,
@@ -690,7 +745,8 @@ var masked = IMask.PatternMasked({
 
   // pattern options can be set as well
   lazy: false
-});</code></pre>
+})
+{% endhighlight %}
   <p>Unlike <a href="#masked-number">Number</a> mask Range mask is fixed in size, accepts only integer values but can use placeholder.</p>
 
   <h4 id="autofix" class="section-h"><a href="#autofix">Autofix Mode</a></h4>
@@ -706,18 +762,20 @@ var masked = IMask.PatternMasked({
     </div>
 
     <div class="toggle-panel">
-      <label for="range-autofix-mask-source" class="muted">source</label>
+      <label for="range-autofix-mask-source">source</label>
       <input id="range-autofix-mask-source" type="checkbox">
       <div class="toggle-panel-content">
-        <pre><code>var autofixMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('range-autofix-mask'),
   {
     mask: IMask.MaskedRange,
     from: 0,
     to: 15,
-    autofix: &lt;SELECT&gt;,
+    autofix: <SELECT>,
   }
-);</code></pre>
+)
+{% endhighlight %}
       </div>
     </div>
   </div>
@@ -726,7 +784,7 @@ var masked = IMask.PatternMasked({
   <h3 id="masked-enum" class="section-h"><a href="#enum">Enum Mask</a></h3>
   <p>Enum mask extends <a href="#masked-pattern">Pattern</a> mask and can be used to restrict input within characters enum.</p>
   <div class="toggle-panel">
-    <label for="enum-mask-demo" class="muted">demo</label>
+    <label for="enum-mask-demo">demo</label>
     <input id="enum-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -738,11 +796,8 @@ var masked = IMask.PatternMasked({
       </form>
     </div>
   </div>
-  <pre><code>var languages = Array.from({ length: 12 }, (_, i) =>
-  new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
-);
-
-var enumMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: IMask.MaskedEnum,
   enum: Array.from({ length: 12 }, (_, i) =>
     new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
@@ -750,7 +805,8 @@ var enumMask = IMask(element, {
 
   // pattern options can be set as well
   lazy: false
-});</code></pre>
+})
+{% endhighlight %}
 
 
   <h3 id="masked-date" class="section-h"><a href="#masked-date">Date Mask</a></h3>
@@ -761,7 +817,7 @@ var enumMask = IMask(element, {
     <p>Also Date mask uses independent pattern blocks so it's possible to input inexistent dates until mask is complete. When last character is inserted then input is converted to Date object and get verified. This leads to weird situations when you might have incorrect day, but not being able to insert year. It is not possible to validate Date intermediate states in general way, but you still can use <code>validate</code> callback on application side to check your specific case.</p>
   </fieldset>
   <div class="toggle-panel">
-    <label for="date-mask-demo" class="muted">demo</label>
+    <label for="date-mask-demo">demo</label>
     <input id="date-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -773,7 +829,8 @@ var enumMask = IMask(element, {
       </form>
     </div>
   </div>
-  <pre><code>var dateMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: Date,  // enable date mask
 
   // other options are optional
@@ -798,20 +855,22 @@ var enumMask = IMask(element, {
       to: 9999,
     }
   },
-  // define <em>date -> str</em> convertion
-  format: function (date) {
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
 
-    if (day &lt; 10) day = "0" + day;
-    if (month &lt; 10) month = "0" + month;
+  // define date -> str convertion
+  format: date => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    if (day < 10) day = "0" + day;
+    if (month < 10) month = "0" + month;
 
     return [year, month, day].join('-');
   },
-  // define <em>str -> date</em> convertion
-  parse: function (str) {
-    var yearMonthDay = str.split('-');
+
+  // define str -> date convertion
+  parse: str => {
+    const yearMonthDay = str.split('-');
     return new Date(yearMonthDay[0], yearMonthDay[1] - 1, yearMonthDay[2]);
   },
 
@@ -819,17 +878,18 @@ var enumMask = IMask(element, {
   min: new Date(2000, 0, 1),  // defaults to `1900-01-01`
   max: new Date(2020, 0, 1),  // defaults to `9999-01-01`
 
-  autofix: true,  // defaults to `false`, see <a href="#autofix">details</a>
+  autofix: true,  // defaults to `false`
 
   // pattern options can be set as well
   lazy: false,
 
   // and other common options
   overwrite: true  // defaults to `false`
-});</code></pre>
+})
+{% endhighlight %}
   <p>It is easy to use it with <a href="https://momentjs.com/">Moment.js</a>:</p>
   <div class="toggle-panel">
-    <label for="moment-mask-demo" class="muted">demo</label>
+    <label for="moment-mask-demo">demo</label>
     <input id="moment-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -841,20 +901,18 @@ var enumMask = IMask(element, {
       </form>
     </div>
   </div>
-  <pre><code>var momentFormat = 'YYYY/MM/DD HH:mm';
-var momentMask = IMask(element, {
+{% highlight javascript %}
+const momentFormat = 'YYYY/MM/DD HH:mm';
+
+IMask(element, {
   mask: Date,
   pattern: momentFormat,
   lazy: false,
   min: new Date(1970, 0, 1),
   max: new Date(2030, 0, 1),
 
-  format: function (date) {
-    return moment(date).format(momentFormat);
-  },
-  parse: function (str) {
-    return moment(str, momentFormat);
-  },
+  format: date => moment(date).format(momentFormat),
+  parse: str => moment(str, momentFormat),
 
   blocks: {
     YYYY: {
@@ -883,13 +941,14 @@ var momentMask = IMask(element, {
       to: 59
     }
   }
-});</code></pre>
+});
+{% endhighlight %}
 
 
   <h3 id="masked-dynamic" class="section-h"><a href="#masked-dynamic">Dynamic Mask</a></h3>
   <p>Dynamic mask automatically selects appropriate mask from provided array of masks. Mask with the largest number of fitting characters is selected considering provided masks order.</p>
   <div class="toggle-panel">
-    <label for="dynamic-mask-demo" class="muted">demo</label>
+    <label for="dynamic-mask-demo">demo</label>
     <input id="dynamic-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form dynamic-form">
@@ -903,7 +962,8 @@ var momentMask = IMask(element, {
       </form>
     </div>
   </div>
-  <pre><code>var dynamicMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: [
     {
       mask: 'RGB,RGB,RGB',
@@ -919,10 +979,11 @@ var momentMask = IMask(element, {
       mask: /^#[0-9a-f]{0,6}$/i
     }
   ]
-});</code></pre>
+})
+{% endhighlight %}
   <p>It is also possible to select mask manually via <code>dispatch</code> option:</p>
   <div class="toggle-panel">
-      <label for="dispatch-mask-demo" class="muted">demo</label>
+      <label for="dispatch-mask-demo">demo</label>
       <input id="dispatch-mask-demo" type="checkbox">
       <div class="toggle-panel-content">
         <form class="form dispatch-form">
@@ -934,46 +995,45 @@ var momentMask = IMask(element, {
         </form>
       </div>
     </div>
-    <pre><code>var dispatchMask = IMask(element, {
-    mask: [
-      {
-        mask: '+00 {21} 0 000 0000',
-        startsWith: '30',
-        lazy: false,
-        country: 'Greece'
-      },
-      {
-        mask: '+0 000 000-00-00',
-        startsWith: '7',
-        lazy: false,
-        country: 'Russia'
-      },
-      {
-        mask: '+00-0000-000000',
-        startsWith: '91',
-        lazy: false,
-        country: 'India'
-      },
-      {
-        mask: '0000000000000',
-        startsWith: '',
-        country: 'unknown'
-      }
-    ],
-    dispatch: function (appended, dynamicMasked) {
-      var number = (dynamicMasked.value + appended).replace(/\D/g,'');
-
-      return dynamicMasked.compiledMasks.find(function (m) {
-        return number.indexOf(m.startsWith) === 0;
-      });
+{% highlight javascript %}
+IMask(element, {
+  mask: [
+    {
+      mask: '+00 {21} 0 000 0000',
+      startsWith: '30',
+      lazy: false,
+      country: 'Greece'
+    },
+    {
+      mask: '+0 000 000-00-00',
+      startsWith: '7',
+      lazy: false,
+      country: 'Russia'
+    },
+    {
+      mask: '+00-0000-000000',
+      startsWith: '91',
+      lazy: false,
+      country: 'India'
+    },
+    {
+      mask: '0000000000000',
+      startsWith: '',
+      country: 'unknown'
     }
+  ],
+  dispatch: (appended, dynamicMasked) => {
+    const number = (dynamicMasked.value + appended).replace(/\D/g,'');
+
+    return dynamicMasked.compiledMasks.find(m => number.indexOf(m.startsWith) === 0);
   }
-)</code></pre>
+})
+{% endhighlight %}
 
   <h4 id="expose-dynamic" class="section-h"><a href="#expose-dynamic">Expose mask value</a> <kbd>since 7.1.0</kbd></h4>
   <p>Nested mask value can be exposed using the <code>expose</code> option on one of the masks:</p>
   <div class="toggle-panel">
-    <label for="percent-mask-demo" class="muted">demo</label>
+    <label for="percent-mask-demo">demo</label>
     <input id="percent-mask-demo" type="checkbox">
     <div class="toggle-panel-content">
       <form class="form">
@@ -985,7 +1045,8 @@ var momentMask = IMask(element, {
       </form>
     </div>
   </div>
-  <pre><code>var percentMask = IMask(element, {
+{% highlight javascript %}
+IMask(element, {
   mask: [
     { mask: '' },
     {
@@ -1000,12 +1061,14 @@ var momentMask = IMask(element, {
       },
     },
   ],
-});</code></pre>
+})
+{% endhighlight %}
 
 
   <h2 id="pipe" class="section-h"><a href="#pipe">Pipe <kbd>since 6.0</kbd></a></h2>
   <p>Since v6.0.0 <code>IMask</code> can be used for formatting or converting values through mask with <code>pipe</code> and <code>createPipe</code> routines:</p>
-  <pre><code>var numberPipe = IMask.createPipe({
+{% highlight javascript %}
+const numberPipe = IMask.createPipe({
   mask: Number,
   scale: 2,
   thousandsSeparator: ' ',
@@ -1023,10 +1086,11 @@ IMask.pipe('1', {
   normalizeZeros: true,
   padFractionalZeros: true,
 }); // "1,00"
-</code></pre>
+{% endhighlight %}
   <p>By default <code>pipe</code> expects masked value on input and produces masked input as well. This behavior is exactly the same as if a value was pasted in input.</p>
   <p>Pipe also provides a way to customize source and destination types:</p>
-  <pre><code>// pipe(value, mask|masked, sourcetype, destinationtype);
+{% highlight javascript %}
+// pipe(value, mask|masked, sourcetype, destinationtype);
 // PIPE_TYPE = {TYPED, MASKED, UNMASKED}
 // converts formated string to number
 IMask.pipe(
@@ -1041,7 +1105,7 @@ IMask.pipe(
   IMask.PIPE_TYPE.MASKED,
   IMask.PIPE_TYPE.TYPED
 ); // 1.01 of number type
-</code></pre>
+{% endhighlight %}
   <fieldset>
     <strong>Note:</strong> it is possible to share single <code>Masked</code> instance both for input handling and formatting with <code>pipe</code>. Just pass <code>Masked</code> to <code>pipe</code> instead of mask options. In that case <code>pipe</code> will not create or clone <code>Masked</code> instance, <code>Masked</code> state also will not be changed during formatting.
   </fieldset>
@@ -1051,7 +1115,8 @@ IMask.pipe(
   <h2 id="advanced" class="section-h"><a href="#advanced">Advanced</a></h2>
   <h3 id="treeshaking" class="section-h"><a href="#treeshaking">Treeshaking <kbd>since 6.0</kbd></a></h3>
   <p><code>IMask</code> contains a lot of cool features, which makes it pretty big in size. But you might not need all features and want to reduce your bundle size. Since v6.0.0 <code>IMask</code> provides such possibility and ships chunks along side with assembled bundle. Despite mask has been already support esm modules treeshaking did not work on it because of recursive masks and therefore circular dependencies inside. So now you can import only features that you want, for instance if only number mask is used:</p>
-  <pre><code>// was before
+{% highlight javascript %}
+// was before
 // import IMask from 'imask'; // imports all modules
 
 // enable treeshaking
@@ -1061,8 +1126,8 @@ import 'imask/masked/number';
 // now factory can work with number masks, but not any other
 
 // usage is same in both cases
-var numberMask = IMask(element, { mask: Number });
-</code></pre>
+IMask(element, { mask: Number });
+{% endhighlight %}
 </main>
 
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
