@@ -59,20 +59,20 @@ const mask = IMask(element, maskOptions);
 
   <p>Get/set value and unmasked value:</p>
 {% highlight javascript %}
-mask.value = "+7(999)999-99-99";
-console.log(mask.value);  // "+7(999)999-99-99"
-console.log(mask.unmaskedValue);  // "79999999999"
+mask.value = '+7(999)999-99-99';
+console.log(mask.value);  // '+7(999)999-99-99'
+console.log(mask.unmaskedValue);  // '79999999999'
 
-mask.unmaskedValue = "70000000000";
-console.log(mask.value);  // "+7(000)000-00-00"
-console.log(mask.unmaskedValue);  // "70000000000"
+mask.unmaskedValue = '70000000000';
+console.log(mask.value);  // '+7(000)000-00-00'
+console.log(mask.unmaskedValue);  // '70000000000'
 {% endhighlight %}
 
   <p>For typed masks like <code>Number</code> or <code>Date</code> it is possible to work with typed values:</p>
 {% highlight javascript %}mask.updateOptions({mask: Number});
 mask.typedValue = 100;  // use number
-console.log(mask.value);  // "100"
-console.log(mask.unmaskedValue);  // "100"
+console.log(mask.value);  // '100'
+console.log(mask.unmaskedValue);  // '100'
 console.log(mask.typedValue);  // 100
 {% endhighlight %}
   <p>For untyped masks <code>typedValue</code> and <code>unmaskedValue</code> works identically.</p>
@@ -93,20 +93,21 @@ mask.destroy();
 
   <p>Listen to events:</p>
 {% highlight javascript %}
+const log = () => console.log(mask.value);
 // 'accept' event fired on input when mask value has changed
-mask.on("accept", () => console.log(mask.value));
+mask.on('accept', log);
 
 // 'complete' event fired when the value is completely filled
 // Note: this makes sense only for Pattern-based masks
-mask.on("complete", () => console.log(mask.value));
+mask.on('complete', () => console.log(mask.value));
 {% endhighlight %}
 
   <p>Stop listening to events:</p>
 {% highlight javascript %}
-mask.off("accept", log);
+mask.off('accept', log);
 
 // omit handler argument to unbind all handlers
-mask.off("complete");
+mask.off('complete');
 {% endhighlight %}
 
   <p>Get <code>Masked</code> model:</p>

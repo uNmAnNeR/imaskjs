@@ -1,5 +1,5 @@
 .highlight { background-color: rgba(55, 148, 222, 0.05) }
-.highlight pre code { background: none; color: #5d5d5d }
+.highlight pre code { background: none; color: #404040 }
 .highlight .hll { background-color: #ffffcc }
 .highlight .c { color: #aaaaaa; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
@@ -28,7 +28,7 @@
 .highlight .m { color: #929292 } /* Literal.Number */
 .highlight .s { color: #006c00 } /* Literal.String */
 /*.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #75a6d7; letter-spacing: 0.03em; } /* Name.Builtin */
+.highlight .nb { color: #598cc0; letter-spacing: 0.03em; } /* Name.Builtin */
 .highlight .nc { color: #0000FF; font-weight: bold; letter-spacing: 0.03em; } /* Name.Class */
 .highlight .no { color: #880000 } /* Name.Constant */
 .highlight .nd { color: #AA22FF } /* Name.Decorator */
