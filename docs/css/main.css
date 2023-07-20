@@ -42,6 +42,7 @@ h4 {
 
 a:hover {
   transition: all linear 0.2s;
+  color: #3794de;
   text-decoration: underline;
 }
 
@@ -68,7 +69,7 @@ a {
 }
 
 .toggle-panel > label:hover {
-  color: #0d0d0e;
+  text-decoration: underline;
 }
 
 .toggle-panel > input[type=checkbox] {
