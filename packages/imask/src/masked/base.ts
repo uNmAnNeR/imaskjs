@@ -220,7 +220,11 @@ abstract class Masked<Value=any> {
     let details: ChangeDetails;
     [ch, details] = this.doPrepareChar(ch, flags);
 
-    details = details.aggregate(this._appendCharRaw(ch, flags));
+    if (ch) {
+      details = details.aggregate(this._appendCharRaw(ch, flags));
+    } else if (details.skip == null) {
+      details.skip = true;
+    }
 
     if (details.inserted) {
       let consistentTail;
