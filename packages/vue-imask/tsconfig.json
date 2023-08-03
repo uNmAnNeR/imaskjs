@@ -7,6 +7,10 @@
     "declaration": true,
     "declarationMap": true,
     "declarationDir": "esm",
+    "types": [
+      "imask",
+      "vue-demi"
+    ],
     "paths": {
       "imask": [
         "../imask"

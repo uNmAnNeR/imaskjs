@@ -1,76 +1,79 @@
-import { ref, readonly, isRef, watch, onMounted, onUnmounted, type DeepReadonly, type Ref } from 'vue-demi';
-import IMask, { type FactoryOpts, type InputMaskElement, type InputMask } from 'imask';
+import type { DeepReadonly, Ref } from 'vue-demi';
+import type { FactoryOpts, InputMaskElement, InputMask } from 'imask';
+
+import { ref, readonly, nextTick, unref, watch, onMounted, onUnmounted } from 'vue-demi';
+import IMask from 'imask';
+
+type MaybeRef<T> = T | Ref<T>
 
 export
-type ComposableEmitEventBase = 'accept' | 'complete';
+  type ComposableEmitEventBase = 'accept' | 'complete';
 
 export
-type ComposableEmitEvent = ComposableEmitEventBase | `${ComposableEmitEventBase}:masked` | `${ComposableEmitEventBase}:typed` | `${ComposableEmitEventBase}:unmasked`;
+  type ComposableEmitEvent = ComposableEmitEventBase | `${ComposableEmitEventBase}:masked` | `${ComposableEmitEventBase}:typed` | `${ComposableEmitEventBase}:unmasked`;
 
 export
-type ComposableEmitValue<E extends ComposableEmitEvent, Opts extends FactoryOpts> =
+  type ComposableEmitValue<E extends ComposableEmitEvent, Opts extends FactoryOpts> =
   E extends ComposableEmitEventBase | `${ComposableEmitEventBase}:masked` ? InputMask<Opts>['value'] :
   E extends `${ComposableEmitEventBase}:unmasked` ? InputMask<Opts>['unmaskedValue'] :
   E extends `${ComposableEmitEventBase}:typed` ? InputMask<Opts>['typedValue'] :
-  never
-;
+  never;
 
 export
-type ComposableParams<Opts extends FactoryOpts> = {
-  emit?: <E extends ComposableEmitEvent>(eventName: E, value: ComposableEmitValue<E, Opts>) => void,
-  onAccept?: () => void,
-  onComplete?: () => void,
-}
+  type ComposableParams<Opts extends FactoryOpts> = {
+    emit?: <E extends ComposableEmitEvent>(eventName: E, value: ComposableEmitValue<E, Opts>) => void,
+    onAccept?: () => void,
+    onComplete?: () => void,
+  }
+
+export
+  type ComposableReturn<MaskElement extends InputMaskElement, Opts extends FactoryOpts> = {
+    el: Ref<MaskElement | undefined>,
+    mask: DeepReadonly<Ref<InputMask<Opts> | undefined>>,
+    masked: Ref<InputMask<Opts>['value']>,
+    unmasked: Ref<InputMask<Opts>['unmaskedValue']>,
+    typed: Ref<InputMask<Opts>['typedValue']>,
+  }
 
 export default
-function useIMask<
-  MaskElement extends InputMaskElement,
-  Opts extends FactoryOpts
-> (props: Opts | Ref<Opts>, { emit, onAccept, onComplete }: ComposableParams<Opts>={}): {
-  el: Ref<MaskElement | undefined>,
-  mask: DeepReadonly<Ref<InputMask<Opts> | undefined>>,
-  masked: Ref<InputMask<Opts>['value']>,
-  unmasked: Ref<InputMask<Opts>['unmaskedValue']>,
-  typed: Ref<InputMask<Opts>['typedValue']>,
-} {
-  const _props = isRef(props) ? props : ref(props);
-  const el: Ref<MaskElement | undefined> = ref();
-  const mask: Ref<InputMask<Opts> | undefined> = ref();
-  const masked: Ref<InputMask<Opts>['value']> = ref('');
-  const unmasked: Ref<InputMask<Opts>['unmaskedValue']> = ref('');
-  const typed: Ref<InputMask<Opts>['typedValue']> = ref(null);
-  let $el: MaskElement | undefined;
-  let $masked: InputMask<Opts>['value'];
-  let $unmasked: InputMask<Opts>['unmaskedValue'];
-  let $typed: InputMask<Opts>['typedValue'];
+  function useIMask<MaskElement extends InputMaskElement, Opts extends FactoryOpts>(
+    props: MaybeRef<Opts>,
+    { emit, onAccept, onComplete }: ComposableParams<Opts> = {}
+  ): ComposableReturn<MaskElement, Opts> {
+  const el = ref<MaskElement>();
 
-  function _onAccept () {
-    $typed = typed.value = (mask.value as InputMask<Opts>).typedValue;
-    $unmasked = unmasked.value = (mask.value as InputMask<Opts>).unmaskedValue;
-    $masked = masked.value = (mask.value as InputMask<Opts>).value;
+  const mask = ref<InputMask<Opts>>(null);
+  const masked = ref<InputMask<Opts>['value']>('');
+  const unmasked = ref<InputMask<Opts>['unmaskedValue']>('');
+  const typed = ref<InputMask<Opts>['typedValue']>(null);
+
+  function _onAccept() {
+    typed.value = mask.value.typedValue;
+    unmasked.value = mask.value.unmaskedValue;
+    masked.value = mask.value.value;
 
     if (emit) {
-      emit('accept', $masked);
-      emit('accept:masked', $masked);
-      emit('accept:typed', $typed);
-      emit('accept:unmasked', $unmasked);
+      emit('accept', unref(masked));
+      emit('accept:masked', unref(masked));
+      emit('accept:typed', unref(typed));
+      emit('accept:unmasked', unref(unmasked));
     }
     if (onAccept) onAccept();
   }
 
-  function _onComplete () {
+  function _onComplete() {
     if (emit) {
-      emit('complete', $masked);
-      emit('complete:masked', $masked);
-      emit('complete:typed', $typed);
-      emit('complete:unmasked', $unmasked);
+      emit('complete', unref(masked));
+      emit('complete:masked', unref(masked));
+      emit('complete:typed', unref(typed));
+      emit('complete:unmasked', unref(unmasked));
     }
     if (onComplete) onComplete();
   }
 
-  function _initMask () {
-    $el = el.value;
-    const $props = _props.value;
+  function _initMask() {
+    const $el = unref(el);
+    const $props = unref(props);
 
     if (!$el || !$props?.mask) return;
 
@@ -81,7 +84,7 @@ function useIMask<
     _onAccept();
   }
 
-  function _destroyMask () {
+  function _destroyMask() {
     if (mask.value) {
       mask.value.destroy();
       mask.value = undefined;
@@ -92,30 +95,37 @@ function useIMask<
   onUnmounted(_destroyMask);
 
   watch(unmasked, () => {
-    if (mask.value) $unmasked = mask.value.unmaskedValue = unmasked.value;
+    if (mask.value) mask.value.unmaskedValue = unmasked.value;
   });
 
   watch(masked, () => {
-    if (mask.value) $masked = mask.value.value = masked.value;
+    if (mask.value) mask.value.value = masked.value;
   });
 
   watch(typed, () => {
-    if (mask.value) $typed = mask.value.typedValue = typed.value;
+    if (mask.value) mask.value.typedValue = typed.value;
   });
 
-  watch([el, _props], () => {
-    const $newEl = el.value;
-    const $props = _props.value;
+  watch(() => unref(el), (newEl: MaskElement, prevEl: MaskElement) => {
+    nextTick(() => {
+      if (newEl !== prevEl) _destroyMask();
+      if (newEl && !mask.value) {
+        _initMask();
+      }
+    });
+  });
 
-    if (!$props?.mask || $newEl !== $el) _destroyMask();
-    if ($newEl) {
+  watch(() => unref(props), (newOptions: MaybeRef<Opts>) => {
+    nextTick(() => {
+      if (!newOptions?.mask) _destroyMask();
       if (!mask.value) {
         _initMask();
-      } else {
-        mask.value.updateOptions($props);
       }
-    }
-  });
+      else {
+        mask.value.updateOptions(newOptions);
+      }
+    });
+  }, { deep: true });
 
   return {
     el,
