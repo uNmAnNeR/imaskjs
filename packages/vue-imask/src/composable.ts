@@ -1,6 +1,5 @@
 import type { DeepReadonly, Ref } from 'vue-demi';
 import type { FactoryOpts, InputMaskElement, InputMask } from 'imask';
-
 import { ref, readonly, nextTick, unref, watch, onMounted, onUnmounted } from 'vue-demi';
 import IMask from 'imask';
 
@@ -27,30 +26,30 @@ export
   }
 
 export
-  type ComposableReturn<MaskElement extends InputMaskElement, Opts extends FactoryOpts> = {
+  type ComposableReturn<MaskElement extends InputMaskElement | undefined, Opts extends FactoryOpts> = {
     el: Ref<MaskElement | undefined>,
     mask: DeepReadonly<Ref<InputMask<Opts> | undefined>>,
     masked: Ref<InputMask<Opts>['value']>,
     unmasked: Ref<InputMask<Opts>['unmaskedValue']>,
     typed: Ref<InputMask<Opts>['typedValue']>,
-  }
+  };
 
 export default
   function useIMask<MaskElement extends InputMaskElement, Opts extends FactoryOpts>(
     props: MaybeRef<Opts>,
     { emit, onAccept, onComplete }: ComposableParams<Opts> = {}
   ): ComposableReturn<MaskElement, Opts> {
-  const el = ref<MaskElement>();
+  const el = ref<MaskElement | undefined>();
 
-  const mask = ref<InputMask<Opts>>(null);
+  const mask = ref<InputMask<Opts>>();
   const masked = ref<InputMask<Opts>['value']>('');
   const unmasked = ref<InputMask<Opts>['unmaskedValue']>('');
   const typed = ref<InputMask<Opts>['typedValue']>(null);
 
   function _onAccept() {
-    typed.value = mask.value.typedValue;
-    unmasked.value = mask.value.unmaskedValue;
-    masked.value = mask.value.value;
+    typed.value = mask.value!.typedValue;
+    unmasked.value = mask.value!.unmaskedValue;
+    masked.value = mask.value!.value;
 
     if (emit) {
       emit('accept', unref(masked));
@@ -106,7 +105,7 @@ export default
     if (mask.value) mask.value.typedValue = typed.value;
   });
 
-  watch(() => unref(el), (newEl: MaskElement, prevEl: MaskElement) => {
+  watch(() => unref(el), (newEl, prevEl) => {
     nextTick(() => {
       if (newEl !== prevEl) _destroyMask();
       if (newEl && !mask.value) {
@@ -115,14 +114,15 @@ export default
     });
   });
 
-  watch(() => unref(props), (newOptions: MaybeRef<Opts>) => {
+  watch(() => unref(props), (newOptions) => {
     nextTick(() => {
       if (!newOptions?.mask) _destroyMask();
       if (!mask.value) {
         _initMask();
       }
       else {
-        mask.value.updateOptions(newOptions);
+        // TODO: Fix  - cannot use FactoryOpts in Partial<MaskedOptions>
+        mask.value.updateOptions(newOptions as any);
       }
     });
   }, { deep: true });
