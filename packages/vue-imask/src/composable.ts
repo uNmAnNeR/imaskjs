@@ -105,7 +105,7 @@ export default
     if (mask.value) mask.value.typedValue = typed.value;
   });
 
-  watch(() => unref(el), (newEl, prevEl) => {
+  watch(el, (newEl, prevEl) => {
     nextTick(() => {
       if (newEl !== prevEl) _destroyMask();
       if (newEl && !mask.value) {
