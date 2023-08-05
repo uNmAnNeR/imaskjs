@@ -20,9 +20,9 @@ export
 
 export
   type ComposableParams<Opts extends FactoryOpts> = {
-    emit?: <E extends ComposableEmitEvent>(eventName: E, value: ComposableEmitValue<E, Opts>) => void,
-    onAccept?: () => void,
-    onComplete?: () => void,
+    emit?: <E extends ComposableEmitEvent>(eventName: E, value: ComposableEmitValue<E, Opts>, e?: InputEvent) => void,
+    onAccept?: (e?: InputEvent) => void,
+    onComplete?: (e?: InputEvent) => void,
   }
 
 export
@@ -46,7 +46,7 @@ export default
   const unmasked = ref<InputMask<Opts>['unmaskedValue']>('');
   const typed = ref<InputMask<Opts>['typedValue']>(null);
 
-  function _onAccept() {
+  function _onAccept(e?: InputEvent) {
     typed.value = mask.value!.typedValue;
     unmasked.value = mask.value!.unmaskedValue;
     masked.value = mask.value!.value;
@@ -60,7 +60,7 @@ export default
     if (onAccept) onAccept();
   }
 
-  function _onComplete() {
+  function _onComplete(e?: InputEvent) {
     if (emit) {
       emit('complete', masked.value, e);
       emit('complete:masked', masked.value, e);
