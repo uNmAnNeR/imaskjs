@@ -52,31 +52,30 @@ export default
     masked.value = mask.value!.value;
 
     if (emit) {
-      emit('accept', unref(masked));
-      emit('accept:masked', unref(masked));
-      emit('accept:typed', unref(typed));
-      emit('accept:unmasked', unref(unmasked));
+      emit('accept', masked.value, e);
+      emit('accept:masked', masked.value, e);
+      emit('accept:typed', typed.value, e);
+      emit('accept:unmasked', unmasked.value, e);
     }
     if (onAccept) onAccept();
   }
 
   function _onComplete() {
     if (emit) {
-      emit('complete', unref(masked));
-      emit('complete:masked', unref(masked));
-      emit('complete:typed', unref(typed));
-      emit('complete:unmasked', unref(unmasked));
+      emit('complete', masked.value, e);
+      emit('complete:masked', masked.value, e);
+      emit('complete:typed', typed.value, e);
+      emit('complete:unmasked', unmasked.value, e);
     }
     if (onComplete) onComplete();
   }
 
   function _initMask() {
-    const $el = unref(el);
     const $props = unref(props);
 
-    if (!$el || !$props?.mask) return;
+    if (!el.value || !$props?.mask) return;
 
-    mask.value = IMask($el, $props)
+    mask.value = IMask(el.value, $props)
       .on('accept', _onAccept)
       .on('complete', _onComplete);
 
