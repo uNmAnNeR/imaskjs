@@ -6,7 +6,7 @@
   "description": "Solid input mask",
   "main": "dist/solid-imask.js",
   "module": "esm/index.js",
-  "types": "index.d.ts",
+  "types": "esm/index.d.ts",
   "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
   "exports": {
