@@ -3,7 +3,7 @@
 
 <body>
   <h1>IMask Core Demo</h1>
-  <input type="text" id="input" value="0000">
+  <input type="text" id="input">
   <div>value: <span id="value"></span></div>
   <div>unmasked: <span id="unmasked"></span></div>
   <div contenteditable="true" id="ce"></div>
@@ -12,7 +12,30 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: /^.*$/
+      mask: Date,
+      pattern: 'd.`m.`Y',
+      lazy: false,
+      overwrite: true,
+      autofix: 'pad',
+      blocks: {
+        d: {
+          mask: IMask.MaskedRange,
+          from: 1,
+          to: 31,
+          maxLength: 2,
+        },
+        m: {
+          mask: IMask.MaskedRange,
+          from: 1,
+          to: 12,
+          maxLength: 2,
+        },
+        Y: {
+          mask: IMask.MaskedRange,
+          from: 2023,
+          to: 2023,
+        },
+      },
     };
 
     const input = document.getElementById('input');
@@ -23,24 +46,6 @@
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });
-
-
-    setTimeout(() => {
-      //HMR does pretty much this:
-      input.value = 1111
-      dispatchEvents(input)
-    }, 1000)
-
-    //straight from Angular's hmr-accept.js
-    function dispatchEvents() {
-      input.dispatchEvent(new Event('input', {
-          bubbles: true,
-          cancelable: true,
-      }));
-      input.blur();
-      input.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' }));
-    }
-
 
     // document.getElementById('input').addEventListener('focus', () => {
     //   imask.updateOptions({

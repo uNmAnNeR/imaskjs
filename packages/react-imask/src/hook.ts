@@ -7,7 +7,7 @@ import type { ReactMaskProps } from './mixin';
 export default
 function useIMask<
   MaskElement extends InputMaskElement,
-  Opts extends FactoryOpts,
+  Opts extends FactoryOpts=FactoryOpts,
 >(
   opts: Opts,
   { onAccept, onComplete }: Partial<Pick<ReactMaskProps<MaskElement, Opts>, 'onAccept' | 'onComplete'>> = {}
