@@ -267,8 +267,6 @@ describe('Insert', function () {
       });
 
       masked.rawInputValue = '55';
-
-      console.log({ v: masked.value });
       assert.equal(masked.value, '5-5');
     });
   });

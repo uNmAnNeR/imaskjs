@@ -143,8 +143,8 @@ export
 type UpdateConstructorOpts<M extends FactoryConstructorOpts> =
   M extends { mask: typeof MaskedDate } ? MaskedDateOptions :
   M extends { mask: typeof MaskedNumber } ? MaskedNumberOptions :
-  M extends { mask: typeof MaskedEnum } ? MaskedEnumOptions :
-  M extends { mask: typeof MaskedRange } ? MaskedRangeOptions :
+  M extends { mask: typeof MaskedEnum } ? MaskedEnumOptions & { mask: typeof MaskedEnum } :
+  M extends { mask: typeof MaskedRange } ? MaskedRangeOptions & { mask: typeof MaskedRange } :
   M extends { mask: typeof MaskedRegExp } ? MaskedRegExpOptions :
   M extends { mask: typeof MaskedFunction } ? MaskedFunctionOptions :
   M extends { mask: typeof MaskedPattern } ? MaskedPatternOptions :
