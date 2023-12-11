@@ -45,5 +45,16 @@ export default [
       multi.default(), // https://github.com/alfredosalzillo/rollup-plugin-multi-input/issues/72
       ...commonPlugins,
     ]
-  }
+  },
+  {
+    input: 'src/index.ts',
+    output: {
+      name: 'IMask',
+      format: 'cjs',
+      file: 'dist/imask.cjs',
+      sourcemap: true,
+      exports: 'named',
+    },
+    plugins: commonPlugins,
+  },
 ];

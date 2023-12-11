@@ -12,6 +12,7 @@
   "exports": {
     ".": {
       "import": "./esm/index.js",
+      "require": "./dist/react-native-imask.cjs",
       "default": "./dist/react-native-imask.js"
     },
     "./*": "./*"

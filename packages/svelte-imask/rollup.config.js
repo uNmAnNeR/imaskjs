@@ -52,5 +52,18 @@ export default [
       multi.default(),
       ...commonPlugins,
     ]
-  }
+  },
+  {
+    input: 'src/index.ts',
+    external: Object.keys(globals),
+    output: {
+      name: 'SvelteIMask',
+      file: 'dist/svelte-imask.cjs',
+      format: 'cjs',
+      sourcemap: true,
+      globals,
+      interop: 'auto',
+    },
+    plugins: commonPlugins,
+  },
 ]

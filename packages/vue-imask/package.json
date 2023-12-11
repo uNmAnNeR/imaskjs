@@ -18,6 +18,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
+      "require": "./dist/vue-imask.cjs",
       "default": "./dist/vue-imask.js"
     },
     "./esm": {

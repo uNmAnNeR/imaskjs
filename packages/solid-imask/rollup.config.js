@@ -57,5 +57,18 @@ export default [
       multi.default(),
       ...commonPlugins,
     ]
-  }
+  },
+  {
+    input: 'src/index.ts',
+    external: Object.keys(globals),
+    output: {
+      name: 'SolidIMask',
+      file: 'dist/solid-imask.cjs',
+      globals,
+      format: 'cjs',
+      sourcemap: true,
+      interop: 'auto',
+    },
+    plugins: commonPlugins,
+  },
 ];

@@ -13,6 +13,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
+      "require": "./dist/solid-imask.cjs",
       "default": "./dist/solid-imask.js"
     },
     "./esm": {

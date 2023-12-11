@@ -58,5 +58,18 @@ export default [
       multi.default(),
       ...commonPlugins,
     ]
-  }
+  },
+  {
+    input: 'src/index.ts',
+    external: Object.keys(globals),
+    output: {
+      name: 'ReactIMask',
+      file: 'dist/react-imask.cjs',
+      format: 'cjs',
+      globals,
+      sourcemap: true,
+      interop: 'auto',
+    },
+    plugins: commonPlugins,
+  },
 ]

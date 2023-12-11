@@ -12,20 +12,20 @@ export { default as MaskedDate, type DateMaskType, type MaskedDateOptions } from
 export { default as MaskedDynamic, type DynamicMaskType, type MaskedDynamicOptions, type MaskedDynamicState } from './masked/dynamic';
 export { default as MaskedEnum, type MaskedEnumOptions } from './masked/enum';
 export {
-    default as createMask,
-    normalizeOpts,
-    type AllFactoryStaticOpts,
-    type FactoryArg,
-    type FactoryConstructorOpts,
-    type FactoryConstructorReturnMasked,
-    type FactoryInstanceOpts,
-    type FactoryInstanceReturnMasked,
-    type FactoryOpts,
-    type FactoryReturnMasked,
-    type FactoryStaticOpts,
-    type FactoryStaticReturnMasked,
-    type NormalizedOpts,
-    type UpdateOpts,
+  default as createMask,
+  normalizeOpts,
+  type AllFactoryStaticOpts,
+  type FactoryArg,
+  type FactoryConstructorOpts,
+  type FactoryConstructorReturnMasked,
+  type FactoryInstanceOpts,
+  type FactoryInstanceReturnMasked,
+  type FactoryOpts,
+  type FactoryReturnMasked,
+  type FactoryStaticOpts,
+  type FactoryStaticReturnMasked,
+  type NormalizedOpts,
+  type UpdateOpts,
 } from './masked/factory';
 export { default as MaskedFunction, type MaskedFunctionOptions } from './masked/function';
 export { default as MaskedNumber, type MaskedNumberOptions } from './masked/number';

@@ -57,5 +57,18 @@ export default [
       multi.default(),
       ...commonPlugins,
     ]
-  }
+  },
+  {
+    input: 'src/index.ts',
+    external: Object.keys(globals),
+    output: {
+      name: 'VueIMask',
+      file: 'dist/vue-imask.cjs',
+      format: 'cjs',
+      sourcemap: true,
+      globals,
+      interop: 'auto',
+    },
+    plugins: commonPlugins,
+  },
 ];

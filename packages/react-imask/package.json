@@ -14,6 +14,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
+      "require": "./dist/react-imask.cjs",
       "default": "./dist/react-imask.js"
     },
     "./esm": {
