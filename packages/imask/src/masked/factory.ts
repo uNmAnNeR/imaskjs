@@ -75,18 +75,17 @@ export
 type FactoryInstanceReturnMasked<Opts extends FactoryInstanceOpts> = Opts extends { mask: infer M } ? M : never;
 
 export
-type FactoryConstructorOpts = MaskedOptions & { mask:
-  | typeof Masked
-  | typeof MaskedDate
-  | typeof MaskedNumber
-  | typeof MaskedEnum
-  | typeof MaskedRange
-  | typeof MaskedRegExp
-  | typeof MaskedFunction
-  | typeof MaskedPattern
-  | typeof MaskedDynamic
-  | typeof MaskedRegExp
-};
+type FactoryConstructorOpts =
+  | { mask: typeof MaskedDate } & Omit<MaskedDateFactoryOptions, 'mask'>
+  | { mask: typeof MaskedNumber } & Omit<MaskedNumberOptions, 'mask'>
+  | { mask: typeof MaskedEnum } & Omit<MaskedEnumOptions, 'mask'>
+  | { mask: typeof MaskedRange } & Omit<MaskedRangeOptions, 'mask'>
+  | { mask: typeof MaskedRegExp } & Omit<MaskedRegExpOptions, 'mask'>
+  | { mask: typeof MaskedFunction } & Omit<MaskedFunctionOptions, 'mask'>
+  | { mask: typeof MaskedPattern } & Omit<MaskedPatternOptions, 'mask'>
+  | { mask: typeof MaskedDynamic } & Omit<MaskedDynamicOptions, 'mask'>
+  | { mask: typeof Masked } & Omit<MaskedOptions, 'mask'>
+;
  
 export
 type FactoryConstructorReturnMasked<Opts extends FactoryConstructorOpts> =
@@ -327,7 +326,7 @@ function createMask<Opts extends FactoryArg> (opts: Opts): FactoryReturnMasked<O
   const nOpts = normalizeOpts(opts);
 
   const MaskedClass = maskedClass(nOpts.mask);
-  if (!MaskedClass) throw new Error('Masked class is not found for provided mask, appropriate module needs to be imported manually before creating mask.');
+  if (!MaskedClass) throw new Error(`Masked class is not found for provided mask ${nOpts.mask}, appropriate module needs to be imported manually before creating mask.`);
 
   if (nOpts.mask === MaskedClass) delete nOpts.mask;
   if ((nOpts as any)._mask) { nOpts.mask = (nOpts as any)._mask; delete (nOpts as any)._mask; }

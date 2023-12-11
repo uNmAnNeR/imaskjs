@@ -1,4 +1,4 @@
-import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
+import { DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
 import createMask, { type UpdateOpts, maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
 import Masked from '../masked/base';
@@ -211,7 +211,7 @@ class InputMask<Opts extends FactoryArg> {
     const { mask, ...restOpts } = opts;
 
     const updateMask = !this.maskEquals(mask);
-    const updateOpts = !objectIncludes(this.masked, restOpts);
+    const updateOpts = this.masked.optionsIsChanged(restOpts);
 
     if (updateMask) this.mask = mask;
     if (updateOpts) this.masked.updateOptions(restOpts);  // TODO

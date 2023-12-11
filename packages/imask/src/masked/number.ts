@@ -317,9 +317,7 @@ class MaskedNumber extends Masked<number> {
   }
 
   override get unmaskedValue (): string {
-    return this._removeThousandsSeparators(
-      this._normalizeZeros(
-        this.value))
+    return this._removeThousandsSeparators(this._normalizeZeros(this.value))
       .replace(this.radix, MaskedNumber.UNMASKED_RADIX);
   }
 

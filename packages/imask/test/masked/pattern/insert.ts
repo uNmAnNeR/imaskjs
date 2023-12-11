@@ -1,9 +1,11 @@
 import assert from 'assert';
 import { describe, it, beforeEach, mock } from 'node:test';
 
-import MaskedPattern from '../../../src/masked/pattern';
 import { DIRECTION } from '../../../src/core/utils';
+import '../../../src/masked/number';
 import type MaskedNumber from '../../../src/masked/number';
+import MaskedRange from '../../../src/masked/range';
+import MaskedPattern from '../../../src/masked/pattern';
 
 
 describe('Insert', function () {
@@ -61,8 +63,9 @@ describe('Insert', function () {
       mask: '+{7}(000)000-00-00',
       prepareChar: prepareStub
     });
-    masked.value = '+79998887766';
-    assert.equal(prepareStub.mock.callCount(), 1);
+    const v = '+79998887766';
+    masked.value = v;
+    assert.equal(prepareStub.mock.callCount(), v.length);
   });
 
   it('should insert value in the middle', function () {
@@ -245,5 +248,28 @@ describe('Insert', function () {
       masked.value = '321';
       assert.equal(masked.displayValue, '$321 aa');
     })
+  });
+
+  describe('blocks', function () {
+    it('should shift char to another block', function () {
+      masked.updateOptions({
+        mask: 'num-num',
+        blocks: {
+          num: {
+            mask: MaskedRange,
+            from: 0,
+            to: 9,
+            autofix: true,
+          },
+        },
+        lazy: false,
+        overwrite: false,
+      });
+
+      masked.rawInputValue = '55';
+
+      console.log({ v: masked.value });
+      assert.equal(masked.value, '5-5');
+    });
   });
 });

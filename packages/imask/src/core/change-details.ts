@@ -15,7 +15,7 @@ class ChangeDetails {
   /** Inserted symbols */
   declare inserted: string;
   /** Can skip chars */
-  declare skip?: boolean;
+  declare skip: boolean;
   /** Additional offset if any changes occurred before tail */
   declare tailShift: number;
   /** Raw inserted is used by dynamic mask */
@@ -32,6 +32,7 @@ class ChangeDetails {
     Object.assign(this, {
       inserted: '',
       rawInserted: '',
+      skip: false,
       tailShift: 0,
     }, details);
   }

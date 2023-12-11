@@ -1,6 +1,6 @@
 import ChangeDetails from '../core/change-details';
 import ContinuousTailDetails from '../core/continuous-tail-details';
-import { type Direction, DIRECTION, isString, forceDirection } from '../core/utils';
+import { type Direction, DIRECTION, isString, forceDirection, objectIncludes } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
 import IMask from '../core/holder';
 
@@ -94,7 +94,7 @@ abstract class Masked<Value=any> {
 
   /** Sets and applies new options */
   updateOptions (opts: Partial<MaskedOptions>) {
-    if (!Object.keys(opts).length) return;
+    if (!this.optionsIsChanged(opts)) return;
 
     this.withValueRefresh(this._update.bind(this, opts));
   }
@@ -220,11 +220,7 @@ abstract class Masked<Value=any> {
     let details: ChangeDetails;
     [ch, details] = this.doPrepareChar(ch, flags);
 
-    if (ch) {
-      details = details.aggregate(this._appendCharRaw(ch, flags));
-    } else if (details.skip == null) {
-      details.skip = true;
-    }
+    if (ch) details = details.aggregate(this._appendCharRaw(ch, flags));
 
     if (details.inserted) {
       let consistentTail;
@@ -419,6 +415,10 @@ abstract class Masked<Value=any> {
 
   maskEquals (mask: any): boolean {
     return this.mask === mask;
+  }
+
+  optionsIsChanged (opts: Partial<MaskedOptions>): boolean {
+    return !objectIncludes(this, opts);
   }
 
   typedValueEquals (value: any): boolean {
