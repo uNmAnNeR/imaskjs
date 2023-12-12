@@ -16,7 +16,7 @@ type InputMaskEventListener = (e?: InputEvent) => void;
 
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
-class InputMask<Opts extends FactoryArg> {
+class InputMask<Opts extends FactoryArg = FactoryArg> {
   /**
     View element
   */
