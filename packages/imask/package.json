@@ -64,7 +64,7 @@
     }
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec --import tsx --test test/**/*",
+    "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec --loader tsx --test test/**/*",
     "watch": "rollup -c -w",
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
