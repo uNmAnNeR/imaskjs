@@ -10,7 +10,10 @@ function useIMask<
   Opts extends FactoryOpts=FactoryOpts,
 >(
   opts: Opts,
-  { onAccept, onComplete }: Partial<Pick<ReactMaskProps<MaskElement, Opts>, 'onAccept' | 'onComplete'>> = {}
+  { onAccept, onComplete }: {
+    onAccept?: (value: InputMask<Opts>['value'], maskRef: InputMask<Opts>, e?: InputEvent) => void;
+    onComplete?: (value: InputMask<Opts>['value'], maskRef: InputMask<Opts>, e?: InputEvent) => void;
+  } = {}
 ): {
   ref: MutableRefObject<MaskElement | null>,
   maskRef: MutableRefObject<InputMask<Opts> | null>,

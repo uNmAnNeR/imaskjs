@@ -69,7 +69,17 @@ type FactoryStaticMaskReturnMasked<Mask extends FactoryStaticOpts['mask']> =
 
 
 export
-type FactoryInstanceOpts = MaskedOptions & { mask: Masked };
+type FactoryInstanceOpts =
+  | { mask: MaskedDate } & Omit<MaskedDateFactoryOptions, 'mask'>
+  | { mask: MaskedNumber } & Omit<MaskedNumberOptions, 'mask'>
+  | { mask: MaskedEnum } & Omit<MaskedEnumOptions, 'mask'>
+  | { mask: MaskedRange } & Omit<MaskedRangeOptions, 'mask'>
+  | { mask: MaskedRegExp } & Omit<MaskedRegExpOptions, 'mask'>
+  | { mask: MaskedFunction } & Omit<MaskedFunctionOptions, 'mask'>
+  | { mask: MaskedPattern } & Omit<MaskedPatternOptions, 'mask'>
+  | { mask: MaskedDynamic } & Omit<MaskedDynamicOptions, 'mask'>
+  | { mask: Masked } & Omit<MaskedOptions, 'mask'>
+;
 
 export
 type FactoryInstanceReturnMasked<Opts extends FactoryInstanceOpts> = Opts extends { mask: infer M } ? M : never;
@@ -133,8 +143,8 @@ type UpdateInstanceOpts<M extends Masked> =
   M extends MaskedDate ? MaskedDateOptions :
   M extends MaskedNumber ? MaskedNumberOptions :
   M extends MaskedDynamic ? MaskedDynamicOptions :
-  M extends MaskedRange ? MaskedRangeOptions :
-  M extends MaskedEnum ? MaskedEnumOptions :
+  M extends MaskedRange ? MaskedRangeOptions & { mask: MaskedRange } :
+  M extends MaskedEnum ? MaskedEnumOptions & { mask: MaskedEnum } :
   M extends MaskedPattern ? MaskedPatternOptions :
   AnyOpts
 ;
@@ -182,7 +192,6 @@ type FactoryReturnMasked<Opts extends FactoryArg> =
   Opts extends FactoryStaticOpts ? FactoryStaticReturnMasked<Opts> :
   never
 ;
-
 
 
 // TODO can't use overloads here because of https://github.com/microsoft/TypeScript/issues/50754

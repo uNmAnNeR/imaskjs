@@ -4,7 +4,7 @@ export { default as IMaskInput } from './input';
 export { default as useIMask } from './hook';
 export { default as IMaskMixin,
   type MaskPropsKeys,
-  type MaskOpts,
+  type ExtractMaskOpts,
   type ReactElementProps,
   type ReactMaskProps,
   type ReactMixinComponent,
