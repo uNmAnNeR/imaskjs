@@ -121,11 +121,11 @@ const MASK_PROPS: { [key in keyof (AllFactoryStaticOpts & ReactMaskProps<InputMa
 } as const;
 
 const MASK_PROPS_NAMES = (Object.keys(MASK_PROPS) as Array<keyof typeof MASK_PROPS>).filter(p => p !== 'value');
-const NON_MASK_OPTIONS_PROPS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'] as const;
+const NON_MASK_OPTIONS_NAMES = ['value', 'unmask', 'onAccept', 'onComplete', 'inputRef'] as const;
 
 export
 type ReactElementProps<MaskElement extends InputMaskElement> =
-  Omit<Omit<React.HTMLProps<MaskElement>, keyof typeof MASK_PROPS>, typeof NON_MASK_OPTIONS_PROPS_NAMES[number]>;
+  Omit<Omit<React.HTMLProps<MaskElement>, keyof typeof MASK_PROPS>, typeof NON_MASK_OPTIONS_NAMES[number] | 'maxLength'>;
 
 type NonMaskProps<
   MaskElement extends InputMaskElement,
@@ -143,9 +143,9 @@ type ReactMixinComponent<
 >;
 
 export
-type MaskPropsKeys = Exclude<keyof typeof MASK_PROPS, typeof NON_MASK_OPTIONS_PROPS_NAMES[number]>;
-const MASK_OPTIONS_PROPS_NAMES = MASK_PROPS_NAMES.filter(pName =>
-  NON_MASK_OPTIONS_PROPS_NAMES.indexOf(pName as typeof NON_MASK_OPTIONS_PROPS_NAMES[number]) < 0
+type MaskPropsKeys = Exclude<keyof typeof MASK_PROPS, typeof NON_MASK_OPTIONS_NAMES[number]>;
+const MASK_OPTIONS_NAMES = MASK_PROPS_NAMES.filter(pName =>
+  NON_MASK_OPTIONS_NAMES.indexOf(pName as typeof NON_MASK_OPTIONS_NAMES[number]) < 0
 ) as Array<MaskPropsKeys>;
 
 export
@@ -239,7 +239,7 @@ function IMaskMixin<
 
       // keep only mask options
       (Object.keys(cloneProps) as Array<keyof Props>)
-        .filter(prop => MASK_OPTIONS_PROPS_NAMES.indexOf(prop as MaskPropsKeys) < 0)
+        .filter(prop => MASK_OPTIONS_NAMES.indexOf(prop as MaskPropsKeys) < 0)
         .forEach(nonMaskProp => {
           delete cloneProps[nonMaskProp];
         });
@@ -251,7 +251,7 @@ function IMaskMixin<
       const { ...cloneProps } = props as Props;
 
       (MASK_PROPS_NAMES as Array<keyof Props>).forEach(maskProp => {
-        delete cloneProps[maskProp];
+        if (maskProp !== 'maxLength') delete cloneProps[maskProp];
       });
       if (!('defaultValue' in cloneProps)) cloneProps.defaultValue = props.mask ? '' : cloneProps.value;
       delete cloneProps.value;
