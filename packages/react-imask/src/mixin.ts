@@ -125,7 +125,12 @@ type NonMaskProps<
 export
 type ReactMixinComponent<
   MaskElement extends InputMaskElement,
-> = React.ComponentType<ReactElementProps<MaskElement> & { inputRef: React.Ref<MaskElement>; }>;
+  Props extends IMaskInputProps<MaskElement>,
+> = React.ComponentType<
+  & ReactElementProps<MaskElement>
+  & { inputRef: React.Ref<MaskElement> }
+  & NonMaskProps<MaskElement, Props>
+>;
 
 export
 type MaskPropsKeys = Exclude<keyof typeof MASK_PROPS, typeof NON_MASK_OPTIONS_PROPS_NAMES[number]>;
@@ -152,11 +157,13 @@ type IMaskInputProps<
 > = ReactElementProps<MaskElement> & IMaskMixinProps<MaskElement, Props>;
 
 
+type AnyProps = Record<string, unknown>;
+
 export default
 function IMaskMixin<
   MaskElement extends InputMaskElement,
-  Props extends IMaskInputProps<MaskElement>,
->(ComposedComponent: ReactMixinComponent<MaskElement>) {
+  Props extends IMaskInputProps<MaskElement>=AnyProps,
+>(ComposedComponent: ReactMixinComponent<MaskElement, Props>) {
   const MaskedComponent = class extends React.Component<Props> {
     static displayName: string;
     static propTypes: typeof MASK_PROPS;
@@ -285,8 +292,7 @@ function IMaskMixin<
   MaskedComponent.displayName = `IMask(${nestedComponentName})`;
   MaskedComponent.propTypes = MASK_PROPS;
 
-  return React.forwardRef<
-    React.ComponentType<Props>,
-    Props
-  >((props, ref) => React.createElement(MaskedComponent, { ...props, ref }));
+  return React.forwardRef<React.ComponentType<Props>, Props>(
+    (props, ref) => React.createElement(MaskedComponent, { ...props, ref })
+  );
 }

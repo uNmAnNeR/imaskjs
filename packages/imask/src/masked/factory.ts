@@ -124,7 +124,7 @@ type UpdateStaticOpts<Opts extends FactoryStaticOpts> =
   never
 ;
 
-type UpdateAnyOpts = Record<string, any>;
+type AnyOpts = Record<string, any>;
 
 export
 type UpdateInstanceOpts<M extends Masked> =
@@ -136,7 +136,7 @@ type UpdateInstanceOpts<M extends Masked> =
   M extends MaskedRange ? MaskedRangeOptions :
   M extends MaskedEnum ? MaskedEnumOptions :
   M extends MaskedPattern ? MaskedPatternOptions :
-  UpdateAnyOpts
+  AnyOpts
 ;
 
 export
@@ -149,7 +149,7 @@ type UpdateConstructorOpts<M extends FactoryConstructorOpts> =
   M extends { mask: typeof MaskedFunction } ? MaskedFunctionOptions :
   M extends { mask: typeof MaskedPattern } ? MaskedPatternOptions :
   M extends { mask: typeof MaskedDynamic } ? MaskedDynamicOptions :
-  UpdateAnyOpts
+  AnyOpts
 ;
 
 export
@@ -170,7 +170,7 @@ type UpdateOpts<Opts extends FactoryArg> = Partial<
   Opts extends FactoryStaticOpts ? UpdateStaticOpts<Opts> :
   Opts extends FactoryInstanceOpts ? UpdateInstanceOpts<Opts['mask']> :
   Opts extends FactoryConstructorOpts ? UpdateConstructorOpts<Opts> :
-  UpdateAnyOpts
+  AnyOpts
 >;
 
 export
