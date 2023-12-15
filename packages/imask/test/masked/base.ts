@@ -188,4 +188,16 @@ describe('Masked', function () {
       assert.strictEqual(masked.value, '0');
     });
   });
+
+  describe('#withValueRefresh', function () {
+    it('should commit after adding tail', function () {
+      const masked = new MaskedNumber({ scale: 2, normalizeZeros: false, padFractionalZeros: true });
+
+      masked.unmaskedValue = '11.00';
+      assert.strictEqual(masked.value, '11,00');
+
+      masked.updateOptions({ normalizeZeros: true, padFractionalZeros: false });
+      assert.strictEqual(masked.value, '11');
+    });
+  });
 });
