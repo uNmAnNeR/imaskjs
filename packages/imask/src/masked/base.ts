@@ -320,6 +320,7 @@ abstract class Masked<Value=any> {
     // append lost trailing chars at the end
     if (this.value && this.value !== value && value.indexOf(this.value) === 0) {
       this.append(value.slice(this.displayValue.length), {}, '');
+      this.doCommit();
     }
 
     delete this._refreshing;
