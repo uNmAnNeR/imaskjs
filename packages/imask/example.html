@@ -17,25 +17,6 @@
       lazy: false,
       overwrite: true,
       autofix: 'pad',
-      blocks: {
-        d: {
-          mask: IMask.MaskedRange,
-          from: 1,
-          to: 31,
-          maxLength: 2,
-        },
-        m: {
-          mask: IMask.MaskedRange,
-          from: 1,
-          to: 12,
-          maxLength: 2,
-        },
-        Y: {
-          mask: IMask.MaskedRange,
-          from: 2023,
-          to: 2023,
-        },
-      },
     };
 
     const input = document.getElementById('input');

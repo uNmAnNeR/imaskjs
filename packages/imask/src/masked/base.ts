@@ -231,20 +231,24 @@ abstract class Masked<Value=any> {
         const beforeTailState = this.state;
         if (this.overwrite === true) {
           consistentTail = checkTail.state;
-          checkTail.unshift(this.displayValue.length - details.tailShift);
+          for (let i=0; i < details.rawInserted.length; ++i) {
+            checkTail.unshift(this.displayValue.length - details.tailShift);
+          }
         }
 
         let tailDetails = this.appendTail(checkTail);
-        appended = tailDetails.rawInserted === checkTail.toString();
+        appended = tailDetails.rawInserted.length === checkTail.toString().length;
 
         // not ok, try shift
         if (!(appended && tailDetails.inserted) && this.overwrite === 'shift') {
           this.state = beforeTailState;
           consistentTail = checkTail.state;
-          checkTail.shift();
+          for (let i=0; i < details.rawInserted.length; ++i) {
+            checkTail.shift();
+          }
 
           tailDetails = this.appendTail(checkTail);
-          appended = tailDetails.rawInserted === checkTail.toString();
+          appended = tailDetails.rawInserted.length === checkTail.toString().length;
         }
 
         // if ok, rollback state after tail

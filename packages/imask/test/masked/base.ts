@@ -5,6 +5,7 @@ import MaskedPattern from '../../src/masked/pattern';
 import MaskedDate from '../../src/masked/date';
 import MaskedNumber from '../../src/masked/number';
 import { DIRECTION } from '../../src/core/utils';
+import { MaskedRange } from '../../src';
 
 
 describe('Masked', function () {
@@ -146,6 +147,24 @@ describe('Masked', function () {
 
       masked.splice(4, 0, '0', DIRECTION.NONE, { input: true, raw: true });
       assert.strictEqual(masked.value, '$1,230.45');
+    });
+
+    it('should work with autofix', function () {
+      const masked = new MaskedRange({
+        from: 1,
+        to: 31,
+        autofix: 'pad',
+        overwrite: true,
+      });
+
+      masked.value = '12';
+      assert.strictEqual(masked.value, '12');
+
+      masked.splice(0, 0, '3', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.value, '31');
+
+      masked.splice(0, 0, '4', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.value, '04');
     });
   });
 
