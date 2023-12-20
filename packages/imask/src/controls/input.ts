@@ -6,6 +6,7 @@ import MaskElement from './mask-element';
 import HTMLInputMaskElement, { type InputElement } from './html-input-mask-element';
 import HTMLContenteditableMaskElement from './html-contenteditable-mask-element';
 import IMask from '../core/holder';
+import InputHistory, { type InputHistoryState } from './input-history';
 
 
 export
@@ -31,7 +32,9 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
   declare _unmaskedValue: string;
   declare _selection: Selection;
   declare _cursorChanging?: ReturnType<typeof setTimeout>;
+  declare _historyChanging?: boolean;
   declare _inputEvent?: InputEvent;
+  declare history: InputHistory;
 
   constructor (el: InputMaskElement, opts: Opts) {
     this.el =
@@ -44,6 +47,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     this._listeners = {};
     this._value = '';
     this._unmaskedValue = '';
+    this.history = new InputHistory();
 
     this._saveSelection = this._saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
@@ -51,6 +55,8 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     this._onDrop = this._onDrop.bind(this);
     this._onFocus = this._onFocus.bind(this);
     this._onClick = this._onClick.bind(this);
+    this._onUndo = this._onUndo.bind(this);
+    this._onRedo = this._onRedo.bind(this);
     this.alignCursor = this.alignCursor.bind(this);
     this.alignCursorFriendly = this.alignCursorFriendly.bind(this);
 
@@ -92,8 +98,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     if (this.value === str) return;
 
     this.masked.value = str;
-    this.updateControl();
-    this.alignCursor();
+    this.updateControl('auto');
   }
 
   /** Unmasked value */
@@ -105,8 +110,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     if (this.unmaskedValue === str) return;
 
     this.masked.unmaskedValue = str;
-    this.updateControl();
-    this.alignCursor();
+    this.updateControl('auto');
   }
 
   /** Typed unmasked value */
@@ -118,8 +122,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     if (this.masked.typedValueEquals(val)) return;
 
     this.masked.typedValue = val;
-    this.updateControl();
-    this.alignCursor();
+    this.updateControl('auto');
   }
 
   /** Display value */
@@ -136,6 +139,8 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
       click: this._onClick,
       focus: this._onFocus,
       commit: this._onChange,
+      undo: this._onUndo,
+      redo: this._onRedo,
     });
   }
 
@@ -192,18 +197,25 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
   }
 
   /** Syncronizes view from model value, fires change events */
-  updateControl () {
+  updateControl (cursorPos?: number | 'auto') {
     const newUnmaskedValue = this.masked.unmaskedValue;
     const newValue = this.masked.value;
     const newDisplayValue = this.displayValue;
-    const isChanged = (this.unmaskedValue !== newUnmaskedValue ||
-      this.value !== newValue);
+    const isChanged = (this.unmaskedValue !== newUnmaskedValue || this.value !== newValue);
 
     this._unmaskedValue = newUnmaskedValue;
     this._value = newValue;
 
     if (this.el.value !== newDisplayValue) this.el.value = newDisplayValue;
+
+    if (cursorPos === 'auto') this.alignCursor();
+    else if (cursorPos != null) this.cursorPos = cursorPos;
+
     if (isChanged) this._fireChangeEvents();
+    if (!this._historyChanging && (isChanged || this.history.isEmpty)) this.history.push({
+      unmaskedValue: newUnmaskedValue,
+      selection: { start: this.selectionStart, end: this.cursorPos },
+    });
   }
 
   /** Updates options with deep equal check, recreates {@link Masked} model if mask type changes */
@@ -320,8 +332,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     );
     if (removeDirection !== DIRECTION.NONE) cursorPos = this.masked.nearestInputPos(cursorPos, DIRECTION.NONE);
 
-    this.updateControl();
-    this.updateCursor(cursorPos);
+    this.updateControl(cursorPos);
     delete this._inputEvent;
   }
 
@@ -349,6 +360,24 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
   /** Restore last selection on focus */
   _onClick (ev: Event) {
     this.alignCursorFriendly();
+  }
+
+  _onUndo () {
+    this._applyHistoryState(this.history.undo());
+  }
+
+  _onRedo () {
+    this._applyHistoryState(this.history.redo());
+  }
+
+  _applyHistoryState (state: InputHistoryState | undefined) {
+    if (!state) return;
+
+    this._historyChanging = true;
+    this.unmaskedValue = state.unmaskedValue;
+    this.el.select(state.selection.start, state.selection.end);
+    this._saveSelection();
+    this._historyChanging = false;
   }
 
   /** Unbind view events and removes element reference */
