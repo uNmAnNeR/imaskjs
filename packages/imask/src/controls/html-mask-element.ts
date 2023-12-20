@@ -5,24 +5,17 @@ import IMask from '../core/holder';
 /** Bridge between HTMLElement and {@link Masked} */
 export default
 abstract class HTMLMaskElement extends MaskElement {
-  /** Mapping between HTMLElement events and mask internal events */
-  static EVENTS_MAP = {
-    selectionChange: 'keydown',
-    input: 'input',
-    drop: 'drop',
-    click: 'click',
-    focus: 'focus',
-    commit: 'blur',
-  } as const;
   /** HTMLElement to use mask on */
   declare input: HTMLElement;
-  declare _handlers: {[k: string]: EventListener};
+  declare _handlers: {[key: string]: EventListener};
   abstract value: string;
 
   constructor (input: HTMLElement) {
     super();
     this.input = input;
-    this._handlers = {};
+    this._onKeydown = this._onKeydown.bind(this);
+    this._onInput = this._onInput.bind(this);
+    this._onCompositionEnd = this._onCompositionEnd.bind(this);
   }
 
   get rootElement (): HTMLDocument {
@@ -40,28 +33,40 @@ abstract class HTMLMaskElement extends MaskElement {
     Binds HTMLElement events to mask internal events
   */
   override bindEvents (handlers: {[key in ElementEvent]: EventListener}) {
-    (Object.keys(handlers) as Array<ElementEvent>)
-      .forEach(event => this._toggleEventHandler(HTMLMaskElement.EVENTS_MAP[event], handlers[event]));
+    this.input.addEventListener('keydown', this._onKeydown as EventListener);
+    this.input.addEventListener('input', this._onInput as EventListener);
+    this.input.addEventListener('compositionend', this._onCompositionEnd as EventListener);
+    this.input.addEventListener('drop', handlers.drop);
+    this.input.addEventListener('click', handlers.click);
+    this.input.addEventListener('focus', handlers.focus);
+    this.input.addEventListener('blur', handlers.commit);
+    this._handlers = handlers;
+  }
+
+  _onKeydown (e: KeyboardEvent) {
+    if (!e.isComposing) this._handlers.selectionChange(e);
+  }
+
+  _onCompositionEnd (e: CompositionEvent) {
+    this._handlers.input(e);
+  }
+
+  _onInput (e: InputEvent) {
+    if (!e.isComposing) this._handlers.input(e);
   }
 
   /**
     Unbinds HTMLElement events to mask internal events
   */
   override unbindEvents () {
-    Object.keys(this._handlers)
-      .forEach(event => this._toggleEventHandler(event));
-  }
-
-  _toggleEventHandler (event: string, handler?: EventListener): void {
-    if (this._handlers[event]) {
-      this.input.removeEventListener(event, this._handlers[event]);
-      delete this._handlers[event];
-    }
-
-    if (handler) {
-      this.input.addEventListener(event, handler);
-      this._handlers[event] = handler;
-    }
+    this.input.removeEventListener('keydown', this._onKeydown as EventListener);
+    this.input.removeEventListener('input', this._onInput as EventListener);
+    this.input.removeEventListener('compositionend', this._onCompositionEnd as EventListener);
+    this.input.removeEventListener('drop', this._handlers.drop);
+    this.input.removeEventListener('click', this._handlers.click);
+    this.input.removeEventListener('focus', this._handlers.focus);
+    this.input.removeEventListener('blur', this._handlers.commit);
+    this._handlers = {};
   }
 }
 
