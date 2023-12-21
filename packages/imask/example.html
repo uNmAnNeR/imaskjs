@@ -11,8 +11,57 @@
   <script src="dist/imask.js"></script>
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
+    const numberOpts = {
+      mask: Number,
+      thousandsSeparator: ' ',
+      scale: 2,
+      radix: '.',
+      expose: true,
+    };
+
+    class NegativeNumberMask extends IMask.MaskedNumber {
+      get typedValue () {
+        return -Math.abs(super.typedValue);
+      }
+      set typedValue (value) {
+        super.typedValue = Math.abs(value);
+      }
+    }
+
+    function dispatchMaskIndex (value) {
+      if (!value) return 0;
+      else if (value.indexOf('-') === 0 || value.indexOf('-') === 1) return 2;
+      else return 1;
+    }
+
     const opts = {
-      mask: /字/g,
+      mask: [
+        {
+          mask: '',
+        },
+        {
+          mask: '$num',
+          blocks: {
+            num: numberOpts,
+          }
+        },
+        {
+          mask: '{-}$num',
+          blocks: {
+            num: {
+              ...numberOpts,
+              mask: NegativeNumberMask,
+              min: 0,
+            }
+          }
+        }
+      ],
+      dispatch: (appended, dynamicMasked, flags, tail) => {
+        const value = dynamicMasked.rawInputValue + appended + String(tail);
+        const masked = dynamicMasked.compiledMasks[dispatchMaskIndex(value)];
+        dynamicMasked.exposeMask = masked;
+        return masked;
+      }
     };
 
     const input = document.getElementById('input');

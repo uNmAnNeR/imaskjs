@@ -29,6 +29,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
   declare _value: string;
   declare _changingCursorPos: number;
   declare _unmaskedValue: string;
+  declare _rawInputValue: string;
   declare _selection: Selection;
   declare _cursorChanging?: ReturnType<typeof setTimeout>;
   declare _inputEvent?: InputEvent;
@@ -44,6 +45,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     this._listeners = {};
     this._value = '';
     this._unmaskedValue = '';
+    this._rawInputValue = '';
 
     this._saveSelection = this._saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
@@ -105,6 +107,19 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     if (this.unmaskedValue === str) return;
 
     this.masked.unmaskedValue = str;
+    this.updateControl();
+    this.alignCursor();
+  }
+
+    /** Raw input value */
+  get rawInputValue (): string {
+    return this._rawInputValue;
+  }
+
+  set rawInputValue (str: string) {
+    if (this.rawInputValue === str) return;
+
+    this.masked.rawInputValue = str;
     this.updateControl();
     this.alignCursor();
   }
@@ -195,12 +210,18 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
   updateControl () {
     const newUnmaskedValue = this.masked.unmaskedValue;
     const newValue = this.masked.value;
+    const newRawInputValue = this.masked.rawInputValue;
     const newDisplayValue = this.displayValue;
-    const isChanged = (this.unmaskedValue !== newUnmaskedValue ||
-      this.value !== newValue);
+
+    const isChanged =
+      this.unmaskedValue !== newUnmaskedValue ||
+      this.value !== newValue ||
+      this._rawInputValue !== newRawInputValue
+    ;
 
     this._unmaskedValue = newUnmaskedValue;
     this._value = newValue;
+    this._rawInputValue = newRawInputValue;
 
     if (this.el.value !== newDisplayValue) this.el.value = newDisplayValue;
     if (isChanged) this._fireChangeEvents();
