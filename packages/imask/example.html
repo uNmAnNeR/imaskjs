@@ -11,43 +11,10 @@
   <script src="dist/imask.js"></script>
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
-    const numberOpts = {
-      mask: Number,
-      thousandsSeparator: ' ',
-      scale: 2,
-      radix: '.',
-      min: 0,
+    const opts = {
+      mask: Date,
+      autofix: 'pad',
     };
-
-    class CurrencyMaskedDynamic extends IMask.MaskedDynamic {
-      get typedValue () {
-        return Number(this.unmaskedValue);
-      }
-
-      set typedValue (typedValue) {
-        this.unmaskedValue = String(typedValue);
-      }
-    }
-
-    const opts = new CurrencyMaskedDynamic({
-      mask: [
-        {
-          mask: '',
-        },
-        {
-          mask: '$num',
-          blocks: {
-            num: numberOpts,
-          }
-        },
-        {
-          mask: '{-}$num',
-          blocks: {
-            num: numberOpts,
-          }
-        }
-      ],
-    });
 
     const input = document.getElementById('input');
     var result = document.getElementById('value');
