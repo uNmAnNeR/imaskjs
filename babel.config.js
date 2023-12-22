@@ -1,29 +1,21 @@
 module.exports = function (api) {
   api.cache(true);
 
-  const presetOptions = {
-    useBuiltIns: false,
-    loose: true,
-  };
-  const plugins = [
-    "@babel/transform-runtime",
-    ["polyfill-corejs3", {
-      "method": "usage-pure"
-    }]
-  ];
-
-  if (process.env.NODE_ENV === 'test') {
-    presetOptions.targets = { node: 'current' };
-    plugins.push(['istanbul', { exclude: ['test'], include: ['src'] }]);
-  }
-
   return {
-    targets: '> 0.25%, not dead',
+    targets: '> 0.25%, not dead, not android < 100',
     presets: [
-      [ '@babel/env', presetOptions ],
-      [ '@babel/typescript', { allowDeclareFields: true } ]
+      [ '@babel/env', {
+        useBuiltIns: false,
+        loose: true,
+      } ],
+      [ '@babel/typescript', { allowDeclareFields: true } ],
     ],
-    plugins,
+    plugins: [
+      "@babel/transform-runtime",
+      ["polyfill-corejs3", {
+        "method": "usage-pure",
+      }],
+    ],
     exclude: ['**/node_modules/**'],
   };
 };

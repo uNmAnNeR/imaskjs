@@ -28,6 +28,12 @@ class ActionDetails {
     while (this.value.slice(0, this.startChangePos) !== this.oldValue.slice(0, this.startChangePos)) {
       --this.oldSelection.start;
     }
+
+    // double check right part
+    while (this.value.slice(this.cursorPos) !== this.oldValue.slice(this.oldSelection.end)) {
+      if (this.value.length - this.cursorPos < this.oldValue.length - this.oldSelection.end) ++this.oldSelection.end;
+      else ++this.cursorPos;
+    }
   }
 
   /** Start changing position */

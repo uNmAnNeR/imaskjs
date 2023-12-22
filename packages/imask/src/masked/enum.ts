@@ -15,6 +15,10 @@ export default
 class MaskedEnum extends MaskedPattern {
   declare enum: Array<string>;
 
+  constructor (opts?: MaskedEnumOptions) {
+    super(opts as MaskedPatternOptions); // mask will be created in _update
+  }
+
   override updateOptions (opts: Partial<MaskedEnumOptions>) {
     super.updateOptions(opts);
   }
@@ -23,7 +27,13 @@ class MaskedEnum extends MaskedPattern {
     const { enum: _enum, ...eopts }: MaskedEnumPatternOptions = opts;
 
     if (_enum) {
-      eopts.mask = '*'.repeat(_enum[0].length);
+      const lengths = _enum.map(e => e.length);
+      const requiredLength = Math.min(...lengths);
+      const optionalLength = Math.max(...lengths) - requiredLength;
+
+      eopts.mask = '*'.repeat(requiredLength);
+      if (optionalLength) eopts.mask += '[' + '*'.repeat(optionalLength) + ']';
+
       this.enum = _enum;
     }
 
@@ -31,7 +41,7 @@ class MaskedEnum extends MaskedPattern {
   }
 
   override doValidate (flags: AppendFlags): boolean {
-    return this.enum.some(e => e.indexOf(this.unmaskedValue) >= 0) &&
+    return this.enum.some(e => e.indexOf(this.unmaskedValue) === 0) &&
       super.doValidate(flags);
   }
 }

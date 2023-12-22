@@ -1,4 +1,4 @@
-import { objectIncludes, DIRECTION, type Selection } from '../core/utils';
+import { DIRECTION, type Selection } from '../core/utils';
 import ActionDetails from '../core/action-details';
 import createMask, { type UpdateOpts, maskedClass, type FactoryArg, type FactoryReturnMasked } from '../masked/factory';
 import Masked from '../masked/base';
@@ -16,7 +16,7 @@ type InputMaskEventListener = (e?: InputEvent) => void;
 
 /** Listens to element events and controls changes between element and {@link Masked} */
 export default
-class InputMask<Opts extends FactoryArg> {
+class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
   /**
     View element
   */
@@ -29,6 +29,7 @@ class InputMask<Opts extends FactoryArg> {
   declare _value: string;
   declare _changingCursorPos: number;
   declare _unmaskedValue: string;
+  declare _rawInputValue: string;
   declare _selection: Selection;
   declare _cursorChanging?: ReturnType<typeof setTimeout>;
   declare _inputEvent?: InputEvent;
@@ -44,6 +45,7 @@ class InputMask<Opts extends FactoryArg> {
     this._listeners = {};
     this._value = '';
     this._unmaskedValue = '';
+    this._rawInputValue = '';
 
     this._saveSelection = this._saveSelection.bind(this);
     this._onInput = this._onInput.bind(this);
@@ -105,6 +107,19 @@ class InputMask<Opts extends FactoryArg> {
     if (this.unmaskedValue === str) return;
 
     this.masked.unmaskedValue = str;
+    this.updateControl();
+    this.alignCursor();
+  }
+
+    /** Raw input value */
+  get rawInputValue (): string {
+    return this._rawInputValue;
+  }
+
+  set rawInputValue (str: string) {
+    if (this.rawInputValue === str) return;
+
+    this.masked.rawInputValue = str;
     this.updateControl();
     this.alignCursor();
   }
@@ -195,12 +210,18 @@ class InputMask<Opts extends FactoryArg> {
   updateControl () {
     const newUnmaskedValue = this.masked.unmaskedValue;
     const newValue = this.masked.value;
+    const newRawInputValue = this.masked.rawInputValue;
     const newDisplayValue = this.displayValue;
-    const isChanged = (this.unmaskedValue !== newUnmaskedValue ||
-      this.value !== newValue);
+
+    const isChanged =
+      this.unmaskedValue !== newUnmaskedValue ||
+      this.value !== newValue ||
+      this._rawInputValue !== newRawInputValue
+    ;
 
     this._unmaskedValue = newUnmaskedValue;
     this._value = newValue;
+    this._rawInputValue = newRawInputValue;
 
     if (this.el.value !== newDisplayValue) this.el.value = newDisplayValue;
     if (isChanged) this._fireChangeEvents();
@@ -211,7 +232,7 @@ class InputMask<Opts extends FactoryArg> {
     const { mask, ...restOpts } = opts;
 
     const updateMask = !this.maskEquals(mask);
-    const updateOpts = !objectIncludes(this.masked, restOpts);
+    const updateOpts = this.masked.optionsIsChanged(restOpts);
 
     if (updateMask) this.mask = mask;
     if (updateOpts) this.masked.updateOptions(restOpts);  // TODO
@@ -287,9 +308,6 @@ class InputMask<Opts extends FactoryArg> {
   _onInput (e: InputEvent): void {
     this._inputEvent = e;
     this._abortUpdateCursor();
-
-    // fix strange IE behavior
-    if (!this._selection) return this.updateValue();
 
     const details = new ActionDetails({
       // new state

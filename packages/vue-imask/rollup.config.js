@@ -1,19 +1,19 @@
-// import withSolid from 'rollup-preset-solid';
 import { babel } from '@rollup/plugin-babel';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json' assert { type: 'json' };
-import copy from 'rollup-plugin-copy';
 
 
 const globals = {
-  'solid-js': 'Solid',
   imask: 'IMask',
+  vue: 'Vue',
+  'vue-demi': 'VueDemi',
+  '@vue/composition-api': 'vueCompositionApi',
 };
 
-const extensions = ['.js', '.ts', '.tsx', '.jsx'];
+const extensions = ['.js', '.ts'];
 const input = ['src/**'];
 const commonPlugins = [
   nodeResolve({ extensions }),
@@ -23,7 +23,6 @@ const commonPlugins = [
     rootMode: 'upward',
     babelHelpers: 'runtime',
     include: input,
-    presets: [ 'solid' ],
   }),
 ];
 
@@ -33,11 +32,11 @@ export default [
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'SolidIMask',
+      name: 'VueIMask',
       file: pkg.main,
-      globals,
       format: 'umd',
       sourcemap: true,
+      globals,
       interop: 'auto',
     },
     plugins: commonPlugins,
@@ -57,13 +56,19 @@ export default [
       }),
       multi.default(),
       ...commonPlugins,
-      copy({
-        targets: [
-          { src: 'dist/*.d.ts', dest: 'esm' },
-          { src: 'dist/index.d.ts', dest: 'dist', rename: 'react-imask.d.ts' },
-        ],
-        flatten: false,
-      })
     ]
-  }
+  },
+  {
+    input: 'src/index.ts',
+    external: Object.keys(globals),
+    output: {
+      name: 'VueIMask',
+      file: 'dist/vue-imask.cjs',
+      format: 'cjs',
+      sourcemap: true,
+      globals,
+      interop: 'auto',
+    },
+    plugins: commonPlugins,
+  },
 ];

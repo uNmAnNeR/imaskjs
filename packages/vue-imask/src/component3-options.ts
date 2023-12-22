@@ -131,9 +131,9 @@ export default defineComponent({
     },
 
     _onAccept (): void {
-      const typedValue = (this.maskRef as InputMask<FactoryOpts>).typedValue;
-      const unmaskedValue = (this.maskRef as InputMask<FactoryOpts>).unmaskedValue;
-      const value = (this.maskRef as InputMask<FactoryOpts>).value;
+      const typedValue = (this.maskRef as any).typedValue;
+      const unmaskedValue = (this.maskRef as any).unmaskedValue;
+      const value = (this.maskRef as any).value;
 
       this.$emit('update:modelValue', value);
       this.$emit('update:value', value);
@@ -149,9 +149,9 @@ export default defineComponent({
     },
 
     _onComplete (): void {
-      const typedValue = (this.maskRef as InputMask<FactoryOpts>).typedValue;
-      const unmaskedValue = (this.maskRef as InputMask<FactoryOpts>).unmaskedValue;
-      const value = (this.maskRef as InputMask<FactoryOpts>).value;
+      const typedValue = (this.maskRef as any).typedValue;
+      const unmaskedValue = (this.maskRef as any).unmaskedValue;
+      const value = (this.maskRef as any).value;
 
       this.$emit('complete', value);
       this.$emit('complete:value', value);

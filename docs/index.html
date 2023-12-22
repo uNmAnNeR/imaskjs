@@ -52,15 +52,18 @@ title: Javascript Input Mask
           <input id="regexp-mask" type="text" value="">
 
           <div class="toggle-panel">
-            <label for="regexp-mask-source" class="muted">source</label>
+            <label for="regexp-mask-source">source</label>
             <input id="regexp-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var regExpMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('regexp-mask'),
   {
     mask: /^[1-6]\d{0,5}$/
-  });
-<a href="guide.html#masked-base" class="learn-more">learn more</a></code></pre>
+  }
+)
+{% endhighlight %}
+<a href="guide.html#masked-base" class="learn-more">learn more</a>
             </div>
           </div>
         </div>
@@ -70,14 +73,18 @@ title: Javascript Input Mask
           <input id="phone-mask" type="text" value="">
           <div class="unmasked-value desc">unmasked: <span id="phone-unmasked"></span><span id="phone-complete" class="example__complete"></span></div>
           <div class="toggle-panel">
-            <label for="phone-mask-source" class="muted">source</label>
+            <label for="phone-mask-source">source</label>
             <input id="phone-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var phoneMask = IMask(
-  document.getElementById('phone-mask'), {
+{% highlight javascript %}
+IMask(
+  document.getElementById('phone-mask'),
+  {
     mask: '+{7}(000)000-00-00'
-  });
-<a href="guide.html#masked-pattern" class="learn-more">learn more</a></code></pre>
+  }
+)
+{% endhighlight %}
+<a href="guide.html#masked-pattern" class="learn-more">learn more</a>
             </div>
           </div>
         </div>
@@ -87,11 +94,13 @@ title: Javascript Input Mask
           <input id="ssn-mask" type="text" value="">
           <div class="unmasked-value desc">value: <span id="ssn-value"></span><span id="ssn-complete" class="example__complete"></span></div>
           <div class="toggle-panel">
-            <label for="ssn-mask-source" class="muted">source</label>
+            <label for="ssn-mask-source">source</label>
             <input id="ssn-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var ssnMask = IMask(
-  document.getElementById('ssn-mask'), {
+{% highlight javascript %}
+IMask(
+  document.getElementById('ssn-mask'),
+  {
     mask: 'XXX-XX-0000',
     definitions: {
       X: {
@@ -102,8 +111,10 @@ title: Javascript Input Mask
     },
     lazy: false,
     overwrite: 'shift',
-  });
-<a href="guide.html#masked-pattern" class="learn-more">learn more</a></code></pre>
+  }
+)
+{% endhighlight %}
+<a href="guide.html#masked-pattern" class="learn-more">learn more</a>
             </div>
           </div>
         </div>
@@ -113,18 +124,21 @@ title: Javascript Input Mask
           <input id="number-mask" type="text" value="">
           <div class="unmasked-value desc">number: <span id="number-value"></span></div>
           <div class="toggle-panel">
-            <label for="number-mask-source" class="muted">source</label>
+            <label for="number-mask-source">source</label>
             <input id="number-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var numberMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('number-mask'),
   {
     mask: Number,
     min: -10000,
     max: 10000,
     thousandsSeparator: ' '
-  });
-<a href="guide.html#masked-number" class="learn-more">learn more</a></code></pre>
+  }
+)
+{% endhighlight %}
+<a href="guide.html#masked-number" class="learn-more">learn more</a>
             </div>
           </div>
         </div>
@@ -134,18 +148,21 @@ title: Javascript Input Mask
           <input id="date-mask" type="text" value="">
           <div class="unmasked-value desc">date: <span id="date-value"></span></div>
           <div class="toggle-panel">
-            <label for="date-mask-source" class="muted">source</label>
+            <label for="date-mask-source">source</label>
             <input id="date-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var dateMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('date-mask'),
   {
     mask: Date,
     min: new Date(1990, 0, 1),
     max: new Date(2020, 0, 1),
     lazy: false
-  });
-<a href="guide.html#masked-date" class="learn-more">learn more</a></code></pre>
+  }
+)
+{% endhighlight %}
+<a href="guide.html#masked-date" class="learn-more">learn more</a>
             </div>
           </div>
         </div>
@@ -155,10 +172,11 @@ title: Javascript Input Mask
           <input id="dynamic-mask" type="text">
           <div class="unmasked-value desc">unmasked: <span id="dynamic-value"></span><span id="dynamic-complete" class="example__complete"></span></div>
           <div class="toggle-panel">
-            <label for="dynamic-mask-source" class="muted">source</label>
+            <label for="dynamic-mask-source">source</label>
             <input id="dynamic-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var dynamicMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('dynamic-mask'),
   {
     mask: [
@@ -169,8 +187,10 @@ title: Javascript Input Mask
         mask: /^\S*@?\S*$/
       }
     ]
-  });
-<a href="guide.html#masked-dynamic" class="learn-more">learn more</a></code></pre>
+  }
+)
+{% endhighlight %}
+<a href="guide.html#masked-dynamic" class="learn-more">learn more</a>
             </div>
           </div>
         </div>
@@ -180,10 +200,11 @@ title: Javascript Input Mask
           <input id="currency-mask" type="text">
           <div class="unmasked-value desc">unmasked: <span id="currency-value"></span><span id="currency-complete" class="example__complete"></span></div>
           <div class="toggle-panel">
-            <label for="currency-mask-source" class="muted">source</label>
+            <label for="currency-mask-source">source</label>
             <input id="currency-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var currencyMask = IMask(
+{% highlight javascript %}
+IMask(
   document.getElementById('currency-mask'),
   {
     mask: '$num',
@@ -194,8 +215,10 @@ title: Javascript Input Mask
         thousandsSeparator: ' '
       }
     }
-  });
-<a href="guide.html#masked-pattern" class="learn-more">learn more</a></code></pre>
+  }
+)
+{% endhighlight %}
+<a href="guide.html#masked-pattern" class="learn-more">learn more</a>
             </div>
           </div>
         </div>
@@ -205,15 +228,17 @@ title: Javascript Input Mask
           <input id="pipe-mask" type="text">
           <div class="unmasked-value desc">masked: <span id="pipe-value"></span><span id="pipe-complete" class="example__complete"></span></div>
           <div class="toggle-panel">
-            <label for="pipe-mask-source" class="muted">source</label>
+            <label for="pipe-mask-source">source</label>
             <input id="pipe-mask-source" type="checkbox">
             <div class="toggle-panel-content">
-              <pre><code>var phonePipe = IMask.createPipe(
+{% highlight javascript %}
+IMask.createPipe(
   phoneMask.masked,
   IMask.PIPE_TYPE.UNMASKED,
   IMask.PIPE_TYPE.MASKED
-);
-<a href="guide.html#pipe" class="learn-more">learn more</a></code></pre>
+)
+{% endhighlight %}
+<a href="guide.html#pipe" class="learn-more">learn more</a>
             </div>
           </div>
         </div>

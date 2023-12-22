@@ -50,5 +50,18 @@ export default [
       multi.default(),
       babel(babelConfig),
     ]
-  }
+  },
+  {
+    input: 'src/index.js',
+    external: Object.keys(globals),
+    output: {
+      name: 'ReactNativeIMask',
+      file: 'dist/react-native-imask.cjs',
+      globals,
+      format: 'cjs',
+      sourcemap: true,
+      interop: 'auto',
+    },
+    plugins: babel(babelConfig),
+  },
 ];

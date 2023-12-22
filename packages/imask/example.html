@@ -3,7 +3,7 @@
 
 <body>
   <h1>IMask Core Demo</h1>
-  <input type="text" id="input" value="123">
+  <input type="text" id="input">
   <div>value: <span id="value"></span></div>
   <div>unmasked: <span id="unmasked"></span></div>
   <div contenteditable="true" id="ce"></div>
@@ -14,16 +14,21 @@
     const opts = {
       mask: /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\-[0-9]|X{1}$/, // /^[0-9]{2}\.[0-9]{3}\.[0-9]{3}\-[0-9]|X{1}$/,
       partialize: true,
-    };
+    }
 
+    const input = document.getElementById('input');
     var result = document.getElementById('value');
     var unmasked = document.getElementById('unmasked');
-    var imask = IMask(document.getElementById('input'), opts).on('accept', () => {
-      console.log(imask.value, imask.unmaskedValue, imask.typedValue);
+    var imask = IMask(input, opts).on('accept', () => {
+      console.log('accept', imask.value, imask.unmaskedValue, imask.typedValue);
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });
 
+    input.addEventListener('keydown', e => console.log('keydown', e.isComposing));
+    input.addEventListener('input', e => console.log('input', e.isComposing, e.inputType));
+    input.addEventListener('compositionstart', e => console.log('compositionstart'));
+    input.addEventListener('compositionend', e => console.log('compositionend'));
 
     // document.getElementById('input').addEventListener('focus', () => {
     //   imask.updateOptions({

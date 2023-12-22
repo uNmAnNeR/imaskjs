@@ -7,10 +7,13 @@ import type { ReactMaskProps } from './mixin';
 export default
 function useIMask<
   MaskElement extends InputMaskElement,
-  Opts extends FactoryOpts,
+  Opts extends FactoryOpts=FactoryOpts,
 >(
   opts: Opts,
-  { onAccept, onComplete }: Partial<Pick<ReactMaskProps<MaskElement, Opts>, 'onAccept' | 'onComplete'>> = {}
+  { onAccept, onComplete }: {
+    onAccept?: (value: InputMask<Opts>['value'], maskRef: InputMask<Opts>, e?: InputEvent) => void;
+    onComplete?: (value: InputMask<Opts>['value'], maskRef: InputMask<Opts>, e?: InputEvent) => void;
+  } = {}
 ): {
   ref: MutableRefObject<MaskElement | null>,
   maskRef: MutableRefObject<InputMask<Opts> | null>,
@@ -34,6 +37,7 @@ function useIMask<
   const [typedValue, setTypedValue] = useState<InputMask<Opts>['typedValue']>();
 
   const _destroyMask = useCallback(() => {
+    if (!initialized) return;
     maskRef.current?.destroy();
     maskRef.current = null;
   }, []);
@@ -96,22 +100,28 @@ function useIMask<
   useEffect(() => {
     const { value: lastAcceptValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized && lastAcceptValue !== value) mask.value = value;
-    setLastAcceptState(state);
+    if (mask && initialized) {
+      if (lastAcceptValue !== value) mask.value = value;
+      setLastAcceptState(state);
+    }
   }, [value]);
 
   useEffect(() => {
     const { unmaskedValue: lastAcceptUnmaskedValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized && lastAcceptUnmaskedValue !== unmaskedValue) mask.unmaskedValue = unmaskedValue;
-    setLastAcceptState(state);
+    if (mask && initialized) {
+      if (lastAcceptUnmaskedValue !== unmaskedValue) mask.unmaskedValue = unmaskedValue;
+      setLastAcceptState(state);
+    }
   }, [unmaskedValue]);
 
   useEffect(() => {
     const { typedValue: lastAcceptTypedValue, ...state } = lastAcceptState;
     const mask = maskRef.current;
-    if (mask && initialized && lastAcceptTypedValue !== typedValue) mask.typedValue = typedValue;
-    setLastAcceptState(state);
+    if (mask && initialized) {
+      if (lastAcceptTypedValue !== typedValue) mask.typedValue = typedValue;
+      setLastAcceptState(state);
+    }
   }, [typedValue]);
 
   useEffect(() => _destroyMask, [_destroyMask]);

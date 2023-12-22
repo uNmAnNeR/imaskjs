@@ -37,7 +37,7 @@ describe('Align LEFT', function () {
   it('should align before XX with DIRECTION.LEFT', function () {
     ['XX*', 'XX[*]'].forEach(mask => {
       masked.updateOptions({mask, lazy: true});
-      for (var pos=0; pos<masked._blocks.length-1; ++pos) {
+      for (let pos=0; pos<masked._blocks.length-1; ++pos) {
         assert.equal(masked.nearestInputPos(pos, DIRECTION.LEFT), 0);
       }
     });
@@ -46,7 +46,7 @@ describe('Align LEFT', function () {
   it('should align before XX', function () {
     ['*XX', '[*]XX'].forEach(mask => {
       masked.updateOptions({mask});
-      for (var pos=0; pos<masked._blocks.length-1; ++pos) {
+      for (let pos=0; pos<masked._blocks.length-1; ++pos) {
         assert.ok(masked.nearestInputPos(pos) <= 1);
       }
     });

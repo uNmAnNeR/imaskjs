@@ -305,10 +305,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     const details = new ChangeDetails();
     if (!blockIter) return details;
 
-    for (let bi=blockIter.index; ; ++bi) {
-      const block = this._blocks[bi];
-      if (!block) break;
-
+    for (let bi=blockIter.index, block; (block = this._blocks[bi]); ++bi) {
       const blockDetails = block._appendChar(ch, { ...flags, _beforeTailState: flags._beforeTailState?._blocks?.[bi] });
 
       const skip = blockDetails.skip;

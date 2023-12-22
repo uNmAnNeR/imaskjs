@@ -9,7 +9,8 @@
   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
   <script src="https://unpkg.com/prop-types@15/prop-types.js"></script>
-  <script src="https://unpkg.com/imask"></script>
+  <!-- <script src="https://unpkg.com/imask"></script> -->
+  <script src="dist/imask.js"></script>
   <script src="dist/react-imask.js"></script>
   <script type="text/babel">
     const mask = Number;
@@ -17,28 +18,66 @@
     function IMaskHook () {
       const [ opts, setOpts ] = React.useState({ mask: Number });
 
-      const { ref, value, setValue } = ReactIMask.useIMask(opts, /* { onAccept, onComplete } */);
-
-      React.useEffect(() => {
-        if (value) return;
-
-        /*setTimeout(() => {
-          setValue('123')
-          console.log('set value from hook');
-        }, 1000); */
+      const { ref, value, setValue } = ReactIMask.useIMask({
+        blocks: {
+          d: {
+            mask: Number,
+            scale: 2,
+            signed: false,
+            thousandsSeparator: " ",
+            padFractionalZeros: false,
+            normalizeZeros: false,
+            radix: ",",
+            mapToRadix: [".", "б", "^", "ю", "&"]
+          }
+        },
+        mask: `d $`,
+        lazy: false
       });
 
-      React.useEffect(() => {
-        console.log('masked value changed', value);
-      }, [value]);
-
-      return React.createElement('input', { ref, defaultValue: 10 });
+      return React.createElement('input', { ref, defaultValue: '10000000' });
     }
+
+    const blocks = {
+      d: {
+        mask: IMask.MaskedRange,
+        from: 1,
+        to: 31,
+        maxLength: 2,
+      },
+      m: {
+        mask: IMask.MaskedRange,
+        from: 1,
+        to: 12,
+        maxLength: 2,
+      },
+      Y: {
+        mask: IMask.MaskedRange,
+        from: 1900,
+        to: 9999,
+      }
+    }
+    const format2 = date => {
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      if (day < 10) day = "0" + day;
+      if (month < 10) month = "0" + month;
+
+      return [year, month, day].join('-');
+    }
+    const parse2 = str => {
+      const yearMonthDay = str.split('-');
+      return new Date(yearMonthDay[0], yearMonthDay[1] - 1, yearMonthDay[2]);
+    }
+    const min = new Date(2000, 0, 1);
+    const max = new Date(2020, 0, 1);
 
     class App extends React.Component {
       constructor (...args) {
         super(...args);
-        this.state = {mask, value: 5};
+        this.state = {mask, value: '2000-12'};
       }
 
       render () {
@@ -46,16 +85,22 @@
           React.createElement(ReactIMask.IMaskInput, {
             key: 'maskedinput',
             mask: this.state.mask,
-            defaultValue: '50',
             value: this.state.value,
-            unmask: 'typed',
+            mask: Date,
+            pattern: '`Y-`m-`d',
+            blocks: blocks,
+            format: format2,
+            parse: parse2,
+            min: min,
+            max: max,
+            autofix: true,
+            lazy: false,
+            overwrite: false,
+            // unmask: 'typed',
             lazy: false,
             onAccept: (value, mask) => {
               console.log('accept', value, typeof value, mask);
               this.setState({value});
-            },
-            onInput: (e) => {
-              if (!this.state.mask) this.setState({ value: e.target.value });
             },
             onComplete: (value, mask) => console.log('complete!', value, mask),
 

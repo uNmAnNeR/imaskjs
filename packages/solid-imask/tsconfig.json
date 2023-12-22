@@ -7,6 +7,11 @@
     "jsxImportSource": "solid-js",
     "declaration": true,
     "declarationMap": true,
-    "declarationDir": "./dist"
+    "declarationDir": "esm",
+    "paths": {
+      "imask": [
+        "../imask"
+      ]
+    },
   }
 }

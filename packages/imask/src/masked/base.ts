@@ -1,6 +1,6 @@
 import ChangeDetails from '../core/change-details';
 import ContinuousTailDetails from '../core/continuous-tail-details';
-import { type Direction, DIRECTION, isString, forceDirection } from '../core/utils';
+import { type Direction, DIRECTION, isString, forceDirection, objectIncludes } from '../core/utils';
 import { type TailDetails } from '../core/tail-details';
 import IMask from '../core/holder';
 
@@ -94,7 +94,7 @@ abstract class Masked<Value=any> {
 
   /** Sets and applies new options */
   updateOptions (opts: Partial<MaskedOptions>) {
-    if (!Object.keys(opts).length) return;
+    if (!this.optionsIsChanged(opts)) return;
 
     this.withValueRefresh(this._update.bind(this, opts));
   }
@@ -220,7 +220,7 @@ abstract class Masked<Value=any> {
     let details: ChangeDetails;
     [ch, details] = this.doPrepareChar(ch, flags);
 
-    details = details.aggregate(this._appendCharRaw(ch, flags));
+    if (ch) details = details.aggregate(this._appendCharRaw(ch, flags));
 
     if (details.inserted) {
       let consistentTail;
@@ -231,20 +231,24 @@ abstract class Masked<Value=any> {
         const beforeTailState = this.state;
         if (this.overwrite === true) {
           consistentTail = checkTail.state;
-          checkTail.unshift(this.displayValue.length - details.tailShift);
+          for (let i=0; i < details.rawInserted.length; ++i) {
+            checkTail.unshift(this.displayValue.length - details.tailShift);
+          }
         }
 
         let tailDetails = this.appendTail(checkTail);
-        appended = tailDetails.rawInserted === checkTail.toString();
+        appended = tailDetails.rawInserted.length === checkTail.toString().length;
 
         // not ok, try shift
         if (!(appended && tailDetails.inserted) && this.overwrite === 'shift') {
           this.state = beforeTailState;
           consistentTail = checkTail.state;
-          checkTail.shift();
+          for (let i=0; i < details.rawInserted.length; ++i) {
+            checkTail.shift();
+          }
 
           tailDetails = this.appendTail(checkTail);
-          appended = tailDetails.rawInserted === checkTail.toString();
+          appended = tailDetails.rawInserted.length === checkTail.toString().length;
         }
 
         // if ok, rollback state after tail
@@ -320,6 +324,7 @@ abstract class Masked<Value=any> {
     // append lost trailing chars at the end
     if (this.value && this.value !== value && value.indexOf(this.value) === 0) {
       this.append(value.slice(this.displayValue.length), {}, '');
+      this.doCommit();
     }
 
     delete this._refreshing;
@@ -415,6 +420,10 @@ abstract class Masked<Value=any> {
 
   maskEquals (mask: any): boolean {
     return this.mask === mask;
+  }
+
+  optionsIsChanged (opts: Partial<MaskedOptions>): boolean {
+    return !objectIncludes(this, opts);
   }
 
   typedValueEquals (value: any): boolean {

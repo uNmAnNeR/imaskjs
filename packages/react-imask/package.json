@@ -1,14 +1,53 @@
 {
   "name": "react-imask",
-  "version": "7.1.0-alpha.0",
+  "version": "7.2.1",
   "license": "MIT",
   "author": "Alexey Kryazhev",
   "homepage": "https://imask.js.org/",
   "description": "React input mask",
   "main": "dist/react-imask.js",
   "module": "esm/index.js",
-  "types": "esm/index.d.ts",
+  "type": "module",
+  "types": "index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
+  "exports": {
+    ".": {
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "require": "./dist/react-imask.cjs",
+      "default": "./dist/react-imask.js"
+    },
+    "./esm": {
+      "types": "./esm/index.d.ts",
+      "default": "./esm/index.js"
+    },
+    "./esm/*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./esm/*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    }
+  },
+  "typesVersions": {
+    ">=4.2": {
+      "*": [
+        "esm/*"
+      ],
+      "esm/*": [
+        "esm/*"
+      ]
+    }
+  },
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
@@ -22,7 +61,7 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^7.1.0-alpha.0",
+    "imask": "^7.2.1",
     "prop-types": "^15.8.1"
   },
   "peerDependencies": {
@@ -33,8 +72,8 @@
   },
   "gitHead": "228f2a4dce7125d0c7156868fcb5364b4487c8e6",
   "devDependencies": {
-    "@types/react": "^18.2.13",
-    "@types/react-dom": "^18.2.6",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.17",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

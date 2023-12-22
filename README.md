@@ -1,7 +1,7 @@
 # imaskjs
 vanilla javascript input mask
 
-[![npm version](https://badge.fury.io/js/imask.svg)](https://badge.fury.io/jas/imask)
+[![npm version](https://badge.fury.io/js/imask.svg)](https://badge.fury.io/js/imask)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=master)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=master)
 

@@ -1,3 +1,5 @@
+@import "highlight.css";
+
 header {
   margin: 30px 0;
   text-align: center;
@@ -6,13 +8,10 @@ header {
 
 nav {
   margin: 0;
-  padding: 20px 0;
-  border-top: 1px dashed rgba(0, 0, 0, 0.15);
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
 }
 
 header nav {
-  margin-top: 30px;
+  margin-top: 24px;
 }
 
 footer nav {
@@ -43,6 +42,7 @@ h4 {
 
 a:hover {
   transition: all linear 0.2s;
+  color: #3794de;
   text-decoration: underline;
 }
 
@@ -61,14 +61,15 @@ a {
 }
 
 .toggle-panel > label {
-  text-decoration: underline;
   cursor: pointer;
   display: inline-block;
   float: right;
+  font-size: 12px;
+  color: #3794de;
 }
 
 .toggle-panel > label:hover {
-  color: #0d0d0e;
+  text-decoration: underline;
 }
 
 .toggle-panel > input[type=checkbox] {
@@ -125,13 +126,12 @@ body {
 .learn-more {
   position: absolute;
   right: 1rem;
-  bottom: 0;
-  text-decoration: underline;
+  bottom: 0.5rem;
+  font-size: 14px;
 }
 
 footer {
   text-align: center;
-  margin-bottom: 30px;
   padding-top: 20px;
 }
 
@@ -202,4 +202,8 @@ fieldset *:last-child {
 
 .github-link:hover {
   opacity: 1;
+}
+
+code {
+  background-color: rgba(55, 148, 222, 0.17);
 }

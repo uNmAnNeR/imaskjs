@@ -2,15 +2,55 @@
   "name": "@imask/svelte",
   "author": "Alexey Kryazhev",
   "license": "MIT",
-  "version": "7.1.0-alpha.0",
+  "version": "7.2.1",
   "description": "Svelte input mask",
   "main": "dist/svelte-imask.js",
   "module": "esm/index.js",
+  "type": "module",
+  "types": "index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask",
   "scripts": {
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",
     "build": "tsc --emitDeclarationOnly && rollup -c"
+  },
+  "exports": {
+    ".": {
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "require": "./dist/svelte-imask.cjs",
+      "default": "./dist/svelte-imask.js"
+    },
+    "./esm": {
+      "types": "./esm/index.d.ts",
+      "default": "./esm/index.js"
+    },
+    "./esm/*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./esm/*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    },
+    "./*.js": {
+      "types": "./esm/*.d.ts",
+      "default": "./esm/*.js"
+    }
+  },
+  "typesVersions": {
+    ">=4.2": {
+      "*": [
+        "esm/*"
+      ],
+      "esm/*": [
+        "esm/*"
+      ]
+    }
   },
   "keywords": [
     "svelte",
@@ -20,10 +60,10 @@
     "mask"
   ],
   "dependencies": {
-    "imask": "^7.1.0-alpha.0"
+    "imask": "^7.2.1"
   },
   "peerDependencies": {
-    "svelte": "^3.59.2"
+    "svelte": "^4.2.8"
   },
   "publishConfig": {
     "access": "public"

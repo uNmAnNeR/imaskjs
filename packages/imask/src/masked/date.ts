@@ -67,6 +67,14 @@ class MaskedDate extends MaskedPattern<DateValue> {
     },
   } satisfies Partial<MaskedDateOptions>;
 
+  static extractPatternOptions (opts: Partial<MaskedDateOptions>): Partial<Omit<MaskedDateOptions, 'mask' | 'pattern'> & { mask: MaskedPatternOptions['mask'] }> {
+    const { mask, pattern, ...patternOpts } = opts;
+    return {
+      ...patternOpts,
+      mask: isString(mask) ? mask : pattern,
+    };
+  }
+
   /** Pattern mask for date according to {@link MaskedDate#format} */
   declare pattern: string;
   /** Start date */
@@ -81,15 +89,10 @@ class MaskedDate extends MaskedPattern<DateValue> {
   declare parse: (str: string, masked: Masked) => DateValue;
 
   constructor (opts?: MaskedDateOptions) {
-    const { mask, pattern, ...patternOpts } = {
+    super(MaskedDate.extractPatternOptions({
       ...(MaskedDate.DEFAULTS as MaskedDateOptions),
       ...opts,
-    };
-
-    super({
-      ...patternOpts,
-      mask: isString(mask) ? mask : pattern,
-    });
+    }));
   }
 
   override updateOptions (opts: Partial<MaskedDateOptions>) {
@@ -163,6 +166,10 @@ class MaskedDate extends MaskedPattern<DateValue> {
 
   override maskEquals (mask: any): boolean {
     return mask === Date || super.maskEquals(mask);
+  }
+
+  override optionsIsChanged (opts: Partial<MaskedDateOptions>): boolean {
+    return super.optionsIsChanged(MaskedDate.extractPatternOptions(opts));
   }
 }
 
