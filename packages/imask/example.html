@@ -16,25 +16,20 @@
       thousandsSeparator: ' ',
       scale: 2,
       radix: '.',
-      expose: true,
+      min: 0,
     };
 
-    class NegativeNumberMask extends IMask.MaskedNumber {
+    class CurrencyMaskedDynamic extends IMask.MaskedDynamic {
       get typedValue () {
-        return -Math.abs(super.typedValue);
+        return Number(this.unmaskedValue);
       }
-      set typedValue (value) {
-        super.typedValue = Math.abs(value);
+
+      set typedValue (typedValue) {
+        this.unmaskedValue = String(typedValue);
       }
     }
 
-    function dispatchMaskIndex (value) {
-      if (!value) return 0;
-      else if (value.indexOf('-') === 0 || value.indexOf('-') === 1) return 2;
-      else return 1;
-    }
-
-    const opts = {
+    const opts = new CurrencyMaskedDynamic({
       mask: [
         {
           mask: '',
@@ -48,21 +43,11 @@
         {
           mask: '{-}$num',
           blocks: {
-            num: {
-              ...numberOpts,
-              mask: NegativeNumberMask,
-              min: 0,
-            }
+            num: numberOpts,
           }
         }
       ],
-      dispatch: (appended, dynamicMasked, flags, tail) => {
-        const value = dynamicMasked.rawInputValue + appended + String(tail);
-        const masked = dynamicMasked.compiledMasks[dispatchMaskIndex(value)];
-        dynamicMasked.exposeMask = masked;
-        return masked;
-      }
-    };
+    });
 
     const input = document.getElementById('input');
     var result = document.getElementById('value');

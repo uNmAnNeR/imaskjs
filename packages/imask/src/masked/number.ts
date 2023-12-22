@@ -342,16 +342,10 @@ class MaskedNumber extends Masked<number> {
     this.typedValue = number;
   }
 
-  /**
-    Is negative allowed
-  */
   get allowNegative (): boolean {
     return (this.min != null && this.min < 0) || (this.max != null && this.max < 0);
   }
 
-  /**
-    Is positive allowed
-  */
   get allowPositive (): boolean {
     return (this.min != null && this.min > 0) || (this.max != null && this.max > 0);
   }
