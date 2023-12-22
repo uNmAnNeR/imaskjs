@@ -37,6 +37,7 @@ export { default as PatternInputDefinition, type PatternInputDefinitionOptions, 
 export { createPipe, pipe, PIPE_TYPE } from './masked/pipe';
 export { default as MaskedRange, type MaskedRangeOptions } from './masked/range';
 export { default as MaskedRegExp, type MaskedRegExpOptions } from './masked/regexp';
+export { default as RepeatBlock, type RepeatBlockOptions } from './masked/repeat';
 
 try { (globalThis as any).IMask = IMask; } catch {}
 export default IMask;

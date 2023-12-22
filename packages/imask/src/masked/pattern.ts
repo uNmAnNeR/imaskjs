@@ -57,7 +57,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
   declare mask: string;
   /** */
-  declare blocks: { [key: string]: ExtendFactoryArgOptions<{ expose?: boolean }> };
+  declare blocks: { [key: string]: ExtendFactoryArgOptions<{ expose?: boolean, repeat?: number }> };
   /** */
   declare definitions: Definitions;
   /** Single char for empty input */
@@ -117,16 +117,18 @@ class MaskedPattern<Value=string> extends Masked<Value> {
         // use block name with max length
         const bName = bNames[0];
         if (bName) {
-          const { expose, ...blockOpts } = normalizeOpts(this.blocks[bName]) as NormalizedOpts<FactoryArg> & { expose?: boolean };
-          const maskedBlock = createMask({
+          const { expose, repeat, ...bOpts } = normalizeOpts(this.blocks[bName]) as NormalizedOpts<FactoryArg> & { expose?: boolean, repeat?: number };
+          const blockOpts = {
             lazy: this.lazy,
             eager: this.eager,
             placeholderChar: this.placeholderChar,
             displayChar: this.displayChar,
             overwrite: this.overwrite,
-            ...blockOpts,
+            ...bOpts,
+            repeat,
             parent: this,
-          });
+          };
+          const maskedBlock = repeat != null ? new IMask.RepeatBlock(blockOpts as any /* TODO */) : createMask(blockOpts);
 
           if (maskedBlock) {
             this._blocks.push(maskedBlock);
@@ -195,7 +197,9 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   }
 
   set state (state: MaskedPatternState) {
-    const {_blocks, ...maskedState} = state;
+    if (!state) { this.reset(); return; }
+
+    const { _blocks, ...maskedState } = state;
     this._blocks.forEach((b, bi) => b.state = _blocks[bi]);
     super.state = maskedState;
   }
