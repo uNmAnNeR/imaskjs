@@ -1,24 +1,21 @@
 import ChangeDetails from '../core/change-details';
 import IMask from '../core/holder';
 import { type AppendFlags } from './base';
-import createMask, { type FactoryArg, normalizeOpts, type ExtendFactoryArgOptions, type UpdateOpts } from './factory';
+import createMask, { type FactoryArg, normalizeOpts, type ExtendFactoryArgOptions, type UpdateOpts, type FactoryReturnMasked } from './factory';
 import MaskedPattern, { type MaskedPatternOptions, type MaskedPatternState } from './pattern';
 import type PatternBlock from './pattern/block';
 
 
-export
-type RepeatBlockOptions<M extends FactoryArg> = ExtendFactoryArgOptions<Partial<Pick<RepeatBlock<M>, 'repeat'>>>;
+type RepeatBlockExtraOptions<M extends FactoryArg> = Partial<Pick<RepeatBlock<M>, 'repeat'>>;
 
 export
-type BlockPosData = {
-  index: number,
-  offset: number,
-};
+type RepeatBlockOptions<M extends FactoryArg> = ExtendFactoryArgOptions<RepeatBlockExtraOptions<M>>;
+
 
 /** Pattern mask */
 export default
 class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
-  declare block: M;
+  declare block: FactoryReturnMasked<M> & { repeat?: number };
   declare repeat: number;
 
   constructor (opts: RepeatBlockOptions<M>) {
@@ -29,43 +26,57 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
     super.updateOptions(opts as MaskedPatternOptions);
   }
 
-  override _update (opts: UpdateOpts<RepeatBlockOptions<M>>) {
-    const { repeat, ...block } = normalizeOpts(opts as any); // TODO
-    if (repeat != null) this.repeat = repeat;
-    this.block = Object.assign({}, this.block, block);
+  override _update (opts: UpdateOpts<M> & RepeatBlockExtraOptions<M>) {
+    const { repeat, ...block } = normalizeOpts(opts) as any; // TODO type
+    this.block = createMask(Object.assign({}, this.block, block));
+    this.repeat = repeat ?? this.block.repeat ?? this.repeat ?? Infinity;
+
     super._update({
-      mask: 'm'.repeat(Math.max(repeat == Infinity ? (this._blocks?.length || 1) : this.repeat, 1)),
-      blocks: { m: block },
-      lazy: block.lazy,
-      eager: block.eager,
-      placeholderChar: block.placeholderChar,
-      displayChar: block.displayChar,
-      overwrite: block.overwrite,
-      skipInvalid: block.skipInvalid,
+      mask: 'm'.repeat(Math.max(this.repeat == Infinity ? (this._blocks?.length || 1) : this.repeat, 1)),
+      blocks: { m: this.block },
+      eager: this.block.eager,
+      overwrite: this.block.overwrite,
+      skipInvalid: this.block.skipInvalid,
+      lazy: (this.block as MaskedPattern).lazy,
+      placeholderChar: (this.block as MaskedPattern).placeholderChar,
+      displayChar: (this.block as MaskedPattern).displayChar,
     });
   }
 
   _allocateBlock (bi: number): PatternBlock | undefined {
-    if (bi < this._blocks.length) return super._allocateBlock(bi);
+    if (bi < this._blocks.length) return this._blocks[bi];
     if (this.repeat === Infinity || this._blocks.length < this.repeat) {
-      this._blocks.push(createMask({
-        lazy: this.lazy,
-        eager: this.eager,
-        placeholderChar: this.placeholderChar,
-        displayChar: this.displayChar,
-        overwrite: this.overwrite,
-        ...normalizeOpts(this.block),
-        parent: this,
-      }));
+      this._blocks.push(createMask({ mask: this.block }));
       this.mask += 'm';
       return this._blocks[this._blocks.length - 1];
     }
   }
 
-  override _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>): ChangeDetails {
-    const pos = this.displayValue.length;
-    const details = super._appendCharRaw(ch, flags);
-    this._trimEmptyTail(pos);
+  override _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
+    const blockIter = this._mapPosToBlock(this.displayValue.length);
+    const details = new ChangeDetails();
+    if (!blockIter) return details;
+
+    for (
+      let bi=blockIter.index, block, allocated;
+      // try to get a block or
+      // try to allocate a new block if not allocated already
+      (block = this._blocks[bi] ?? (allocated = !allocated && this._allocateBlock(bi)));
+      ++bi
+    ) {
+      const blockDetails = block._appendChar(ch, { ...flags, _beforeTailState: flags._beforeTailState?._blocks?.[bi] });
+
+      if (blockDetails.skip && allocated) {
+        // remove the last allocated block and break
+        this._blocks.pop();
+        this.mask = this.mask.slice(1);
+        break;
+      }
+
+      details.aggregate(blockDetails);
+
+      if (blockDetails.skip || blockDetails.rawInserted) break; // go next char
+    }
 
     return details;
   }

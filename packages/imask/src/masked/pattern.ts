@@ -309,20 +309,15 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     const details = new ChangeDetails();
     if (!blockIter) return details;
 
-    for (let bi=blockIter.index, block; (block = this._allocateBlock(bi)); ++bi) {
+    for (let bi=blockIter.index, block; (block = this._blocks[bi]); ++bi) {
       const blockDetails = block._appendChar(ch, { ...flags, _beforeTailState: flags._beforeTailState?._blocks?.[bi] });
 
-      const skip = blockDetails.skip;
       details.aggregate(blockDetails);
 
-      if (skip || blockDetails.rawInserted) break; // go next char
+      if (blockDetails.skip || blockDetails.rawInserted) break; // go next char
     }
 
     return details;
-  }
-
-  _allocateBlock (bi: number): PatternBlock | undefined {
-    return this._blocks[bi];
   }
 
   override extractTail (fromPos: number=0, toPos: number=this.displayValue.length): ChunksTailDetails {
