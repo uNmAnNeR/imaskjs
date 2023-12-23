@@ -46,7 +46,7 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
   }
 
   _allocateBlock (bi: number): PatternBlock | undefined {
-    if (bi < this._blocks.length) return this._blocks[bi];
+    if (bi < this._blocks.length) return super._allocateBlock(bi);
     if (this.repeat === Infinity || this._blocks.length < this.repeat) {
       this._blocks.push(createMask({
         lazy: this.lazy,
@@ -62,44 +62,48 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
     }
   }
 
-  _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
-    const blockIter = this._mapPosToBlock(this.displayValue.length);
-    const details = new ChangeDetails();
-    if (!blockIter) return details;
-
-    // TODO create add new block if possible
-    for (let bi=blockIter.index, block; (block = this._allocateBlock(bi)); ++bi) {
-      const blockDetails = block._appendChar(ch, { ...flags, _beforeTailState: flags._beforeTailState?._blocks?.[bi] });
-
-      const skip = blockDetails.skip;
-      details.aggregate(blockDetails);
-
-      if (skip || blockDetails.rawInserted) break; // go next char
-    }
+  override _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>): ChangeDetails {
+    const pos = this.displayValue.length;
+    const details = super._appendCharRaw(ch, flags);
+    this._trimEmptyTail(pos);
 
     return details;
   }
 
-  remove (fromPos: number=0, toPos: number=this.displayValue.length): ChangeDetails {
-    const removeDetails = super.remove(fromPos, toPos);
+  _trimEmptyTail (fromPos: number=0, toPos?: number): void {
+    if (this.repeat !== Infinity) return;
 
-    if (this.repeat === Infinity) {
-      const firstBlockIndex = Math.max(this._mapPosToBlock(fromPos)?.index || 0, 1);
-      let blockIndex = this._mapPosToBlock(toPos)?.index || this._blocks.length - 1;
+    const firstBlockIndex = Math.max(this._mapPosToBlock(fromPos)?.index || 0, 1);
+    let blockIndex;
+    if (toPos != null) blockIndex = this._mapPosToBlock(toPos)?.index;
+    if (blockIndex == null) blockIndex = this._blocks.length - 1;
 
-      for (; firstBlockIndex <= blockIndex; --blockIndex) {
-        if (this._blocks[blockIndex].unmaskedValue) break;
-        this._blocks.splice(blockIndex, 1);
-        this.mask = this.mask.slice(1);
-      }
+    for (; firstBlockIndex <= blockIndex; --blockIndex) {
+      if (this._blocks[blockIndex].unmaskedValue) break;
+      this._blocks.splice(blockIndex, 1);
+      this.mask = this.mask.slice(1);
     }
+  }
 
+  override remove (fromPos: number=0, toPos: number=this.displayValue.length): ChangeDetails {
+    const removeDetails = super.remove(fromPos, toPos);
+    this._trimEmptyTail(fromPos, toPos);
     return removeDetails;
   }
 
-  totalInputPositions (fromPos: number=0, toPos: number=this.displayValue.length): number {
-    if (this.repeat === Infinity) return Infinity;
+  override totalInputPositions (fromPos: number=0, toPos?: number): number {
+    if (toPos == null && this.repeat === Infinity) return Infinity;
     return super.totalInputPositions(fromPos, toPos);
+  }
+
+  override get state (): MaskedPatternState {
+    return super.state;
+  }
+
+  override set state (state: MaskedPatternState) {
+    this._blocks.length = state._blocks.length;
+    this.mask = this.mask.slice(0, this._blocks.length);
+    super.state = state;
   }
 }
 
