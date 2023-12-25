@@ -26,7 +26,6 @@ class MyMasked extends Masked {
   declare skipInvalid?: boolean | undefined;
 }
 
-
 type cases = [
   Check<Equal<Parameters<InputMask<{ mask: DateConstructor }>['updateOptions']>, [Partial<MaskedDateOptions>]>>,
   Check<Equal<Parameters<InputMask<{ mask: ArrayConstructor }>['updateOptions']>, [Partial<MaskedDynamicOptions>]>>,
@@ -57,11 +56,11 @@ type cases = [
 
   Check<Equal<Parameters<InputMask<{ mask: typeof MaskedDate }>['updateOptions']>, [Partial<MaskedDateOptions>]>>,
   Check<Equal<Parameters<InputMask<{ mask: typeof MaskedDynamic }>['updateOptions']>, [Partial<MaskedDynamicOptions>]>>,
-  Check<Equal<Parameters<InputMask<{ mask: typeof MaskedEnum }>['updateOptions']>, [Partial<MaskedEnumOptions>]>>,
+  Check<Equal<Parameters<InputMask<{ mask: typeof MaskedEnum, enum: string[] }>['updateOptions']>, [Partial<MaskedEnumOptions>]>>,
   Check<Equal<Parameters<InputMask<{ mask: typeof MaskedFunction }>['updateOptions']>, [Partial<MaskedFunctionOptions>]>>,
   Check<Equal<Parameters<InputMask<{ mask: typeof MaskedNumber }>['updateOptions']>, [Partial<MaskedNumberOptions>]>>,
   Check<Equal<Parameters<InputMask<{ mask: typeof MaskedPattern }>['updateOptions']>, [Partial<MaskedPatternOptions>]>>,
-  Check<Equal<Parameters<InputMask<{ mask: typeof MaskedRange }>['updateOptions']>, [Partial<MaskedRangeOptions>]>>,
+  Check<Equal<Parameters<InputMask<{ mask: typeof MaskedRange, from: number, to: number }>['updateOptions']>, [Partial<MaskedRangeOptions>]>>,
   Check<Equal<Parameters<InputMask<{ mask: typeof MaskedRegExp }>['updateOptions']>, [Partial<MaskedRegExpOptions>]>>,
   Check<Equal<Parameters<InputMask<{ mask: typeof MyMasked }>['updateOptions']>, [Partial<Record<string, any>>]>>,
 ];
