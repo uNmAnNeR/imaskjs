@@ -22,11 +22,6 @@
       },
     };
 
-    // const opts = {
-    //   mask: '0Xa0Xa',
-    //   lazy: false,
-    // }
-
     const input = document.getElementById('input');
     var result = document.getElementById('value');
     var unmasked = document.getElementById('unmasked');
@@ -35,11 +30,6 @@
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });
-
-    // input.addEventListener('keydown', e => console.log('keydown', e.isComposing));
-    // input.addEventListener('input', e => console.log('input', e.isComposing, e.inputType));
-    // input.addEventListener('compositionstart', e => console.log('compositionstart'));
-    // input.addEventListener('compositionend', e => console.log('compositionend'));
 
     // document.getElementById('input').addEventListener('focus', () => {
     //   imask.updateOptions({

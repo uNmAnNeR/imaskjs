@@ -270,6 +270,24 @@ describe('Insert', function () {
       masked.rawInputValue = '55';
       assert.equal(masked.value, '5-5');
     });
+
+    it('should not skip char for incomplete range block', function () {
+      masked.updateOptions({
+        mask: 'num-num',
+        blocks: {
+          num: {
+            mask: MaskedRange,
+            from: 0,
+            to: 10,
+          },
+        },
+        lazy: true,
+        overwrite: false,
+      });
+
+      masked.rawInputValue = 'aaaa';
+      assert.equal(masked.value, '');
+    });
   });
 
   describe('repeat', function () {
