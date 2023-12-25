@@ -5,10 +5,6 @@ vanilla javascript input mask
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Coverage Status](https://coveralls.io/repos/github/uNmAnNeR/imaskjs/badge.svg?branch=master)](https://coveralls.io/github/uNmAnNeR/imaskjs?branch=master)
 
-<a href="https://opencollective.com/imask/donate" target="_blank">
-  <img src="https://opencollective.com/imask/donate/button.png?color=blue" width=300 />
-</a>
-
 ## Features
 * get and set *raw* and *unmasked* values easily
 * no external dependencies
@@ -29,6 +25,7 @@ vanilla javascript input mask
   - secure text entry
   - **[Enum](https://imask.js.org/guide.html#masked-enum)** and **[Range](https://imask.js.org/guide.html#masked-range)** masks
 * convert and format values with **[pipe](https://imask.js.org/guide.html#pipe)**
+  - **[Repeating](https://imask.js.org/guide.html#repeat)** blocks
 
 ## Plugins
 * [Vue plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask)
