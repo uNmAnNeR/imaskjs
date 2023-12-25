@@ -42,6 +42,12 @@ type BlockPosData = {
   offset: number,
 };
 
+export
+type BlockExtraOptions = {
+  expose?: boolean,
+  repeat?: number | [number, number],
+};
+
 
 /** Pattern mask */
 export default
@@ -57,7 +63,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
   declare mask: string;
   /** */
-  declare blocks: { [key: string]: ExtendFactoryArgOptions<{ expose?: boolean, repeat?: number }> };
+  declare blocks: { [key: string]: ExtendFactoryArgOptions<BlockExtraOptions> };
   /** */
   declare definitions: Definitions;
   /** Single char for empty input */
@@ -117,7 +123,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
         // use block name with max length
         const bName = bNames[0];
         if (bName) {
-          const { expose, repeat, ...bOpts } = normalizeOpts(this.blocks[bName]) as NormalizedOpts<FactoryArg> & { expose?: boolean, repeat?: number };
+          const { expose, repeat, ...bOpts } = normalizeOpts(this.blocks[bName]) as NormalizedOpts<FactoryArg> & BlockExtraOptions; // TODO type Opts<Arg & Extra>
           const blockOpts = {
             lazy: this.lazy,
             eager: this.eager,

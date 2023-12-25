@@ -12,13 +12,12 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: 'aar00',
       lazy: false,
+      mask: 'r0',
       blocks: {
         r: {
-          mask: 'ax0',
-          scale: 2,
-          repeat: 2,
+          mask: 'a',
+          repeat: [2, 5],
         },
       },
     };

@@ -1,64 +1,76 @@
 import ChangeDetails from '../core/change-details';
 import IMask from '../core/holder';
 import { type AppendFlags } from './base';
-import createMask, { type FactoryArg, normalizeOpts, type ExtendFactoryArgOptions, type UpdateOpts, type FactoryReturnMasked } from './factory';
-import MaskedPattern, { type MaskedPatternOptions, type MaskedPatternState } from './pattern';
+import createMask, { type FactoryArg, normalizeOpts, type ExtendFactoryArgOptions, type UpdateOpts } from './factory';
+import MaskedPattern, { type BlockExtraOptions, type MaskedPatternOptions, type MaskedPatternState } from './pattern';
 import type PatternBlock from './pattern/block';
 
 
-type RepeatBlockExtraOptions<M extends FactoryArg> = Partial<Pick<RepeatBlock<M>, 'repeat'>>;
+export
+type RepeatBlockExtraOptions = Pick<BlockExtraOptions, 'repeat'>;
 
 export
-type RepeatBlockOptions<M extends FactoryArg> = ExtendFactoryArgOptions<RepeatBlockExtraOptions<M>>;
+type RepeatBlockOptions = ExtendFactoryArgOptions<RepeatBlockExtraOptions>;
 
 
 /** Pattern mask */
 export default
 class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
-  declare block: FactoryReturnMasked<M> & { repeat?: number };
-  declare repeat: number;
+  declare _blockOpts: M & { repeat?: number };
+  declare repeat: Required<RepeatBlockExtraOptions>['repeat'];
 
-  constructor (opts: RepeatBlockOptions<M>) {
+
+  get repeatFrom (): number {
+    return (
+      Array.isArray(this.repeat) ? this.repeat[0] :
+      this.repeat === Infinity ? 0 : this.repeat
+    ) ?? 0;
+  }
+
+  get repeatTo (): number {
+    return (Array.isArray(this.repeat) ? this.repeat[1] : this.repeat) ?? Infinity;
+  }
+
+  constructor (opts: RepeatBlockOptions) {
     super(opts as MaskedPatternOptions);
   }
 
-  override updateOptions (opts: UpdateOpts<RepeatBlockOptions<M>>) {
+  override updateOptions (opts: UpdateOpts<RepeatBlockOptions>) {
     super.updateOptions(opts as MaskedPatternOptions);
   }
 
-  override _update (opts: UpdateOpts<M> & RepeatBlockExtraOptions<M>) {
-    const { repeat, ...block } = normalizeOpts(opts) as any; // TODO type
-    this.block = createMask(Object.assign({}, this.block, block));
-    this.repeat = repeat ?? this.block.repeat ?? this.repeat ?? Infinity;
+  override _update (opts: UpdateOpts<M> & RepeatBlockExtraOptions) {
+    const { repeat, ...blockOpts } = normalizeOpts(opts) as any; // TODO type
+    this._blockOpts = Object.assign({}, this._blockOpts, blockOpts);
+    const block = createMask(this._blockOpts);
+    this.repeat = repeat ?? (block as any).repeat ?? this.repeat ?? Infinity; // TODO type
 
     super._update({
-      mask: 'm'.repeat(Math.max(this.repeat == Infinity ? (this._blocks?.length || 1) : this.repeat, 1)),
-      blocks: { m: this.block },
-      eager: this.block.eager,
-      overwrite: this.block.overwrite,
-      skipInvalid: this.block.skipInvalid,
-      lazy: (this.block as MaskedPattern).lazy,
-      placeholderChar: (this.block as MaskedPattern).placeholderChar,
-      displayChar: (this.block as MaskedPattern).displayChar,
+      mask: 'm'.repeat(Math.max(this.repeatTo === Infinity && this._blocks?.length || 0, this.repeatFrom)),
+      blocks: { m: block },
+      eager: block.eager,
+      overwrite: block.overwrite,
+      skipInvalid: block.skipInvalid,
+      lazy: (block as MaskedPattern).lazy,
+      placeholderChar: (block as MaskedPattern).placeholderChar,
+      displayChar: (block as MaskedPattern).displayChar,
     });
   }
 
   _allocateBlock (bi: number): PatternBlock | undefined {
     if (bi < this._blocks.length) return this._blocks[bi];
-    if (this.repeat === Infinity || this._blocks.length < this.repeat) {
-      this._blocks.push(createMask({ mask: this.block }));
+    if (this.repeatTo === Infinity || this._blocks.length < this.repeatTo) {
+      this._blocks.push(createMask(this._blockOpts));
       this.mask += 'm';
       return this._blocks[this._blocks.length - 1];
     }
   }
 
   override _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
-    const blockIter = this._mapPosToBlock(this.displayValue.length);
     const details = new ChangeDetails();
-    if (!blockIter) return details;
 
     for (
-      let bi=blockIter.index, block, allocated;
+      let bi=this._mapPosToBlock(this.displayValue.length)?.index ?? Math.max(this._blocks.length - 1, 0), block, allocated;
       // try to get a block or
       // try to allocate a new block if not allocated already
       (block = this._blocks[bi] ?? (allocated = !allocated && this._allocateBlock(bi)));
@@ -82,18 +94,25 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
   }
 
   _trimEmptyTail (fromPos: number=0, toPos?: number): void {
-    if (this.repeat !== Infinity) return;
+    const firstBlockIndex = Math.max(this._mapPosToBlock(fromPos)?.index || 0, this.repeatFrom, 0);
+    let lastBlockIndex;
+    if (toPos != null) lastBlockIndex = this._mapPosToBlock(toPos)?.index;
+    if (lastBlockIndex == null) lastBlockIndex = this._blocks.length - 1;
 
-    const firstBlockIndex = Math.max(this._mapPosToBlock(fromPos)?.index || 0, 1);
-    let blockIndex;
-    if (toPos != null) blockIndex = this._mapPosToBlock(toPos)?.index;
-    if (blockIndex == null) blockIndex = this._blocks.length - 1;
-
-    for (; firstBlockIndex <= blockIndex; --blockIndex) {
+    let removeCount = 0;
+    for (let blockIndex = lastBlockIndex; firstBlockIndex <= blockIndex; --blockIndex, ++removeCount) {
       if (this._blocks[blockIndex].unmaskedValue) break;
-      this._blocks.splice(blockIndex, 1);
-      this.mask = this.mask.slice(1);
     }
+
+    if (removeCount) {
+      this._blocks.splice(lastBlockIndex - removeCount + 1, removeCount);
+      this.mask = this.mask.slice(removeCount);
+    }
+  }
+
+  override reset () {
+    super.reset();
+    this._trimEmptyTail();
   }
 
   override remove (fromPos: number=0, toPos: number=this.displayValue.length): ChangeDetails {
@@ -103,7 +122,7 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
   }
 
   override totalInputPositions (fromPos: number=0, toPos?: number): number {
-    if (toPos == null && this.repeat === Infinity) return Infinity;
+    if (toPos == null && this.repeatTo === Infinity) return Infinity;
     return super.totalInputPositions(fromPos, toPos);
   }
 
