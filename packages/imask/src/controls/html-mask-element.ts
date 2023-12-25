@@ -18,6 +18,7 @@ abstract class HTMLMaskElement extends MaskElement {
     this.input = input;
     this._onKeydown = this._onKeydown.bind(this);
     this._onInput = this._onInput.bind(this);
+    this._onBeforeinput = this._onBeforeinput.bind(this);
     this._onCompositionEnd = this._onCompositionEnd.bind(this);
   }
 
@@ -34,6 +35,7 @@ abstract class HTMLMaskElement extends MaskElement {
   override bindEvents (handlers: EventHandlers) {
     this.input.addEventListener('keydown', this._onKeydown as EventListener);
     this.input.addEventListener('input', this._onInput as EventListener);
+    this.input.addEventListener('beforeinput', this._onBeforeinput as EventListener);
     this.input.addEventListener('compositionend', this._onCompositionEnd as EventListener);
     this.input.addEventListener('drop', handlers.drop);
     this.input.addEventListener('click', handlers.click);
