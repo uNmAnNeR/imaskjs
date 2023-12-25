@@ -85,6 +85,7 @@ abstract class HTMLMaskElement extends MaskElement {
   override unbindEvents () {
     this.input.removeEventListener('keydown', this._onKeydown as EventListener);
     this.input.removeEventListener('input', this._onInput as EventListener);
+    this.input.removeEventListener('beforeinput', this._onBeforeinput as EventListener);
     this.input.removeEventListener('compositionend', this._onCompositionEnd as EventListener);
     this.input.removeEventListener('drop', this._handlers.drop);
     this.input.removeEventListener('click', this._handlers.click);
