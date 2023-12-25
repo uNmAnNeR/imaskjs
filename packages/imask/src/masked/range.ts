@@ -85,7 +85,10 @@ class MaskedRange extends MaskedPattern {
     let details: ChangeDetails;
     [ch, details] = super.doPrepareChar(ch.replace(/\D/g, ''), flags);
 
-    if (!this.autofix || !ch) return [ch, details];
+    if (!this.autofix || !ch) {
+      details.skip = !this.isComplete;
+      return [ch, details];
+    }
 
     const fromStr = String(this.from).padStart(this.maxLength, '0');
     const toStr = String(this.to).padStart(this.maxLength, '0');

@@ -2,6 +2,9 @@ import MaskElement, { EventHandlers } from './mask-element';
 import IMask from '../core/holder';
 
 
+const KEY_Z = 90;
+const KEY_Y = 89;
+
 /** Bridge between HTMLElement and {@link Masked} */
 export default
 abstract class HTMLMaskElement extends MaskElement {
@@ -22,16 +25,12 @@ abstract class HTMLMaskElement extends MaskElement {
     return (this.input.getRootNode?.() ?? document) as HTMLDocument;
   }
 
-  /**
-    Is element in focus
-  */
+  /** Is element in focus */
   get isActive (): boolean {
     return this.input === this.rootElement.activeElement;
   }
 
-  /**
-    Binds HTMLElement events to mask internal events
-  */
+  /** Binds HTMLElement events to mask internal events */
   override bindEvents (handlers: EventHandlers) {
     this.input.addEventListener('keydown', this._onKeydown as EventListener);
     this.input.addEventListener('input', this._onInput as EventListener);
@@ -45,19 +44,31 @@ abstract class HTMLMaskElement extends MaskElement {
 
   _onKeydown (e: KeyboardEvent) {
     if (this._handlers.redo && (
-      (e.keyCode === 90 && e.shiftKey && (e.metaKey || e.ctrlKey)) ||
-      (e.keyCode === 89 && e.ctrlKey)
+      (e.keyCode === KEY_Z && e.shiftKey && (e.metaKey || e.ctrlKey)) ||
+      (e.keyCode === KEY_Y && e.ctrlKey)
     )) {
       e.preventDefault();
       return this._handlers.redo(e);
     }
 
-    if (this._handlers.undo && e.keyCode === 90 && (e.metaKey || e.ctrlKey)) {
+    if (this._handlers.undo && e.keyCode === KEY_Z && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       return this._handlers.undo(e);
     }
 
     if (!e.isComposing) this._handlers.selectionChange(e);
+  }
+
+  _onBeforeinput (e: InputEvent) {
+    if (e.inputType === 'historyUndo' && this._handlers.undo) {
+      e.preventDefault();
+      return this._handlers.undo(e);
+    }
+
+    if (e.inputType === 'historyRedo' && this._handlers.redo) {
+      e.preventDefault();
+      return this._handlers.redo(e);
+    }
   }
 
   _onCompositionEnd (e: CompositionEvent) {
@@ -68,9 +79,7 @@ abstract class HTMLMaskElement extends MaskElement {
     if (!e.isComposing) this._handlers.input(e);
   }
 
-  /**
-    Unbinds HTMLElement events to mask internal events
-  */
+  /** Unbinds HTMLElement events to mask internal events */
   override unbindEvents () {
     this.input.removeEventListener('keydown', this._onKeydown as EventListener);
     this.input.removeEventListener('input', this._onInput as EventListener);
