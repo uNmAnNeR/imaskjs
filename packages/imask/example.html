@@ -12,14 +12,21 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: '00000',
+      lazy: false,
+      mask: 'r0',
+      blocks: {
+        r: {
+          mask: 'a',
+          repeat: [2, 5],
+        },
+      },
     };
 
     const input = document.getElementById('input');
     var result = document.getElementById('value');
     var unmasked = document.getElementById('unmasked');
     var imask = IMask(input, opts).on('accept', () => {
-      // console.log('accept', imask.value, imask.unmaskedValue, imask.typedValue);
+      console.log('accept', imask.value, imask.unmaskedValue, imask.typedValue);
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });

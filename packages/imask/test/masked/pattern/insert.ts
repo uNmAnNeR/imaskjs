@@ -3,6 +3,7 @@ import { describe, it, beforeEach, mock } from 'node:test';
 
 import { DIRECTION } from '../../../src/core/utils';
 import '../../../src/masked/number';
+import '../../../src/masked/repeat';
 import type MaskedNumber from '../../../src/masked/number';
 import MaskedRange from '../../../src/masked/range';
 import MaskedPattern from '../../../src/masked/pattern';
@@ -286,6 +287,29 @@ describe('Insert', function () {
 
       masked.rawInputValue = 'aaaa';
       assert.equal(masked.value, '');
+    });
+  });
+
+  describe('repeat', function () {
+    it('should insert if possible and skip otherwise', function () {
+      masked.updateOptions({
+        mask: 'r0',
+        blocks: {
+          r: {
+            mask: 'a',
+            repeat: Infinity,
+          },
+        },
+      });
+
+      masked.value = 'aaaa';
+      assert.equal(masked.value, 'aaaa_');
+
+      masked.value = '0';
+      assert.equal(masked.value, '0');
+
+      masked.value = 'aa0';
+      assert.equal(masked.value, 'aa0');
     });
   });
 });
