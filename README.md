@@ -24,8 +24,8 @@ vanilla javascript input mask
   - reusable blocks
   - secure text entry
   - **[Enum](https://imask.js.org/guide.html#masked-enum)** and **[Range](https://imask.js.org/guide.html#masked-range)** masks
-* convert and format values with **[pipe](https://imask.js.org/guide.html#pipe)**
   - **[Repeating](https://imask.js.org/guide.html#repeat)** blocks
+* convert and format values with **[pipe](https://imask.js.org/guide.html#pipe)**
 
 ## Plugins
 * [Vue plugin](https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask)
