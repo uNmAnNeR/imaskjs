@@ -307,7 +307,7 @@ class MaskedNumber extends Masked<number> {
     return parts.join(this.radix);
   }
 
-  doSkipInvalid (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): boolean {
+  override doSkipInvalid (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): boolean {
     const dropFractional = this.scale === 0 && ch !== this.thousandsSeparator && (
       ch === this.radix ||
       ch === MaskedNumber.UNMASKED_RADIX ||

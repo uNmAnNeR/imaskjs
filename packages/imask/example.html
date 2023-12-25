@@ -12,23 +12,24 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: Date,
-      autofix: 'pad',
+      lazy: false,
+      mask: 'r0',
+      blocks: {
+        r: {
+          mask: 'a',
+          repeat: [2, 5],
+        },
+      },
     };
 
     const input = document.getElementById('input');
     var result = document.getElementById('value');
     var unmasked = document.getElementById('unmasked');
     var imask = IMask(input, opts).on('accept', () => {
-      console.log('accept', imask.value, imask.unmaskedValue, imask.typedValue);
+      console.log('accept', imask.value, imask.mask);
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });
-
-    input.addEventListener('keydown', e => console.log('keydown', e.isComposing));
-    input.addEventListener('input', e => console.log('input', e.isComposing, e.inputType));
-    input.addEventListener('compositionstart', e => console.log('compositionstart'));
-    input.addEventListener('compositionend', e => console.log('compositionend'));
 
     // document.getElementById('input').addEventListener('focus', () => {
     //   imask.updateOptions({

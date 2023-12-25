@@ -1,6 +1,7 @@
 import type { default as _InputMask, InputMaskElement as _InputMaskElement } from '../controls/input';
 import type { default as _Masked } from '../masked/base';
 import type { default as _MaskedPattern } from '../masked/pattern';
+import type { default as _RepeatBlock } from '../masked/repeat';
 import type { default as _MaskedDate } from '../masked/date';
 import type { default as _MaskedDynamic } from '../masked/dynamic';
 import type { default as _MaskedEnum } from '../masked/enum';
@@ -36,6 +37,7 @@ declare namespace IMask {
   export let createMask: typeof _createMask;
   export let Masked: typeof _Masked;
   export let MaskedPattern: typeof _MaskedPattern;
+  export let RepeatBlock: typeof _RepeatBlock;
   export let MaskedDate: typeof _MaskedDate;
   export let MaskedDynamic: typeof _MaskedDynamic;
   export let MaskedEnum: typeof _MaskedEnum;
