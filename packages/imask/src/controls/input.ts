@@ -242,7 +242,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
 
   /** Updates options with deep equal check, recreates {@link Masked} model if mask type changes */
   updateOptions(opts: UpdateOpts<Opts>) {
-    const { mask, ...restOpts } = opts;
+    const { mask, ...restOpts } = opts as any; // TODO types, yes, mask is optional
 
     const updateMask = !this.maskEquals(mask);
     const updateOpts = this.masked.optionsIsChanged(restOpts);

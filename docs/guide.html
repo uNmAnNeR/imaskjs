@@ -781,6 +781,41 @@ IMask(
     </div>
   </div>
 
+  <h4 id="repeat" class="section-h"><a href="#repeat">Repeat block (since 7.3.0)</a></h4>
+  <div class="form-item">
+    <label>Repeat pattern block:</label>
+    <div class="input-select">
+      <input id="repeat-mask" type="text" value="">
+      <select id="select-repeat">
+        <option value="Infinity">Repeat: Infinity</option>
+        <option value="3">Repeat: 3</option>
+        <option value="[2, 4]">Repeat: [2, 4]</option>
+      </select>
+    </div>
+
+    <div class="toggle-panel">
+      <label for="repeat-mask-source">source</label>
+      <input id="repeat-mask-source" type="checkbox">
+      <div class="toggle-panel-content">
+{% highlight javascript %}
+IMask(
+  document.getElementById('repeat-mask'),
+  {
+    mask: 'r',
+    lazy: false,
+    blocks: {
+      r: {
+        repeat: <SELECT>,
+        mask: '0',
+      }
+    },
+  }
+)
+{% endhighlight %}
+      </div>
+    </div>
+  </div>
+
 
   <h3 id="masked-enum" class="section-h"><a href="#enum">Enum Mask</a></h3>
   <p>Enum mask extends <a href="#masked-pattern">Pattern</a> mask and can be used to restrict input within characters enum.</p>
@@ -1547,7 +1582,6 @@ IMask(element, { mask: Number });
         autofix: false
       }
     );
-
     var selectAutofix = document.getElementById('select-autofix');
     selectAutofix.addEventListener('change', function (e) {
       var val = e.target.value;
@@ -1555,6 +1589,32 @@ IMask(element, { mask: Number });
         autofix: val === 'false' ? false :
           val === 'true' ? true :
           'pad',
+      });
+    });
+
+    var repeatMask = IMask(
+      document.getElementById('repeat-mask'),
+      {
+        mask: 'r',
+        lazy: false,
+        blocks: {
+          r: {
+            repeat: Infinity,
+            mask: '0',
+          }
+        },
+      }
+    );
+    var selectRepeat = document.getElementById('select-repeat');
+    selectRepeat.addEventListener('change', function (e) {
+      var val = e.target.value;
+      repeatMask.updateOptions({
+        blocks: {
+          r: {
+            autofix: eval(val),
+            mask: '0',
+          }
+        },
       });
     });
 
