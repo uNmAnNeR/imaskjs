@@ -3,12 +3,19 @@ import IMask from '../core/holder';
 
 export
 type ElementEvent =
-  'selectionChange' |
-  'input' |
-  'drop' |
-  'click' |
-  'focus' |
-  'commit';
+  | 'selectionChange'
+  | 'input'
+  | 'drop'
+  | 'click'
+  | 'focus'
+  | 'commit'
+;
+
+export
+type EventHandlers = { [key in ElementEvent]: (...args: any[]) => void } & {
+  undo?: (...args: any[]) => void;
+  redo?: (...args: any[]) => void;
+}
 
 /**  Generic element API to use with mask */
 export default
@@ -59,7 +66,7 @@ abstract class MaskElement {
   /** */
   abstract _unsafeSelect (start: number, end: number): void;
   /** */
-  abstract bindEvents (handlers: {[key in ElementEvent]: Function}): void;
+  abstract bindEvents (handlers: EventHandlers): void;
   /** */
   abstract unbindEvents (): void
 }

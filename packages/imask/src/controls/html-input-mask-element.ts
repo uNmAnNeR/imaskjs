@@ -13,7 +13,6 @@ class HTMLInputMaskElement extends HTMLMaskElement {
   constructor (input: InputElement) {
     super(input);
     this.input = input;
-    this._handlers = {};
   }
 
   /** Returns InputElement selection start */

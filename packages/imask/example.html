@@ -26,7 +26,7 @@
     var result = document.getElementById('value');
     var unmasked = document.getElementById('unmasked');
     var imask = IMask(input, opts).on('accept', () => {
-      console.log('accept', imask.value, imask.mask);
+      console.log('accept', imask.value, imask.unmaskedValue, imask.typedValue);
       result.innerHTML = imask.value;
       unmasked.innerHTML = imask.unmaskedValue;
     });
