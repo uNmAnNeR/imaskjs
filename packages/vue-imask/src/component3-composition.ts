@@ -52,19 +52,19 @@ export default defineComponent<MaskProps>({
   setup (props, { attrs, emit }) {
     const { el, masked, unmasked, typed } = useIMask(extractOptionsFromProps(props as MaskProps, VALUE_PROPS) as FactoryOpts, {
       emit,
-      onAccept: () => {
+      onAccept: (event?: InputEvent) => {
         // emit more events
         const v = masked.value;
-        emit('accept:value', v);
-        emit('update:value', v);
-        emit('update:masked', v);
-        emit('update:modelValue', v);
+        emit('accept:value', v, event);
+        emit('update:value', v, event);
+        emit('update:masked', v, event);
+        emit('update:modelValue', v, event);
 
-        emit('update:unmasked', unmasked.value);
-        emit('update:typed', typed.value);
+        emit('update:unmasked', unmasked.value, event);
+        emit('update:typed', typed.value, event);
       },
-      onComplete: () => {
-        emit('complete:value', masked.value);
+      onComplete: (event?: InputEvent) => {
+        emit('complete:value', masked.value, event);
       },
     } as ComposableParams<MaskProps>);
 

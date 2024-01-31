@@ -60,7 +60,7 @@ function useIMask<
   );
 
   const _onComplete = useCallback(
-    () => maskRef.current && onComplete?.(maskRef.current.value, maskRef.current),
+    (event?: InputEvent) => maskRef.current && onComplete?.(maskRef.current.value, maskRef.current, event),
     [onComplete],
   );
 

@@ -33,6 +33,7 @@
   </main>
 
   <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-demi"></script>
   <script src="https://unpkg.com/vue-types"></script>
   <script src="https://unpkg.com/imask"></script>
   <script src="dist/vue-imask.js"></script>
@@ -41,22 +42,21 @@
     var testDateMask = {
       mask: Date
     };
-    var app = new Vue({
-      el: '#app',
+    var app = Vue.createApp({
       directives: {
         imask: VueIMask.IMaskDirective
       },
       components: {
         'imask-input': VueIMask.IMaskComponent
       },
-      data: {
+      data: () => ({
         dateMask: testDateMask,
         dateValue: '12.12',
 
         numberMask: testNumberMask,
         numberUnmask: 'typed',
-        numberValue: 0
-      },
+        // numberValue: 0,
+      }),
       methods: {
         onAcceptDate: function (e) {
           console.log('accept date', e.detail.value);
@@ -69,7 +69,7 @@
         onFocusNumber: function () {
           console.log('focus num');
         },
-        onAcceptNumber: function (value) {
+        onAcceptNumber: function (value, e) {
           console.log('accept num', value, typeof value);
         },
         onCompleteNumber: function (value) {
@@ -84,7 +84,7 @@
           else app.dateMask = testDateMask;
         }
       }
-    });
+    }).mount('#app');
     // setTimeout(function () {
     //   app.numberUnmask = false;
     //   app.numberValue = '123';

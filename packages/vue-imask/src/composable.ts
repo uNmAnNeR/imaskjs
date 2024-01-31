@@ -17,9 +17,9 @@ type ComposableEmitValue<E extends ComposableEmitEvent, Opts extends FactoryOpts
 
 export
 type ComposableParams<Opts extends FactoryOpts> = {
-  emit?: <E extends ComposableEmitEvent>(eventName: E, value: ComposableEmitValue<E, Opts>) => void,
-  onAccept?: () => void,
-  onComplete?: () => void,
+  emit?: <E extends ComposableEmitEvent>(eventName: E, value: ComposableEmitValue<E, Opts>, e?: InputEvent) => void,
+  onAccept?: (e?: InputEvent) => void,
+  onComplete?: (e?: InputEvent) => void,
 }
 
 export default
@@ -39,33 +39,34 @@ function useIMask<
   const masked: Ref<InputMask<Opts>['value']> = ref('');
   const unmasked: Ref<InputMask<Opts>['unmaskedValue']> = ref('');
   const typed: Ref<InputMask<Opts>['typedValue']> = ref(null);
+  const initialized = ref(false);
   let $el: MaskElement | undefined;
-  let $masked: InputMask<Opts>['value'];
-  let $unmasked: InputMask<Opts>['unmaskedValue'];
-  let $typed: InputMask<Opts>['typedValue'];
+  let $lastAcceptedValue: InputMask<Opts>['value'] | undefined;
+  let $lastAcceptedUnmaskedValue: InputMask<Opts>['unmaskedValue'] | undefined;
+  let $lastAcceptedTypedValue: InputMask<Opts>['typedValue'] | undefined;
 
-  function _onAccept () {
-    $typed = typed.value = (mask.value as InputMask<Opts>).typedValue;
-    $unmasked = unmasked.value = (mask.value as InputMask<Opts>).unmaskedValue;
-    $masked = masked.value = (mask.value as InputMask<Opts>).value;
+  function _onAccept (event?: InputEvent) {
+    $lastAcceptedTypedValue = typed.value = (mask.value as InputMask<Opts>).typedValue;
+    $lastAcceptedUnmaskedValue = unmasked.value = (mask.value as InputMask<Opts>).unmaskedValue;
+    $lastAcceptedValue = masked.value = (mask.value as InputMask<Opts>).value;
 
     if (emit) {
-      emit('accept', $masked);
-      emit('accept:masked', $masked);
-      emit('accept:typed', $typed);
-      emit('accept:unmasked', $unmasked);
+      emit('accept', masked.value, event);
+      emit('accept:masked', masked.value, event);
+      emit('accept:typed', typed.value, event);
+      emit('accept:unmasked', unmasked.value, event);
     }
-    if (onAccept) onAccept();
+    if (onAccept) onAccept(event);
   }
 
-  function _onComplete () {
+  function _onComplete (event?: InputEvent) {
     if (emit) {
-      emit('complete', $masked);
-      emit('complete:masked', $masked);
-      emit('complete:typed', $typed);
-      emit('complete:unmasked', $unmasked);
+      emit('complete', (mask.value as InputMask<Opts>).value, event);
+      emit('complete:masked', (mask.value as InputMask<Opts>).value, event);
+      emit('complete:typed', (mask.value as InputMask<Opts>).typedValue, event);
+      emit('complete:unmasked', (mask.value as InputMask<Opts>).unmaskedValue, event);
     }
-    if (onComplete) onComplete();
+    if (onComplete) onComplete(event);
   }
 
   function _initMask () {
@@ -79,28 +80,38 @@ function useIMask<
       .on('complete', _onComplete);
 
     _onAccept();
+
+    initialized.value = true;
   }
 
   function _destroyMask () {
-    if (mask.value) {
-      mask.value.destroy();
-      mask.value = undefined;
-    }
+    if (!initialized.value) return;
+    mask.value?.destroy();
+    mask.value = undefined;
   }
 
   onMounted(_initMask);
   onUnmounted(_destroyMask);
 
   watch(unmasked, () => {
-    if (mask.value) $unmasked = mask.value.unmaskedValue = unmasked.value;
+    if (mask.value && initialized.value) {
+      if ($lastAcceptedUnmaskedValue !== unmasked.value) mask.value.unmaskedValue = unmasked.value;
+      $lastAcceptedUnmaskedValue = undefined;
+    }
   });
 
   watch(masked, () => {
-    if (mask.value) $masked = mask.value.value = masked.value;
+    if (mask.value && initialized.value) {
+      if ($lastAcceptedValue !== masked.value) mask.value.value = masked.value;
+      $lastAcceptedValue = undefined;
+    }
   });
 
   watch(typed, () => {
-    if (mask.value) $typed = mask.value.typedValue = typed.value;
+    if (mask.value && initialized.value) {
+      if ($lastAcceptedTypedValue !== typed.value) mask.value.typedValue = typed.value;
+      $lastAcceptedTypedValue = undefined;
+    }
   });
 
   watch([el, _props], () => {
