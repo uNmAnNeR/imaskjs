@@ -120,12 +120,12 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
         this.currentMask.reset();
 
         if (insertValue) {
-          const d = this.currentMask.append(insertValue, {raw: true});
-          details.tailShift = d.inserted.length - prevValueBeforeTail.length;
+          this.currentMask.append(insertValue, { raw: true });
+          details.tailShift = this.currentMask.value.length - prevValueBeforeTail.length;
         }
 
         if (tailValue) {
-          details.tailShift += this.currentMask.append(tailValue, {raw: true, tail: true}).tailShift;
+          details.tailShift += this.currentMask.append(tailValue, { raw: true, tail: true }).tailShift;
         }
       } else if (prevMaskState) {
         // Dispatch can do something bad with state, so

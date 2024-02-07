@@ -87,6 +87,7 @@ class MaskedRange extends MaskedPattern {
 
     if (!this.autofix || !ch) {
       details.skip = !this.isComplete;
+      // TODO if (!this.isComplete) details.consumed = ch;
       return [ch, details];
     }
 

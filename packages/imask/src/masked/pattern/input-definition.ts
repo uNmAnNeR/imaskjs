@@ -118,6 +118,7 @@ class PatternInputDefinition<Opts extends FactoryOpts=any> implements PatternBlo
       details.inserted = this.placeholderChar;
     }
     details.skip = !details.inserted && !this.isOptional;
+    // TODO if (!optional) consumed = ch;
     this.isFilled = Boolean(details.inserted);
 
     return details;
