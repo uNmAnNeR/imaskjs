@@ -7,7 +7,7 @@ function fireEvent<Opts extends FactoryArg> (el: HTMLElement, eventName: string,
   el.dispatchEvent(e);
 }
 
-function initMask<Opts extends FactoryArg> (el: HTMLElement, opts: InputMask<Opts> | Opts) {
+function initMask<Opts extends FactoryArg> (el: HTMLElement, opts: InputMask<Opts> | Opts): InputMask<Opts> {
   const maskRef = (opts instanceof IMask.InputMask ? opts : IMask(el, opts as Opts));
   return maskRef
     .on('accept', () => fireEvent(el, 'accept', maskRef))
@@ -17,22 +17,25 @@ function initMask<Opts extends FactoryArg> (el: HTMLElement, opts: InputMask<Opt
 
 export default
 function IMaskAction<Opts extends FactoryArg> (el: HTMLElement, opts: Opts) {
-  let maskRef: InputMask<Opts> | undefined = opts && initMask(el, opts);
+  let maskRef: InputMask<Opts> | undefined;
+  let created: boolean | undefined;
 
   function destroy (): void {
-    if (maskRef) {
-      maskRef.destroy();
-      maskRef = undefined;
-    }
+    if (created) maskRef?.destroy();
+    maskRef = undefined;
+    created = undefined;
   }
 
   function update (opts: InputMask<Opts> | Opts | UpdateOpts<Opts>): void {
     if (!opts) return destroy();
 
-    if (opts instanceof IMask.InputMask) maskRef = opts;
-    else if (maskRef) maskRef.updateOptions(opts as UpdateOpts<Opts>);
-    else maskRef = initMask(el, opts as Opts);
+    if (opts instanceof IMask.InputMask || !maskRef) maskRef = initMask(el, opts as Opts);
+    else maskRef.updateOptions(opts as UpdateOpts<Opts>);
+
+    created = (opts as InputMask<Opts>) !== maskRef;
   }
+
+  update(opts);
 
   return {
     update,
