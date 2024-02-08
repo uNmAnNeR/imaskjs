@@ -6,7 +6,6 @@ type ChangeDetailsOptions = Pick<ChangeDetails,
   | 'inserted'
   | 'tailShift'
   | 'rawInserted'
-  | 'consumed'
   | 'skip'
 >;
 
@@ -19,8 +18,6 @@ class ChangeDetails {
   declare tailShift: number;
   /** Raw inserted is used by dynamic mask */
   declare rawInserted: string;
-  /** Not inserted but handled in some way. 'consumed' is always >= then 'rawInserted' */
-  declare consumed: string;
   /** Can skip chars */
   declare skip: boolean;
 
@@ -36,7 +33,6 @@ class ChangeDetails {
     Object.assign(this, {
       inserted: '',
       rawInserted: '',
-      consumed: '',
       tailShift: 0,
       skip: false,
     }, details);
@@ -46,7 +42,6 @@ class ChangeDetails {
   aggregate (details: ChangeDetails): this {
     this.inserted += details.inserted;
     this.rawInserted += details.rawInserted;
-    this.consumed += details.consumed || details.rawInserted;
     this.tailShift += details.tailShift;
     this.skip = this.skip || details.skip;
 
@@ -58,9 +53,9 @@ class ChangeDetails {
     return this.tailShift + this.inserted.length;
   }
 
-  // get skip (): boolean {
-  //   return this.rawInserted !== this.consumed;
-  // }
+  get consumed (): boolean {
+    return Boolean(this.rawInserted) || this.skip;
+  }
 }
 
 

@@ -286,7 +286,7 @@ abstract class Masked<Value=any> {
 
     for (let ci=0; ci<str.length; ++ci) {
       const d = this._appendChar(str[ci], flags, checkTail);
-      if (!d.consumed && !this.doSkipInvalid(str[ci], flags, checkTail)) break;
+      if (!d.rawInserted && !this.doSkipInvalid(str[ci], flags, checkTail)) break;
       details.aggregate(d);
     }
 

@@ -320,8 +320,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
       details.aggregate(blockDetails);
 
-      if (blockDetails.skip || blockDetails.rawInserted) break; // go next char
-      // TODO blockDetails.consumed
+      if (blockDetails.consumed) break; // go next char
     }
 
     return details;

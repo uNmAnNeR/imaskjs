@@ -127,7 +127,7 @@ class MaskedNumber extends Masked<number> {
         !flags.input && !flags.raw
       ) ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
     ), flags);
-    if (ch && !prepCh) details.skip = true; // TODO details.consumed = ch;
+    if (ch && !prepCh) details.skip = true;
 
     if (prepCh && !this.allowPositive && !this.value && prepCh !== '-') details.aggregate(this._appendChar('-'));
 
@@ -167,7 +167,7 @@ class MaskedNumber extends Masked<number> {
 
     const oldValue = this._value;
 
-    let appendDetails = super._appendCharRaw(ch, flags);
+    this._value += ch;
 
     const num = this.number;
     let accepted = !isNaN(num);
@@ -180,16 +180,22 @@ class MaskedNumber extends Masked<number> {
 
       if (fixedNum != null && this.autofix) {
         this._value = this.format(fixedNum, this).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
-        appendDetails.consumed = ch;
-        skip = oldValue === this._value;
+        skip ||= oldValue === this._value && !flags.tail; // if not changed on tail it's still ok to proceed
       }
 
-      accepted = !skip && Boolean(this._value.match(this._numberRegExp));
+      accepted = Boolean(this._value.match(this._numberRegExp));
     }
 
+    let appendDetails;
     if (!accepted) {
       this._value = oldValue;
-      appendDetails = new ChangeDetails({ skip });
+      appendDetails = new ChangeDetails();
+    } else {
+      appendDetails = new ChangeDetails({
+        inserted: this._value.slice(oldValue.length),
+        rawInserted: skip ? '' : ch,
+        skip,
+      });
     }
 
     this._value = this._insertThousandsSeparators(this._value);
@@ -199,7 +205,6 @@ class MaskedNumber extends Masked<number> {
     const beforeTailSeparatorsCount = this._separatorsCountFromSlice(beforeTailValue);
 
     appendDetails.tailShift += (beforeTailSeparatorsCount - prevBeforeTailSeparatorsCount) * this.thousandsSeparator.length;
-    appendDetails.skip ||= !appendDetails.rawInserted && ch === this.thousandsSeparator;
     return appendDetails;
   }
 

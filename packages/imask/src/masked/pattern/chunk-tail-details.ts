@@ -103,7 +103,7 @@ class ChunksTailDetails implements TailDetails {
         details.aggregate(tailDetails);
 
         // get not inserted chars
-        const remainChars = chunk.toString().slice(tailDetails.consumed.length);
+        const remainChars = chunk.toString().slice(tailDetails.rawInserted.length);
         if (remainChars) details.aggregate(masked.append(remainChars, { tail: true }));
       } else {
         details.aggregate(masked.append(chunk.toString(), { tail: true }));

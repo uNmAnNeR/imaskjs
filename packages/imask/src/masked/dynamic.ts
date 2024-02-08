@@ -283,6 +283,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
 
   override remove (fromPos?: number, toPos?: number): ChangeDetails {
     const details: ChangeDetails = new ChangeDetails();
+
     if (this.currentMask) {
       details.aggregate(this.currentMask.remove(fromPos, toPos))
         // update with dispatch
