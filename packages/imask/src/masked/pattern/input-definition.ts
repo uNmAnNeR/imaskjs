@@ -107,10 +107,10 @@ class PatternInputDefinition<Opts extends FactoryOpts=any> implements PatternBlo
 
     const state = this.masked.state;
     // simulate input
-    const details = this.masked._appendChar(ch, this.currentMaskFlags(flags));
+    let details = this.masked._appendChar(ch, this.currentMaskFlags(flags));
 
     if (details.inserted && this.doValidate(flags) === false) {
-      details.inserted = details.rawInserted = '';
+      details = new ChangeDetails();
       this.masked.state = state;
     }
 
@@ -129,13 +129,10 @@ class PatternInputDefinition<Opts extends FactoryOpts=any> implements PatternBlo
   }
 
   _appendPlaceholder (): ChangeDetails {
-    const details = new ChangeDetails();
-
-    if (this.isFilled || this.isOptional) return details;
+    if (this.isFilled || this.isOptional) return new ChangeDetails();
 
     this.isFilled = true;
-    details.inserted = this.placeholderChar;
-    return details;
+    return new ChangeDetails({ inserted: this.placeholderChar });
   }
 
   _appendEager (): ChangeDetails {

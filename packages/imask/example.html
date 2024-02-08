@@ -12,14 +12,10 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      lazy: false,
-      mask: 'r0',
-      blocks: {
-        r: {
-          mask: 'a',
-          repeat: [2, 5],
-        },
-      },
+      mask: Number,
+      min: -10,
+      max: 2000,
+      autofix: true,
     };
 
     const input = document.getElementById('input');

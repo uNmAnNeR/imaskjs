@@ -87,7 +87,7 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
 
       details.aggregate(blockDetails);
 
-      if (blockDetails.skip || blockDetails.rawInserted) break; // go next char
+      if (blockDetails.consumed) break; // go next char
     }
 
     return details;

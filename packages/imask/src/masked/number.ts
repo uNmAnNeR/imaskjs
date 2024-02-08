@@ -16,6 +16,7 @@ type MaskedNumberOptions = MaskedOptions<MaskedNumber,
   | 'max'
   | 'normalizeZeros'
   | 'padFractionalZeros'
+  | 'autofix'
 >;
 
 /** Number mask */
@@ -64,6 +65,8 @@ class MaskedNumber extends Masked<number> {
   declare format: (value: number, masked: Masked) => string;
   /** Parse string to get typed value */
   declare parse: (str: string, masked: Masked) => number;
+  /** */
+  declare autofix?: boolean;
 
   declare _numberRegExp: RegExp;
   declare _thousandsSeparatorRegExp: RegExp;
@@ -156,15 +159,47 @@ class MaskedNumber extends Masked<number> {
 
   
   override _appendCharRaw (ch: string, flags: AppendFlags={}): ChangeDetails {
-    if (!this.thousandsSeparator) return super._appendCharRaw(ch, flags);
-
     const prevBeforeTailValue = flags.tail && flags._beforeTailState ?
       flags._beforeTailState._value :
       this._value;
     const prevBeforeTailSeparatorsCount = this._separatorsCountFromSlice(prevBeforeTailValue);
     this._value = this._removeThousandsSeparators(this.value);
 
-    const appendDetails = super._appendCharRaw(ch, flags);
+    const oldValue = this._value;
+
+    this._value += ch;
+
+    const num = this.number;
+    let accepted = !isNaN(num);
+    let skip = false;
+
+    if (accepted) {
+      let fixedNum;
+      if (this.min != null && this.min < 0 && this.number < this.min) fixedNum = this.min;
+      if (this.max != null && this.max > 0 && this.number > this.max) fixedNum = this.max;
+
+      if (fixedNum != null) {
+        if (this.autofix) {
+          this._value = this.format(fixedNum, this).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
+          skip ||= oldValue === this._value && !flags.tail; // if not changed on tail it's still ok to proceed
+        } else {
+          accepted = false;
+        }
+      }
+      accepted &&= Boolean(this._value.match(this._numberRegExp));
+    }
+
+    let appendDetails;
+    if (!accepted) {
+      this._value = oldValue;
+      appendDetails = new ChangeDetails();
+    } else {
+      appendDetails = new ChangeDetails({
+        inserted: this._value.slice(oldValue.length),
+        rawInserted: skip ? '' : ch,
+        skip,
+      });
+    }
 
     this._value = this._insertThousandsSeparators(this._value);
     const beforeTailValue = flags.tail && flags._beforeTailState ?
@@ -173,7 +208,6 @@ class MaskedNumber extends Masked<number> {
     const beforeTailSeparatorsCount = this._separatorsCountFromSlice(beforeTailValue);
 
     appendDetails.tailShift += (beforeTailSeparatorsCount - prevBeforeTailSeparatorsCount) * this.thousandsSeparator.length;
-    appendDetails.skip = !appendDetails.rawInserted && ch === this.thousandsSeparator;
     return appendDetails;
   }
 
@@ -241,23 +275,6 @@ class MaskedNumber extends Masked<number> {
     }
 
     return cursorPos;
-  }
-
-  override doValidate (flags: AppendFlags): boolean {
-    // validate as string
-    let valid = Boolean(this._removeThousandsSeparators(this.value).match(this._numberRegExp));
-
-    if (valid) {
-      // validate as number
-      const number = this.number;
-      valid = valid && !isNaN(number) &&
-        // check min bound for negative values
-        (this.min == null || this.min >= 0 || this.min <= this.number) &&
-        // check max bound for positive values
-        (this.max == null || this.max <= 0 || this.number <= this.max);
-    }
-
-    return valid && super.doValidate(flags);
   }
 
   override doCommit () {

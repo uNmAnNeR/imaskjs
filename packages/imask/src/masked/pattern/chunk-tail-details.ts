@@ -78,7 +78,7 @@ class ChunksTailDetails implements TailDetails {
 
     const details = new ChangeDetails();
 
-    for (let ci=0; ci < this.chunks.length && !details.skip; ++ci) {
+    for (let ci=0; ci < this.chunks.length; ++ci) {
       const chunk = this.chunks[ci];
 
       const lastBlockIter = masked._mapPosToBlock(masked.displayValue.length);
@@ -93,17 +93,14 @@ class ChunksTailDetails implements TailDetails {
           // for continuous block also check if stop is exist
           masked._stops.indexOf(stop) >= 0
         ) {
-          const phDetails = masked._appendPlaceholder(stop);
-          details.aggregate(phDetails);
+          details.aggregate(masked._appendPlaceholder(stop));
         }
         chunkBlock = chunk instanceof ChunksTailDetails && masked._blocks[stop];
       }
 
       if (chunkBlock) {
         const tailDetails = chunkBlock.appendTail(chunk);
-        tailDetails.skip = false; // always ignore skip, it will be set on last
         details.aggregate(tailDetails);
-        masked._value += tailDetails.inserted;
 
         // get not inserted chars
         const remainChars = chunk.toString().slice(tailDetails.rawInserted.length);

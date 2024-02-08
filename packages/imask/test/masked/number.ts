@@ -13,6 +13,8 @@ describe('MaskedNumber', function () {
       thousandsSeparator: '',
       radix: ',',
       scale: 2,
+      min: Number.MIN_SAFE_INTEGER,
+      max: Number.MAX_SAFE_INTEGER,
     });
     masked.unmaskedValue = '';
   });
@@ -112,5 +114,39 @@ describe('MaskedNumber', function () {
 
     masked.updateOptions({ scale: 0 });
     assert.strictEqual(masked.value, '99');
+  });
+
+  describe('#autofix', function () {
+    const max = 200;
+    const min = -10;
+    
+    beforeEach(function () {
+      masked.updateOptions({
+        autofix: true,
+        max,
+        min,
+      });
+      masked.unmaskedValue = '100';
+    });
+
+    it('should round to max on input at the end', function () {
+      masked.splice(3, 0, '1', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.typedValue, max);
+    });
+
+    it('should round to max on input at the beginning', function () {
+      masked.splice(0, 0, '1', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.typedValue, max);
+    });
+
+    it('should round to max on input in the middle', function () {
+      masked.splice(1, 0, '1', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.typedValue, max);
+    });
+
+    it('should round to min on input sign at the beginning', function () {
+      masked.splice(0, 0, '-', DIRECTION.NONE, { input: true, raw: true });
+      assert.strictEqual(masked.typedValue, min);
+    });
   });
 });

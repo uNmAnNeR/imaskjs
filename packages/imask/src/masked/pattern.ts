@@ -320,7 +320,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
       details.aggregate(blockDetails);
 
-      if (blockDetails.skip || blockDetails.rawInserted) break; // go next char
+      if (blockDetails.consumed) break; // go next char
     }
 
     return details;
@@ -378,9 +378,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     this._blocks.slice(startBlockIndex, endBlockIndex)
       .forEach(b => {
         if (!b.lazy || toBlockIndex != null) {
-          const bDetails = b._appendPlaceholder((b as MaskedPattern)._blocks?.length);
-          this._value += bDetails.inserted;
-          details.aggregate(bDetails);
+          details.aggregate(b._appendPlaceholder((b as MaskedPattern)._blocks?.length));
         }
       });
 
