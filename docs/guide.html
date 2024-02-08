@@ -381,6 +381,7 @@ IMask(
               <div class="form-item">
                 <label class="checkbox"><input type="checkbox" name="padFractionalZeros">Pad fractional zeros</label>
                 <label class="checkbox"><input checked type="checkbox" name="normalizeZeros">Normalize zeros</label>
+                <label class="checkbox"><input checked type="checkbox" name="autofix">Autofix <kbd>since v7.4</kbd></label>
               </div>
             </div>
           </div>
@@ -423,7 +424,8 @@ IMask(element, {
 
   // additional number interval options (e.g.)
   min: -10000,
-  max: 10000
+  max: 10000,
+  autofix: true,
 })
 {% endhighlight %}
 
@@ -1379,13 +1381,11 @@ IMask(element, { mask: Number });
       mask: Number,
       scale: 2,
       thousandsSeparator: ' ',
-      // padFractionalZeros: true,
       normalizeZeros: true,
-      padFractionalZeros: true,
+      padFractionalZeros: false,
       min: -10000,
-      max: 10000
-      // radix: ',',
-      // mapToRadix: ['.']
+      max: 10000,
+      autofix: true
     }).on('accept', function() {
       document.getElementById('number-value').innerHTML = numberMask.masked.number;
     });
@@ -1398,6 +1398,7 @@ IMask(element, { mask: Number });
         mapToRadix: numberEl.querySelector('[name=mapToRadix]').value.split(''),
         thousandsSeparator: numberEl.querySelector('[name=thousandsSeparator]').value,
         padFractionalZeros: numberEl.querySelector('[name=padFractionalZeros]').checked,
+        autofix: numberEl.querySelector('[name=autofix]').checked,
         normalizeZeros: numberEl.querySelector('[name=normalizeZeros]').checked,
         min: numberEl.querySelector('[name=min]').value ?
           Number(numberEl.querySelector('[name=min]').value) : null,
