@@ -33,7 +33,7 @@ function useIMask<
   unmasked: Ref<InputMask<Opts>['unmaskedValue']>,
   typed: Ref<InputMask<Opts>['typedValue']>,
 } {
-  const _props = isRef(props) ? props : ref(props);
+  const _props = (isRef(props) ? props : ref(props)) as Ref<Opts>;
   const el: Ref<MaskElement | undefined> = ref();
   const mask: Ref<InputMask<Opts> | undefined> = ref();
   const masked: Ref<InputMask<Opts>['value']> = ref('');
@@ -123,7 +123,7 @@ function useIMask<
       if (!mask.value) {
         _initMask();
       } else {
-        mask.value.updateOptions($props);
+        mask.value.updateOptions($props as any);
       }
     }
   });
