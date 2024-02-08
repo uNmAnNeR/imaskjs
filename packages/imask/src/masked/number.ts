@@ -275,12 +275,14 @@ class MaskedNumber extends Masked<number> {
   }
 
   override doValidate (flags: AppendFlags): boolean {
+    const num = this.number;
+
     return Boolean(this._removeThousandsSeparators(this.value).match(this._numberRegExp)) &&
-      !isNaN(this.number) &&
+      !isNaN(num) &&
       // check min bound for negative values
-      (this.min == null || this.min >= 0 || this.min <= this.number) &&
+      (this.min == null || this.min >= 0 || this.min <= num) &&
       // check max bound for positive values
-      (this.max == null || this.max <= 0 || this.number <= this.max) &&
+      (this.max == null || this.max <= 0 || num <= this.max) &&
       super.doValidate(flags);
   }
 
