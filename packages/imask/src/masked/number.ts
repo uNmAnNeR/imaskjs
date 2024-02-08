@@ -178,12 +178,15 @@ class MaskedNumber extends Masked<number> {
       if (this.min != null && this.min < 0 && this.number < this.min) fixedNum = this.min;
       if (this.max != null && this.max > 0 && this.number > this.max) fixedNum = this.max;
 
-      if (fixedNum != null && this.autofix) {
-        this._value = this.format(fixedNum, this).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
-        skip ||= oldValue === this._value && !flags.tail; // if not changed on tail it's still ok to proceed
+      if (fixedNum != null) {
+        if (this.autofix) {
+          this._value = this.format(fixedNum, this).replace(MaskedNumber.UNMASKED_RADIX, this.radix);
+          skip ||= oldValue === this._value && !flags.tail; // if not changed on tail it's still ok to proceed
+        } else {
+          accepted = false;
+        }
       }
-
-      accepted = Boolean(this._value.match(this._numberRegExp));
+      accepted &&= Boolean(this._value.match(this._numberRegExp));
     }
 
     let appendDetails;
@@ -272,18 +275,6 @@ class MaskedNumber extends Masked<number> {
     }
 
     return cursorPos;
-  }
-
-  override doValidate (flags: AppendFlags): boolean {
-    const num = this.number;
-
-    return Boolean(this._removeThousandsSeparators(this.value).match(this._numberRegExp)) &&
-      !isNaN(num) &&
-      // check min bound for negative values
-      (this.min == null || this.min >= 0 || this.min <= num) &&
-      // check max bound for positive values
-      (this.max == null || this.max <= 0 || num <= this.max) &&
-      super.doValidate(flags);
   }
 
   override doCommit () {
