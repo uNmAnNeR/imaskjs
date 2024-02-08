@@ -63,7 +63,7 @@
     "imask": "^7.3.0"
   },
   "peerDependencies": {
-    "svelte": "^4.2.8"
+    "svelte": "^4.2.10"
   },
   "publishConfig": {
     "access": "public"
