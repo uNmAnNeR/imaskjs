@@ -1,0 +1,16 @@
+<table>
+  <thead>
+    <tr>
+      <th>non masked input phone</th>
+      <th>masked input phone</th>
+      <th>phone</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th><Input @value={{this.phone}} /></th>
+      <th><Input {{imask-phone this.phone onChange=(fn (mut this.phone))}} /></th>
+      <th>{{this.phone}}</th>
+    </tr>
+  </tbody>
+</table>
