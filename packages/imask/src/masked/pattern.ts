@@ -52,10 +52,11 @@ type BlockExtraOptions = {
 /** Pattern mask */
 export default
 class MaskedPattern<Value=string> extends Masked<Value> {
-  static DEFAULTS: Record<string, any> = {
+  static DEFAULTS = {
+    ...Masked.DEFAULTS,
     lazy: true,
     placeholderChar: '_'
-  } satisfies Partial<MaskedPattern>;
+  };
   static STOP_CHAR = '`';
   static ESCAPE_CHAR = '\\';
   static InputDefinition = PatternInputDefinition;
@@ -326,7 +327,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     return details;
   }
 
-  override extractTail (fromPos: number=0, toPos: number=this.displayValue.length): ChunksTailDetails {
+  override extractTail (fromPos: number=0, toPos: number=this.displayValue.length): TailDetails {
     const chunkTail = new ChunksTailDetails();
     if (fromPos === toPos) return chunkTail;
 

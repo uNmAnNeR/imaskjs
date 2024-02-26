@@ -49,7 +49,8 @@ class MaskedDate extends MaskedPattern<DateValue> {
       to: 9999,
     }
   });
-  static DEFAULTS: Record<string, any> = {
+  static DEFAULTS = {
+    ...MaskedPattern.DEFAULTS,
     mask: Date,
     pattern: 'd{.}`m{.}`Y',
     format: (date: DateValue, masked: Masked): string => {

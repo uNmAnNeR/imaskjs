@@ -12,10 +12,12 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: Number,
-      min: -10,
-      max: 2000,
-      autofix: true,
+      mask: IMask.MaskedEnum,
+      enum: Array.from({ length: 12 }, (_, i) =>
+        new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
+      ),
+      lazy: false,
+      matchValue: (estr, istr, matchFrom) => IMask.MaskedEnum.DEFAULTS.matchValue(estr.toLowerCase(), istr.toLowerCase(), matchFrom),
     };
 
     const input = document.getElementById('input');

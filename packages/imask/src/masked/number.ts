@@ -24,7 +24,8 @@ export default
 class MaskedNumber extends Masked<number> {
   static UNMASKED_RADIX = '.';
   static EMPTY_VALUES: Array<null | undefined | string | number> = [...Masked.EMPTY_VALUES, 0];
-  static DEFAULTS: Partial<MaskedNumberOptions> = {
+  static DEFAULTS = {
+    ...Masked.DEFAULTS,
     mask: Number,
     radix: ',',
     thousandsSeparator: '',

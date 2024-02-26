@@ -30,8 +30,6 @@ type HandleState = MaskedDynamicState | MaskedState;
 /** Dynamic mask for choosing appropriate mask in run-time */
 export default
 class MaskedDynamic<Value=any> extends Masked<Value> {
-  static DEFAULTS: Partial<MaskedDynamicOptions>;
-
   declare mask: DynamicMaskType;
   /** Currently chosen mask */
   declare currentMask?: Masked;
@@ -45,6 +43,44 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   declare _overwrite?: this['overwrite'];
   declare _eager?: this['eager'];
   declare _skipInvalid?: this['skipInvalid'];
+
+  static DEFAULTS: typeof Masked.DEFAULTS & Pick<MaskedDynamic, 'dispatch'> = {
+    ...Masked.DEFAULTS,
+    dispatch: (appended, masked, flags, tail) => {
+      if (!masked.compiledMasks.length) return;
+
+      const inputValue = masked.rawInputValue;
+
+      // simulate input
+      const inputs = masked.compiledMasks.map((m, index) => {
+        const isCurrent = masked.currentMask === m;
+        const startInputPos = isCurrent ? m.displayValue.length : m.nearestInputPos(m.displayValue.length, DIRECTION.FORCE_LEFT);
+
+        if (m.rawInputValue !== inputValue) {
+          m.reset();
+          m.append(inputValue, { raw: true });
+        } else if (!isCurrent) {
+          m.remove(startInputPos);
+        }
+        m.append(appended, masked.currentMaskFlags(flags));
+        m.appendTail(tail);
+
+        return {
+          index,
+          weight: m.rawInputValue.length,
+          totalInputPositions: m.totalInputPositions(
+            0,
+            Math.max(startInputPos, m.nearestInputPos(m.displayValue.length, DIRECTION.FORCE_LEFT)),
+          ),
+        };
+      });
+
+      // pop masks with longer values first
+      inputs.sort((i1, i2) => i2.weight - i1.weight || i2.totalInputPositions - i1.totalInputPositions);
+
+      return masked.compiledMasks[inputs[0].index];
+    }
+  };
 
   constructor (opts?: MaskedDynamicOptions) {
     super({
@@ -380,43 +416,6 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
     return Boolean(this.currentMask?.typedValueEquals(value));
   }
 }
-
-MaskedDynamic.DEFAULTS = {
-  dispatch: (appended, masked, flags, tail) => {
-    if (!masked.compiledMasks.length) return;
-
-    const inputValue = masked.rawInputValue;
-
-    // simulate input
-    const inputs = masked.compiledMasks.map((m, index) => {
-      const isCurrent = masked.currentMask === m;
-      const startInputPos = isCurrent ? m.displayValue.length : m.nearestInputPos(m.displayValue.length, DIRECTION.FORCE_LEFT);
-
-      if (m.rawInputValue !== inputValue) {
-        m.reset();
-        m.append(inputValue, { raw: true });
-      } else if (!isCurrent) {
-        m.remove(startInputPos);
-      }
-      m.append(appended, masked.currentMaskFlags(flags));
-      m.appendTail(tail);
-
-      return {
-        index,
-        weight: m.rawInputValue.length,
-        totalInputPositions: m.totalInputPositions(
-          0,
-          Math.max(startInputPos, m.nearestInputPos(m.displayValue.length, DIRECTION.FORCE_LEFT)),
-        ),
-      };
-    });
-
-    // pop masks with longer values first
-    inputs.sort((i1, i2) => i2.weight - i1.weight || i2.totalInputPositions - i1.totalInputPositions);
-
-    return masked.compiledMasks[inputs[0].index];
-  }
-};
 
 
 IMask.MaskedDynamic = MaskedDynamic;
