@@ -43,6 +43,7 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
   declare _overwrite?: this['overwrite'];
   declare _eager?: this['eager'];
   declare _skipInvalid?: this['skipInvalid'];
+  declare _autofix?: this['autofix'];
 
   static DEFAULTS: typeof Masked.DEFAULTS & Pick<MaskedDynamic, 'dispatch'> = {
     ...Masked.DEFAULTS,
@@ -400,6 +401,16 @@ class MaskedDynamic<Value=any> extends Masked<Value> {
 
   override set skipInvalid (skipInvalid: boolean | undefined) {
     this._skipInvalid = skipInvalid;
+  }
+
+  override get autofix (): boolean | 'pad' | undefined {
+    return this.currentMask ?
+      this.currentMask.autofix :
+      this._autofix;
+  }
+
+  override set autofix (autofix: boolean | 'pad' | undefined) {
+    this._autofix = autofix;
   }
 
   override maskEquals (mask: any): boolean {

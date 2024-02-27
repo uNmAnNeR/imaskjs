@@ -41,6 +41,7 @@ type MaskedOptions<M extends Masked=Masked, Props extends keyof M=never> = Parti
   | 'overwrite'
   | 'eager'
   | 'skipInvalid'
+  | 'autofix'
   | Props
 >>;
 
@@ -75,6 +76,8 @@ abstract class Masked<Value=any> {
   abstract eager?: boolean | 'remove' | 'append' | undefined;
   /** */
   abstract skipInvalid?: boolean | undefined;
+  /** */
+  abstract autofix?: boolean | 'pad' | undefined;
 
   /** */
   declare _initialized: boolean;
@@ -216,11 +219,33 @@ abstract class Masked<Value=any> {
 
   /** Appends char */
   _appendChar (ch: string, flags: AppendFlags={}, checkTail?: TailDetails): ChangeDetails {
-    const consistentState: MaskedState = this.state;
+    const consistentState = this.state;
     let details: ChangeDetails;
     [ch, details] = this.doPrepareChar(ch, flags);
 
-    if (ch) details = details.aggregate(this._appendCharRaw(ch, flags));
+    if (ch) {
+      details = details.aggregate(this._appendCharRaw(ch, flags));
+
+      // TODO handle `skip`?
+
+      // try `autofix` lookahead
+      if (!details.rawInserted && this.autofix === 'pad') {
+        const noFixState = this.state;
+        this.state = consistentState;
+
+        let fixDetails = this.pad(flags);
+        const chDetails = this._appendCharRaw(ch, flags);
+        fixDetails = fixDetails.aggregate(chDetails);
+
+        // if fix was applied or
+        // if details are equal use skip restoring state optimization
+        if (chDetails.rawInserted || fixDetails.equals(details)) {
+          details = fixDetails;
+        } else {
+          this.state = noFixState;
+        }
+      }
+    }
 
     if (details.inserted) {
       let consistentTail;
@@ -373,7 +398,7 @@ abstract class Masked<Value=any> {
     if (this.commit) this.commit(this.value, this);
   }
 
-  splice (start: number, deleteCount: number, inserted: string, removeDirection: Direction = DIRECTION.NONE, flags: AppendFlags = { input: true }): ChangeDetails {
+  splice (start: number, deleteCount: number, inserted='', removeDirection: Direction = DIRECTION.NONE, flags: AppendFlags = { input: true }): ChangeDetails {
     const tailPos: number = start + deleteCount;
     const tail: TailDetails = this.extractTail(tailPos);
 
@@ -432,6 +457,10 @@ abstract class Masked<Value=any> {
     return value === tval ||
       Masked.EMPTY_VALUES.includes(value) && Masked.EMPTY_VALUES.includes(tval) ||
       (this.format ? this.format(value, this) === this.format(this.typedValue, this) : false);
+  }
+
+  pad (flags?: AppendFlags): ChangeDetails {
+    return new ChangeDetails();
   }
 }
 

@@ -30,4 +30,5 @@ interface PatternBlock<State=MaskedState> {
   doCommit (): void;
   nearestInputPos (cursorPos: number, direction: Direction): number;
   totalInputPositions (fromPos?: number, toPos?: number): number;
+  pad (flags?: AppendFlags): ChangeDetails;
 }

@@ -56,6 +56,14 @@ class ChangeDetails {
   get consumed (): boolean {
     return Boolean(this.rawInserted) || this.skip;
   }
+
+  equals (details: ChangeDetails): boolean {
+    return this.inserted === details.inserted &&
+      this.tailShift === details.tailShift &&
+      this.rawInserted === details.rawInserted &&
+      this.skip === details.skip
+    ;
+  }
 }
 
 

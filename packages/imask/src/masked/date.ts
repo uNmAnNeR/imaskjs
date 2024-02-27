@@ -82,12 +82,11 @@ class MaskedDate extends MaskedPattern<DateValue> {
   declare min?: Date;
   /** End date */
   declare max?: Date;
-  /** */
-  declare autofix?: boolean | 'pad' | undefined;
   /** Format typed value to string */
   declare format: (value: DateValue, masked: Masked) => string;
   /** Parse string to get typed value */
   declare parse: (str: string, masked: Masked) => DateValue;
+
 
   constructor (opts?: MaskedDateOptions) {
     super(MaskedDate.extractPatternOptions({
@@ -121,12 +120,6 @@ class MaskedDate extends MaskedPattern<DateValue> {
       }
     }
     Object.assign(patternBlocks, this.blocks, blocks);
-
-    // add autofix
-    Object.keys(patternBlocks).forEach(bk => {
-      const b = patternBlocks[bk];
-      if (!('autofix' in b) && 'autofix' in opts) b.autofix = opts.autofix;
-    });
 
     super._update({
       ...patternOpts,

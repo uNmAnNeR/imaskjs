@@ -16,6 +16,8 @@ class MaskedFunction<Value=any> extends Masked<Value> {
   declare eager?: boolean | 'remove' | 'append' | undefined;
   /** */
   declare skipInvalid?: boolean | undefined;
+  /** */
+  declare autofix?: boolean | 'pad' | undefined;
 
   override updateOptions (opts: Partial<MaskedFunctionOptions>) {
     super.updateOptions(opts);

@@ -58,6 +58,7 @@ class PatternInputDefinition<Opts extends FactoryOpts=any> implements PatternBlo
   /** */
   declare displayChar: MaskedPattern['displayChar'];
 
+
   constructor(opts: PatternInputDefinitionOptions<Opts>) {
     const { parent, isOptional, placeholderChar, displayChar, lazy, eager, ...maskOpts } = opts;
 
@@ -200,5 +201,9 @@ class PatternInputDefinition<Opts extends FactoryOpts=any> implements PatternBlo
       ...flags,
       _beforeTailState: flags?._beforeTailState?.masked || flags?._beforeTailState as unknown as MaskedState,
     };
+  }
+
+  pad (flags?: AppendFlags): ChangeDetails {
+    return new ChangeDetails();
   }
 }

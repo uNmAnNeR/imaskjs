@@ -12,12 +12,22 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: IMask.MaskedEnum,
-      enum: Array.from({ length: 12 }, (_, i) =>
-        new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
-      ),
-      lazy: false,
-      matchValue: (estr, istr, matchFrom) => IMask.MaskedEnum.DEFAULTS.matchValue(estr.toLowerCase(), istr.toLowerCase(), matchFrom),
+      mask: 'HH:MM',
+      blocks: {
+        HH: {
+          mask: IMask.MaskedRange,
+          from: 0,
+          to: 23,
+          maxLength: 2,
+        },
+        MM: {
+          mask: IMask.MaskedRange,
+          from: 0,
+          to: 59,
+          maxLength: 2,
+        },
+      },
+      autofix: 'pad',
     };
 
     const input = document.getElementById('input');

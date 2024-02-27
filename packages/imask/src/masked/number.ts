@@ -16,7 +16,6 @@ type MaskedNumberOptions = MaskedOptions<MaskedNumber,
   | 'max'
   | 'normalizeZeros'
   | 'padFractionalZeros'
-  | 'autofix'
 >;
 
 /** Number mask */
@@ -62,12 +61,12 @@ class MaskedNumber extends Masked<number> {
   declare eager?: boolean | 'remove' | 'append' | undefined;
   /** */
   declare skipInvalid?: boolean | undefined;
+  /** */
+  declare autofix?: boolean | 'pad' | undefined;
   /** Format typed value to string */
   declare format: (value: number, masked: Masked) => string;
   /** Parse string to get typed value */
   declare parse: (str: string, masked: Masked) => number;
-  /** */
-  declare autofix?: boolean;
 
   declare _numberRegExp: RegExp;
   declare _thousandsSeparatorRegExp: RegExp;

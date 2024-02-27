@@ -54,4 +54,38 @@ describe('MaskedRange', function () {
     masked.append('6', { input: true });
     assert.equal(masked.value, '06');
   });
+
+  it('should pad value', function () {
+    masked.updateOptions({
+      from: 0,
+      to: 100,
+      maxLength: 0,
+      autofix: 'pad',
+    });
+
+    masked.value = '';
+    masked.pad();
+    assert.equal(masked.value, '000');
+
+    masked.value = '2';
+    masked.pad();
+    assert.equal(masked.value, '002');
+
+    masked.value = '02';
+    masked.pad();
+    assert.equal(masked.value, '002');
+  });
+
+  it('should not pad value on tail', function () {
+    masked.updateOptions({
+      from: 0,
+      to: 20,
+      maxLength: 0,
+      autofix: 'pad',
+    });
+
+    masked.value = '';
+    masked.appendTail('3');
+    assert.equal(masked.value, '2');
+  });
 });

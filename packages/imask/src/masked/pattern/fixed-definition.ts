@@ -152,4 +152,8 @@ class PatternFixedDefinition implements PatternBlock {
     this._value = state._value;
     this._isRawInput = Boolean(state._rawInputValue);
   }
+
+  pad (flags?: AppendFlags): ChangeDetails {
+    return this._appendPlaceholder();
+  }
 }

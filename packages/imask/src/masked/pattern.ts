@@ -79,6 +79,8 @@ class MaskedPattern<Value=string> extends Masked<Value> {
   declare eager?: boolean | 'remove' | 'append' | undefined;
   /** */
   declare skipInvalid?: boolean | undefined;
+  /** */
+  declare autofix?: boolean | 'pad' | undefined;
 
   declare _blocks: Array<PatternBlock>;
   declare _maskedBlocks: {[key: string]: Array<number>};
@@ -131,6 +133,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
             placeholderChar: this.placeholderChar,
             displayChar: this.displayChar,
             overwrite: this.overwrite,
+            autofix: this.autofix,
             ...bOpts,
             repeat,
             parent: this,
@@ -531,6 +534,12 @@ class MaskedPattern<Value=string> extends Masked<Value> {
     const indices = this._maskedBlocks[name];
     if (!indices) return [];
     return indices.map(gi => this._blocks[gi]);
+  }
+
+  override pad (flags?: AppendFlags): ChangeDetails {
+    const details = new ChangeDetails();
+    this._forEachBlocksInRange(0, this.displayValue.length, b => details.aggregate(b.pad(flags)))
+    return details;
   }
 }
 

@@ -312,4 +312,54 @@ describe('Insert', function () {
       assert.equal(masked.value, 'aa0');
     });
   });
+
+  describe('autofix: pad', function () {
+    it('should pad', function () {
+      masked.updateOptions({
+        mask: 'Na',
+        blocks: {
+          N: {
+            mask: MaskedRange,
+            from: 0,
+            to: 10,
+          },
+        },
+        autofix: 'pad',
+      });
+
+      masked.value = '1';
+      assert.equal(masked.value, '1__');
+
+      masked.splice(1, 0, 'a');
+      assert.equal(masked.value, '01a');
+    });
+
+    it('should not pad on tail', function () {
+      masked.updateOptions({
+        mask: 'HH:MM',
+        blocks: {
+          HH: {
+            mask: MaskedRange,
+            from: 0,
+            to: 23,
+            maxLength: 2,
+          },
+          MM: {
+            mask: MaskedRange,
+            from: 0,
+            to: 59,
+            maxLength: 2,
+          },
+        },
+        autofix: 'pad',
+        lazy: false,
+      });
+
+      masked.value = '13:34';
+      assert.equal(masked.value, '13:34');
+
+      masked.splice(0, 1);
+      assert.equal(masked.value, '23:4_');
+    });
+  });
 });

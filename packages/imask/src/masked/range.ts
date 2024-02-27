@@ -1,11 +1,11 @@
 import ChangeDetails from '../core/change-details';
 import IMask from '../core/holder';
 import { type AppendFlags } from './base';
-import MaskedPattern, { type MaskedPatternOptions } from './pattern';
+import MaskedPattern, { MaskedPatternState, type MaskedPatternOptions } from './pattern';
 
 
 type MaskedRangePatternOptions = MaskedPatternOptions &
-  Pick<MaskedRange, 'from' | 'to' | 'autofix'> &
+  Pick<MaskedRange, 'from' | 'to'> &
   Partial<Pick<MaskedRange, 'maxLength'>>;
 
 export
@@ -24,8 +24,6 @@ class MaskedRange extends MaskedPattern {
   declare from: number;
   /** Max bound */
   declare to: number;
-  /** */
-  declare autofix?: boolean | 'pad';
 
   get _matchFrom (): number {
     return this.maxLength - String(this.from).length;
@@ -85,29 +83,29 @@ class MaskedRange extends MaskedPattern {
     let details: ChangeDetails;
     [ch, details] = super.doPrepareChar(ch.replace(/\D/g, ''), flags);
 
-    if (!this.autofix || !ch) {
-      details.skip = !this.isComplete;
-      return [ch, details];
-    }
+    if (!ch) details.skip = !this.isComplete;
+
+    return [ch, details];
+  }
+
+  override _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
+    if (!this.autofix || this.value.length + 1 > this.maxLength) return super._appendCharRaw(ch, flags);
 
     const fromStr = String(this.from).padStart(this.maxLength, '0');
     const toStr = String(this.to).padStart(this.maxLength, '0');
 
-    const nextVal = this.value + ch;
-    if (nextVal.length > this.maxLength) return ['', details];
+    const [minstr, maxstr] = this.boundaries(this.value + ch);
 
-    const [minstr, maxstr] = this.boundaries(nextVal);
-
-    if (Number(maxstr) < this.from) return [fromStr[nextVal.length - 1], details];
+    if (Number(maxstr) < this.from) return super._appendCharRaw(fromStr[this.value.length], flags);
 
     if (Number(minstr) > this.to) {
-      if (this.autofix === 'pad' && nextVal.length < this.maxLength) {
-        return ['', details.aggregate(this.append(fromStr[nextVal.length - 1]+ch, flags))];
+      if (!flags.tail && this.autofix === 'pad' && this.value.length + 1 < this.maxLength) {
+        return super._appendCharRaw(fromStr[this.value.length], flags).aggregate(this._appendCharRaw(ch, flags));
       }
-      return [toStr[nextVal.length - 1], details];
+      return super._appendCharRaw(toStr[this.value.length], flags);
     }
 
-    return [ch, details];
+    return super._appendCharRaw(ch, flags);
   }
 
   override doValidate (flags: AppendFlags): boolean {
@@ -120,6 +118,26 @@ class MaskedRange extends MaskedPattern {
 
     return this.from <= Number(maxstr) && Number(minstr) <= this.to &&
       super.doValidate(flags);
+  }
+
+  override pad (flags?: AppendFlags): ChangeDetails {
+    const details = new ChangeDetails();
+    if (this.value.length === this.maxLength) return details;
+
+    const value = this.value;
+    const padLength = this.maxLength - this.value.length;
+
+    if (padLength) {
+      this.reset();
+      for (let i=0; i < padLength; ++i) {
+        details.aggregate(super._appendCharRaw('0', flags as AppendFlags<MaskedPatternState>));
+      }
+
+      // append tail
+      value.split('').forEach(ch => this._appendCharRaw(ch));
+    }
+
+    return details;
   }
 }
 
