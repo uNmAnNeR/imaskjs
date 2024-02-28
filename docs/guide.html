@@ -841,6 +841,11 @@ IMask(element, {
     new Date(0, i).toLocaleString(window.navigator.language, { month: 'long' })
   ),
 
+  // optionally can set match function
+  matchValue: (estr, istr, matchFrom) =>
+    // use case insensitive match
+    IMask.MaskedEnum.DEFAULTS.matchValue(estr.toLowerCase(), istr.toLowerCase(), matchFrom),
+
   // pattern options can be set as well
   lazy: false
 })
@@ -1353,6 +1358,11 @@ IMask(element, { mask: Number });
     var enumMask = IMask(document.getElementById('enum-mask'), {
       mask: IMask.MaskedEnum,
       enum: languages,
+
+      // optionally can set match function
+      matchValue: (estr, istr, matchFrom) =>
+        // use case insensitive match
+        IMask.MaskedEnum.DEFAULTS.matchValue(estr.toLowerCase(), istr.toLowerCase(), matchFrom),
 
       // pattern options can be set as well
       lazy: false
