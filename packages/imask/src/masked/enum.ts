@@ -79,7 +79,7 @@ class MaskedEnum extends MaskedPattern {
       return d;
     }
 
-    return new ChangeDetails();
+    return new ChangeDetails({ skip: !this.isComplete });
   }
 
   override extractTail (fromPos: number=0, toPos: number=this.displayValue.length): TailDetails {
@@ -102,6 +102,10 @@ class MaskedEnum extends MaskedPattern {
     details.tailShift += pos - fromPos;
 
     return details;
+  }
+
+  override get isComplete (): boolean {
+    return this.enum.indexOf(this.value) >= 0;
   }
 }
 

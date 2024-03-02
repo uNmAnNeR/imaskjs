@@ -70,4 +70,21 @@ describe('MaskedEnum', function () {
 
     assert.equal(masked.value, 'aaa');
   });
+
+  it('should skip char if does not match', function () {
+    const enum_ = ['aaa', 'bbb', 'ccc'];
+    const masked = new MaskedEnum({ enum: enum_ });
+    const d = masked.append('x', { input: true, raw: true });
+
+    assert.equal(d.skip, true);
+  });
+
+  it('should not skip char if complete', function () {
+    const enum_ = ['aaa', 'bbb', 'ccc'];
+    const masked = new MaskedEnum({ enum: enum_ });
+    masked.value = 'aaa';
+    const d = masked.append('x', { input: true, raw: true });
+
+    assert.equal(d.skip, false);
+  });
 });
