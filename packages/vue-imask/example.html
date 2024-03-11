@@ -19,12 +19,13 @@
     <label>
       Component
       <imask-input
-        v-model="numberValue"
-        :mask="numberMask"
-        :unmask="numberUnmask"
-        @focus="onFocusNumber"
-        @accept="onAcceptNumber"
-        @complete="onCompleteNumber">
+        v-model:typed="numberModel"
+        :mask="Number"
+        radix="."
+        @accept:masked="onAcceptNumberMasked"
+        @accept:unmasked="onAcceptNumberUnmasked"
+        placeholder="Enter number here"
+      >
     </label>
     {{numberValue}}
     <button
@@ -34,7 +35,6 @@
 
   <script src="https://unpkg.com/vue"></script>
   <script src="https://unpkg.com/vue-demi"></script>
-  <script src="https://unpkg.com/vue-types"></script>
   <script src="https://unpkg.com/imask"></script>
   <script src="dist/vue-imask.js"></script>
   <script type="text/javascript">
@@ -55,7 +55,7 @@
 
         numberMask: testNumberMask,
         numberUnmask: 'typed',
-        // numberValue: 0,
+        numberValue: 0,
       }),
       methods: {
         onAcceptDate: function (e) {
@@ -69,7 +69,10 @@
         onFocusNumber: function () {
           console.log('focus num');
         },
-        onAcceptNumber: function (value, e) {
+        onAcceptNumberMasked: function (value, e) {
+          console.log('accept num', value, typeof value);
+        },
+        onAcceptNumberUnmasked: function (value, e) {
           console.log('accept num', value, typeof value);
         },
         onCompleteNumber: function (value) {

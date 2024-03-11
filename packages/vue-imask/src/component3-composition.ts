@@ -26,7 +26,7 @@ export default defineComponent<MaskProps>({
     modelValue: String,
     value: String,
     unmasked: String,
-    typed: Object as PropType<any>,
+    typed: { validator: () => true } as unknown as PropType<any>,
 
     ...props,
   },
@@ -50,7 +50,7 @@ export default defineComponent<MaskProps>({
   ],
 
   setup (props, { attrs, emit }) {
-    const { el, masked, unmasked, typed } = useIMask(extractOptionsFromProps(props as MaskProps, VALUE_PROPS) as FactoryOpts, {
+    const { el, mask, masked, unmasked, typed } = useIMask(extractOptionsFromProps(props as MaskProps, VALUE_PROPS) as FactoryOpts, {
       emit,
       onAccept: (event?: InputEvent) => {
         // emit more events
@@ -86,7 +86,10 @@ export default defineComponent<MaskProps>({
       // TODO type?
       const data: Record<string, any> = {
         ...attrs,
-        value: props.value != null ? props.value : props.modelValue,
+        value: props.value != null ? props.value :
+          props.modelValue != null ? props.modelValue :
+          mask.value ? mask.value.displayValue :
+          '',
         ref: el,
       };
 
