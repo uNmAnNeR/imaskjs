@@ -78,7 +78,8 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
     ) {
       const blockDetails = block._appendChar(ch, { ...flags, _beforeTailState: flags._beforeTailState?._blocks?.[bi] });
 
-      if (blockDetails.skip && allocated) {
+      const consumed = blockDetails.consumed(block);
+      if (consumed && !blockDetails.rawInserted && allocated) {
         // remove the last allocated block and break
         this._blocks.pop();
         this.mask = this.mask.slice(1);
@@ -87,7 +88,7 @@ class RepeatBlock<M extends FactoryArg> extends MaskedPattern {
 
       details.aggregate(blockDetails);
 
-      if (blockDetails.consumed) break; // go next char
+      if (consumed) break; // go next char
     }
 
     return details;
