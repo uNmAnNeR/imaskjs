@@ -74,7 +74,7 @@ export default defineComponent<MaskProps>({
     const ptyped = toRef(props, 'typed');
 
     masked.value = pmodelValue.value || pvalue.value || '';
-    unmasked.value = punmasked.value;
+    unmasked.value = punmasked.value || '';
     typed.value = ptyped.value;
 
     watch(pvalue, v => masked.value = v);

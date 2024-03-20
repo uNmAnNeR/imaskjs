@@ -38,17 +38,20 @@ function useIMask<
   const mask: Ref<InputMask<Opts> | undefined> = ref();
   const masked: Ref<InputMask<Opts>['value']> = ref('');
   const unmasked: Ref<InputMask<Opts>['unmaskedValue']> = ref('');
-  const typed: Ref<InputMask<Opts>['typedValue']> = ref(null);
-  const initialized = ref(false);
+  const typed: Ref<InputMask<Opts>['typedValue']> = ref();
   let $el: MaskElement | undefined;
-  let $lastAcceptedValue: InputMask<Opts>['value'] | undefined;
-  let $lastAcceptedUnmaskedValue: InputMask<Opts>['unmaskedValue'] | undefined;
-  let $lastAcceptedTypedValue: InputMask<Opts>['typedValue'] | undefined;
+  let $lastAcceptedValue: InputMask<Opts>['value'] | undefined = masked.value;
+  let $lastAcceptedUnmaskedValue: InputMask<Opts>['unmaskedValue'] | undefined = unmasked.value;
+  let $lastAcceptedTypedValue: InputMask<Opts>['typedValue'] | undefined = typed.value;
 
-  function _onAccept (event?: InputEvent) {
+  function storeLastAcceptedValues () {
     $lastAcceptedTypedValue = typed.value = (mask.value as InputMask<Opts>).typedValue;
     $lastAcceptedUnmaskedValue = unmasked.value = (mask.value as InputMask<Opts>).unmaskedValue;
     $lastAcceptedValue = masked.value = (mask.value as InputMask<Opts>).value;
+  }
+
+  function _onAccept (event?: InputEvent) {
+    storeLastAcceptedValues();
 
     if (emit) {
       emit('accept', masked.value, event);
@@ -79,13 +82,14 @@ function useIMask<
       .on('accept', _onAccept)
       .on('complete', _onComplete);
 
-    _onAccept();
+    updateUnmaskedValue();
+    updateMaskedValue();
+    updateTypedValue();
 
-    initialized.value = true;
+    storeLastAcceptedValues();
   }
 
   function _destroyMask () {
-    if (!initialized.value) return;
     mask.value?.destroy();
     mask.value = undefined;
   }
@@ -93,26 +97,38 @@ function useIMask<
   onMounted(_initMask);
   onUnmounted(_destroyMask);
 
-  watch(unmasked, () => {
-    if (mask.value && initialized.value) {
-      if ($lastAcceptedUnmaskedValue !== unmasked.value) mask.value.unmaskedValue = unmasked.value;
-      $lastAcceptedUnmaskedValue = undefined;
-    }
-  });
+  const updateUnmaskedValue = () => {
+    if (!mask.value) return;
 
-  watch(masked, () => {
-    if (mask.value && initialized.value) {
-      if ($lastAcceptedValue !== masked.value) mask.value.value = masked.value;
-      $lastAcceptedValue = undefined;
+    if ($lastAcceptedUnmaskedValue !== unmasked.value) {
+      mask.value.unmaskedValue = unmasked.value;
+      if (mask.value.unmaskedValue !== unmasked.value) _onAccept();
     }
-  });
+    $lastAcceptedUnmaskedValue = undefined;
+  };
+  watch(unmasked, updateUnmaskedValue);
 
-  watch(typed, () => {
-    if (mask.value && initialized.value) {
-      if ($lastAcceptedTypedValue !== typed.value) mask.value.typedValue = typed.value;
-      $lastAcceptedTypedValue = undefined;
+  const updateMaskedValue = () => {
+    if (!mask.value) return;
+
+    if ($lastAcceptedValue !== masked.value) {
+      mask.value.value = masked.value;
+      if (mask.value.value !== masked.value) _onAccept();
     }
-  });
+    $lastAcceptedValue = undefined;
+  };
+  watch(masked, updateMaskedValue);
+
+  const updateTypedValue = () => {
+    if (!mask.value) return;
+
+    if ($lastAcceptedTypedValue !== typed.value) {
+      mask.value.typedValue = typed.value;
+      if (mask.value.typedValue !== typed.value) _onAccept();
+    }
+    $lastAcceptedTypedValue = undefined;
+  }
+  watch(typed, updateTypedValue);
 
   watch([el, _props], () => {
     const $newEl = el.value;

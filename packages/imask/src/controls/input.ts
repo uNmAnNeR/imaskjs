@@ -65,7 +65,6 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     this._bindEvents();
 
     // refresh
-    this.updateValue();
     this._onChange();
   }
 
@@ -209,6 +208,8 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
   updateValue () {
     this.masked.value = this.el.value;
     this._value = this.masked.value;
+    this._unmaskedValue = this.masked.unmaskedValue;
+    this._rawInputValue = this.masked.rawInputValue;
   }
 
   /** Syncronizes view from model value, fires change events */
@@ -360,9 +361,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
 
   /** Handles view change event and commits model value */
   _onChange () {
-    if (this.displayValue !== this.el.value) {
-      this.updateValue();
-    }
+    if (this.displayValue !== this.el.value) this.updateValue();
     this.masked.doCommit();
     this.updateControl();
     this._saveSelection();
