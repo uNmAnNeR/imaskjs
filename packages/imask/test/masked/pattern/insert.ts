@@ -70,9 +70,7 @@ describe('Insert', function () {
   });
 
   it('should insert value in the middle', function () {
-    masked.updateOptions({
-      mask: '000',
-    });
+    masked.updateOptions({ mask: '000' });
     masked.splice(1, 0, '1', DIRECTION.NONE);
     assert.equal(masked.value, '_1_');
   });

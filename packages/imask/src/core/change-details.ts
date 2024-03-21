@@ -19,7 +19,7 @@ class ChangeDetails {
   /** Raw inserted is used by dynamic mask */
   declare rawInserted: string;
   /** Can skip chars */
-  declare skip: boolean;
+  declare skip?: boolean;
 
 
   static normalize (prep: string | [string, ChangeDetails]): [string, ChangeDetails] {
@@ -34,7 +34,6 @@ class ChangeDetails {
       inserted: '',
       rawInserted: '',
       tailShift: 0,
-      skip: false,
     }, details);
   }
 
@@ -53,8 +52,11 @@ class ChangeDetails {
     return this.tailShift + this.inserted.length;
   }
 
-  get consumed (): boolean {
-    return Boolean(this.rawInserted) || this.skip;
+  // TODO only for CharChangeDetails
+  // TODO `rawInserted` and `skip` should be mutually exclusive
+  consumed (block: { isComplete: boolean }): boolean {
+    return Boolean(this.rawInserted) || this.skip === true ||
+      this.skip == null && !block.isComplete && !this.rawInserted;
   }
 
   equals (details: ChangeDetails): boolean {

@@ -127,7 +127,6 @@ class MaskedNumber extends Masked<number> {
         !flags.input && !flags.raw
       ) ? ch.replace(this._mapToRadixRegExp, this.radix) : ch
     ), flags);
-    if (ch && !prepCh) details.skip = true;
 
     if (prepCh && !this.allowPositive && !this.value && prepCh !== '-') details.aggregate(this._appendChar('-'));
 
@@ -197,7 +196,6 @@ class MaskedNumber extends Masked<number> {
       appendDetails = new ChangeDetails({
         inserted: this._value.slice(oldValue.length),
         rawInserted: skip ? '' : ch,
-        skip,
       });
     }
 

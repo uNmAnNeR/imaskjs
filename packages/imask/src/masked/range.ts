@@ -80,12 +80,7 @@ class MaskedRange extends MaskedPattern {
   }
 
   override doPrepareChar (ch: string, flags: AppendFlags={}): [string, ChangeDetails] {
-    let details: ChangeDetails;
-    [ch, details] = super.doPrepareChar(ch.replace(/\D/g, ''), flags);
-
-    if (!ch) details.skip = !this.isComplete;
-
-    return [ch, details];
+    return super.doPrepareChar(ch.replace(/\D/g, ''), flags);
   }
 
   override _appendCharRaw (ch: string, flags: AppendFlags<MaskedPatternState>={}): ChangeDetails {
