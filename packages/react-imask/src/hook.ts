@@ -9,7 +9,8 @@ function useIMask<
   Opts extends FactoryOpts=FactoryOpts,
 >(
   opts: Opts,
-  { onAccept, onComplete }: {
+  { onAccept, onComplete, ref=useRef<MaskElement | null>(null) }: {
+    ref?: MutableRefObject<MaskElement | null>,
     onAccept?: (value: InputMask<Opts>['value'], maskRef: InputMask<Opts>, e?: InputEvent) => void;
     onComplete?: (value: InputMask<Opts>['value'], maskRef: InputMask<Opts>, e?: InputEvent) => void;
   } = {}
@@ -23,7 +24,6 @@ function useIMask<
   typedValue: InputMask<Opts>['typedValue'],
   setTypedValue: Dispatch<InputMask<Opts>['typedValue']>,
 } {
-  const ref = useRef<MaskElement | null>(null);
   const maskRef = useRef<InputMask<Opts> | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
   const [lastAcceptState, setLastAcceptState] = useState<{
