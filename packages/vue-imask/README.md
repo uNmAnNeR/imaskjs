@@ -163,7 +163,14 @@ More options see in a [guide](https://imask.js.org/guide.html).
       const { el, masked } = useIMask({
         mask: Number,
         radix: '.',
-      });
+      }, /* optional {
+        emit,
+        onAccept,
+        onComplete,
+        defaultValue,
+        defaultUnmaskedValue,
+        defaultTypedValue,
+      } */);
   
       return { el };
     }
