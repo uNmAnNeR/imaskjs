@@ -34,7 +34,7 @@
   },
   "peerDependencies": {
     "react": ">=16.0.0",
-    "react-native": "^0.71.16"
+    "react-native": "^0.71.17"
   },
   "engines": {
     "npm": ">=4.0.0"
