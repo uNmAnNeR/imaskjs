@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/ban-types': 'warn',
     '@typescript-eslint/no-empty-function': 'warn',
-    'no-empty': ["error", { "allowEmptyCatch": true }],
+    'no-empty': ['error', { allowEmptyCatch: true }],
+    'prefer-const': ['error', { destructuring: 'all' }],
   },
 };

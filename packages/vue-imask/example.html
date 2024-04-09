@@ -19,7 +19,7 @@
     <label>
       Component
       <imask-input
-        v-model:typed="numberModel"
+        v-model:typed="numberValue"
         :mask="Number"
         radix="."
         @accept:masked="onAcceptNumberMasked"
@@ -31,6 +31,9 @@
     <button
       @click="toggleNumberMask"
       >{{numberMask ? 'Disable' : 'Enable'}} mask</button>
+
+    <br>
+    <input ref="el">
   </main>
 
   <script src="https://unpkg.com/vue"></script>
@@ -55,8 +58,19 @@
 
         numberMask: testNumberMask,
         numberUnmask: 'typed',
-        numberValue: 0,
+        numberValue: 10,
       }),
+      setup () {
+        const { el, typed } = VueIMask.useIMask({
+          mask: Number,
+          scale: 0,
+        }, {
+          defaultTypedValue: 500,
+          onAccept: () => console.log('accept composition value', typed.value),
+        });
+
+        return { el };
+      },
       methods: {
         onAcceptDate: function (e) {
           console.log('accept date', e.detail.value);

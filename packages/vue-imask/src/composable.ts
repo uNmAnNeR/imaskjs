@@ -20,13 +20,18 @@ type ComposableParams<Opts extends FactoryOpts> = {
   emit?: <E extends ComposableEmitEvent>(eventName: E, value: ComposableEmitValue<E, Opts>, e?: InputEvent) => void,
   onAccept?: (e?: InputEvent) => void,
   onComplete?: (e?: InputEvent) => void,
+  defaultValue?: InputMask<Opts>['value'],
+  defaultUnmaskedValue?: InputMask<Opts>['unmaskedValue'],
+  defaultTypedValue?: InputMask<Opts>['typedValue'],
 }
 
 export default
 function useIMask<
   MaskElement extends InputMaskElement,
   Opts extends FactoryOpts
-> (props: Opts | Ref<Opts>, { emit, onAccept, onComplete }: ComposableParams<Opts>={}): {
+> (props: Opts | Ref<Opts>, {
+    emit, onAccept, onComplete, defaultValue, defaultUnmaskedValue, defaultTypedValue,
+  }: ComposableParams<Opts>={}): {
   el: Ref<MaskElement | undefined>,
   mask: DeepReadonly<Ref<InputMask<Opts> | undefined>>,
   masked: Ref<InputMask<Opts>['value']>,
@@ -59,7 +64,7 @@ function useIMask<
       emit('accept:typed', typed.value, event);
       emit('accept:unmasked', unmasked.value, event);
     }
-    if (onAccept) onAccept(event);
+    onAccept?.(event);
   }
 
   function _onComplete (event?: InputEvent) {
@@ -69,36 +74,11 @@ function useIMask<
       emit('complete:typed', (mask.value as InputMask<Opts>).typedValue, event);
       emit('complete:unmasked', (mask.value as InputMask<Opts>).unmaskedValue, event);
     }
-    if (onComplete) onComplete(event);
+    onComplete?.(event);
   }
-
-  function _initMask () {
-    $el = el.value;
-    const $props = _props.value;
-
-    if (!$el || !$props?.mask) return;
-
-    mask.value = IMask($el, $props)
-      .on('accept', _onAccept)
-      .on('complete', _onComplete);
-
-    updateUnmaskedValue();
-    updateMaskedValue();
-    updateTypedValue();
-
-    storeLastAcceptedValues();
-  }
-
-  function _destroyMask () {
-    mask.value?.destroy();
-    mask.value = undefined;
-  }
-
-  onMounted(_initMask);
-  onUnmounted(_destroyMask);
 
   const updateUnmaskedValue = () => {
-    if (!mask.value) return;
+    if (!mask.value || unmasked.value === undefined) return;
 
     if ($lastAcceptedUnmaskedValue !== unmasked.value) {
       mask.value.unmaskedValue = unmasked.value;
@@ -109,7 +89,7 @@ function useIMask<
   watch(unmasked, updateUnmaskedValue);
 
   const updateMaskedValue = () => {
-    if (!mask.value) return;
+    if (!mask.value || masked.value === undefined) return;
 
     if ($lastAcceptedValue !== masked.value) {
       mask.value.value = masked.value;
@@ -120,15 +100,45 @@ function useIMask<
   watch(masked, updateMaskedValue);
 
   const updateTypedValue = () => {
-    if (!mask.value) return;
+    if (!mask.value || typed.value === undefined) return;
 
     if ($lastAcceptedTypedValue !== typed.value) {
       mask.value.typedValue = typed.value;
-      if (mask.value.typedValue !== typed.value) _onAccept();
+      if (!mask.value.masked.typedValueEquals(typed.value)) _onAccept();
     }
     $lastAcceptedTypedValue = undefined;
   }
   watch(typed, updateTypedValue);
+
+
+  function _initMask () {
+    $el = el.value;
+    const $props = _props.value;
+
+    if (!$el || !$props?.mask) return;
+
+    mask.value = IMask($el, $props);
+
+    if (defaultValue !== undefined) masked.value = defaultValue;
+    if (defaultUnmaskedValue !== undefined) unmasked.value = defaultUnmaskedValue;
+    if (defaultTypedValue !== undefined) typed.value = defaultTypedValue;
+
+    updateUnmaskedValue();
+    updateMaskedValue();
+    updateTypedValue();
+
+    storeLastAcceptedValues();
+
+    mask.value.on('accept', _onAccept).on('complete', _onComplete);
+  }
+
+  function _destroyMask () {
+    mask.value?.destroy();
+    mask.value = undefined;
+  }
+
+  onMounted(_initMask);
+  onUnmounted(_destroyMask);
 
   watch([el, _props], () => {
     const $newEl = el.value;
