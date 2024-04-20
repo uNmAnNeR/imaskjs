@@ -24,7 +24,10 @@ export
 type MaskedDateOptions =
   Omit<MaskedPatternOptions<DateValue>, 'mask'> &
   Partial<Pick<MaskedDate, DateOptionsKeys>> &
-  { mask?: string | DateMaskType }
+  { mask?: string | DateMaskType } &
+  // Make format and parse required when pattern is provided
+  ({ pattern?: never; format?: MaskedDate["format"]; parse?: MaskedDate["parse"] } |
+  { pattern: MaskedDate["pattern"]; format: MaskedDate["format"]; parse: MaskedDate["parse"] })
 ;
 
 /** Date mask */
