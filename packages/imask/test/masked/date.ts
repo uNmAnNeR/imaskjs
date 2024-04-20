@@ -17,6 +17,7 @@ describe('MaskedDate', function () {
   describe('#isDateExist', function () {
     masked.updateOptions({
       pattern: MaskedDate.DEFAULTS.pattern + '.',
+      parse: MaskedDate.DEFAULTS.parse,
       lazy: false,
       format: function (date) {
         return MaskedDate.DEFAULTS.format(date, masked) + '.';

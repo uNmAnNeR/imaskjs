@@ -20,15 +20,18 @@ type DateOptionsKeys =
 export
 type DateValue = Date | null;
 
+const DefaultPattern = 'd{.}`m{.}`Y'
+
+// Make format and parse required when pattern is provided
+type RequiredDateOptions = ({ pattern?: never |  typeof DefaultPattern; format?: MaskedDate["format"]; parse?: MaskedDate["parse"] } |
+  { pattern: MaskedDate["pattern"]; format: MaskedDate["format"]; parse: MaskedDate["parse"] })
+
 export
 type MaskedDateOptions =
   Omit<MaskedPatternOptions<DateValue>, 'mask'> &
   Partial<Pick<MaskedDate, DateOptionsKeys>> &
   { mask?: string | DateMaskType } &
-  // Make format and parse required when pattern is provided
-  ({ pattern?: never; format?: MaskedDate["format"]; parse?: MaskedDate["parse"] } |
-  { pattern: MaskedDate["pattern"]; format: MaskedDate["format"]; parse: MaskedDate["parse"] })
-;
+  RequiredDateOptions;
 
 /** Date mask */
 export default
@@ -55,7 +58,7 @@ class MaskedDate extends MaskedPattern<DateValue> {
   static DEFAULTS = {
     ...MaskedPattern.DEFAULTS,
     mask: Date,
-    pattern: 'd{.}`m{.}`Y',
+    pattern: DefaultPattern,
     format: (date: DateValue, masked: Masked): string => {
       if (!date) return '';
 
@@ -98,7 +101,7 @@ class MaskedDate extends MaskedPattern<DateValue> {
     }));
   }
 
-  override updateOptions (opts: Partial<MaskedDateOptions>) {
+  override updateOptions (opts: Partial<MaskedDateOptions> & RequiredDateOptions) {
     super.updateOptions(opts as Partial<MaskedPatternOptions<DateValue>>);
   }
 
