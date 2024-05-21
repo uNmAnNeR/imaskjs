@@ -65,6 +65,7 @@ class InputMask<Opts extends FactoryArg=Record<string, unknown>> {
     this._bindEvents();
 
     // refresh
+    this.updateValue();
     this._onChange();
   }
 
