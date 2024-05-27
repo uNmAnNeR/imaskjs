@@ -104,7 +104,7 @@ class PatternInputDefinition<Opts extends FactoryOpts=any> implements PatternBlo
   }
 
   _appendChar (ch: string, flags: AppendFlags<PatternInputDefinitionState<Opts>>={}): ChangeDetails {
-    if (this.isFilled) return new ChangeDetails();
+    if (this.isFilled) return new ChangeDetails({ skip: false });
 
     const state = this.masked.state;
     // simulate input

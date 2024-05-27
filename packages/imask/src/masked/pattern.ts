@@ -324,7 +324,7 @@ class MaskedPattern<Value=string> extends Masked<Value> {
 
       details.aggregate(blockDetails);
 
-      if (blockDetails.consumed) break; // go next char
+      if (blockDetails.consumed(block)) break; // go next char
     }
 
     return details;

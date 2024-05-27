@@ -71,20 +71,20 @@ describe('MaskedEnum', function () {
     assert.equal(masked.value, 'aaa');
   });
 
-  it('should skip char if does not match', function () {
+  it('should consume char if does not match', function () {
     const enum_ = ['aaa', 'bbb', 'ccc'];
     const masked = new MaskedEnum({ enum: enum_ });
-    const d = masked.append('x', { input: true, raw: true });
+    const d = masked._appendChar('x', { input: true, raw: true });
 
-    assert.equal(d.skip, true);
+    assert.equal(d.consumed(masked), true);
   });
 
-  it('should not skip char if complete', function () {
+  it('should not consume char if complete', function () {
     const enum_ = ['aaa', 'bbb', 'ccc'];
     const masked = new MaskedEnum({ enum: enum_ });
     masked.value = 'aaa';
-    const d = masked.append('x', { input: true, raw: true });
+    const d = masked._appendChar('x', { input: true, raw: true });
 
-    assert.equal(d.skip, false);
+    assert.equal(d.consumed(masked), false);
   });
 });
