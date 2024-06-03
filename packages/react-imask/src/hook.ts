@@ -86,8 +86,9 @@ function useIMask<
     if (!mask || value === undefined) return;
 
     if (lastAcceptValue !== value) {
+      const isDiff = mask.value !== value;
       mask.value = value;
-      if (mask.value !== value) _onAccept();
+      if (isDiff) _onAccept();
     }
     setLastAcceptState(state);
   }, [value]);
@@ -99,8 +100,9 @@ function useIMask<
     if (!mask || unmaskedValue === undefined) return;
 
     if (lastAcceptUnmaskedValue !== unmaskedValue) {
+      const isDiff = mask.unmaskedValue !== unmaskedValue;
       mask.unmaskedValue = unmaskedValue;
-      if (mask.unmaskedValue !== unmaskedValue) _onAccept();
+      if (isDiff) _onAccept();
     }
     setLastAcceptState(state);
   }, [unmaskedValue]);

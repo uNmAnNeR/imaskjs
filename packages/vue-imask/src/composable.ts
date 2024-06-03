@@ -81,8 +81,9 @@ function useIMask<
     if (!mask.value || unmasked.value === undefined) return;
 
     if ($lastAcceptedUnmaskedValue !== unmasked.value) {
+      const isDiff = mask.value.unmaskedValue !== unmasked.value;
       mask.value.unmaskedValue = unmasked.value;
-      if (mask.value.unmaskedValue !== unmasked.value) _onAccept();
+      if (isDiff) _onAccept();
     }
     $lastAcceptedUnmaskedValue = undefined;
   };
@@ -92,8 +93,9 @@ function useIMask<
     if (!mask.value || masked.value === undefined) return;
 
     if ($lastAcceptedValue !== masked.value) {
+      const isDiff = mask.value.value !== masked.value;
       mask.value.value = masked.value;
-      if (mask.value.value !== masked.value) _onAccept();
+      if (isDiff) _onAccept();
     }
     $lastAcceptedValue = undefined;
   };
