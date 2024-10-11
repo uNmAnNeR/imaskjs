@@ -161,6 +161,18 @@ describe('MaskedDynamic', function () {
     assert.equal(masked.value, '12__5_');
   });
 
+  it('should consider only raw input', function () {
+    masked.updateOptions({
+      mask: [
+        { mask: '000.000.000-00' },
+        { mask: '00.000.000/0000-00' },
+      ],
+    });
+
+    masked.resolve('123.456.789-012');
+    assert.equal(masked.value, '12.345.678/9012');
+  });
+
   describe('expose', function () {
     it('should expose number', function () {
       const mask = new MaskedDynamic<number>({

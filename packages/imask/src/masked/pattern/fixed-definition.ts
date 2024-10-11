@@ -102,7 +102,7 @@ class PatternFixedDefinition implements PatternBlock {
       rawInserted: isResolved ? this.char: '',
     })
     this._value = this.char;
-    this._isRawInput = isResolved && (flags.raw || flags.input);
+    this._isRawInput = isResolved && flags.raw;
 
     return details;
   }

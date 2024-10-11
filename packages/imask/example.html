@@ -12,25 +12,14 @@
   <!-- <script src="https://unpkg.com/imask"></script> -->
   <script type="text/javascript">
     const opts = {
-      mask: 'VLv\\alue MM',
-      lazy: false, // make placeholder always visible
-
-      blocks: {
-        YY: {
-          mask: '00',
+      mask: [
+        {
+          mask: '000.000.000-00',
         },
-
-        VL: {
-          mask: IMask.MaskedEnum,
-          enum: ['TV', 'HD', 'VR'],
+        {
+          mask: '00.000.000/0000-00',
         },
-
-        MM: {
-          mask: IMask.MaskedRange,
-          from: 1,
-          to: 12,
-        },
-      },
+      ],
     };
 
     const input = document.getElementById('input');
