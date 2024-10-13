@@ -7,12 +7,8 @@ import pkg from './package.json' with { type: 'json' };
 
 
 const globals = {
-  imask: 'IMask',
-  vue: 'Vue',
-  'vue-demi': 'VueDemi',
-  '@vue/composition-api': 'vueCompositionApi',
+  imask: 'IMask'
 };
-
 const extensions = ['.js', '.ts'];
 const input = ['src/**'];
 const commonPlugins = [
@@ -26,13 +22,12 @@ const commonPlugins = [
   }),
 ];
 
-
 export default [
   {
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'VueIMask',
+      name: 'SvelteIMask',
       file: pkg.main,
       format: 'umd',
       sourcemap: true,
@@ -50,7 +45,7 @@ export default [
     },
     plugins: [
       replace({
-        "from 'imask'": "from 'imask/esm/imask'",
+        "import IMask from 'imask'": "import IMask from 'imask/esm/imask'",
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
       }),
@@ -62,8 +57,8 @@ export default [
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'VueIMask',
-      file: 'dist/vue-imask.cjs',
+      name: 'SvelteIMask',
+      file: 'dist/svelte-imask.js',
       format: 'cjs',
       sourcemap: true,
       globals,
@@ -71,4 +66,4 @@ export default [
     },
     plugins: commonPlugins,
   },
-];
+]

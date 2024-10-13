@@ -8,7 +8,6 @@
   "description": "vanilla javascript input mask",
   "main": "dist/imask.js",
   "module": "esm/index.js",
-  "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs",
   "types": "index.d.ts",
   "engines": {
@@ -18,7 +17,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "require": "./dist/imask.cjs",
+      "require": "./dist/imask.js",
       "default": "./dist/imask.js"
     },
     "./holder": {
@@ -64,7 +63,7 @@
     }
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test c8 node --test-reporter=spec --loader tsx --test test/**/*",
+    "test": "cross-env NODE_ENV=test tsx --test test/**/*",
     "watch": "rollup -c -w",
     "lint": "eslint src",
     "prebuild": "npm run lint -- --quiet && rimraf --glob \"{dist,esm}\"",

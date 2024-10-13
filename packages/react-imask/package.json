@@ -7,14 +7,13 @@
   "description": "React input mask",
   "main": "dist/react-imask.js",
   "module": "esm/index.js",
-  "type": "module",
   "types": "index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/react-imask",
   "exports": {
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "require": "./dist/react-imask.cjs",
+      "require": "./dist/react-imask.js",
       "default": "./dist/react-imask.js"
     },
     "./esm": {

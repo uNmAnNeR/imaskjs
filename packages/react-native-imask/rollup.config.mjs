@@ -56,7 +56,7 @@ export default [
     external: Object.keys(globals),
     output: {
       name: 'ReactNativeIMask',
-      file: 'dist/react-native-imask.cjs',
+      file: 'dist/react-native-imask.js',
       globals,
       format: 'cjs',
       sourcemap: true,

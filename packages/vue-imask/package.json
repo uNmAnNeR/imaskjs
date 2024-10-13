@@ -6,7 +6,6 @@
   "description": "Vue input mask",
   "main": "dist/vue-imask.js",
   "module": "esm/index.js",
-  "type": "module",
   "types": "index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/vue-imask",
   "contributors": [
@@ -18,7 +17,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "require": "./dist/vue-imask.cjs",
+      "require": "./dist/vue-imask.js",
       "default": "./dist/vue-imask.js"
     },
     "./esm": {
