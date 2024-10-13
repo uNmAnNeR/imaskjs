@@ -1,4 +1,3 @@
-// import withSolid from 'rollup-preset-solid';
 import { babel } from '@rollup/plugin-babel';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
@@ -7,13 +6,15 @@ import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json' with { type: 'json' };
 
 
+const input = ['src/**'];
+const extensions = ['.js', '.ts'];
+
 const globals = {
-  'solid-js': 'Solid',
+  react: 'React',
   imask: 'IMask',
+  'prop-types': 'PropTypes',
 };
 
-const extensions = ['.js', '.ts', '.tsx', '.jsx'];
-const input = ['src/**'];
 const commonPlugins = [
   nodeResolve({ extensions }),
   commonjs(),
@@ -22,7 +23,6 @@ const commonPlugins = [
     rootMode: 'upward',
     babelHelpers: 'runtime',
     include: input,
-    presets: [ 'solid' ],
   }),
 ];
 
@@ -32,7 +32,7 @@ export default [
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'SolidIMask',
+      name: 'ReactIMask',
       file: pkg.main,
       globals,
       format: 'umd',
@@ -53,6 +53,7 @@ export default [
         "from 'imask'": "from 'imask/esm/imask'",
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
+        preventAssignment: true,
       }),
       multi.default(),
       ...commonPlugins,
@@ -62,13 +63,13 @@ export default [
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'SolidIMask',
-      file: 'dist/solid-imask.cjs',
-      globals,
+      name: 'ReactIMask',
+      file: 'dist/react-imask.js',
       format: 'cjs',
+      globals,
       sourcemap: true,
       interop: 'auto',
     },
     plugins: commonPlugins,
   },
-];
+]

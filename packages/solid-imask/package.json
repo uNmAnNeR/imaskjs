@@ -7,13 +7,12 @@
   "main": "dist/solid-imask.js",
   "module": "esm/index.js",
   "types": "esm/index.d.ts",
-  "type": "module",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/solid-imask",
   "exports": {
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "require": "./dist/solid-imask.cjs",
+      "require": "./dist/solid-imask.js",
       "default": "./dist/solid-imask.js"
     },
     "./esm": {

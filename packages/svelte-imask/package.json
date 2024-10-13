@@ -6,7 +6,6 @@
   "description": "Svelte input mask",
   "main": "dist/svelte-imask.js",
   "module": "esm/index.js",
-  "type": "module",
   "types": "index.d.ts",
   "repository": "https://github.com/uNmAnNeR/imaskjs/tree/master/packages/svelte-imask",
   "scripts": {
@@ -18,7 +17,7 @@
     ".": {
       "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "require": "./dist/svelte-imask.cjs",
+      "require": "./dist/svelte-imask.js",
       "default": "./dist/svelte-imask.js"
     },
     "./esm": {

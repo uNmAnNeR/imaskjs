@@ -1,3 +1,4 @@
+// import withSolid from 'rollup-preset-solid';
 import { babel } from '@rollup/plugin-babel';
 import multi from 'rollup-plugin-multi-input';
 import replace from '@rollup/plugin-replace';
@@ -7,9 +8,11 @@ import pkg from './package.json' with { type: 'json' };
 
 
 const globals = {
-  imask: 'IMask'
+  'solid-js': 'Solid',
+  imask: 'IMask',
 };
-const extensions = ['.js', '.ts'];
+
+const extensions = ['.js', '.ts', '.tsx', '.jsx'];
 const input = ['src/**'];
 const commonPlugins = [
   nodeResolve({ extensions }),
@@ -19,19 +22,21 @@ const commonPlugins = [
     rootMode: 'upward',
     babelHelpers: 'runtime',
     include: input,
+    presets: [ 'solid' ],
   }),
 ];
+
 
 export default [
   {
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'SvelteIMask',
+      name: 'SolidIMask',
       file: pkg.main,
+      globals,
       format: 'umd',
       sourcemap: true,
-      globals,
       interop: 'auto',
     },
     plugins: commonPlugins,
@@ -45,7 +50,7 @@ export default [
     },
     plugins: [
       replace({
-        "import IMask from 'imask'": "import IMask from 'imask/esm/imask'",
+        "from 'imask'": "from 'imask/esm/imask'",
         "import 'imask'": "import 'imask/esm'",
         delimiters: ['', ''],
       }),
@@ -57,13 +62,13 @@ export default [
     input: 'src/index.ts',
     external: Object.keys(globals),
     output: {
-      name: 'SvelteIMask',
-      file: 'dist/svelte-imask.cjs',
+      name: 'SolidIMask',
+      file: 'dist/solid-imask.js',
+      globals,
       format: 'cjs',
       sourcemap: true,
-      globals,
       interop: 'auto',
     },
     plugins: commonPlugins,
   },
-]
+];

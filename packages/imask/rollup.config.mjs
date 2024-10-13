@@ -51,7 +51,7 @@ export default [
     output: {
       name: 'IMask',
       format: 'cjs',
-      file: 'dist/imask.cjs',
+      file: 'dist/imask.js',
       sourcemap: true,
       exports: 'named',
     },
